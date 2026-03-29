@@ -1,4 +1,4 @@
-# InquisitBridge - Codex Instructions
+# InqBridge - Codex Instructions
 
 ## First-Run Setup Check
 On first interaction in this project, check whether the environment is ready. If any of the following are missing, ask the user if you should help set them up:

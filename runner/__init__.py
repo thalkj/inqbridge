@@ -1,1 +1,1 @@
-"""InquisitBridge local audited runner."""
+"""InqBridge local audited runner."""

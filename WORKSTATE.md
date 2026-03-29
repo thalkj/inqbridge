@@ -1,9 +1,9 @@
-# InquisitBridge - Work State
+# InqBridge - Work State
 
 ## Status: ALL PHASES COMPLETE AND VERIFIED
 
 ## Completed
-- [x] Created InquisitBridge folder and local git
+- [x] Created InqBridge folder and local git
 - [x] Located Inquisit 6 exe: `C:\Program Files\Millisecond Software\Inquisit 6\Inquisit.exe`
 - [x] Confirmed CLI flags: `-s`, `-g`, `-m monkey|human` (return code 1 = normal)
 - [x] Installed Python 3.12 via winget
@@ -19,7 +19,7 @@
 
 ## Changes Made to Computer
 - Installed Python 3.12.10 via `winget install Python.Python.3.12`
-- Created virtual environment at InquisitBridge/.venv/
+- Created virtual environment at InqBridge/.venv/
 
 ## Inquisit 6 Behavior Notes
 - Exit code 1 is normal (not an error)

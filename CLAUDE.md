@@ -1,4 +1,4 @@
-# InquisitBridge - Claude Instructions
+# InqBridge - Claude Instructions
 
 ## First-Run Setup Check
 On first interaction in this project, check whether the environment is ready:
@@ -12,7 +12,7 @@ On first interaction in this project, check whether the environment is ready:
 1. **Plan before executing** - Make a thorough plan before starting any implementation.
 2. **Ask upfront** - User cannot answer questions mid-task. Identify and ask all important questions before starting work.
 3. **Don't touch computer settings** - Avoid modifying system/computer settings unless clearly safe. Document any changes made.
-4. **Stay in scope** - Work only within the InquisitBridge folder and ClaudeAccess subfolders unless strictly necessary.
+4. **Stay in scope** - Work only within the InqBridge folder and ClaudeAccess subfolders unless strictly necessary.
 5. **Permission for critical changes** - If critical computer-level changes are needed, wait until the last moment and ask for explicit permission before proceeding.
 
 ## Project

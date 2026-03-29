@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 echo ============================================
-echo   InquisitBridge Setup
+echo   InqBridge Setup
 echo ============================================
 echo.
 
@@ -82,7 +82,7 @@ if %FOUND_COUNT%==1 (
 
 :: Multiple versions found - prompt user
 echo.
-echo   Multiple Inquisit versions found. Which one should InquisitBridge use?
+echo   Multiple Inquisit versions found. Which one should InqBridge use?
 set /p "CHOICE=  Enter number [1-%FOUND_COUNT%]: "
 
 :: Validate choice
@@ -127,7 +127,7 @@ set "JSON_VENV=%PROJECT_ROOT:\=\\%\\.venv\\Scripts\\python.exe"
 (
     echo {
     echo   "mcpServers": {
-    echo     "inquisit-bridge": {
+    echo     "inq-bridge": {
     echo       "command": "!JSON_VENV!",
     echo       "args": ["-m", "mcp_server.main"],
     echo       "cwd": "!JSON_ROOT!"

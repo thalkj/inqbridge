@@ -1,5 +1,5 @@
 ---
-name: inquisit-bridge
+name: inq-bridge
 description: Build and maintain the local Inquisit runner and MCP bridge. Use for tasks involving Inquisit scripts, run artifacts, Monkey mode, screenCapture analysis, layout patching, and traceable experiment iteration.
 ---
 

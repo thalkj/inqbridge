@@ -1,1 +1,1 @@
-"""InquisitBridge MCP server."""
+"""InqBridge MCP server."""

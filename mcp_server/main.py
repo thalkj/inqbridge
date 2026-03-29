@@ -1,4 +1,4 @@
-"""MCP server exposing InquisitBridge runner as tools.
+"""MCP server exposing InqBridge runner as tools.
 
 Thin wrapper - all logic lives in the runner package.
 """
@@ -24,7 +24,7 @@ from runner.preflight import preflight_check as _preflight_check
 from runner.config import ARTIFACTS_DIR, SCRIPTS_DIR, INCLUDES_DIR
 
 
-app = Server("inquisit-bridge")
+app = Server("inq-bridge")
 
 
 @app.list_tools()

@@ -47,7 +47,7 @@ class LinkParser(HTMLParser):
 
 def fetch(url: str) -> str:
     """Fetch URL and return text content."""
-    req = urllib.request.Request(url, headers={"User-Agent": "InquisitBridge/0.1 (research)"})
+    req = urllib.request.Request(url, headers={"User-Agent": "InqBridge/0.1 (research)"})
     with urllib.request.urlopen(req, timeout=30) as resp:
         return resp.read().decode("utf-8", errors="replace")
 
@@ -55,7 +55,7 @@ def fetch(url: str) -> str:
 def download_file(url: str, dest: Path) -> bool:
     """Download a binary file. Returns True on success."""
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "InquisitBridge/0.1 (research)"})
+        req = urllib.request.Request(url, headers={"User-Agent": "InqBridge/0.1 (research)"})
         with urllib.request.urlopen(req, timeout=60) as resp:
             dest.parent.mkdir(parents=True, exist_ok=True)
             dest.write_bytes(resp.read())

@@ -1,4 +1,4 @@
-# InquisitBridge
+# InqBridge
 
 A bridge program that allows LLMs to run Inquisit Scripts via an MCP server.
 

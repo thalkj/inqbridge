@@ -8,7 +8,7 @@ from .run import run_script
 
 def main():
     parser = argparse.ArgumentParser(
-        description="InquisitBridge: Audited local runner for Inquisit scripts"
+        description="InqBridge: Audited local runner for Inquisit scripts"
     )
     parser.add_argument("script", help="Path to the .iqx script to run")
     parser.add_argument("-m", "--mode", default="monkey", choices=["human", "monkey"],

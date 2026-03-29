@@ -1,0 +1,2026 @@
+// Notes:
+// -IDEA: use the number line to get implicit judgments of the point estimate below current granularity!
+// -REMEMBER TO SAVE ALL RELEVANT VALUES: lastresponsedisplayed and lastresponse
+
+*********************************************
+************************* EXPERIMENT EXPTs **
+*********************************************
+// =====================================================================
+// prove_eksp: DISABLED — Quick test experiment for development.
+// Uncomment to re-enable for smoke testing.
+// =====================================================================
+// <expt prove_eksp>
+// / preinstructions = (intro1)
+// / blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+//             7=experienceonlyAposskew;8=predictnext5expVisAna;9=distributionunderstandingcheck;10=evaluateBlock;11=textboxlastBlock]
+// </expt>
+
+// =====================================================================
+// FULL EXPERIMENT: 3 (information type) x 2 (granularity) = 6 between-subjects conditions
+// Skew (positive vs negative) is counterbalanced between subjects within each condition,
+// yielding 12 groups total. Inquisit auto-assigns group 1-12 round-robin.
+//
+// Groups 1-2:   Experience only,              low granularity  (0-10 scale), pos/neg skew
+// Groups 3-4:   Experience only,              high granularity (0-1000 scale), pos/neg skew
+// Groups 5-6:   Description only (histogram), low granularity, pos/neg skew
+// Groups 7-8:   Description only (histogram), high granularity, pos/neg skew
+// Groups 9-10:  Both (experience + histogram), low granularity, pos/neg skew
+// Groups 11-12: Both (experience + histogram), high granularity, pos/neg skew
+//
+// NOTE: Description-only uses the placebo distribution (modeANDcondition=2),
+// which draws from probabilitiesplacebo regardless of posskew. The skew
+// counterbalancing for description groups is included for design symmetry
+// but has no effect on the stimulus distribution.
+//
+// Block sequence per condition:
+//   1. Demographics
+//   2-3. Learn histogram (with knowledge test/retry loop)
+//   4-5. Learn response scale (two practice trials)
+//   6. Task introduction
+//   7. Gain experience (45 trials with attention checks)
+//   8. First round of 5 predictions
+//   9. Survey about distribution understanding (mean, mode, max, min)
+//   10. Evaluation (reveal each prediction vs actual + rate satisfaction, smiley VAS)
+//   11. Second round of 5 predictions
+//   12. Evaluation (reveal each prediction vs actual + rate satisfaction, smiley VAS)
+//   13. Final debrief and comments
+// =====================================================================
+
+*****************************************
+************************* EXPERIMENT ****
+*****************************************
+
+// --- Experience only, low granularity ---
+<expt experienceonly_lowGran_posskew>
+/ preinstructions = (intro1)
+/ groups = (1 of 12)
+/ blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;
+            4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+            7=experienceonlyAposskew;8=predictnext5expVisAna;
+            9=distributionunderstandingcheck;10=evaluateBlock;
+            11=predictnext5expVisAna;12=evaluateBlock;13=textboxlastBlock]
+</expt>
+
+<expt experienceonly_lowGran_negskew>
+/ preinstructions = (intro1)
+/ groups = (2 of 12)
+/ blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;
+            4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+            7=experienceonlyBnegskew;8=predictnext5expVisAna;
+            9=distributionunderstandingcheck;10=evaluateBlock;
+            11=predictnext5expVisAna;12=evaluateBlock;13=textboxlastBlock]
+</expt>
+
+// --- Experience only, high granularity ---
+<expt experienceonly_highGran_posskew>
+/ preinstructions = (intro1)
+/ groups = (3 of 12)
+/ blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;
+            4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+            7=experienceonlyAposskew_1000;8=predictnext5expVisAna;
+            9=distributionunderstandingcheck;10=evaluateBlock;
+            11=predictnext5expVisAna;12=evaluateBlock;13=textboxlastBlock]
+</expt>
+
+<expt experienceonly_highGran_negskew>
+/ preinstructions = (intro1)
+/ groups = (4 of 12)
+/ blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;
+            4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+            7=experienceonlyBnegskew_1000;8=predictnext5expVisAna;
+            9=distributionunderstandingcheck;10=evaluateBlock;
+            11=predictnext5expVisAna;12=evaluateBlock;13=textboxlastBlock]
+</expt>
+
+// --- Description only (histogram), low granularity ---
+// Description condition uses placebo distribution (modeANDcondition=2).
+// Skew value is set but does not affect the placebo distribution.
+<expt descriptiononly_lowGran_posskew>
+/ preinstructions = (intro1)
+/ groups = (5 of 12)
+/ blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;
+            4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+            7=descriptiononly;8=predictnext5descVisAna;
+            9=distributionunderstandingcheck;10=evaluateBlock;
+            11=predictnext5descVisAna;12=evaluateBlock;13=textboxlastBlock]
+</expt>
+
+<expt descriptiononly_lowGran_negskew>
+/ preinstructions = (intro1)
+/ groups = (6 of 12)
+/ blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;
+            4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+            7=descriptiononly;8=predictnext5descVisAna;
+            9=distributionunderstandingcheck;10=evaluateBlock;
+            11=predictnext5descVisAna;12=evaluateBlock;13=textboxlastBlock]
+</expt>
+
+// --- Description only (histogram), high granularity ---
+<expt descriptiononly_highGran_posskew>
+/ preinstructions = (intro1)
+/ groups = (7 of 12)
+/ blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;
+            4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+            7=descriptiononly_1000;8=predictnext5descVisAna;
+            9=distributionunderstandingcheck;10=evaluateBlock;
+            11=predictnext5descVisAna;12=evaluateBlock;13=textboxlastBlock]
+</expt>
+
+<expt descriptiononly_highGran_negskew>
+/ preinstructions = (intro1)
+/ groups = (8 of 12)
+/ blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;
+            4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+            7=descriptiononly_1000;8=predictnext5descVisAna;
+            9=distributionunderstandingcheck;10=evaluateBlock;
+            11=predictnext5descVisAna;12=evaluateBlock;13=textboxlastBlock]
+</expt>
+
+// --- Both (experience + histogram), low granularity ---
+<expt both_lowGran_posskew>
+/ preinstructions = (intro1)
+/ groups = (9 of 12)
+/ blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;
+            4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+            7=bothAposskew;8=predictnext5bothVisAna;
+            9=distributionunderstandingcheck;10=evaluateBlock;
+            11=predictnext5bothVisAna;12=evaluateBlock;13=textboxlastBlock]
+</expt>
+
+<expt both_lowGran_negskew>
+/ preinstructions = (intro1)
+/ groups = (10 of 12)
+/ blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;
+            4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+            7=bothBnegskew;8=predictnext5bothVisAna;
+            9=distributionunderstandingcheck;10=evaluateBlock;
+            11=predictnext5bothVisAna;12=evaluateBlock;13=textboxlastBlock]
+</expt>
+
+// --- Both (experience + histogram), high granularity ---
+<expt both_highGran_posskew>
+/ preinstructions = (intro1)
+/ groups = (11 of 12)
+/ blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;
+            4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+            7=bothAposskew_1000;8=predictnext5bothVisAna;
+            9=distributionunderstandingcheck;10=evaluateBlock;
+            11=predictnext5bothVisAna;12=evaluateBlock;13=textboxlastBlock]
+</expt>
+
+<expt both_highGran_negskew>
+/ preinstructions = (intro1)
+/ groups = (12 of 12)
+/ blocks = [1=demografiBlock;2=learning_histBlock;3=testlearn_histoBlock;
+            4=learnvisualanalogueblock1;5=learnvisualanalogueblock2;6=restaurantInstructionBlock;
+            7=bothBnegskew_1000;8=predictnext5bothVisAna;
+            9=distributionunderstandingcheck;10=evaluateBlock;
+            11=predictnext5bothVisAna;12=evaluateBlock;13=textboxlastBlock]
+</expt>
+
+
+// Structure: EXPT > BLOCK > TRIAL
+// See chronology note at top for the full block sequence per condition.
+____________________________________________Instruction EXPT-level
+<page intro1>
+Welcome to this experiment on ratings and predictions. Any questions about the study can be directed at torleif@simula.no.
+^^Some of the tasks may feel repetitive, but please do your best to pay close attention throughout.
+</page>
+
+
+//*********************************************************************
+//****SETTINGS AND TECHINICAL STUFF *********************************
+//********************************************************************
+
+//Instruction (page) settings
+<instruct>   
+/ nextkey = (" ")
+/ prevkey = (noresponse)
+/ nextlabel = "Press spacebar to continue"
+/ finishlabel = "Press spacebar to continue"
+/ fontstyle = ("Times New Roman", 3.43%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ windowsize = (70%, 70%)
+</instruct>
+
+//Values AND EXPRESSIONS: Variables to Store Data **
+<values>
+    /posskew=1     //expereimetnal condition, positive skew=1, negative=0, set by the blocks 
+	/ modeANDcondition = 0 //set to 0 = learning, 1=experience, 2= placeboexperience; 3= experience with histogram
+	/ showfine = 0 //0=show coarse bin value, 1= show fine (1000 or 600)
+    / finalshownvalue = -99
+	/ actoutcome = -99
+    / actplacebooutcome = -99
+	/ randomvalue = -99
+	/ count0 = 0
+	/ count1 = 0
+	/ count2 = 0
+	/ count3 = 0
+	/ count4 = 0
+	/ count5 = 0
+	/ count6 = 0
+	/ count7 = 0
+	/ count8 = 0
+	/ count9 = 0
+	/ count10 = 0
+	/ totaloutcome = 1
+	/ histogincrement = 1.5
+	/ binsize = 2.9
+	/totalprob=0
+	/ totalprobA=0  //are these used?
+	/ totalprobB=0
+	/ currentprediction=-99
+	/ bintargetvalue=15 
+	/ actoutcome1000 = -99
+	/ actoutcome1000placebo = -99
+
+//HERE AND BELOW ARE VALUES FOR THE VISUAL ANALOGUE SCALE     
+/ activetasknr=1
+/ scalemax =10000       
+/ lastresponse = 0
+/ hpositionAvalue = (-10)
+/ predtimer = 0
+/trialcounter=0
+/totaltid=0
+/totaltid10=0
+/numberofmouseadjust=0
+/numberofbuttonadjust=0
+/valueoutcome=0
+/valueprediction=0
+/overunder=0
+/fakecorrect=0   // increment when failing attention task ("what was the previous rating?")
+/currentexptelapsedtime=0
+/randnumbersubmitcode=0
+/responsexscore=0 //to record the horizontal response. used in expressions
+/scalemaxdisplayed=10  //HERE YOU CAN CHANGE THE MAXIMUM OF THE SCALE THAT IS DISPLAYED
+/displayvalue=""
+/correcthistanswers=0 //Knoweldge test
+
+// Tidy per-prediction values (set to -99 if participant clicks Continue without predicting)
+/ pred_counter = 0                 // counter 1-5 within current prediction round
+/ prediction1 = -99
+/ prediction2 = -99
+/ prediction3 = -99
+/ prediction4 = -99
+/ prediction5 = -99
+/ actual1 = -99
+/ actual2 = -99
+/ actual3 = -99
+/ actual4 = -99
+/ actual5 = -99
+// Display-formatted versions (set to "N.A." if prediction == -99)
+/ displayprediction1 = "N.A."
+/ displayprediction2 = "N.A."
+/ displayprediction3 = "N.A."
+/ displayprediction4 = "N.A."
+/ displayprediction5 = "N.A."
+
+// Evaluation block values
+/ eval_satisfaction_raw = 0        // raw score on vertical satisfaction VAS (0 to scalemax)
+/ eval_satisfaction01 = 0          // normalized satisfaction (0=dissatisfied, 1=satisfied)
+/ eval_satisfaction_y = -10        // raw y-pixel response on vertical VAS
+/ eval_vpositionVERT = -10         // vertical marker position on VERT scale
+/ eval_numberofmouseadjustVERT = 0 // mouse adjustment counter for VERT scale
+/ eval_round = 0                   // which evaluation round (incremented each evaluateBlock)
+/ eval_currentpred_num = 0         // counter 1-5 for which prediction is being evaluated
+/ eval_current_prediction = 0      // the prediction value currently being evaluated
+/ eval_current_actual = 0          // the actual outcome currently being evaluated
+/ eval_display_current = ""        // formatted display (number or "N.A.")
+/ eval_ordinal_label = ""          // "First prediction", "Second prediction", etc.
+</values>
+
+<expressions>
+    // Calculate cumulative probabilities in thousands for learning
+    / cumulativeprobabilitiesL1 = list.probabilitieslearning.1 * 1000
+    / cumulativeprobabilitiesL2 = (list.probabilitieslearning.1 + list.probabilitieslearning.2) * 1000
+    / cumulativeprobabilitiesL3 = (list.probabilitieslearning.1 + list.probabilitieslearning.2 + list.probabilitieslearning.3) * 1000
+    / cumulativeprobabilitiesL4 = (list.probabilitieslearning.1 + list.probabilitieslearning.2 + list.probabilitieslearning.3 + list.probabilitieslearning.4) * 1000
+    / cumulativeprobabilitiesL5 = (list.probabilitieslearning.1 + list.probabilitieslearning.2 + list.probabilitieslearning.3 + list.probabilitieslearning.4 + list.probabilitieslearning.5) * 1000
+    / cumulativeprobabilitiesL6 = (list.probabilitieslearning.1 + list.probabilitieslearning.2 + list.probabilitieslearning.3 + list.probabilitieslearning.4 + list.probabilitieslearning.5 + list.probabilitieslearning.6) * 1000
+    // Calculate cumulative probabilities in thousands for PLACEBOEXPERIENCE (similar to learning)
+    / cumulativeprobabilitiesPlacebo1 = list.probabilitiesplacebo.1 * 1000
+    / cumulativeprobabilitiesPlacebo2 = (list.probabilitiesplacebo.1 + list.probabilitiesplacebo.2) * 1000
+    / cumulativeprobabilitiesPlacebo3 = (list.probabilitiesplacebo.1 + list.probabilitiesplacebo.2 + list.probabilitiesplacebo.3) * 1000
+    / cumulativeprobabilitiesPlacebo4 = (list.probabilitiesplacebo.1 + list.probabilitiesplacebo.2 + list.probabilitiesplacebo.3 + list.probabilitiesplacebo.4) * 1000
+    / cumulativeprobabilitiesPlacebo5 = (list.probabilitiesplacebo.1 + list.probabilitiesplacebo.2 + list.probabilitiesplacebo.3 + list.probabilitiesplacebo.4 + list.probabilitiesplacebo.5) * 1000
+    / cumulativeprobabilitiesPlacebo6 = (list.probabilitiesplacebo.1 + list.probabilitiesplacebo.2 + list.probabilitiesplacebo.3 + list.probabilitiesplacebo.4 + list.probabilitiesplacebo.5 + list.probabilitiesplacebo.6) * 1000
+
+    // Calculate cumulative probabilities in thousands for positive skew
+    / cumulativeprobabilitiesA1 = list.probabilitiesA.1 * 1000
+    / cumulativeprobabilitiesA2 = (list.probabilitiesA.1 + list.probabilitiesA.2) * 1000
+    / cumulativeprobabilitiesA3 = (list.probabilitiesA.1 + list.probabilitiesA.2 + list.probabilitiesA.3) * 1000
+    / cumulativeprobabilitiesA4 = (list.probabilitiesA.1 + list.probabilitiesA.2 + list.probabilitiesA.3 + list.probabilitiesA.4) * 1000
+    / cumulativeprobabilitiesA5 = (list.probabilitiesA.1 + list.probabilitiesA.2 + list.probabilitiesA.3 + list.probabilitiesA.4 + list.probabilitiesA.5) * 1000
+    / cumulativeprobabilitiesA6 = (list.probabilitiesA.1 + list.probabilitiesA.2 + list.probabilitiesA.3 + list.probabilitiesA.4 + list.probabilitiesA.5 + list.probabilitiesA.6) * 1000
+    / cumulativeprobabilitiesA7 = (list.probabilitiesA.1 + list.probabilitiesA.2 + list.probabilitiesA.3 + list.probabilitiesA.4 + list.probabilitiesA.5 + list.probabilitiesA.6 + list.probabilitiesA.7) * 1000
+    / cumulativeprobabilitiesA8 = (list.probabilitiesA.1 + list.probabilitiesA.2 + list.probabilitiesA.3 + list.probabilitiesA.4 + list.probabilitiesA.5 + list.probabilitiesA.6 + list.probabilitiesA.7 + list.probabilitiesA.8) * 1000
+    / cumulativeprobabilitiesA9 = (list.probabilitiesA.1 + list.probabilitiesA.2 + list.probabilitiesA.3 + list.probabilitiesA.4 + list.probabilitiesA.5 + list.probabilitiesA.6 + list.probabilitiesA.7 + list.probabilitiesA.8 + list.probabilitiesA.9) * 1000
+    / cumulativeprobabilitiesA10 = (list.probabilitiesA.1 + list.probabilitiesA.2 + list.probabilitiesA.3 + list.probabilitiesA.4 + list.probabilitiesA.5 + list.probabilitiesA.6 + list.probabilitiesA.7 + list.probabilitiesA.8 + list.probabilitiesA.9 + list.probabilitiesA.10) * 1000
+    / cumulativeprobabilitiesA11 = (list.probabilitiesA.1 + list.probabilitiesA.2 + list.probabilitiesA.3 + list.probabilitiesA.4 + list.probabilitiesA.5 + list.probabilitiesA.6 + list.probabilitiesA.7 + list.probabilitiesA.8 + list.probabilitiesA.9 + list.probabilitiesA.10 + list.probabilitiesA.11) * 1000
+    // Calculate cumulative probabilities in thousands for negative skew
+    / cumulativeprobabilitiesB1 = list.probabilitiesB.1 * 1000
+    / cumulativeprobabilitiesB2 = (list.probabilitiesB.1 + list.probabilitiesB.2) * 1000
+    / cumulativeprobabilitiesB3 = (list.probabilitiesB.1 + list.probabilitiesB.2 + list.probabilitiesB.3) * 1000
+    / cumulativeprobabilitiesB4 = (list.probabilitiesB.1 + list.probabilitiesB.2 + list.probabilitiesB.3 + list.probabilitiesB.4) * 1000
+    / cumulativeprobabilitiesB5 = (list.probabilitiesB.1 + list.probabilitiesB.2 + list.probabilitiesB.3 + list.probabilitiesB.4 + list.probabilitiesB.5) * 1000
+    / cumulativeprobabilitiesB6 = (list.probabilitiesB.1 + list.probabilitiesB.2 + list.probabilitiesB.3 + list.probabilitiesB.4 + list.probabilitiesB.5 + list.probabilitiesB.6) * 1000
+    / cumulativeprobabilitiesB7 = (list.probabilitiesB.1 + list.probabilitiesB.2 + list.probabilitiesB.3 + list.probabilitiesB.4 + list.probabilitiesB.5 + list.probabilitiesB.6 + list.probabilitiesB.7) * 1000
+    / cumulativeprobabilitiesB8 = (list.probabilitiesB.1 + list.probabilitiesB.2 + list.probabilitiesB.3 + list.probabilitiesB.4 + list.probabilitiesB.5 + list.probabilitiesB.6 + list.probabilitiesB.7 + list.probabilitiesB.8) * 1000
+    / cumulativeprobabilitiesB9 = (list.probabilitiesB.1 + list.probabilitiesB.2 + list.probabilitiesB.3 + list.probabilitiesB.4 + list.probabilitiesB.5 + list.probabilitiesB.6 + list.probabilitiesB.7 + list.probabilitiesB.8 + list.probabilitiesB.9) * 1000
+    / cumulativeprobabilitiesB10 = (list.probabilitiesB.1 + list.probabilitiesB.2 + list.probabilitiesB.3 + list.probabilitiesB.4 + list.probabilitiesB.5 + list.probabilitiesB.6 + list.probabilitiesB.7 + list.probabilitiesB.8 + list.probabilitiesB.9 + list.probabilitiesB.10) * 1000
+    / cumulativeprobabilitiesB11 = (list.probabilitiesB.1 + list.probabilitiesB.2 + list.probabilitiesB.3 + list.probabilitiesB.4 + list.probabilitiesB.5 + list.probabilitiesB.6 + list.probabilitiesB.7 + list.probabilitiesB.8 + list.probabilitiesB.9 + list.probabilitiesB.10 + list.probabilitiesB.11) * 1000
+    // Random value generation
+    / randomvalue = rand(0, 1000)  //in thousasnds
+    // Assign outcome value based on random draw and cumulative probabilities
+    / outcomevaluelearning = 
+        if (values.randomvalue <= expressions.cumulativeprobabilitiesL1) list.outcomeslearning.1
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesL2) list.outcomeslearning.2
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesL3) list.outcomeslearning.3
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesL4) list.outcomeslearning.4
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesL5) list.outcomeslearning.5
+        else list.outcomeslearning.6
+		/ outcomevalueplacebo = 
+        if (values.randomvalue <= expressions.cumulativeprobabilitiesPlacebo1) list.outcomeslearning.1  //USE SAME LIST AS LEARNING (it is the same scale I believe...for now)
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesPlacebo2) list.outcomeslearning.2
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesPlacebo3) list.outcomeslearning.3
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesPlacebo4) list.outcomeslearning.4
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesPlacebo5) list.outcomeslearning.5
+        else list.outcomes.6
+		/ outcomevalueA = 
+        if (values.randomvalue <= expressions.cumulativeprobabilitiesA1) list.outcomes.1
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesA2) list.outcomes.2
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesA3) list.outcomes.3
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesA4) list.outcomes.4
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesA5) list.outcomes.5
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesA6) list.outcomes.6
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesA7) list.outcomes.7
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesA8) list.outcomes.8
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesA9) list.outcomes.9
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesA10) list.outcomes.10
+        else list.outcomes.11
+	/ outcomevalueB = 
+        if (values.randomvalue <= expressions.cumulativeprobabilitiesB1) list.outcomes.1
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesB2) list.outcomes.2
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesB3) list.outcomes.3
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesB4) list.outcomes.4
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesB5) list.outcomes.5
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesB6) list.outcomes.6
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesB7) list.outcomes.7
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesB8) list.outcomes.8
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesB9) list.outcomes.9
+        else if (values.randomvalue <= expressions.cumulativeprobabilitiesB10) list.outcomes.10
+        else list.outcomes.11
+/animationtargetbin = list.histogramlabpos.item(values.actoutcome + 1) //e.g., if actual outcome is 0 it is indexed 1 and the targetbin should be 1 (for outcome 0)	
+//NOTE:USING THE SAME histogramlabpos but only the lower numbers in the list for placebo and learning, and the entire list for experience conditions
+	/ scalemin = 0        //HERE AND BELOW ARE EXPRESSIONS FOR THE VISUAL ANALOGUE RESPONSE SCALE
+/ increment1 = 1
+/ increment2 = 2
+/ increment3 = 5
+/ linesize_in_px = ((shape.line.width) / 100 * display.canvasWidth)
+/ linestart= (display.canvaswidth-expressions.linesize_in_px) / 2
+/ proportionscore = (values.responsexscore - expressions.linestart) / expressions.linesize_in_px
+/ actualscore= round(expressions.proportionscore*values.scalemax)
+/ tunepos = expressions.linestart + ((values.lastresponse/values.scalemax)*expressions.linesize_in_px)
+/ displaydivisor = values.scalemax / values.scalemaxdisplayed
+/ lastresponsedisplayed = round(values.lastresponse / expressions.displaydivisor)  ///is this correct? lastresponse/actualscore I am a bit confused..
+/ fineoutcome1000 =
+    if (values.actoutcome == 0) round(rand(1, 50))
+    else if (values.actoutcome == 10) round(rand(951, 1000))
+    else round(rand(values.actoutcome * 100 - 49, values.actoutcome * 100 + 50))  //note that I draw another value to get 1000 granularity I dont use the original draw from 1000 which is only used to allocate probabilities
+/ fineoutcome600placebo =
+    if (values.actplacebooutcome == 0) round(rand(1, 100))
+    else if (values.actplacebooutcome == 5) round(rand(500, 600))
+    else round(rand(values.actplacebooutcome * 100 + 1, (values.actplacebooutcome + 1) * 100))  //note that I draw another value to get higher granularity I dont use the original draw from 1000 which is only used to allocate probabilities
+
+/ outcomebin_current =    //which distribution. Note: modeANDcondition 0 = learning, 1=experience, 2= placeboexperience; 3= experience with histogram
+	if (values.modeANDcondition == 0) expressions.outcomevaluelearning 
+    else if (values.modeANDcondition == 2) expressions.outcomevalueplacebo
+    else if (values.posskew == 1) expressions.outcomevalueA
+    else expressions.outcomevalueB
+
+/ finalshownvalue_current =   //which value granularity
+    if (values.showfine == 0) values.actoutcome
+    else if (values.modeANDcondition == 2) expressions.fineoutcome600placebo    //so: if not fine granularity then placebofine is placebo and fine1000 if experience or exp+histo
+    else expressions.fineoutcome1000
+
+// Vertical VAS (satisfaction scale) expressions
+/ linesize_in_pxVERT = (shape.lineVERT.height / 100 * display.canvasheight)
+/ linestartVERT = (display.canvasheight - expressions.linesize_in_pxVERT) / 2
+/ proportionscoreVERT = (values.eval_satisfaction_y - expressions.linestartVERT) / expressions.linesize_in_pxVERT
+/ actualscoreVERT = round(expressions.proportionscoreVERT * values.scalemax)
+/ tuneposVERT = expressions.linestartVERT + ((values.eval_satisfaction_raw / values.scalemax) * expressions.linesize_in_pxVERT)
+/ eval_satisfaction01_calc = 1 - (values.eval_satisfaction_raw / values.scalemax)
+</expressions>
+
+// *****************************************
+// ** Text for debugging*
+<text techdetails>
+    / items = ("chosen randomvalue= <%values.randomvalue%> 
+	~n cumulativeprobabilitiesA8=<%expressions.cumulativeprobabilitiesA8%>~n cumulativeprobabilitiesA1 =<%expressions.cumulativeprobabilitiesA1%> 
+	~n listoutcomes 11 and 1= <%list.outcomes.11%> and <%list.outcomes.1%>
+  	~n <%values.count0%> <%values.count1%> <%values.count2%> <%values.count3%> <%values.count4%> <%values.count5%> <%values.count6%> <%values.count7%> <%values.count8%> <%values.count9%> <%values.count10%>")
+    / fontstyle = ("Arial", 12pt)
+    / txcolor = (0, 30, 30)
+    / position = (70%, 30%)
+</text>
+
+
+--------------DETECTS ERROR IN DISTRIBUTIONPROBABILITIES (not summing to 100)****************RUN FIRST IN EXPERIMENT
+<text errorinscript>
+    / items = ("Note to script: prob does not sum to 100 (but <%values.totalprob%> Press space to continue")
+	/ fontstyle = ("Arial", 12pt)
+    / txcolor = (0, 30, 30)
+    / position = (50%, 50%)
+</text>
+<trial checkerrorpercentages>
+	/ ontrialbegin = [values.totalprobA=100*(list.probabilitiesA.1+list.probabilitiesA.2+list.probabilitiesA.3+list.probabilitiesA.4+list.probabilitiesA.5+list.probabilitiesA.6+list.probabilitiesA.7+list.probabilitiesA.8+list.probabilitiesA.9+list.probabilitiesA.10+list.probabilitiesA.11)]
+	/ ontrialbegin = [values.totalprobB=100*(list.probabilitiesB.1+list.probabilitiesB.2+list.probabilitiesB.3+list.probabilitiesB.4+list.probabilitiesB.5+list.probabilitiesB.6+list.probabilitiesB.7+list.probabilitiesB.8+list.probabilitiesB.9+list.probabilitiesB.10+list.probabilitiesB.11)]
+	/ response = timeout(10)
+	/ branch = [if ((values.totalprobA!=100) || (values.totalprobB!=100)) trial.errorpercentages]
+</trial>
+<trial errorpercentages>
+    / stimulusframes = [1=errorinscript]
+	/ response = correct
+	/ correctresponse = (" ")
+</trial>
+
+
+//***********************************************************************
+//***********************************************************************
+//***           DEMOGRAPHY BLOCK, TEXT, TRIALS and BLOCK                   *****
+//***********************************************************************
+<text alder1>
+/ items = ("What is your age?")
+/ position = (50, 50)
+/ txcolor = (0, 0, 0)
+</text>
+<text kjonn1>
+/ items = ("Please indicate gender.")
+/ position = (50, 40)
+/ fontstyle = ("Times New Roman", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</text>
+<text kjonn2>
+/ items = ("Press M for man, W for woman,")
+/ position = (50, 45)
+/ fontstyle = ("Times New Roman", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</text>
+<text kjonn3>
+/ items = ("spacebar for other or to continue without answering.")
+/ position = (50, 50)
+/ fontstyle = ("Times New Roman", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</text>
+*demographyu trials
+<trial kjonn>
+/stimulusframes = [1=kjonn1, kjonn2, kjonn3]
+/validresponse = (" ", "A", "M", "W")
+/correctresponse = (" ", "A", "M", "W")
+</trial>
+<openended alder>
+/stimulusframes=[1=alder1]
+/multiline=false
+/charlimit=3
+/buttonlabel = "Next ->"
+/position=(50,60)
+/inputdevice = mouse
+/mask=integer
+/ size = (8%, 3%)
+/ responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+</openended>
+*demography block
+<block demografiBlock>
+/trials=[1=alder; 2=kjonn]
+/ postInstructions = (demopostinstruct)
+</block>
+************************************************************************
+*instructions demografiBlock
+<page demopostinstruct>
+Thank you. Now we will introduce a type of chart called a histogram, which is used to show how ratings are distributed.
+</page>
+
+
+//***************************************************************************
+//*************************** LEARNING HISTOGRAM BLOCK**********************
+//**************************************************************************
+--------------------TEXT AND ANIMATION FOR INITIAL REVEAL:
+<text press_space>
+    / items = ("Press space to continue")
+	/ fontstyle = ("Arial", 12pt)
+    / txcolor = (0, 30, 30)
+    / position = (84%, 93%)
+</text>
+
+
+<text letskeep>
+/ items = ("Let's keep record of the ratings!")
+    / fontstyle = ("Arial", 3%, false, true)
+    / txcolor = (0, 0, 0)
+    / position = (50%, 35%)
+</text>
+
+<text letskeep2>
+/ items = ("On the left, ~n blue blocks will be stacked on top of each other ~n to show the number of the different ratings")
+    / fontstyle = ("Arial", 3%, false, true)
+    / txcolor = (0, 0, 0)
+    / position = (65%, 70%)
+</text>
+
+<shape animation1>
+/shape = rectangle
+/color = black
+/size = (1.8%, 0.25%)
+/animation = path(2000, 1, 50%, 27%, expressions.animationtargetbin-0.02,
+95.2%)
+/ erase = false
+/rotation =90
+/ valign = bottom
+/ halign = center
+</shape>
+
+<shape animation1b>
+/shape = rectangle
+/color = black
+/size = (0.8%, 0.2%)
+/animation = path(2000, 1, 50%, 26.8%, expressions.animationtargetbin+0.1,
+94%)
+/ erase = false
+/rotation =135
+/ valign = top
+/ halign = right
+</shape>
+
+<shape animation1c>
+/shape = rectangle
+/color = black
+/size = (0.8%, 0.2%)
+/animation = path(2000, 1, 50%, 26.8%, expressions.animationtargetbin-0.1,
+94%)
+/ erase = false
+/rotation =45
+/ valign = top
+/ halign = left
+</shape>
+
+
+//ARROW BLINKING:
+<shape arrow1>
+/shape = rectangle
+/color = black
+/size = (1.8%, 0.25%)
+/position= (expressions.animationtargetbin-0.02, 95.2%)
+/rotation =90
+/ valign = bottom
+/ halign = center
+</shape>
+
+<shape arrow1b>
+/shape = rectangle
+/color = black
+/size = (0.8%, 0.2%)
+/position= (expressions.animationtargetbin+0.05, 94%)
+/rotation =135
+/ valign = top
+/ halign = right
+</shape>
+
+<shape arrow1c>
+/shape = rectangle
+/color = black
+/size = (0.8%, 0.2%)
+/position= (expressions.animationtargetbin-0.05, 94%)
+/rotation =45
+/ valign = top
+/ halign = left
+</shape>
+
+<shape deletearrow>
+/shape = rectangle
+/color = white
+/ size = (2%, 2%)
+/position= (expressions.animationtargetbin, 95%)
+/ valign = bottom
+/ halign = center
+</shape>
+
+*LEARNING REVEAL:
+<text revealsimplyfirst>
+	/ items = ("Picture that newspaper editors in a country rated the achievements of their new government for the first year in office. They rated the performance on a scale from 0 to 5 where 5 was the best and 0 the worst. Below we will present the rating from the first editor")
+    / fontstyle = ("Arial", 3%, false, true)
+    / txcolor = (0, 0, 0)
+/ size = (95%,20%)
+    / position = (50%, 6%)
+	/ vAlign = top
+</text>
+
+<text revealsimply>
+	/ items = ("Below we will show the rating from the next editor")
+    / fontstyle = ("Arial", 3%, false, true)
+    / txcolor = (0, 0, 0)
+    / position = (50%, 6%)
+</text>
+
+
+<text revealsimplyspace>
+	/ items = ("[Press space to continue]")
+    / fontstyle = ("Arial", 3%, false, true)
+    / txcolor = (0, 0, 0)
+    / position = (50%, 30%)
+</text>
+
+
+<text reveal>
+	/ items = ("Rating:")
+    / fontstyle = ("Arial", 3%, false, true)
+    / txcolor = (0, 0, 0)
+    / position = (50%, 20%)
+</text>
+
+<text reveal2preclear>
+	/ items = ("                          ")
+    / fontstyle = ("Arial", 4%)
+    / txcolor = (0, 0, 255)
+    / position = (50%, 25%)
+</text>
+
+<text reveal2>
+	/ items = ("<%values.finalshownvalue%>")
+    / fontstyle = ("Arial", 4%)
+    / txcolor = (0, 0, 255)
+    / position = (50%, 25%)
+</text>
+
+
+
+***While waiting of actual value:
+<text dot1>
+	/ items = (" . ")
+    / fontstyle = ("Arial", 5%)
+    / txcolor = (0, 0, 0)
+    / position = (50%, 25%)
+</text>
+<text dot2>
+	/ items = (" .. ")
+    / fontstyle = ("Arial", 5%)
+    / txcolor = (0, 0, 0)
+    / position = (50%, 25%)
+</text>
+<text dot3>
+	/ items = (" ... ")
+    / fontstyle = ("Arial", 5%)
+    / txcolor = (0, 0, 0)
+    / position = (50%, 25%)
+</text>
+
+//**************************** GRAPHICS FOR LEARNING HISTOGRAM *************************************
+// Histogram
+<text historicalinfo>
+	/ items = ("Overview of ratings")
+    / fontstyle = ("Arial", 2.5%, false, true, false, false)
+    / txcolor = (0, 0, 0)
+    / position = (22%, 58%)
+</text>
+
+// Define shapes for each histogram bin
+<shape bin0>
+    / shape = rectangle
+    / color = (0, 0, 255)
+    / size = (values.binsize*1%, values.histogincrement*values.count0*1%) //tried with more dynamic graph but does not look good. need to see the accumulation    / size = (2%, 0.1%+70%*values.count0/values.totaloutcome)
+	/ position = (10%, 90%) 
+	/ valign = bottom //needed so that the position does not vary with the height(default center align) 
+/ erase = false
+	</shape>
+
+<shape bin1>
+    / shape = rectangle
+    / color = (0, 0, 255)
+    / size = (values.binsize*1%, values.histogincrement*values.count1*1%)
+    / position = (13%, 90%)
+	/ valign = bottom 
+	/ erase = false
+</shape>
+
+<shape bin2>
+    / shape = rectangle
+    / color = (0, 0, 255)
+    / size = (values.binsize*1%, values.histogincrement*values.count2*1%)
+    / position = (16%, 90%)
+	/ valign = bottom
+/ erase = false	
+</shape>
+
+<shape bin3>
+    / shape = rectangle
+    / color = (0, 0, 255)
+    / size = (values.binsize*1%, values.histogincrement*values.count3*1%)
+    / position = (19%, 90%)
+	/ valign = bottom 
+	/ erase = false
+</shape>
+
+<shape bin4>
+    / shape = rectangle
+    / color = (0, 0, 255)
+    / size = (values.binsize*1%, values.histogincrement*values.count4*1%)
+    / position = (22%, 90%)
+	/ valign = bottom 
+	/ erase = false
+</shape>
+
+<shape bin5>
+    / shape = rectangle
+    / color = (0, 0, 255)
+    / size = (values.binsize*1%, values.histogincrement*values.count5*1%)
+    / position = (25%, 90%)
+	/ valign = bottom
+/ erase = false	
+</shape>
+
+<shape bin6>
+    / shape = rectangle
+    / color = (0, 0, 255)
+    / size = (values.binsize*1%, values.histogincrement*values.count6*1%)
+    / position = (28%, 90%)
+	/ valign = bottom 
+	/ erase = false
+</shape>
+
+<shape bin7>
+    / shape = rectangle
+    / color = (0, 0, 255)
+    / size = (values.binsize*1%, values.histogincrement*values.count7*1%)
+    / position = (31%, 90%)
+	/ valign = bottom 
+	/ erase = false
+</shape>
+
+<shape bin8>
+    / shape = rectangle
+    / color = (0, 0, 255)
+    / size = (values.binsize*1%, values.histogincrement*values.count8*1%)
+    / position = (34%, 90%)
+	/ valign = bottom
+/ erase = false	
+</shape>
+
+<shape bin9>
+    / shape = rectangle
+    / color = (0, 0, 255)
+    / size = (values.binsize*1%, values.histogincrement*values.count9*1%)
+    / position = (37%, 90%)
+	/ valign = bottom 
+	/ erase = false
+</shape>
+
+<shape bin10>
+    / shape = rectangle
+    / color = (0, 0, 255)
+    / size = (values.binsize*1%, values.histogincrement*values.count10*1%)
+    / position = (40%, 90%)
+	/ valign = bottom 
+	/ erase = false
+</shape>
+
+***
+<defaults>
+    / fontstyle = ("Arial", 2%, false) // Default font style applied to all text elements
+</defaults>
+
+***********************************************
+ADD value labels
+
+<text bin0_label> / onprepare = [text.bin0_label.skip = (values.showfine == 1);] / items = ("<%list.outcomes.1%>") / position = (10%, 92%) </text>
+<text bin1_label> / onprepare = [text.bin1_label.skip = (values.showfine == 1);] / items = ("<%list.outcomes.2%>") / position = (13%, 92%) </text>
+<text bin2_label> / onprepare = [text.bin2_label.skip = (values.showfine == 1);] / items = ("<%list.outcomes.3%>") / position = (16%, 92%) </text>
+<text bin3_label> / onprepare = [text.bin3_label.skip = (values.showfine == 1);] / items = ("<%list.outcomes.4%>") / position = (19%, 92%) </text>
+<text bin4_label> / onprepare = [text.bin4_label.skip = (values.showfine == 1);] / items = ("<%list.outcomes.5%>") / position = (22%, 92%) </text>
+<text bin5_label> / onprepare = [text.bin5_label.skip = (values.showfine == 1);] / items = ("<%list.outcomes.6%>") / position = (25%, 92%) </text>
+<text bin6_label> / onprepare = [text.bin6_label.skip = (values.showfine == 1);] / items = ("<%list.outcomes.7%>") / position = (28%, 92%) </text>
+<text bin7_label> / onprepare = [text.bin7_label.skip = (values.showfine == 1);] / items = ("<%list.outcomes.8%>") / position = (31%, 92%) </text>
+<text bin8_label> / onprepare = [text.bin8_label.skip = (values.showfine == 1);] / items = ("<%list.outcomes.9%>") / position = (34%, 92%) </text>
+<text bin9_label> / onprepare = [text.bin9_label.skip = (values.showfine == 1);] / items = ("<%list.outcomes.10%>") / position = (37%, 92%) </text>
+<text bin10_label> / onprepare = [text.bin10_label.skip = (values.showfine == 1);] / items = ("<%list.outcomes.11%>") / position = (40%, 92%) </text>
+
+<text bin0_label1000> / onprepare = [text.bin0_label1000.skip = (values.showfine == 0);] / items = ("<%list.outcomes1000.1%>") / position = (10%, 92%) / rotation = 70 </text>
+<text bin1_label1000> / onprepare = [text.bin1_label1000.skip = (values.showfine == 0);] / items = ("<%list.outcomes1000.2%>") / position = (13%, 92%) / rotation = 70 </text>
+<text bin2_label1000> / onprepare = [text.bin2_label1000.skip = (values.showfine == 0);] / items = ("<%list.outcomes1000.3%>") / position = (16%, 92%) / rotation = 70 </text>
+<text bin3_label1000> / onprepare = [text.bin3_label1000.skip = (values.showfine == 0);] / items = ("<%list.outcomes1000.4%>") / position = (19%, 92%) / rotation = 70 </text>
+<text bin4_label1000> / onprepare = [text.bin4_label1000.skip = (values.showfine == 0);] / items = ("<%list.outcomes1000.5%>") / position = (22%, 92%) / rotation = 70 </text>
+<text bin5_label1000> / onprepare = [text.bin5_label1000.skip = (values.showfine == 0);] / items = ("<%list.outcomes1000.6%>") / position = (25%, 92%) / rotation = 70 </text>
+<text bin6_label1000> / onprepare = [text.bin6_label1000.skip = (values.showfine == 0);] / items = ("<%list.outcomes1000.7%>") / position = (28%, 92%) / rotation = 70 </text>
+<text bin7_label1000> / onprepare = [text.bin7_label1000.skip = (values.showfine == 0);] / items = ("<%list.outcomes1000.8%>") / position = (31%, 92%) / rotation = 70 </text>
+<text bin8_label1000> / onprepare = [text.bin8_label1000.skip = (values.showfine == 0);] / items = ("<%list.outcomes1000.9%>") / position = (34%, 92%) / rotation = 70 </text>
+<text bin9_label1000> / onprepare = [text.bin9_label1000.skip = (values.showfine == 0);] / items = ("<%list.outcomes1000.10%>") / position = (37%, 92%) / rotation = 70 </text>
+<text bin10_label1000> / onprepare = [text.bin10_label1000.skip = (values.showfine == 0);] / items = ("<%list.outcomes1000.11%>") / position = (40%, 92%) / rotation = 70 </text>
+
+******add x-axis:
+
+<text titlexaxis>
+	/items = ("Count")
+	/ position = (2.2%, 77%)
+	/ rotation = 270
+</text>
+
+<text freq0> / items = ("0") / position = (5%, 90%) </text>
+<text freq10> / items = ("10") / position = (5%, 90 - (values.histogincrement * 10) * 1%) </text>
+<text freq20> / items = ("20") / position = (5%, 90 - (values.histogincrement * 20) * 1%) </text>
+<text freq30> / items = ("30") / position = (5%, 90 - (values.histogincrement * 30) * 1%) </text>
+<text freq40> / items = ("40") / position = (5%, 90 - (values.histogincrement * 40) * 1%) </text>
+<text freq50> / items = ("50") / position = (5%, 90 - (values.histogincrement * 50) * 1%) </text>
+<text freq60> / items = ("60") / position = (5%, 90 - (values.histogincrement * 60) * 1%) </text>
+<text freq70> / items = ("70") / position = (5%, 90 - (values.histogincrement * 70) * 1%) </text>
+<text freq80> / items = ("80") / position = (5%, 90 - (values.histogincrement * 80) * 1%) </text>
+<text freq90> / items = ("90") / position = (5%, 90 - (values.histogincrement * 90) * 1%) </text>
+<text freq100> / items = ("100") / position = (5%, 90 - (values.histogincrement * 100) * 1%) </text>
+
+****axis line:
+<shape freq_axis>
+    / shape = rectangle
+    / color = (0, 0, 0) // Black line
+    / size = (0.1%, 27%) // Thin vertical line, spanning most of the height
+    / position = (7%, 90%) // Positioned near the left and centered vertically
+    / valign = bottom
+</shape>
+
+<shape value_axis>
+    / shape = rectangle
+    / color = (0, 0, 0) // Black line
+    / size = (20%, 0.1%) // Thin horizontal line for learning histogram (6 bins)
+    / position = (7%, 90%)
+    / halign = left
+</shape>
+
+// Larger axis lines for desc/both conditions (11 bins, freq up to 30)
+<shape freq_axis_large>
+    / shape = rectangle
+    / color = (0, 0, 0)
+    / size = (0.1%, 48%) // Vertical line covering freq 0-30 range
+    / position = (7%, 90%)
+    / valign = bottom
+</shape>
+
+<shape value_axis_large>
+    / shape = rectangle
+    / color = (0, 0, 0)
+    / size = (36%, 0.1%) // Horizontal line covering bins 0-10 (positions 10%-40%)
+    / position = (7%, 90%)
+    / halign = left
+</shape>
+
+//************LIST FOR LEARNINGHISTOGRAM AND SOME COMMON FOR HISTOGRAMS LATER
+<list outcomeslearning>
+    / items = (0, 1, 2, 3, 4, 5)  // Values that are outcomes, 0 to 10
+</list>
+
+<list probabilitieslearning> 
+    / items = (0.17, 0.17, 0.17, 0.17, 0.16, 0.16)  // Probabilities for 0 to 5
+</list>
+
+//Common elements for later histograms
+<list histogramlabpos> 
+/ items = (10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40) // includes positions for the larger histogram as well!! (not only learning)
+</list>
+
+<list bincounts>
+/ items = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+</list>
+
+
+
+// *****************************************
+// ** LEARNING HISTO TRIALS
+<trial revealsimplyspace>
+/ stimulustimes = [1=revealsimplyfirst, revealsimplyspace]
+/ response = correct
+/ correctresponse = (" ")
+</trial>
+
+<trial learnhistoanimate1>
+    / ontrialbegin = [values.randomvalue=expressions.randomvalue; values.actoutcome = expressions.outcomevaluelearning;]
+	/ ontrialbegin = [values.finalshownvalue = values.actoutcome;]
+	/ ontrialbegin = [if(values.actoutcome == 0) values.count0 +=1; //mulig eg må bruke brackets eller tabort semicolon
+	else if(values.actoutcome == 1) values.count1 +=1;
+	else if(values.actoutcome == 2) values.count2 +=1;
+	else if(values.actoutcome == 3) values.count3 +=1;
+	else if(values.actoutcome == 4) values.count4 +=1;
+	else if(values.actoutcome == 5) values.count5 +=1;]
+    / stimulustimes = [1=revealsimplyfirst,reveal; 1000=dot1;1500=dot2;2000=dot3;
+	2500=reveal2preclear, reveal2;5000=letskeep;
+	6500= historicalinfo, freq_axis, value_axis, freq0, freq10, freq20, titlexaxis,
+	bin0_label, bin1_label, bin2_label, bin3_label, bin4_label, bin5_label; 
+	9500=animation1, animation1b, animation1c; 12500=bin0, bin1, bin2, bin3, bin4, bin5; 14000=letskeep2, press_space;]
+    / response = correct
+	/ correctresponse = (" ")
+</trial>
+<trial learnhistoanimate2>
+    / ontrialbegin = [values.randomvalue=expressions.randomvalue; values.actoutcome = expressions.outcomevaluelearning]
+	/ ontrialbegin = [values.finalshownvalue = values.actoutcome;]
+	/ ontrialbegin = [if(values.actoutcome == 0) values.count0 +=1;
+	else if(values.actoutcome == 1) values.count1 +=1;
+	else if(values.actoutcome == 2) values.count2 +=1;
+	else if(values.actoutcome == 3) values.count3 +=1;
+	else if(values.actoutcome == 4) values.count4 +=1;
+	else if(values.actoutcome == 5) values.count5 +=1]
+    / stimulustimes = [1=revealsimply, reveal, historicalinfo, freq_axis, value_axis, freq0, freq10, freq20, titlexaxis,
+	bin0_label, bin1_label, bin2_label, bin3_label, bin4_label, bin5_label;
+	1000=dot1;1500=dot2;2000=dot3;
+	2500=reveal2preclear, reveal2;3300=arrow1, arrow1b, arrow1c;3500=deletearrow;3700=arrow1, arrow1b, arrow1c;3900=deletearrow;4100=arrow1, arrow1b, arrow1c, bin0, bin1, bin2, bin3, bin4, bin5; 4100=press_space]
+    / response = correct
+	/ correctresponse = (" ")
+</trial>
+
+
+<block learning_histBlock>
+/ onblockbegin = [values.modeANDcondition = 0; values.showfine = 0; values.histogincrement = 1.2;]
+    / trials = [1=checkerrorpercentages;2=revealsimplyspace, learnhistoanimate1; 3-10=learnhistoanimate2]
+	/ onblockend = [values.count0 = 0; values.count1 = 0;	values.count2 = 0; values.count3 = 0; values.count4 = 0; values.count5 = 0; values.count6 = 0; values.count7 = 0; values.count8 = 0; values.count9 = 0; values.count10 = 0]
+	/ postinstructions = (afterhistostack)
+</block>
+
+_____________________________________Instructions for learning histogram:
+<page noneed>
+From now on the blocks will just pile up without the arrow indicating the stack that increased
+^.
+</page>
+
+<page afterhistostack>
+You got it, right? The counting of the ratings were made using a so-called histogram. Please try to answer a few questions regarding another histogram on the next page.
+</page>
+
+
+
+
+
+
+
+//***KNOWELDGE TEST FOR HISTOGRAM
+<text learnhistogram>
+/ items = ("The next task concerns the understanding of histograms. Like just shown to you, a histogram is a type of bar chart that can illustrate how many number of units one has when things differ in size or magnitude. For example one can show the distribution marks 
+in a school or the distribution of height in a group of people.")
+/ position = (50%, 50%)
+/ size = (80%, 30%)
+</text>
+
+
+<text examplehistogram1>
+/ items = ("The histogram to the right shows ~nthe number of marks in a school. ~n~nHow many tests are graded E in that school?")
+/ position = (30%, 50%)
+/ halign = center
+/ fontstyle = ("Tahoma", 3%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+<text examplehistogram2>
+/ items = ("The histogram to the right shows the number of ~nindividuals for different categories of height, ~nfor example, there are ~n8 individuals between 150 and 155 cm and none ~nbetween 195 and 200.")
+/ position = (30%, 25%)
+/ halign = center
+/ fontstyle = ("Tahoma", 2.5%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+<text examplehistogram2b>
+/ items = ("How many individuals are ~nbetween 160 and 165 centimeters tall?")
+/ position = (30%, 57%)
+/ halign = center
+/ fontstyle = ("Tahoma", 3%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+<text examplehistogram2c>
+/ items = ("And how many individuals ~nare between 170 and 175 centimeters tall?")
+/ position = (30%, 57%)
+/ halign = center
+/ fontstyle = ("Tahoma", 3%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+<picture histograde>
+   / items = ("histogrammarks2.jpg")
+   / position = (73%, 50%)
+   / size = (50%, 50%)
+</picture>
+
+<picture histoheight>
+   / items = ("heights_histogram_custom2.jpg")
+   / position = (73%, 50%)
+   / size = (50%, 50%)
+</picture>
+
+<openended gradeQ1>
+/ stimulusframes = [1=examplehistogram1, histograde]
+/ mask = integer
+/ charlimit = 5
+/ multiline = false
+/ position = (30%, 70%)
+/ size = (10%, 3.2%)
+/ halign = center
+/ ontrialend = [if (trial.gradeQ1.response == 25) values.correcthistanswers +=1]
+</openended>
+
+<openended heightQ1>
+/ stimulusframes = [1=examplehistogram2, examplehistogram2b, histoheight]
+/ mask = integer
+/ charlimit = 5
+/ multiline = false
+/ position = (30%, 70%)
+/ size = (10%, 3.2%)
+/ halign = center
+/ ontrialend = [if (trial.heightQ1.response == 25) values.correcthistanswers +=1]
+/ ontrialend = [if (trial.heightQ1.response == 24) values.correcthistanswers +=1]
+/ ontrialend = [if (trial.heightQ1.response == 26) values.correcthistanswers +=1]
+</openended>
+
+<openended heightQ2>
+/ stimulusframes = [1=examplehistogram2c, histoheight]
+/ mask = integer
+/ charlimit = 5
+/ multiline = false
+/ position = (30%, 70%)
+/ size = (10%, 3.2%)
+/ halign = center
+/ ontrialend = [if (trial.heightQ2.response == 40) values.correcthistanswers +=1]
+</openended>
+
+<block testlearn_histoBlock>
+/ trials = [1=heightQ1, heightQ2]
+/ branch = [
+    if (values.correcthistanswers < 2) {
+        return block.incorrect_learn_histoBlock;
+    } else {
+        return block.correct_learn_histoBlock;
+    };
+]
+</block>
+
+**branched + branched blocks
+<block correct_learn_histoBlock>
+/ preInstructions = (nicework)
+</block>
+
+<block incorrect_learn_histoBlock>
+/ preInstructions = (failedknowledgetest)
+/ branch = [block.learning_histBlock]
+</block>
+
+________________________________instructions testlearn_histo
+<page nicework>
+Great! You got all the answers right. 
+</page>
+
+<page failedknowledgetest>
+Hmmm.. those were not the right answers. Let us try the basics again by looking at how the frequencies are counted using a histogram.
+</page>
+
+
+
+//*******************************************************************
+//******************** LEARNVISUALANALOGUE BLOCK ********************
+//***********************************************************
+*Trials
+<trial reset_analogue>
+/ ontrialbegin = [values.lastresponse = 0]
+/ ontrialbegin = [values.hpositionAvalue = 0]
+/ ontrialbegin = [values.displayvalue = ""]
+/ ontrialbegin = [values.numberofmouseadjust = 0]
+/ stimulusframes = [1=blank]
+/ response= timeout(1)
+</trial>
+<shape blank>
+/ shape = rectangle
+/ color = (255,255,255)
+/ position = (50%, 50%)
+/ size = (100%, 100%)
+</shape>
+
+*VISUAL ANALOGUE, STIMULI. 
+*Buttons
+<text continuetxt>
+/ items= (" Continue ")
+/ fontstyle = ("Tahoma", 2.81%, false, false, false, false, 5, 1)
+/ position = (50, 35)
+/ txbgcolor = lightgrey
+</text>
+*Response line and scale
+<shape line>
+/ shape = rectangle
+/ color	=black
+/ size = (90%, 3.5%)
+/ position = (50, 25)
+/ erase = false
+</shape>
+<text leftanchormin>
+/ items = ("<%expressions.scalemin%>")
+/ position = (5%, 21%)
+/ fontstyle = ("Tahoma", 2.81%, false, false, false, false, 5, 1)
+/ erase = false
+</text>
+<text rightanchormax>
+/ items = ("<%values.scalemaxdisplayed%>")
+/ position = (95%, 21%)
+/ fontstyle = ("Tahoma", 2.81%, false, false, false, false, 5, 1)
+/ erase = false
+</text>
+*Indicator
+<text X>
+/ fontstyle = ("Arial", 3.4%, false, false, false, false, 5, 0)
+/ items = ("|")
+/ txcolor = (255, 0, 0)
+/ txbgcolor = (transparent)
+/ hposition = values.hpositionAvalue
+/ vposition = shape.line.vposition
+</text>
+
+*Instructions to scale
+<text question1>
+/ items = ("You may adjust your response by clicking again")
+/ fontstyle = ("Tahoma", 2.1%, false, false, false, false, 5, 1)
+/ position = (50%, 11.5%)
+/ erase = false
+</text>
+<text lastresponsevalue>
+/ items = ("Your prediction: <%values.displayvalue%>")
+/ fontstyle = ("Tahoma", 2.3%, true, false, false, false, 5, 1)
+/ position = (50%, 20%)
+</text>
+<text Predtext1>
+/ items = ("Please predict the next rating.")
+/ position = (50%, 6%)
+/ fontstyle = ("Tahoma", 2.1%, true, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</text>
+
+<text Predtext2>
+/ items = ("Please predict the next customer rating.")
+/ position = (50%, 10%)
+/ fontstyle = ("Tahoma", 2.1%, true, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</text>
+
+<text restaurantnametxt>
+/ items = ("Ristorante Bella")
+</text>
+
+<text Task1>
+/ items = ("Let's try to use the below response scale. Please use the scale to predict what is the next number in this series: 0  2  4  6  ...
+~nPlease provide your prediction by clicking on the black line. If needed, you can click multiple times to adjust your prediction")
+/ position = (50%, 5%)
+/ vAlign = top
+/ fontstyle = ("Tahoma", 2.1%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</text>
+
+
+<text Task2>
+/ items = ("Ok, just to practice once more with the response scale. Please set the prediction to the value '2' by clicking the line below")
+/ size = (98%, 10%)
+/ position = (50%, 5%)
+/ vAlign = top
+/ fontstyle = ("Tahoma", 2.1%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</text>
+
+
+<trial learnvisualanalogue>
+/ ontrialbegin = [text.Task1.skip = (values.activetasknr != 1); text.Task2.skip = (values.activetasknr != 2);]
+/ ontrialbegin = [if (values.numberofmouseadjust== 0) values.predtimer=script.elapsedtime]
+/ stimulusframes = [1= Task1, Task2, continuetxt, lastresponsevalue, line, X,
+leftanchormin, rightanchormax]
+/ inputdevice = mouse
+/ validresponse = (line, continuetxt)
+/ correctresponse= (continuetxt)
+/ branch = [if (trial.learnvisualanalogue.correct==0) trial.learnvisualanalogue]
+/ ontrialend = [values.responsexscore=trial.learnvisualanalogue.responsex]
+/ ontrialend = [if (trial.learnvisualanalogue.response=="line") values.lastresponse=expressions.actualscore]
+/ ontrialend = [if (trial.learnvisualanalogue.correct==0) values.hpositionAvalue=expressions.tunepos]
+/ ontrialend = [if (trial.learnvisualanalogue.correct==0 && trial.learnvisualanalogue.response=="line") values.numberofmouseadjust=values.numberofmouseadjust+1]
+/ ontrialend = [if (trial.learnvisualanalogue.correct==1) values.predtimer= script.elapsedtime-values.predtimer]
+/ ontrialend = [values.currentprediction=expressions.lastresponsedisplayed]
+/ ontrialend = [values.displayvalue= format("%d", values.currentprediction)]
+/ ontrialend = [list.predictions.appenditem(values.currentprediction); list.actuals.appenditem(values.actoutcome)]
+</trial>
+
+<block learnvisualanalogueblock1>
+/ onBlockBegin = [values.activetasknr = 1]
+/ trials = [1=learnvisualanalogue; 2= reset_analogue]
+</block>
+
+<block learnvisualanalogueblock2>
+/ onBlockBegin = [values.activetasknr = 2]
+/ trials = [1=reset_analogue; 2=learnvisualanalogue]
+</block>
+
+
+*preinstruct learn visual analog
+<page beforeexperience>
+Now let us proceed to the next task. You will repeatedly observe ratings, one at a time. This task is repetitive, but please pay close attention throughout.
+</page>
+
+//****************************************************
+//****************************************************
+//*****INTRODUCE TASK *************************
+//****************************************************
+<block restaurantInstructionBlock>
+/ preInstructions = (restaurantInstructpage1)
+</block>
+
+
+<page restaurantInstructpage1>
+Now we have introduced the response scale we will use later in the experiment, and we have worked with interpretation of histograms.
+~nIn the next part you will observe a series of ratings one at a time. Please pay close attention: occasionally we will ask you to recall what the immediately preceding rating was, to check that you are following along.
+</page>
+
+
+
+//****************************************************
+//****************************************************
+//*****GAIN EXPERIENCE BLOCK *************************
+//****************************************************
+--------------preinstructions
+<page restaurantInstructpage2_exp>
+In the next task you will observe customer ratings of a restaurant called Ristorante Italo.
+The ratings will appear one at a time. Please pay close attention to each rating.
+Occasionally we will check your attention by asking you to recall the immediately preceding rating.
+</page>
+
+<page restaurantInstructpage2_placeboexp>
+In the next task you will observe performance ratings of a football player named Andreas Borgersen.
+The ratings will appear one at a time. Please pay close attention to each rating.
+Occasionally we will check your attention by asking you to recall the immediately preceding rating.
+</page>
+
+//*****LISTS FOR GAIN EXPERIENCE BLOCK ********************************
+<list outcomes>
+    / items = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)  // Values that are outcomes, 0 to 10
+</list>
+
+<list outcomes1000>
+/ items = ("1-50", "51-150", "151-250", "251-350", "351-450", "451-550", "551-650", "651-750", "751-850", "851-950", "951-1000")
+</list>
+
+//note: list histogramlabpos is defined under learning trials 
+
+<list probabilitiesA> //positive skew
+    / items = (0.02, 0.07, 0.29, 0.17, 0.13, 0.09, 0.08, 0.07, 0.04, 0.02, 0.02)  // Probabilities for 0 to 10
+</list>
+<list probabilitiesB> //reverse skewness of A (negative skew)
+/ items = (0.02, 0.02, 0.04, 0.07, 0.08, 0.09, 0.13, 0.17, 0.29, 0.07, 0.02)  // Probabilities for 0 to 10
+</list>
+
+<list probabilitiesplacebo>  //perhaps I should vary this....
+    / items = (0.05, 0.10, 0.25, 0.35, 0.20, 0.05)  // Probabilities for 0 to 5
+</list>
+
+
+<list predictions>
+</list>
+
+<list actuals>
+</list>
+
+//STimuli experience and placeboexpereince blocks:
+<text restaurantInstructions_small>
+/ onprepare = [text.restaurantInstructions_small.skip = (values.modeANDcondition == 2);]
+    / items = ("Rating for the restaurant Ristorante Italo")
+    / position = (50%, 2%)
+    / fontstyle = ("Tahoma", 2.25%, false, false, false, false, 5, 1)
+    / size = (60%, 5%)
+    / vAlign = top
+</text>
+<text restaurantInstructions_small_placebo>
+/ onprepare = [text.restaurantInstructions_small_placebo.skip = (values.modeANDcondition != 2);]
+    / items = ("Rating for the football player Andreas Borgersen")
+    / position = (50%, 2%)
+    / fontstyle = ("Tahoma", 2.25%, false, false, false, false, 5, 1)
+    / size = (60%, 5%)
+    / vAlign = top
+</text>
+
+
+
+
+
+
+//Trials for gaining experience  ***********
+//******GainExpBlock/GainDescBlock/GainExpHistBlock 
+//EXPERIENCE ONLY:
+<trial revealtrial>
+    / ontrialbegin = [values.randomvalue=expressions.randomvalue; 
+	values.actoutcome = expressions.outcomebin_current;
+	if (values.modeANDcondition == 2) {values.actplacebooutcome = values.actoutcome;};  //dont know why Imust assign this
+	values.finalshownvalue = expressions.finalshownvalue_current;]
+	/ ontrialbegin = [if(values.actoutcome == 0) values.count0 +=1;
+	else if(values.actoutcome == 1) values.count1 +=1;
+	else if(values.actoutcome == 2) values.count2 +=1;
+	else if(values.actoutcome == 3) values.count3 +=1;
+	else if(values.actoutcome == 4) values.count4 +=1;
+	else if(values.actoutcome == 5) values.count5 +=1;
+	else if(values.actoutcome == 6) values.count6 +=1;
+	else if(values.actoutcome == 7) values.count7 +=1;
+	else if(values.actoutcome == 8) values.count8 +=1;
+	else if(values.actoutcome == 9) values.count9 +=1;
+	else if(values.actoutcome == 10) values.count10 +=1;]
+   / stimulustimes = [1= reveal, restaurantInstructions_small, restaurantInstructions_small_placebo; 300=dot1; 500=dot2; 700=dot3;
+	900=reveal2preclear, reveal2; 1200=press_space]
+    / response = correct
+	/ correctresponse = (" ")
+</trial>
+
+
+//EXPERIENCE WITH DESCRIPTION (histogram)
+<trial revealtrialhist_NoPred>
+    / ontrialbegin = [values.randomvalue=expressions.randomvalue; values.actoutcome = expressions.outcomebin_current]
+	/ ontrialbegin = [if(values.actoutcome == 0) values.count0 +=1;
+	else if(values.actoutcome == 1) values.count1 +=1;
+	else if(values.actoutcome == 2) values.count2 +=1;
+	else if(values.actoutcome == 3) values.count3 +=1;
+	else if(values.actoutcome == 4) values.count4 +=1;
+	else if(values.actoutcome == 5) values.count5 +=1;
+	else if(values.actoutcome == 6) values.count6 +=1;
+	else if(values.actoutcome == 7) values.count7 +=1;
+	else if(values.actoutcome == 8) values.count8 +=1;
+	else if(values.actoutcome == 9) values.count9 +=1;
+	else if(values.actoutcome == 10) values.count10 +=1]
+    / stimulustimes = [1=reveal, restaurantInstructions_small, freq0, freq10, freq20, freq30, titlexaxis, freq_axis_large, value_axis_large, historicalinfo,
+	bin0_label, bin1_label, bin2_label, bin3_label, bin4_label, bin5_label, bin6_label, bin7_label, bin8_label, bin9_label, bin10_label;
+	300=dot1;500=dot2;700=dot3;
+	900=reveal2preclear, reveal2; 1100=bin0, bin1, bin2, bin3, bin4, bin5, bin6, bin7, bin8, bin9, bin10; 1400=press_space]
+    / response = correct
+	/ correctresponse = (" ")
+</trial>
+
+
+//CHECK ATTENTION IN REVEAL-TRIALS
+<openended PreviousOutcomeCheck>
+/ stimulusframes = [1=whatwastheprevious]
+/ position = (50%, 50%)
+/ correctresponse= (values.actoutcome)
+/ mask = integer
+/ charlimit = 2
+/ correctmessage = true(correctprevious, 3000)
+/ errormessage = true(incorrectprevious, 7000)
+/ linelength = 3
+/ multiline = false
+/ ontrialend = [if (openended.PreviousOutcomeCheck.correct == 0) values.fakecorrect = values.fakecorrect + 1]
+</openended>
+
+
+<text whatwastheprevious>
+    / items = ("What was the rating you just observed?")
+    / fontstyle = ("Arial", 4%)
+    / txcolor = (0, 0, 255)
+    / position = (50%, 15%)
+</text>
+
+
+<text correctprevious>
+    / items = ("Correct!")
+    / fontstyle = ("Arial", 4%)
+    / txcolor = (0, 0, 255)
+    / position = (50%, 50%)
+</text>
+
+<text incorrectprevious>
+    / items = ("Incorrect answer, please pay attention")
+    / fontstyle = ("Arial", 4%)
+    / txcolor = (0, 0, 255)
+    / position = (50%, 50%)
+</text>
+
+
+-----------------------Experience distribution or placeboexperience trials
+*Experience test trials, only experience
+<block experienceonlyAposskew>
+/ preinstructions = (startingexp_exp)
+/ onblockbegin = [values.modeANDcondition=1;
+					values.posskew = 1;
+					values.showfine=0;]
+/ trials = [1-7, 9-16, 18-24, 26-32, 34-40, 42-45 = revealtrial; 8,17,25,33,41 = PreviousOutcomeCheck]
+</block>
+
+<block experienceonlyBnegskew>
+/ preinstructions = (startingexp_exp)
+/ onblockbegin = [values.modeANDcondition=1;
+					values.posskew = 0;
+					values.showfine=0;]
+/ trials = [1-7, 9-16, 18-24, 26-32, 34-40, 42-45 = revealtrial; 8,17,25,33,41 = PreviousOutcomeCheck]
+</block>
+
+*description
+<block descriptiononly>   //do not need two distributions on experience for placebo
+/ onblockbegin = [values.modeANDcondition=2;
+					values.posskew = -1;
+					values.showfine=0;]
+/ preinstructions = (startingexp_desc)
+/ trials = [1-7, 9-16, 18-24, 26-32, 34-40, 42-45 = revealtrial; 8,17,25,33,41 = PreviousOutcomeCheck]
+</block>
+
+
+*both
+<block bothAposskew>
+/ preinstructions = (startingexp_both)
+/ onblockbegin = [values.modeANDcondition=3;
+					values.posskew = 1;
+					values.showfine=0;]
+/ trials = [1-7, 9-16, 18-24, 26-32, 34-40, 42-45 = revealtrialhist_NoPred; 8,17,25,33,41 = PreviousOutcomeCheck]
+</block>
+
+<block bothBnegskew>
+/ preinstructions = (startingexp_both)
+/ onblockbegin = [values.modeANDcondition=3;
+					values.posskew = 0;
+					values.showfine=0;]
+/ trials = [1-7, 9-16, 18-24, 26-32, 34-40, 42-45 = revealtrialhist_NoPred; 8,17,25,33,41 = PreviousOutcomeCheck]
+</block>
+
+
+//high granularity blocks:
+<block experienceonlyAposskew_1000>
+/ preinstructions = (startingexp_exp)
+/ onblockbegin = [values.modeANDcondition=1;
+					values.posskew = 1;
+					values.showfine=1;]
+/ trials = [1-7, 9-16, 18-24, 26-32, 34-40, 42-45 = revealtrial; 8,17,25,33,41 = PreviousOutcomeCheck]
+</block>
+
+<block experienceonlyBnegskew_1000>
+/ preinstructions = (startingexp_exp)
+/ onblockbegin = [values.modeANDcondition=1;
+					values.posskew = 0;
+					values.showfine=1;]
+/ trials = [1-7, 9-16, 18-24, 26-32, 34-40, 42-45 = revealtrial; 8,17,25,33,41 = PreviousOutcomeCheck]
+</block>
+
+
+<block descriptiononly_1000>  //no need for A and B
+/ preinstructions = (startingexp_desc)
+/ onblockbegin = [values.modeANDcondition=2;
+					values.posskew = -1;
+					values.showfine=1]
+/ trials = [1-7, 9-16, 18-24, 26-32, 34-40, 42-45 = revealtrial; 8,17,25,33,41 = PreviousOutcomeCheck]
+</block>
+
+<block bothAposskew_1000>
+/ preinstructions = (startingexp_both)
+/ onblockbegin = [values.modeANDcondition=3;
+					values.posskew = 1;
+					values.showfine=1]
+/ trials = [1-7, 9-16, 18-24, 26-32, 34-40, 42-45 = revealtrialhist_NoPred; 8,17,25,33,41 = PreviousOutcomeCheck]
+</block>
+
+<block bothBnegskew_1000>
+/ preinstructions = (startingexp_both)
+/ onblockbegin = [values.modeANDcondition=3;
+					values.posskew = 0;
+					values.showfine=1]
+/ trials = [1-7, 9-16, 18-24, 26-32, 34-40, 42-45 = revealtrialhist_NoPred; 8,17,25,33,41 = PreviousOutcomeCheck]
+</block>
+_____________________________
+//Instruction experience blocks:
+
+<page startingexp_exp>
+In the next task you will see customer ratings for a restaurant, one at a time. Each rating is on a scale from 0 (worst) to 10 (best).
+~nPlease pay close attention to the ratings as they appear. Occasionally we will check your attention by asking what the immediately preceding rating was.
+</page>
+
+<page startingexp_desc>
+In the next task you will see customer ratings for a football player, one at a time. Each rating is on a scale from 0 (worst) to 5 (best).
+~nAs the ratings accumulate, a histogram on the left side of the screen will show how many times each rating value has been given so far.
+~nPlease pay close attention. Occasionally we will check your attention by asking what the immediately preceding rating was.
+</page>
+
+<page startingexp_both>
+In the next task you will see customer ratings for a restaurant, one at a time. Each rating is on a scale from 0 (worst) to 10 (best).
+~nAs the ratings accumulate, a histogram on the left side of the screen will show how many times each rating value has been given so far.
+~nPlease pay close attention to both the individual ratings and the histogram. Occasionally we will check your attention by asking what the immediately preceding rating was.
+</page>
+
+
+//*************************************************************
+//********************5 NEXT PREDICTIONS *************************
+//************************************************************
+//common:
+<trial andthenextrating>
+/ stimulustimes = [1=andthenextrating]
+/ response = timeout(2000)
+</trial>
+
+// Brief interstitial between predictions 3-5
+<trial andthenext>
+/ stimulustimes = [1=andthenext]
+/ response = timeout(2000)
+</trial>
+
+-----------------EXPERIENCE ONLY
+<trial predictnextexp1VisAna>  
+/ ontrialbegin = [if (values.showfine==0) values.scalemaxdisplayed=10 else values.scalemaxdisplayed=1000;
+				values.randomvalue = expressions.randomvalue; 
+				if (values.posskew == 1) { values.actoutcome = expressions.outcomevalueA; } else { values.actoutcome = expressions.outcomevalueB; };
+				if (values.numberofmouseadjust== 0) values.predtimer=script.elapsedtime;]
+/ stimulusframes = [1=restaurantInstructions_small, restaurantInstructions_small_placebo, hiddenactoutcome, whatnext, Predtext2, continuetxt, lastresponsevalue, line, X,
+leftanchormin, rightanchormax]
+/ inputdevice = mouse
+/ validresponse = (line, continuetxt)
+/ correctresponse= (continuetxt)
+/ branch = [if (trial.predictnextexp1VisAna.correct==0) trial.predictnextexp1VisAna]
+/ ontrialend = [values.responsexscore=trial.predictnextexp1VisAna.responsex]
+/ ontrialend = [if (trial.predictnextexp1VisAna.response=="line") values.lastresponse=expressions.actualscore]
+/ ontrialend = [if (trial.predictnextexp1VisAna.correct==0) values.hpositionAvalue=expressions.tunepos]
+/ ontrialend = [if (trial.predictnextexp1VisAna.correct==0 && trial.predictnextexp1VisAna.response=="line") values.numberofmouseadjust=values.numberofmouseadjust+1]
+/ ontrialend = [if (trial.predictnextexp1VisAna.correct==1) values.predtimer= script.elapsedtime-values.predtimer]
+// Display update during adjustment loop (runs every iteration where line was clicked)
+/ ontrialend = [if (values.numberofmouseadjust > 0) {values.currentprediction = expressions.lastresponsedisplayed; values.displayvalue = format("%d", values.currentprediction);}]
+// On final Continue: set -99 if no prediction was made, otherwise finalize value
+/ ontrialend = [if (trial.predictnextexp1VisAna.correct == 1 && values.numberofmouseadjust == 0) {values.currentprediction = -99; values.displayvalue = "N.A.";}]
+/ ontrialend = [if (trial.predictnextexp1VisAna.correct == 1 && values.numberofmouseadjust > 0) {values.currentprediction = expressions.lastresponsedisplayed; values.displayvalue = format("%d", values.currentprediction);}]
+// Save to lists and numbered values (only on final Continue)
+/ ontrialend = [if (trial.predictnextexp1VisAna.correct == 1) {values.pred_counter = values.pred_counter + 1; list.predictions.appenditem(values.currentprediction); list.actuals.appenditem(values.actoutcome);}]
+/ ontrialend = [if (trial.predictnextexp1VisAna.correct == 1 && values.pred_counter == 1) {values.prediction1 = values.currentprediction; values.actual1 = values.actoutcome;}]
+/ ontrialend = [if (trial.predictnextexp1VisAna.correct == 1 && values.pred_counter == 2) {values.prediction2 = values.currentprediction; values.actual2 = values.actoutcome;}]
+/ ontrialend = [if (trial.predictnextexp1VisAna.correct == 1 && values.pred_counter == 3) {values.prediction3 = values.currentprediction; values.actual3 = values.actoutcome;}]
+/ ontrialend = [if (trial.predictnextexp1VisAna.correct == 1 && values.pred_counter == 4) {values.prediction4 = values.currentprediction; values.actual4 = values.actoutcome;}]
+/ ontrialend = [if (trial.predictnextexp1VisAna.correct == 1 && values.pred_counter == 5) {values.prediction5 = values.currentprediction; values.actual5 = values.actoutcome;}]
+</trial>
+------------------VISUAL ANALOGUE DESCRIPTION ONLY AND DESCRIPTION PLUS EXPERIENCE
+<trial predictnextdesc1VisAna>
+/ ontrialbegin = [if (values.showfine==0) values.scalemaxdisplayed=10 else values.scalemaxdisplayed=1000;
+					values.randomvalue = expressions.randomvalue; if (values.posskew == 1) { values.actoutcome = expressions.outcomevalueA; } else { values.actoutcome = expressions.outcomevalueB; };
+					if (values.numberofmouseadjust== 0) values.predtimer=script.elapsedtime;]
+/ stimulusframes = [1= restaurantInstructions_small, restaurantInstructions_small_placebo, hiddenactoutcome, whatnext, Predtext2, continuetxt, lastresponsevalue, line, X,
+						leftanchormin, rightanchormax, historicalinfo, freq_axis_large, value_axis_large, freq0, freq10, freq20, freq30, bin0, bin1, bin2, bin3, bin4, bin5, bin6, bin7, bin8, bin9, bin10, bin0_label, bin1_label, bin2_label, bin3_label, bin4_label, bin5_label, bin6_label, bin7_label, bin8_label, bin9_label, bin10_label,
+						bin0_label1000, bin1_label1000, bin2_label1000, bin3_label1000, bin4_label1000, bin5_label1000, bin6_label1000, bin7_label1000, bin8_label1000, bin9_label1000, bin10_label1000]
+/ inputdevice = mouse
+/ validresponse = (line, continuetxt)
+/ correctresponse= (continuetxt)
+/ branch = [if (trial.predictnextdesc1VisAna.correct==0) trial.predictnextdesc1VisAna]
+/ ontrialend = [values.responsexscore=trial.predictnextdesc1VisAna.responsex]
+/ ontrialend = [if (trial.predictnextdesc1VisAna.response=="line") values.lastresponse=expressions.actualscore]
+/ ontrialend = [if (trial.predictnextdesc1VisAna.correct==0) values.hpositionAvalue=expressions.tunepos]
+/ ontrialend = [if (trial.predictnextdesc1VisAna.correct==0 && trial.predictnextdesc1VisAna.response=="line") values.numberofmouseadjust=values.numberofmouseadjust+1]
+/ ontrialend = [if (trial.predictnextdesc1VisAna.correct==1) values.predtimer= script.elapsedtime-values.predtimer]
+/ ontrialend = [if (values.numberofmouseadjust > 0) {values.currentprediction = expressions.lastresponsedisplayed; values.displayvalue = format("%d", values.currentprediction);}]
+/ ontrialend = [if (trial.predictnextdesc1VisAna.correct == 1 && values.numberofmouseadjust == 0) {values.currentprediction = -99; values.displayvalue = "N.A.";}]
+/ ontrialend = [if (trial.predictnextdesc1VisAna.correct == 1 && values.numberofmouseadjust > 0) {values.currentprediction = expressions.lastresponsedisplayed; values.displayvalue = format("%d", values.currentprediction);}]
+/ ontrialend = [if (trial.predictnextdesc1VisAna.correct == 1) {values.pred_counter = values.pred_counter + 1; list.predictions.appenditem(values.currentprediction); list.actuals.appenditem(values.actoutcome);}]
+/ ontrialend = [if (trial.predictnextdesc1VisAna.correct == 1 && values.pred_counter == 1) {values.prediction1 = values.currentprediction; values.actual1 = values.actoutcome;}]
+/ ontrialend = [if (trial.predictnextdesc1VisAna.correct == 1 && values.pred_counter == 2) {values.prediction2 = values.currentprediction; values.actual2 = values.actoutcome;}]
+/ ontrialend = [if (trial.predictnextdesc1VisAna.correct == 1 && values.pred_counter == 3) {values.prediction3 = values.currentprediction; values.actual3 = values.actoutcome;}]
+/ ontrialend = [if (trial.predictnextdesc1VisAna.correct == 1 && values.pred_counter == 4) {values.prediction4 = values.currentprediction; values.actual4 = values.actoutcome;}]
+/ ontrialend = [if (trial.predictnextdesc1VisAna.correct == 1 && values.pred_counter == 5) {values.prediction5 = values.currentprediction; values.actual5 = values.actoutcome;}]
+</trial>
+
+// Both condition (experience + histogram): same as description but with own self-references
+<trial predictnextboth1VisAna>
+/ ontrialbegin = [if (values.showfine==0) values.scalemaxdisplayed=10 else values.scalemaxdisplayed=1000;
+					values.randomvalue = expressions.randomvalue; if (values.posskew == 1) { values.actoutcome = expressions.outcomevalueA; } else { values.actoutcome = expressions.outcomevalueB; };
+					if (values.numberofmouseadjust== 0) values.predtimer=script.elapsedtime;]
+/ stimulusframes = [1= restaurantInstructions_small, restaurantInstructions_small_placebo, hiddenactoutcome, whatnext, Predtext2, continuetxt, lastresponsevalue, line, X,
+						leftanchormin, rightanchormax, historicalinfo, freq_axis_large, value_axis_large, freq0, freq10, freq20, freq30, bin0, bin1, bin2, bin3, bin4, bin5, bin6, bin7, bin8, bin9, bin10, bin0_label, bin1_label, bin2_label, bin3_label, bin4_label, bin5_label, bin6_label, bin7_label, bin8_label, bin9_label, bin10_label,
+						bin0_label1000, bin1_label1000, bin2_label1000, bin3_label1000, bin4_label1000, bin5_label1000, bin6_label1000, bin7_label1000, bin8_label1000, bin9_label1000, bin10_label1000]
+/ inputdevice = mouse
+/ validresponse = (line, continuetxt)
+/ correctresponse= (continuetxt)
+/ branch = [if (trial.predictnextboth1VisAna.correct==0) trial.predictnextboth1VisAna]
+/ ontrialend = [values.responsexscore=trial.predictnextboth1VisAna.responsex]
+/ ontrialend = [if (trial.predictnextboth1VisAna.response=="line") values.lastresponse=expressions.actualscore]
+/ ontrialend = [if (trial.predictnextboth1VisAna.correct==0) values.hpositionAvalue=expressions.tunepos]
+/ ontrialend = [if (trial.predictnextboth1VisAna.correct==0 && trial.predictnextboth1VisAna.response=="line") values.numberofmouseadjust=values.numberofmouseadjust+1]
+/ ontrialend = [if (trial.predictnextboth1VisAna.correct==1) values.predtimer= script.elapsedtime-values.predtimer]
+/ ontrialend = [if (values.numberofmouseadjust > 0) {values.currentprediction = expressions.lastresponsedisplayed; values.displayvalue = format("%d", values.currentprediction);}]
+/ ontrialend = [if (trial.predictnextboth1VisAna.correct == 1 && values.numberofmouseadjust == 0) {values.currentprediction = -99; values.displayvalue = "N.A.";}]
+/ ontrialend = [if (trial.predictnextboth1VisAna.correct == 1 && values.numberofmouseadjust > 0) {values.currentprediction = expressions.lastresponsedisplayed; values.displayvalue = format("%d", values.currentprediction);}]
+/ ontrialend = [if (trial.predictnextboth1VisAna.correct == 1) {values.pred_counter = values.pred_counter + 1; list.predictions.appenditem(values.currentprediction); list.actuals.appenditem(values.actoutcome);}]
+/ ontrialend = [if (trial.predictnextboth1VisAna.correct == 1 && values.pred_counter == 1) {values.prediction1 = values.currentprediction; values.actual1 = values.actoutcome;}]
+/ ontrialend = [if (trial.predictnextboth1VisAna.correct == 1 && values.pred_counter == 2) {values.prediction2 = values.currentprediction; values.actual2 = values.actoutcome;}]
+/ ontrialend = [if (trial.predictnextboth1VisAna.correct == 1 && values.pred_counter == 3) {values.prediction3 = values.currentprediction; values.actual3 = values.actoutcome;}]
+/ ontrialend = [if (trial.predictnextboth1VisAna.correct == 1 && values.pred_counter == 4) {values.prediction4 = values.currentprediction; values.actual4 = values.actoutcome;}]
+/ ontrialend = [if (trial.predictnextboth1VisAna.correct == 1 && values.pred_counter == 5) {values.prediction5 = values.currentprediction; values.actual5 = values.actoutcome;}]
+</trial>
+
+
+---------------------------5 next prediction blocks
+<block predictnext5expVisAna>
+/ onblockbegin = [list.predictions.reset(); list.actuals.reset(); values.pred_counter = 0;
+    values.prediction1 = -99; values.prediction2 = -99; values.prediction3 = -99; values.prediction4 = -99; values.prediction5 = -99;
+    values.actual1 = -99; values.actual2 = -99; values.actual3 = -99; values.actual4 = -99; values.actual5 = -99]
+/ preinstructions = (startingpred_exp)
+/ trials = [
+    1               = reset_analogue;
+    2, 5, 8, 11, 14 = predictnextexp1VisAna;
+    3, 6, 9, 12     = reset_analogue;
+    4               = andthenextrating;
+    7, 10, 13       = andthenext]
+// postinstructions moved to predictionresultspage block (shown after survey)
+</block>
+
+<block predictnext5descVisAna>
+/ onblockbegin = [list.predictions.reset(); list.actuals.reset(); values.pred_counter = 0;
+    values.prediction1 = -99; values.prediction2 = -99; values.prediction3 = -99; values.prediction4 = -99; values.prediction5 = -99;
+    values.actual1 = -99; values.actual2 = -99; values.actual3 = -99; values.actual4 = -99; values.actual5 = -99]
+/ preinstructions = (startingpred_desc)
+/ trials = [
+    1               = reset_analogue;
+    2, 5, 8, 11, 14 = predictnextdesc1VisAna;
+    3, 6, 9, 12     = reset_analogue;
+    4               = andthenextrating;
+    7, 10, 13       = andthenext]
+// postinstructions moved to predictionresultspage block (shown after survey)
+</block>
+
+<block predictnext5bothVisAna>
+/ onblockbegin = [list.predictions.reset(); list.actuals.reset(); values.pred_counter = 0;
+    values.prediction1 = -99; values.prediction2 = -99; values.prediction3 = -99; values.prediction4 = -99; values.prediction5 = -99;
+    values.actual1 = -99; values.actual2 = -99; values.actual3 = -99; values.actual4 = -99; values.actual5 = -99]
+/ preinstructions = (startingpred_both)
+/ trials = [
+    1               = reset_analogue;
+    2, 5, 8, 11, 14 = predictnextboth1VisAna;
+    3, 6, 9, 12     = reset_analogue;
+    4               = andthenextrating;
+    7, 10, 13       = andthenext]
+// postinstructions moved to predictionresultspage block (shown after survey)
+</block>
+
+
+-------------------------------INSTRUCTIONS FOR PREDICTIONS
+**************************************************************************************************
+
+------------------prediction trial stimulus common to all below
+<text hiddenactoutcome>
+/ items = ("<%values.actoutcome%>")
+/ position = (100%, 100%)
+/ color =white 
+</text>
+
+<text whatnext>
+/ items = ("What is your prediction of the next rating?")
+/ position = (50%, 12%)
+</text>
+
+<text andthenextrating>
+/ items = ("And your prediction of the next rating after that?")
+/ position = (50%, 12%)
+</text>
+
+<text andthenext>
+/ items = ("And the next?")
+/ position = (50%, 12%)
+</text>
+
+
+<page startingpred_exp>
+Now a short break. You have observed a series of customer ratings for Ristorante Italo.
+~nOn the next page your task is to predict the next five ratings for this restaurant. The customers rate on a scale from 0 (worst) to 10 (best). Use the response scale to indicate each prediction.
+</page>
+
+<page startingpred_desc>
+Now a short break. You have observed a series of ratings displayed in a histogram.
+~nOn the next page you will use this histogram information to predict the next five ratings. The ratings are on a scale from 0 (worst) to 10 (best), and the histogram showing the frequency of past ratings will remain visible. Use the response scale to indicate each prediction.
+</page>
+
+<page startingpred_both>
+Now a short break. You have observed a series of customer ratings for Ristorante Italo, along with a histogram showing the distribution of all ratings so far.
+~nOn the next page your task is to predict the next five ratings. The customers rate on a scale from 0 (worst) to 10 (best), and the histogram will remain visible. Use the response scale to indicate each prediction.
+</page>
+
+**postinstruxctiorn
+<page yourresults>
+Thanks for your predictions. Here are your results compared with the customer ratings:~n~n
+
+First prediction: <% values.displayprediction1 %>     —     Actual: <% values.actual1 %>~n
+ Second prediction: <% values.displayprediction2 %>     —     Actual: <% values.actual2 %>~n
+ Third prediction: <% values.displayprediction3 %>     —     Actual: <% values.actual3 %>~n
+ Fourth prediction: <% values.displayprediction4 %>     —     Actual: <% values.actual4 %>~n
+ Fifth prediction: <% values.displayprediction5 %>     —     Actual: <% values.actual5 %>~n
+</page>
+
+<block predictionresultspage>
+/ preinstructions = (yourresults)
+</block>
+
+//**************************************************
+//*************************************************
+// EVALUATE BLOCK
+// After each round of 5 predictions, participants evaluate each prediction error
+// one by one. For each of the 5 predictions, they see their prediction vs actual
+// and rate how happy they are with the result on a vertical VAS with smiley face anchors.
+// This mirrors the evaluation pattern from micpred_keys.
+//*************************************************
+
+// --- Instruction page before evaluation ---
+<page evaluateInstructions>
+Now you will see how each of your predictions compared to the actual customer rating.~n~n
+For each prediction, please indicate how satisfied you are with the accuracy of your prediction by clicking on the vertical line.~n~n
+Press the spacebar to continue.
+</page>
+
+// --- Smiley face images for VAS anchors ---
+<item bilder1>
+/1="bilde1.jpg"
+</item>
+<item bilder2>
+/1="bilde2.jpg"
+</item>
+<item bilder3>
+/1="bilde3.jpg"
+</item>
+
+// --- Smiley face images for vertical satisfaction scale ---
+// Sad face near bottom of vertical scale (dissatisfied)
+<picture bildeein>
+/ items = bilder1
+/ position = (78%, 82%)
+/ size = (8%, 8%)
+</picture>
+
+// Neutral face at middle of vertical scale
+<picture bildeto>
+/ items = bilder2
+/ position = (78%, 50%)
+/ size = (8%, 8%)
+</picture>
+
+// Happy face near top of vertical scale (satisfied)
+<picture bildetre>
+/ items = bilder3
+/ position = (78%, 18%)
+/ size = (8%, 8%)
+</picture>
+
+// --- Vertical VAS elements for satisfaction rating ---
+// Vertical response line (right side of screen)
+<shape lineVERT>
+/ shape = rectangle
+/ color = black
+/ size = (2%, 60%)
+/ position = (70%, 50%)
+/ erase = false
+</shape>
+
+// Horizontal marker on the vertical line (shows current selection)
+<text XVERT>
+/ fontstyle = ("Arial", 7%, false, false, false, false, 5, 0)
+/ items = ("--")
+/ txcolor = (0, 0, 255)
+/ txbgcolor = (transparent)
+/ hposition = shape.lineVERT.hposition
+/ vposition = values.eval_vpositionVERT
+</text>
+
+// Continue button for vertical VAS
+<text continuetxtVERT>
+/ items = (" Continue ")
+/ fontstyle = ("Tahoma", 2.81%, false, false, false, false, 5, 1)
+/ position = (92%, 50%)
+/ txbgcolor = lightgrey
+</text>
+
+// --- Text elements for individual prediction error evaluation ---
+// Ordinal label ("First prediction", "Second prediction", etc.) — shown 500ms before rest
+<text eval_pe_ordinal>
+/ items = ("<%values.eval_ordinal_label%>")
+/ position = (30%, 15%)
+/ fontstyle = ("Tahoma", 3.5%, true, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</text>
+
+// Shows current prediction vs actual (updated each iteration via eval_set_next)
+<text eval_pe_display>
+/ items = ("Your prediction:  <%values.eval_display_current%>~nActual rating:      <%values.eval_current_actual%>")
+/ position = (30%, 35%)
+/ size = (50%, 20%)
+/ fontstyle = ("Tahoma", 3%, false, false, false, false, 5, 1)
+</text>
+
+<text eval_satisfactionquestion>
+/ items = ("How satisfied are you with the accuracy of this prediction?~nPlease click the vertical line to indicate your satisfaction, then click Continue.")
+/ size = (50%, 20%)
+/ position = (30%, 65%)
+/ fontstyle = ("Tahoma", 2%, false, false, false, false, 5, 1)
+</text>
+
+// --- Hidden text elements to record evaluation data in data file ---
+<text eval_satisfaction01_record>
+/ items = ("<%values.eval_satisfaction01%>")
+/ position = (-10%, -10%)
+/ fontstyle = ("Arial", 1%, false, false, false, false, 5, 1)
+</text>
+
+<text eval_round_record>
+/ items = ("<%values.eval_round%>")
+/ position = (-10%, -10%)
+/ fontstyle = ("Arial", 1%, false, false, false, false, 5, 1)
+</text>
+
+<text eval_prednum_record>
+/ items = ("<%values.eval_currentpred_num%>")
+/ position = (-10%, -10%)
+/ fontstyle = ("Arial", 1%, false, false, false, false, 5, 1)
+</text>
+
+// --- Trials ---
+
+// 500ms blank screen between evaluations (gives visual separation)
+<trial eval_blank_screen>
+/ response = timeout(500)
+</trial>
+
+// Set up the next prediction error for evaluation: increments counter,
+// loads current prediction/actual from numbered values, resets the vertical VAS,
+// sets ordinal label and display string (handles -99 → "N.A.")
+<trial eval_set_next>
+/ ontrialbegin = [values.eval_currentpred_num = values.eval_currentpred_num + 1]
+/ ontrialbegin = [if (values.eval_currentpred_num == 1) {
+    values.eval_current_prediction = values.prediction1; values.eval_current_actual = values.actual1;
+    values.eval_ordinal_label = "First prediction";
+    if (values.prediction1 == -99) values.eval_display_current = "N.A." else values.eval_display_current = format("%d", values.prediction1);
+}]
+/ ontrialbegin = [if (values.eval_currentpred_num == 2) {
+    values.eval_current_prediction = values.prediction2; values.eval_current_actual = values.actual2;
+    values.eval_ordinal_label = "Second prediction";
+    if (values.prediction2 == -99) values.eval_display_current = "N.A." else values.eval_display_current = format("%d", values.prediction2);
+}]
+/ ontrialbegin = [if (values.eval_currentpred_num == 3) {
+    values.eval_current_prediction = values.prediction3; values.eval_current_actual = values.actual3;
+    values.eval_ordinal_label = "Third prediction";
+    if (values.prediction3 == -99) values.eval_display_current = "N.A." else values.eval_display_current = format("%d", values.prediction3);
+}]
+/ ontrialbegin = [if (values.eval_currentpred_num == 4) {
+    values.eval_current_prediction = values.prediction4; values.eval_current_actual = values.actual4;
+    values.eval_ordinal_label = "Fourth prediction";
+    if (values.prediction4 == -99) values.eval_display_current = "N.A." else values.eval_display_current = format("%d", values.prediction4);
+}]
+/ ontrialbegin = [if (values.eval_currentpred_num == 5) {
+    values.eval_current_prediction = values.prediction5; values.eval_current_actual = values.actual5;
+    values.eval_ordinal_label = "Fifth prediction";
+    if (values.prediction5 == -99) values.eval_display_current = "N.A." else values.eval_display_current = format("%d", values.prediction5);
+}]
+/ ontrialbegin = [values.eval_vpositionVERT = -10; values.eval_satisfaction_y = -10; values.eval_satisfaction_raw = 0; values.eval_numberofmouseadjustVERT = 0]
+/ response = timeout(0)
+</trial>
+
+// Satisfaction rating on vertical VAS with smiley face anchors
+// Shows ordinal label at 0ms, then PE display + VAS + smileys at 500ms
+<trial eval_satisfaction_trial>
+/ ontrialbegin = [if (values.eval_numberofmouseadjustVERT == 0) values.predtimer = script.elapsedtime]
+/ stimulustimes = [0=eval_pe_ordinal; 500=eval_pe_display, eval_satisfactionquestion, continuetxtVERT, lineVERT, XVERT, bildeein, bildeto, bildetre]
+/ inputdevice = mouse
+/ validresponse = (lineVERT, continuetxtVERT)
+/ correctresponse = (continuetxtVERT)
+/ branch = [if (trial.eval_satisfaction_trial.correct == 0) trial.eval_satisfaction_trial]
+/ ontrialend = [values.eval_satisfaction_y = trial.eval_satisfaction_trial.responsey]
+/ ontrialend = [if (trial.eval_satisfaction_trial.response == "lineVERT") values.eval_satisfaction_raw = expressions.actualscoreVERT]
+/ ontrialend = [if (trial.eval_satisfaction_trial.correct == 0) values.eval_vpositionVERT = expressions.tuneposVERT]
+/ ontrialend = [if (trial.eval_satisfaction_trial.correct == 0 && trial.eval_satisfaction_trial.response == "lineVERT") values.eval_numberofmouseadjustVERT = values.eval_numberofmouseadjustVERT + 1]
+/ ontrialend = [if (trial.eval_satisfaction_trial.correct == 1) values.eval_satisfaction01 = expressions.eval_satisfaction01_calc]
+</trial>
+
+// Save evaluation data for this single prediction error (timeout=0 records to data file)
+<trial eval_save_single>
+/ stimulusframes = [1=eval_satisfaction01_record, eval_round_record, eval_prednum_record]
+/ response = timeout(0)
+</trial>
+
+// --- The evaluation block ---
+// 5 iterations of: blank screen → set_next → satisfaction rating → save
+<block evaluateBlock>
+/ preinstructions = (evaluateInstructions)
+/ onblockbegin = [values.eval_round = values.eval_round + 1; values.eval_currentpred_num = 0;
+    // Format display predictions for N.A. handling (used by yourresults page)
+    if (values.prediction1 == -99) values.displayprediction1 = "N.A." else values.displayprediction1 = format("%d", values.prediction1);
+    if (values.prediction2 == -99) values.displayprediction2 = "N.A." else values.displayprediction2 = format("%d", values.prediction2);
+    if (values.prediction3 == -99) values.displayprediction3 = "N.A." else values.displayprediction3 = format("%d", values.prediction3);
+    if (values.prediction4 == -99) values.displayprediction4 = "N.A." else values.displayprediction4 = format("%d", values.prediction4);
+    if (values.prediction5 == -99) values.displayprediction5 = "N.A." else values.displayprediction5 = format("%d", values.prediction5);]
+/ trials = [
+    1, 5, 9, 13, 17  = eval_blank_screen;
+    2, 6, 10, 14, 18  = eval_set_next;
+    3, 7, 11, 15, 19 = eval_satisfaction_trial;
+    4, 8, 12, 16, 20 = eval_save_single]
+</block>
+
+//**************************************************
+//*************************************************
+// SURVEY: CHECK AVERAGE AND MOST FREQUENT:
+*******************************************************************************************
+************************************CHECK MODE AND MEAN ***********************************
+******************************************************************************************
+<surveypage distributionunderstandingcheck>
+/ caption = "Before we give you the results of your predictions, think about the customer ratings again and answer the following questions:"
+/ questions = [1=meanQ; 2=modeQ; 3=maxQ; 4=minQ]
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ showbackbutton = false
+/ fontstyle = ("Arial", 2.3%, false, false, false, false, 5, 1)
+</surveypage>
+
+<textbox meanQ>
+/ caption = "What do you think was the **average rating** (the mean)?"
+</textbox>
+
+<textbox modeQ>
+/ caption = "What do you think was the **most frequent rating** (the mode)?"
+</textbox>
+
+<textbox maxQ>
+/ caption = "What was the **highest rating** you saw?"
+</textbox>
+
+<textbox minQ>
+/ caption = "What was the **lowest rating** you saw?"
+</textbox>
+
+<block distributionunderstandingcheck>
+/ trials = [1=distributionunderstandingcheck]
+</block>
+
+
+
+
+
+//*************************************************************************************************************
+//************************************************************************************************************
+//*********                SAVE STUFF                                                           **************
+//***********************************************************************************************************
+//***datasavetrial for things I am not sure gets saved:
+<text actualvaluesave>
+/items = ("<%values.actoutcome%>")
+/ position = (100%, 100%)
+</text>
+
+<text actualvaluefinesave>
+/items = ("<%expressions.fineoutcome1000%>")
+/ position = (100%, 100%)
+</text>
+
+<text fullestimatsave>
+/items = ("<%values.lastresponse%>")
+/ position = (100%, 100%)
+</text>
+<text displayedestimatesave>
+/items = ("<%expressions.lastresponsedisplayed%>") 
+/ position = (100%, 100%)
+</text>
+<text numberofmouse>
+/items = ("<%values.numberofmouseadjust%>")
+/ position = (100%, 100%)
+</text>
+
+*Savestuff, trial
+<trial savedata>
+/ stimulusframes = [1=actualvaluesave, actualvaluefinesave, fullestimatsave, displayedestimatesave, numberofmouse]
+/ timeout = 0
+/ ontrialend = [values.actoutcome = -1] //reset outcome value
+</trial>
+
+********************************************************************************************************************************************************************************************************************************************************************
+**************************************************************************************************************************************************************************************************************************************************************
+
+
+
+
+
+*************************************************************************************************************
+************************************************************************************************************
+*********                FINAL BLOCK, codes and stufdf                                        **************
+***********************************************************************************************************
+<text savecode>
+/ items = ("Do not save code. Anonymous data")
+</text>
+// <text savecode> //commented out for anonymous data collection
+// / items = ("kode<%values.randnumber%><%values.fakecorrect%>")
+// </text>
+<surveypage textboxlast>
+/questions = [1=textboxlast]
+/showpagenumbers = FALSE
+/showbackbutton = FALSE
+/showquestionnumbers = FALSE
+/ fontstyle = ("Arial", 2.11%, false, false, false, false, 5, 1)
+/caption="You have completed all tasks! Many thanks for your participation!
+The purpose of this study is to investigate how people form predictions about ratings when they have different types of information available — direct experience with individual ratings, a summary histogram showing the distribution of past ratings, or both.
+Understanding how people use distributional information to make predictions can help improve how we present data and support better decision-making.
+If you have any questions please contact Torleif Halkjelsvik, Adjunct Research Scientist at Simula Metropolitan Centre for Digital Engineering, e-mail: torleif@simula.no"
+</surveypage>
+<text visetidenA>
+/ items = ("<%script.elapsedtime%>")
+</text>
+
+*Final block, trials
+<trial visetiden>
+/ stimulusframes = [1=visetidenA, savecode]
+/ timeout = 0
+</trial>
+<textbox textboxlast>
+/caption= "Your MTurk code for submitting the HIT is <%values.randnumbersubmitcode%><%values.fakecorrect%> 
+If you have any comments please write in the field below."
+/textboxsize = (80%, 30%)
+/ size = (80%, 30%)
+/ multiline = true
+/required = FALSE
+</textbox>
+
+*Final block, block
+<block textboxlastBlock>
+/onblockbegin = [values.randnumbersubmitcode= floor(rand(700,999))]
+/trials=[1=visetiden; 2= textboxlast]
+</block> 

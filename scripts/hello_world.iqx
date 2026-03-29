@@ -1,0 +1,71 @@
+<include>"defaults_layout.iqx"</include>
+
+<monkey>
+/ latencydistribution = normal(300, 50)
+</monkey>
+
+<text intro>
+/ items = ("Welcome to the InquisitBridge test script.
+Press SPACE to continue.")
+/ position = (50%, 40%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = black
+/ txbgcolor = white
+</text>
+
+<text stimulus>
+/ items = ("HELLO", "WORLD", "TEST", "BRIDGE")
+/ select = sequence
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = blue
+</text>
+
+<text feedback_correct>
+/ items = ("Correct!")
+/ position = (50%, 70%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = green
+</text>
+
+<text feedback_incorrect>
+/ items = ("Incorrect.")
+/ position = (50%, 70%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = red
+</text>
+
+<trial instructions>
+/ stimulusframes = [1=intro]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial classify>
+/ ontrialbegin = [
+    script.debugTrace("TRACE trial=classify stage=begin stimulus=" + text.stimulus.currentitem);
+]
+/ stimulusframes = [1=stimulus]
+/ validresponse = ("a", "l")
+/ correctresponse = ("a")
+/ screenCapture = true
+/ ontrialend = [
+    script.debugTrace("TRACE trial=classify stage=end response=" + trial.classify.response + " correct=" + trial.classify.correct);
+]
+</trial>
+
+<block instructions>
+/ trials = [1=instructions]
+</block>
+
+<block test>
+/ trials = [1-4=classify]
+/ screenCapture = true
+</block>
+
+<expt>
+/ blocks = [1=instructions; 2=test]
+/ onexptend = [
+    script.debugTrace("TRACE expt=hello_world stage=end completed=" + script.completed);
+]
+</expt>

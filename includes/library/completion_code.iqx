@@ -1,0 +1,57 @@
+// Completion code generator
+// Generates a unique completion code from subject ID and displays it.
+// Used for Prolific, MTurk, or similar platforms.
+//
+// The code is deterministic: same subject ID always produces the same code.
+// Displayed prominently at the end of the experiment.
+// All elements use the prefix "compcode_" to avoid namespace conflicts.
+
+<values>
+/ compcode_raw = 0
+/ compcode_display = ""
+</values>
+
+<expressions>
+// Generate a numeric code from subject ID (simple hash)
+// Multiply by a large prime, modulo to get a 6-digit code, add prefix
+/ compcode_computed = format((script.subjectid * 7919 + 100000) % 900000 + 100000, "######")
+</expressions>
+
+<text compcode_title>
+/ items = ("Study Complete!")
+/ fontstyle = ("Arial", 5%)
+/ position = (50%, 25%)
+/ txcolor = black
+</text>
+
+<text compcode_instructions>
+/ items = ("Thank you for participating. Your completion code is shown below.~~Please copy this code and paste it into the survey platform to receive your compensation.")
+/ fontstyle = ("Arial", 3%)
+/ position = (50%, 45%)
+/ txcolor = black
+/ size = (80%, 20%)
+</text>
+
+<text compcode_code>
+/ items = ("Your code: <%expressions.compcode_computed%>")
+/ fontstyle = ("Consolas", 6%)
+/ position = (50%, 65%)
+/ txcolor = green
+</text>
+
+<text compcode_continue>
+/ items = ("Press SPACEBAR to end the experiment.")
+/ fontstyle = ("Arial", 2.5%)
+/ position = (50%, 85%)
+/ txcolor = gray
+</text>
+
+<trial compcode_trial>
+/ stimulustimes = [0=compcode_title, compcode_instructions, compcode_code, compcode_continue]
+/ validresponse = (" ")
+/ recorddata = true
+</trial>
+
+<block compcode_block>
+/ trials = [1=compcode_trial]
+</block>

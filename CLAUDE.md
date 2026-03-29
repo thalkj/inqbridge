@@ -1,31 +1,9 @@
-# InqBridge - Claude Instructions
+# InqBridge - Inquisit Experiment Building Guide
 
-## First-Run Setup Check
-On first interaction in this project, check whether the environment is ready:
-1. **`local.json`** — Check if it exists. If not, tell the user to run `setup.bat` which handles everything below automatically.
-2. **`.mcp.json`** — Check if it exists. If not, same: run `setup.bat`.
-3. **`.venv/`** — Check if it exists with working deps. If not, same: run `setup.bat`.
+## Setup
+If `local.json` or `.mcp.json` are missing, run `setup.bat`. See README.md for details.
 
-`setup.bat` creates the venv, installs dependencies, discovers Inquisit installations (prompts if multiple found), and writes both `local.json` and `.mcp.json`.
-
-## Working Preferences
-1. **Plan before executing** - Make a thorough plan before starting any implementation.
-2. **Ask upfront** - User cannot answer questions mid-task. Identify and ask all important questions before starting work.
-3. **Don't touch computer settings** - Avoid modifying system/computer settings unless clearly safe. Document any changes made.
-4. **Stay in scope** - Work only within the InqBridge folder and ClaudeAccess subfolders unless strictly necessary.
-5. **Permission for critical changes** - If critical computer-level changes are needed, wait until the last moment and ask for explicit permission before proceeding.
-
-## Project
-- **Purpose:** Bridge program allowing LLMs to run Inquisit Scripts
-- **Inquisit exe:** Auto-discovered from `local.json` (written by `setup.bat`), falls back to scanning `C:\Program Files\Millisecond Software\`
-- **Git:** local only, no remote
-- **Python:** 3.12 installed at `C:\Users\thalk\AppData\Local\Programs\Python\Python312`
-
-## Architecture
-- **Layer A (Runner):** Local audited runner - launches Inquisit, captures artifacts, decides pass/fail
-- **Layer B (MCP):** Thin MCP wrapper - exposes the runner to Claude Code as tools
-
-## Required Workflow
+## Experiment Quality Rules
 - Never rely on console output alone.
 - Always preserve an executed source snapshot in each run folder.
 - Prefer editing saved .iqx files over ephemeral buffers.
@@ -35,7 +13,7 @@ On first interaction in this project, check whether the environment is ready:
 - When patching layout, only edit position, size, fontStyle, canvasPosition, canvasSize, canvasAspectRatio, or defaults unless told otherwise.
 - After changing layout, rerun the same target and compare artifacts.
 - Every implementation task must include a validation path.
-- **Always use percentage-based positioning** — never raw pixels. Use `/ hposition = 50%` and `/ vposition = 50%`, not pixel coordinates. If you need to compute a value from pixels, multiply by `1%` (e.g., `display.width * 0.25` expressed as `25%`). Percentages ensure scripts work on any resolution.
+- **Always use percentage-based positioning** — never raw pixels. Use `/ hposition = 50%` and `/ vposition = 50%`, not pixel coordinates. Percentages ensure scripts work on any resolution.
 
 ## Final Script Delivery Rules
 - **Self-contained**: A finished script must be a folder containing the main .iqx and all include files, stimuli, and dependencies. No external references that the recipient won't have.
@@ -43,137 +21,107 @@ On first interaction in this project, check whether the environment is ready:
 - **Human verification required**: Every final script must pass a human-mode run before being considered ready. Monkey mode validates mechanics; only a human run validates the actual participant experience. If the user explicitly requests monkey-only delivery, that is acceptable but should be noted.
 
 ## Code Commenting Standards for .iqx Scripts
-- **Top of script**: Comment explaining the experiment's purpose, flow, and expected participant experience. E.g., "This IAT measures implicit associations between flowers/insects and pleasant/unpleasant words across 7 blocks."
-- **Element purpose**: Every non-trivial element (`<text>`, `<trial>`, `<block>`, `<list>`) should have a one-line comment explaining what it does. E.g., `// Fixation cross shown for 500ms before each target stimulus`.
-- **Complex expressions/values**: If a `/ ontrialbegin` or `values.*` or `expressions.*` line involves a multi-step pipeline, add a comment explaining the logic. E.g., `// Compute running accuracy for the last 20 trials to decide whether to show feedback`.
+- **Top of script**: Comment explaining the experiment's purpose, flow, and expected participant experience.
+- **Element purpose**: Every non-trivial element (`<text>`, `<trial>`, `<block>`, `<list>`) should have a one-line comment explaining what it does.
+- **Complex expressions/values**: If a `/ ontrialbegin` or `values.*` or `expressions.*` line involves a multi-step pipeline, add a comment explaining the logic.
 - **Experiment flow**: Comment the block/expt structure to show the participant's journey. E.g., `// Block 1: Practice (10 trials) → Block 2: Test (40 trials) → Block 3: Debrief`.
 - **Non-obvious Inquisit idioms**: When using uncommon patterns (e.g., `branch`, conditional `skip`, `list.nextvalue`), explain why.
 
 ## Screen Capture Strategy During Development
 - **Enable screenCapture per trial** during development: Add `/ screenCapture = true` to trials you want to inspect visually. Remove before delivery.
-- **Segment trials for visual checks**: When building a complex trial with multiple `stimulustimes` entries, first test the stimuli as separate short trials (each showing one stimulus combination) and capture those individually. This lets you see each visual layer before compositing them.
-- **Use score_layout and score_layout_deep**: After a monkey run with captures, run both layout analysis tools. `score_layout` gives quick heuristics (clipping, contrast, crowding); `score_layout_deep` gives element inventories, overlap detection, font size analysis, and alignment checks.
+- **Segment trials for visual checks**: When building a complex trial with multiple `stimulustimes` entries, first test the stimuli as separate short trials and capture those individually.
+- **Use score_layout and score_layout_deep**: After a monkey run with captures, run both layout analysis tools. `score_layout` gives quick heuristics; `score_layout_deep` gives element inventories, overlap detection, font size analysis, and alignment checks.
 - **Compare before/after**: Use `compare_runs` after any layout change to verify improvements and catch regressions.
 
 ## Debug Mode
 When developing a script, maintain a parallel debug version with an overlay showing element characteristics:
-- **Debug overlay approach**: Add a `<text debug_overlay>` element pinned to the bottom of the screen (e.g., `/ vposition = 95%`, `/ fontstyle = ("Consolas", 1.5%)`) that displays the current trial's key properties: element names visible, their hposition/vposition, stimulustimes, and size.
-- **Maintained as a separate version**: Keep `script_debug.iqx` alongside the main `script.iqx`. The debug version includes extra trials or `ontrialbegin` logic that populates the overlay text. Never ship the debug version.
-- **Toggle via values**: Use `values.debug_mode = 1` at the top so the overlay can be conditionally shown: `/ ontrialbegin = [if (values.debug_mode == 1) trial.current.insertstimulusframe(text.debug_overlay, 1)]` or similar.
-- **What to display**: Element name, hposition, vposition, stimulustime onset, font size, and any dynamic values relevant to the trial.
+- **Debug overlay approach**: Add a `<text debug_overlay>` element pinned to the bottom of the screen (e.g., `/ vposition = 95%`, `/ fontstyle = ("Consolas", 1.5%)`) that displays the current trial's key properties.
+- **Maintained as a separate version**: Keep `script_debug.iqx` alongside the main `script.iqx`. Never ship the debug version.
+- **Toggle via values**: Use `values.debug_mode = 1` at the top so the overlay can be conditionally shown.
 
 ## Edge Case Testing
 Before finalizing any script, test these edge cases via targeted monkey runs:
-- **Longest text**: Set the stimulus to the longest possible string the experiment might encounter. Check for text clipping, overflow, or overlap with other elements.
-- **Unusual characters**: Test with Unicode edge cases (accented characters, CJK characters, RTL text) if the experiment may encounter them.
-- **Screen resolution independence**: Since all positioning is percentage-based, verify captures look correct. The layout analysis tools detect clipping and overlap automatically.
-- **Rapid responses**: Monkey mode naturally tests this — check that zero-latency or near-zero-latency responses don't break trial sequencing.
-- **Missing stimuli**: If using list-based stimuli, verify behavior when the list is exhausted or when a stimulus file is missing.
+- **Longest text**: Set the stimulus to the longest possible string. Check for clipping, overflow, or overlap.
+- **Unusual characters**: Test with Unicode edge cases (accented characters, CJK, RTL text) if applicable.
+- **Screen resolution independence**: Percentage-based positioning ensures this. Layout tools detect clipping automatically.
+- **Rapid responses**: Monkey mode tests this — check that zero-latency responses don't break trial sequencing.
+- **Missing stimuli**: If using list-based stimuli, verify behavior when the list is exhausted.
 
 ## Human-Perspective Script Review
-When working on any .iqx script, mentally walk through it as if you were the participant sitting in front of the screen:
-- **Read the experiment flow**: Follow the `<expt>` → `<block>` → `<trial>` chain. For each trial, ask: What does the participant see? What are they supposed to do? Is it obvious what response is expected? Are instructions clear before they need to act?
-- **Check trial logic**: Does the `stimulustimes` sequence make sense experientially? Is there enough time to read instructions before stimuli appear? Are response windows reasonable? Does feedback (if any) appear at the right moment?
-- **Verify block progression**: Does the order of blocks make sense? Is there practice before test? Does difficulty escalate appropriately? Are breaks provided in long experiments?
-- **Spot confusing elements**: Would a naive participant understand what to do without external explanation? Are response key mappings shown on screen? Are category labels visible during classification tasks?
-- **This is integrated, not a separate step**: Do this mental walkthrough whenever you read or edit a script — it is part of how you work on scripts, not something triggered separately. Flag concerns inline as you work (e.g., "This trial shows the stimulus for only 50ms but the instruction text hasn't appeared yet — participants may miss it").
+When working on any .iqx script, mentally walk through it as if you were the participant:
+- **Read the experiment flow**: Follow `<expt>` → `<block>` → `<trial>`. What does the participant see? Is it obvious what response is expected?
+- **Check trial logic**: Does `stimulustimes` sequencing make sense? Enough time to read instructions? Response windows reasonable?
+- **Verify block progression**: Practice before test? Difficulty escalation? Breaks in long experiments?
+- **Spot confusing elements**: Response key mappings shown? Category labels visible during classification?
+- **Integrated, not separate**: Do this walkthrough whenever you read or edit a script. Flag concerns inline.
 
 ## Ctrl+Q (Abort) Handling
-- **What happens**: Pressing Ctrl+Q during a run causes Inquisit to immediately end the script and save any data collected up to that point. The `script.completed` property returns 0 (vs 1 for normal completion).
-- **Exit code**: Inquisit still returns exit code 1 (same as normal completion in Inquisit 6), so the runner cannot distinguish abort from completion by exit code alone.
-- **Data implications**: Partial data files will exist. The `assess_data_quality` tool can detect unusually low trial counts per trialcode compared to expected block sizes.
-- **Runner behavior**: The runner will report verdict `completed` if data files exist, even on abort. Check `script.completed` in summary data or compare expected vs actual trial counts to detect aborted runs.
-- **During human testing**: Ctrl+Q is expected and normal — testers may need to abort. The data from partial runs is still useful for validating what displayed correctly up to that point.
+- Pressing Ctrl+Q causes Inquisit to end immediately and save partial data. Exit code remains 1 (same as completion).
+- The runner reports `completed` if data files exist. Check `script.completed` or trial counts to detect aborts.
+- Ctrl+Q is expected during human testing — partial run data is still useful.
 
 ## Lessons Learned (Hard Bugs)
 
 ### Inquisit compiles ALL elements at startup
-Even if you only run one block, Inquisit compiles every `<picture>`, `<sound>`, `<text>`, `<trial>`, etc. in the entire script. A missing image file for a block you're not testing will still cause a fatal compile error. **If you remove pictures from the experiment, also remove/comment out the `<picture>` elements themselves.**
+Even if you only run one block, Inquisit compiles every element in the script. A missing image file for a block you're not testing causes a fatal compile error. **If you remove pictures, also remove the `<picture>` elements.**
 
 ### Exit code 0 = failure, 1 = success (opposite of Unix)
-Inquisit 6 returns exit code 0 when compilation fails — no data, no helpful error, just a "Network Error" in stderr. Exit code 1 means normal completion. The runner now handles this correctly with a `compile_error` verdict.
+Inquisit 6 returns exit code 0 on compilation failure — no data, no helpful error. Exit code 1 means normal completion.
 
 ### Silent bracket bugs
-An unclosed `[` in `/ontrialbegin = [` that spans multiple lines, followed by another `/ontrialbegin = [` before the first closes, causes silent compilation failure. This is nearly invisible in long scripts with mixed indentation. **Always run preflight checks before executing.**
+An unclosed `[` in `/ontrialbegin = [` causes silent compilation failure. **Always run preflight checks before executing.**
 
 ### AI-generated scripts have phantom references
-LLM-generated code often references elements that look correct but were never defined (e.g., `restaurantInstructions_smallreuse`, `Predtext2`). The structure looks complete — trials have proper logic, handlers, etc. — but the stimulus elements simply don't exist. **Always run the undefined-reference preflight check on AI-generated scripts.**
+LLM-generated code often references elements that were never defined. The structure looks complete but the stimulus elements don't exist. **Always run the undefined-reference preflight check.**
 
 ### Stale data from previous runs
-Inquisit writes data to `data/` relative to the script. If you ran `hello_world.iqx` previously, those .iqdat files persist. Running a different script in the same folder may pick up old data files. The runner now filters collected data files by script name.
+Inquisit writes data to `data/` relative to the script. Old `.iqdat` files persist between runs. The runner filters by script name, but be aware of this.
 
-## Segmented Development Workflow
-For complex experiments (500+ lines), build and test independent parts separately before combining:
+## Modular Development
+For complex experiments (500+ lines), build and test independent modules before combining. See the SKILL.md workflow for the full pipeline. Use `scaffold_experiment` to generate starter templates and `validate_merge` to check namespace conflicts before combining.
 
-### How to segment
-1. **Identify independent parts**: demographics block, instruction screens, practice trials, test trials, debrief. Each becomes its own mini-script during development.
-2. **Each segment is a standalone .iqx**: Include only the elements that segment needs — its own `<values>`, `<text>`, `<trial>`, `<block>`, and a minimal `<expt>`.
-3. **Test each segment independently**: Monkey run + screen captures + layout analysis. Fix issues in isolation where the error surface is small.
-4. **Combine using `<include>`**: The final script uses `<include>` to merge segment files. All elements share one namespace, so `<values>` defined in one include are visible to all others.
+### Library Fragments
+Pre-built include fragments in `includes/library/`: demographics, consent, debrief, completion code, attention checks. All use namespace prefixes to avoid conflicts. Include them with `<include>` like any other module.
 
 ### Include mechanics
 - `<include>` merges files at compile time — all elements share a single namespace.
-- Values, trials, text elements defined in any include are accessible from any other include.
-- **Name conflicts are fatal**: If two includes both define `<text instructions>`, compilation fails. Use prefixes (e.g., `demo_instructions`, `test_instructions`).
-
-### What `<include>` CANNOT do
-- No conditional includes (all includes are always compiled)
-- No parameterized includes (no way to pass arguments)
-- Included files cannot be tested standalone if they reference elements from other includes
+- **Name conflicts are fatal**: Use prefixes (e.g., `demo_instructions`, `test_instructions`).
+- No conditional includes, no parameterized includes.
+- Included files cannot be tested standalone if they reference elements from other includes — use standalone tester scripts.
 
 ### Batch (separate scripts, no shared state)
-`<batch>` runs multiple .iqx files sequentially. Only `subjectid`, `groupid`, and `sessionid` are passed between scripts — no `<values>` sharing. Use batch for truly independent tasks (e.g., a battery of different tests), not for splitting one experiment.
-
-### Recommended segment structure
-```
-experiment/
-  main.iqx                    # <expt> + <include> directives only
-  config_inc.iqx              # Shared <values>, <defaults>, <expressions>
-  demographics_inc.iqx        # Demographics block + its trials/text
-  instructions_inc.iqx        # All instruction screens
-  practice_inc.iqx            # Practice block + trials
-  test_inc.iqx                # Main test block + trials + lists
-  debrief_inc.iqx             # Debrief block
-  test_demographics.iqx       # Standalone test: imports config + demographics
-  test_practice.iqx           # Standalone test: imports config + practice
-```
+`<batch>` runs multiple .iqx files sequentially. Only `subjectid`, `groupid`, and `sessionid` are passed. Use batch for truly independent tasks, not for splitting one experiment.
 
 ## Tool-Use Policy
-- **Run preflight checks before every Inquisit execution** — catches missing files, bracket bugs, and phantom references before Inquisit's unhelpful error messages.
-- Use file inspection and editing tools first.
-- Use the local Inquisit runner for all execution.
+- **Run preflight checks before every Inquisit execution.**
 - Use Monkey mode before asking for a human run.
+- Use `fast_mode=True` on `run_monkey` for quick compile/data checks — it collapses all stimulustimes to t=0 and zeros pauses.
+- `auto_capture` is on by default for `run_monkey` — it injects `/ screenCapture = true` into temp copies without modifying the real script.
+- `auto_fix` is on by default — on compile error, it runs preflight, auto-fixes missing files and phantom references, and retries once.
 - Use score_layout only after screen captures exist.
-- Use patch_layout only after score_layout returns a concrete issue list.
-- After patch_layout, immediately rerun the same target and compare captures.
+- Use patch_layout only after score_layout returns concrete issues.
+- After patch_layout, immediately rerun and compare captures.
+- Use `validate_merge` before combining modules.
+- Use `list_runs` to find previous run IDs.
+- Use `generate_spec` to understand any script's structure before modifying it.
+- Use `decompose_script` to split a large monolithic script into testable modules.
+- Use `prepare_delivery` for final packaging — it strips screenCapture, removes debug elements, validates, and packages.
 
-## Allowed Changes (First Version)
-- Create/edit .iqx files
-- Create/edit include fragments
-- Create/edit runner code
-- Create/edit MCP wrapper
-- Add debug hooks
-- Add screenCapture=true for targeted runs
-- Patch layout attributes
-- Add tests for the runner
+## Safety Guardrails
+- Do not change task logic, scoring formulas, or response logic without explicit approval.
+- Do not delete data/artifact folders.
+- Do not silently rename elements across files.
 
-## Not Allowed Automatically
-- Broad semantic changes to task logic without explicit approval
-- Deletion of data/artifact folders
-- Silent renaming of elements across many files
-- Changing scoring formulas unless explicitly requested
-- Changing response logic for human-facing trials without a targeted test plan
-
-## Inquisit 6 CLI Syntax
+## Inquisit CLI Syntax
 ```
-"C:\Program Files\Millisecond Software\Inquisit 6\Inquisit.exe" "scriptpath" -s <subjectid> -g <groupid> -m <monkey|human>
+Inquisit.exe "scriptpath" -s <subjectid> -g <groupid> -m <monkey|human>
 ```
-Exit codes (opposite of Unix): **1 = success** (normal completion or Ctrl+Q abort), **0 = failure** (compile error, missing files). Screen captures go to data/screencaptures/ as .png files.
+The Inquisit path is auto-discovered from `local.json`. Exit codes: **1 = success**, **0 = failure**. Screen captures go to `data/screencaptures/` as .png files.
 
 ## Inquisit Documentation
-Reference docs are in `docs/`. Do NOT read these on startup — they are large. Instead, search them with Grep when you need Inquisit syntax help.
-- `docs/inquisit_programmers_manual.txt` — Full programmer's manual (88 pages, covers all elements, attributes, expressions, functions)
-- `docs/script_notes_examples.txt` — Real experiment script examples with values, expressions, trials, stimulustimes, etc.
+Reference docs are in `docs/`. Do NOT read these on startup — they are large. Search them with Grep when you need syntax help.
+- `docs/inquisit_programmers_manual.txt` — Full programmer's manual (88 pages)
+- `docs/script_notes_examples.txt` — Real experiment script examples
 
 ### Quick Inquisit Tips
 - Access item by index: `text.textname.1` (not `text.textname.item(1)`)
@@ -183,15 +131,14 @@ Reference docs are in `docs/`. Do NOT read these on startup — they are large. 
 - `/ response = correct` with `/ correctresponse` for accuracy scoring
 
 ### Reference Library
-- `scripts/library_v6/` — 202 plain-text .iqx files (directly greppable). **Use these when stuck** — grep for Inquisit elements, attributes, or patterns to see real implementations. E.g., `grep -r "stimulustimes" scripts/library_v6/` to see how timing is used across experiments.
-- `scripts/library_v7/` — 385 unzipped Inquisit 7 script folders (may contain multiple files per task).
+- `scripts/library_v6/` — 202 plain-text .iqx files (directly greppable). **Use these when stuck.** Grep the v6 library first (single files, easier to parse), then v7 if needed.
+- `scripts/library_v7/` — 385 unzipped Inquisit 7 script folders.
 - `scripts/library_index.md` — Index with counts and grep usage examples.
-- **When to use**: When you need to see how a specific Inquisit feature is used in practice, or when documentation is unclear. Grep the v6 library first (single files, easier to parse), then v7 if needed.
-- **If libraries are empty**: Run `scripts/download_library_v6.py` and/or `scripts/download_library.py` to populate them from millisecond.com. These are large downloads (200+ files each) and are gitignored.
+- **If libraries are empty**: Run `scripts/download_library_v6.py` and/or `scripts/download_library.py`.
 
-### Screen Capture Policy (capture_policy parameter)
-The `run_script` tool accepts a `capture_policy` parameter but screen capture is actually controlled by `/ screenCapture = true` on individual trials in the .iqx script. The capture_policy parameter is reserved for future use. To get screen captures:
-1. Add `/ screenCapture = true` to the trials you want to inspect
+### Screen Capture Policy
+Screen capture is controlled by `/ screenCapture = true` on individual trials in the .iqx script. To get captures:
+1. Add `/ screenCapture = true` to trials you want to inspect
 2. Run with `run_monkey` or `run_script`
 3. Captures appear in the run's `screencaptures/` folder
 4. Remove `/ screenCapture = true` before final delivery

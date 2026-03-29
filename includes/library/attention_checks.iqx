@@ -1,0 +1,60 @@
+// Attention check items
+// Three types of attention checks for different contexts:
+// 1. Instructed response (for surveys) — "Please select Strongly Agree"
+// 2. Catch trial (for RT tasks) — "Press the spacebar now"
+// 3. Content check (for debrief) — open-ended question about the study
+//
+// Include the ones you need and insert them into the appropriate blocks.
+// All elements use the prefix "attn_" to avoid namespace conflicts.
+
+// --- Type 1: Instructed Response (embed in surveys) ---
+
+<radiobuttons attn_instructed_1>
+/ caption = "This is an attention check. Please select 'Strongly Agree' to continue."
+/ options = ("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree")
+/ required = true
+</radiobuttons>
+
+<radiobuttons attn_instructed_2>
+/ caption = "To show you are paying attention, please select 'Disagree' for this item."
+/ options = ("Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree")
+/ required = true
+</radiobuttons>
+
+// --- Type 2: Catch Trial (insert between blocks in RT/classification tasks) ---
+
+<text attn_catch_instruction>
+/ items = ("ATTENTION CHECK~~Please press the SPACEBAR to continue.")
+/ fontstyle = ("Arial", 4%)
+/ position = (50%, 50%)
+/ txcolor = blue
+/ size = (80%, 20%)
+</text>
+
+<trial attn_catch_trial>
+/ stimulustimes = [0=attn_catch_instruction]
+/ validresponse = (" ")
+/ recorddata = true
+/ correctresponse = (" ")
+</trial>
+
+<block attn_catch_block>
+/ trials = [1=attn_catch_trial]
+</block>
+
+// --- Type 3: Content Check (use at debrief to verify engagement) ---
+
+<surveypage attn_content_page>
+/ caption = "Before we finish, please answer the following question about the study."
+/ questions = [1=attn_content_q]
+/ showpagenumbers = false
+</surveypage>
+
+<openended attn_content_q>
+/ caption = "In a few words, what do you think this study was about?"
+/ required = true
+</openended>
+
+<block attn_content_block>
+/ trials = [1=attn_content_page]
+</block>

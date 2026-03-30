@@ -5,12 +5,20 @@ description: Build Inquisit experiments from scratch or iterate on existing ones
 
 ## Setup Check (do this FIRST)
 
-Before using any MCP tools, verify the environment is ready:
-1. Check that `local.json` and `.mcp.json` exist in the project root.
-2. If either is missing, tell the user to run `setup.bat` in a terminal and restart Claude Code.
-3. If MCP tool calls fail with connection errors, the MCP server isn't running — same fix: run `setup.bat`, restart.
+Before using any MCP tools, verify the environment is ready. Handle all steps yourself via Bash — never tell the user to "run setup.bat" or go to a terminal.
 
-Do NOT attempt to call MCP tools or the Python runner directly without verifying setup first.
+1. Check that `.venv/Scripts/python.exe` exists in the project root. If missing:
+   - Tell the user what you need to do: create a Python venv and install dependencies (~1 minute).
+   - On approval, run via Bash: `python -m venv .venv && .venv/Scripts/pip install -q -e ".[dev]"`
+2. Check that `.mcp.json` exists. If missing, create it with the MCP server config pointing to `.venv/Scripts/python.exe -m mcp_server.main` with the project root as cwd.
+3. `local.json` is **optional** — Inquisit is auto-discovered from `C:\Program Files\Millisecond Software` by `runner/config.py`. Only needed for a non-standard install path.
+4. If MCP tool calls fail with connection errors after setup, the user must restart Claude Code so the MCP server process loads. This is the one step Claude cannot do itself. In the current session, invoke runner modules directly via Bash (e.g., `.venv/Scripts/python -m runner.preflight ...`).
+
+Do NOT tell the user to "run setup.bat". Handle all setup via Bash, asking approval before running commands.
+
+### Permission Warming
+
+After setup, if the user is not in "allow all" mode, run a quick warmup that exercises each tool type once (Bash, Write, MCP preflight, MCP run_monkey, Read). This gets Accept prompts out of the way before the real workflow begins. Tell the user: *"I'll run a quick warmup — you'll see a few Accept prompts. After that the session flows without interruptions."* See CLAUDE.md "Permission Warming" section for the full sequence.
 
 ---
 
@@ -45,6 +53,10 @@ Before writing any experiment code, gather this information from the user. Ask a
 8. **Attention checks?** Default: 1-2 instructed response items. Library: `includes/library/attention_checks.iqx` (instructed response, catch trial, content check).
 9. **Response modality?** Keyboard keys, mouse clicks, or mixed.
 10. **Target platform?** Lab computer, participant's own computer, specific screen size requirements.
+11. **Stimuli needed?** Ask what visual/audio stimuli the experiment requires (images, sounds, videos). For each stimulus type, clarify:
+    - **Can Claude generate it?** (charts, bar graphs, simple shapes, text-on-colored-background, fixation crosses → yes, generate with Python/matplotlib)
+    - **User-provided?** (photos, specific images, audio recordings → user must supply these files before building)
+    - **Not yet available?** → Generate labeled placeholder images (colored rectangles with text like "PLACEHOLDER: [stimulus description]") so the script compiles and layout can be tested. Use `.png` format, reasonable size (e.g., 400x300px). Record what needs replacing in a `stimuli/README.txt` manifest.
 
 ### Paradigm-Specific Questions (ask based on experiment type)
 

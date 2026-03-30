@@ -1,9 +1,51 @@
 # InqBridge - Inquisit Experiment Building Guide
 
 ## Setup (MUST CHECK FIRST)
-**Before doing any experiment work**, verify that `local.json` AND `.mcp.json` exist in the project root. If either is missing, run `setup.bat` in a terminal — it creates the venv, installs dependencies, discovers Inquisit, and writes all config files. Then restart Claude Code so the MCP server loads. Without this, no InqBridge tools will be available.
+
+**Before doing any experiment work**, verify the environment is ready. Check these in order and handle each step yourself via Bash — never tell the user to "run setup.bat" or go to a terminal.
+
+1. **Virtual environment**: Check whether `.venv/Scripts/python.exe` exists in the project root.
+   - If missing, tell the user: "I need to create a Python virtual environment and install dependencies (~1 minute). OK to proceed?"
+   - On approval, run via Bash: `python -m venv .venv && .venv/Scripts/pip install -q -e ".[dev]"`
+   - After creating the venv, the MCP server will load on the next Claude Code restart. In the current session, invoke runner modules directly via Bash (e.g., `.venv/Scripts/python -m runner.preflight ...`).
+
+2. **MCP config**: Check whether `.mcp.json` exists in the project root.
+   - If missing, create it via Write tool with this content (use the actual absolute project root path):
+     ```json
+     {
+       "mcpServers": {
+         "inq-bridge": {
+           "command": "<PROJECT_ROOT>\\.venv\\Scripts\\python.exe",
+           "args": ["-m", "mcp_server.main"],
+           "cwd": "<PROJECT_ROOT>"
+         }
+       }
+     }
+     ```
+   - Also ensure `.claude/settings.local.json` exists with `"enableAllProjectMcpServers": true` and `"enabledMcpjsonServers": ["inq-bridge"]`.
+
+3. **Inquisit discovery** (`local.json`): This file is **optional** if only one Inquisit version is installed. `runner/config.py` auto-discovers Inquisit from `C:\Program Files\Millisecond Software`. However, if multiple versions are installed, **ask the user which version they are licensed for** — a newer version on disk does not mean the user has a license. Create `local.json` with their chosen path.
+
+4. **MCP server not responding**: If MCP tool calls fail with connection errors after setup, tell the user to restart Claude Code so the MCP server process loads. This is the one step that cannot be automated. In the meantime, use Bash to invoke runner modules directly.
+
+## Permission Warming (do after setup)
+
+Many users run Claude Code without blanket "dangerous access" permissions — each new tool category requires an explicit Accept click. To avoid interrupting the experiment workflow later, run a **warming sequence** right after setup that exercises each tool type once. This gets the user's accepts upfront so the rest of the session flows smoothly.
+
+**Warming sequence** (run these in order, explain to the user what you're doing):
+1. **Bash**: `echo "InqBridge permission check"` — warms Bash access
+2. **Write**: Create a temp file `experiments/_warmup_test.iqx` with a minimal hello-world script
+3. **MCP preflight_check**: Run on the warmup script — warms MCP tool access
+4. **MCP run_monkey**: Run the warmup script with `fast_mode=True` — warms Inquisit execution
+5. **Read**: Read back the data file from the warmup run — warms file read access
+6. **Cleanup**: Delete the warmup script and artifacts
+
+Tell the user upfront: *"I'll run a quick warmup sequence that touches each tool type once — you'll see a few Accept prompts. After that the session will flow without interruptions."*
+
+If the user has already granted broad permissions, skip this step.
 
 ## Experiment Quality Rules
+- **Do not set `/ required = true` on survey questions** unless the user explicitly asks or the response value is needed downstream (piping, branching, group allocation). Default to `/ required = false`.
 - Never rely on console output alone.
 - Always preserve an executed source snapshot in each run folder.
 - Prefer editing saved .iqx files over ephemeral buffers.
@@ -28,8 +70,9 @@
 - **Non-obvious Inquisit idioms**: When using uncommon patterns (e.g., `branch`, conditional `skip`, `list.nextvalue`), explain why.
 
 ## Screen Capture Strategy During Development
+- **`/ screenCapture` only works on `<trial>` elements** in Inquisit 6. It does NOT work on `<openended>`, `<likert>`, `<slidertrial>`, or `<surveypage>`. For experiments that primarily use these elements (surveys, text-entry tasks), layout must be verified via a human run instead.
 - **Do NOT capture during iterative debugging**: When fixing compile errors or data issues, use `fast_mode=True` without `auto_capture`. Captures are useless if the script doesn't compile, and layout doesn't change between data-logic fixes.
-- **Capture once before human run**: When the script compiles cleanly, data looks correct, and you're ready to suggest a human run — do one final `run_monkey` with `auto_capture=True`. Then run `score_layout` + `score_layout_deep` and read the captures to check layout.
+- **Capture once before human run**: When the script compiles cleanly, data looks correct, and you're ready to suggest a human run — do one final `run_monkey` with `auto_capture=True`. Then run `score_layout` + `score_layout_deep` and **read the captures yourself** to visually inspect for overlapping text, clipping, elements too close together, or anything visually awkward.
 - **Segment trials for visual checks**: When building a complex trial with multiple `stimulustimes` entries, first test the stimuli as separate short trials and capture those individually.
 - **Compare before/after**: Use `compare_runs` after any layout change to verify improvements and catch regressions.
 - **Deduplication is automatic**: `score_layout` and `score_layout_deep` call `deduplicate_captures()` internally (SHA-256 + perceptual hash). Identical/near-identical frames are marked, not scored twice.

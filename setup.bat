@@ -80,9 +80,10 @@ if %FOUND_COUNT%==1 (
     goto :write_local
 )
 
-:: Multiple versions found - prompt user
+:: Multiple versions found - ask user which one (license may differ per version)
 echo.
 echo   Multiple Inquisit versions found. Which one should InqBridge use?
+echo   (Note: pick the version you have a license for)
 set /p "CHOICE=  Enter number [1-%FOUND_COUNT%]: "
 
 :: Validate choice

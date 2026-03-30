@@ -137,6 +137,18 @@ set "JSON_VENV=%PROJECT_ROOT:\=\\%\\.venv\\Scripts\\python.exe"
 ) > "%MCP_JSON%"
 echo   Wrote .mcp.json
 
+:: --- Write .claude/settings.local.json (enables MCP server in Claude Code) ---
+if not exist "%PROJECT_ROOT%\.claude" mkdir "%PROJECT_ROOT%\.claude"
+set "SETTINGS_JSON=%PROJECT_ROOT%\.claude\settings.local.json"
+(
+    echo {
+    echo   "permissions": {},
+    echo   "enableAllProjectMcpServers": true,
+    echo   "enabledMcpjsonServers": ["inq-bridge"]
+    echo }
+) > "%SETTINGS_JSON%"
+echo   Wrote .claude/settings.local.json
+
 echo.
 echo ============================================
 echo   Setup complete!

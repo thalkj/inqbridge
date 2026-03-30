@@ -3,6 +3,17 @@ name: inq-bridge
 description: Build Inquisit experiments from scratch or iterate on existing ones using the InqBridge MCP tools. Use for tasks involving Inquisit scripts, run artifacts, Monkey mode, screenCapture analysis, layout patching, and traceable experiment iteration.
 ---
 
+## Setup Check (do this FIRST)
+
+Before using any MCP tools, verify the environment is ready:
+1. Check that `local.json` and `.mcp.json` exist in the project root.
+2. If either is missing, tell the user to run `setup.bat` in a terminal and restart Claude Code.
+3. If MCP tool calls fail with connection errors, the MCP server isn't running — same fix: run `setup.bat`, restart.
+
+Do NOT attempt to call MCP tools or the Python runner directly without verifying setup first.
+
+---
+
 ## Core Principles
 
 1. Treat the runner as authoritative and the MCP wrapper as thin.
@@ -78,10 +89,15 @@ Each module is a standalone .iqx that can be tested independently.
 
 **Per-module test cycle (repeat until clean):**
 1. `preflight_check` on the module
-2. `run_monkey` with `/ screenCapture = true` on key trials
-3. `score_layout` + `score_layout_deep` on captures
-4. Read the screen captures to visually inspect layout
-5. Fix issues, repeat
+2. `run_monkey` with `fast_mode=True` (no captures needed yet — focus on compile + data correctness)
+3. Inspect data file: check trial counts, trialcodes, custom values, stimulus content
+4. Fix issues, repeat
+
+**Layout gate (once per module, after data is correct):**
+1. `run_monkey` with `auto_capture=True` (normal speed so captures are representative)
+2. `score_layout` + `score_layout_deep` on captures
+3. Read the screen captures to visually inspect layout
+4. Fix layout issues if any, re-capture and compare
 
 ### Phase 3 — Integrate
 
@@ -90,9 +106,16 @@ Each module is a standalone .iqx that can be tested independently.
 3. Replace all PLACEHOLDER values with real references.
 4. Run `validate_merge` on all include files — zero conflicts required.
 5. `preflight_check` on `main.iqx`.
-6. `run_monkey` the full experiment.
-7. `score_layout` the full experiment.
-8. `compare_runs` if iterating from a previous version.
+6. `run_monkey` with `fast_mode=True` — verify compile + data.
+7. `compare_runs` if iterating from a previous version.
+
+### Phase 3b — Layout Gate (before suggesting human run)
+
+1. `run_monkey` with `auto_capture=True` on the full experiment.
+2. `score_layout` + `score_layout_deep` — check for clipping, overlap, font size issues.
+3. Read captures to visually verify the participant experience.
+4. Fix any layout issues, re-capture, compare.
+5. Only after layout is clean, suggest a human run to the user.
 
 ### Phase 4 — Polish & Deliver
 

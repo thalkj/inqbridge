@@ -1,7 +1,7 @@
 # InqBridge - Inquisit Experiment Building Guide
 
-## Setup
-If `local.json` or `.mcp.json` are missing, run `setup.bat`. See README.md for details.
+## Setup (MUST CHECK FIRST)
+**Before doing any experiment work**, verify that `local.json` AND `.mcp.json` exist in the project root. If either is missing, run `setup.bat` in a terminal — it creates the venv, installs dependencies, discovers Inquisit, and writes all config files. Then restart Claude Code so the MCP server loads. Without this, no InqBridge tools will be available.
 
 ## Experiment Quality Rules
 - Never rely on console output alone.
@@ -28,10 +28,11 @@ If `local.json` or `.mcp.json` are missing, run `setup.bat`. See README.md for d
 - **Non-obvious Inquisit idioms**: When using uncommon patterns (e.g., `branch`, conditional `skip`, `list.nextvalue`), explain why.
 
 ## Screen Capture Strategy During Development
-- **Enable screenCapture per trial** during development: Add `/ screenCapture = true` to trials you want to inspect visually. Remove before delivery.
+- **Do NOT capture during iterative debugging**: When fixing compile errors or data issues, use `fast_mode=True` without `auto_capture`. Captures are useless if the script doesn't compile, and layout doesn't change between data-logic fixes.
+- **Capture once before human run**: When the script compiles cleanly, data looks correct, and you're ready to suggest a human run — do one final `run_monkey` with `auto_capture=True`. Then run `score_layout` + `score_layout_deep` and read the captures to check layout.
 - **Segment trials for visual checks**: When building a complex trial with multiple `stimulustimes` entries, first test the stimuli as separate short trials and capture those individually.
-- **Use score_layout and score_layout_deep**: After a monkey run with captures, run both layout analysis tools. `score_layout` gives quick heuristics; `score_layout_deep` gives element inventories, overlap detection, font size analysis, and alignment checks.
 - **Compare before/after**: Use `compare_runs` after any layout change to verify improvements and catch regressions.
+- **Deduplication is automatic**: `score_layout` and `score_layout_deep` call `deduplicate_captures()` internally (SHA-256 + perceptual hash). Identical/near-identical frames are marked, not scored twice.
 
 ## Debug Mode
 When developing a script, maintain a parallel debug version with an overlay showing element characteristics:
@@ -76,6 +77,24 @@ LLM-generated code often references elements that were never defined. The struct
 
 ### Stale data from previous runs
 Inquisit writes data to `data/` relative to the script. Old `.iqdat` files persist between runs. The runner filters by script name, but be aware of this.
+
+### `/ iti` is not a valid trial attribute
+Use `/ posttrialpause` instead of `/ iti`. There is no `/ iti` attribute in Inquisit 6. This causes a silent compile error (`Expression contains an unknown element or property name`).
+
+### `/ size` is not a valid block attribute
+Blocks do not have a `/ size` attribute. Instead, use explicit position indices in `/ trials` to control how many trials run. Example for 5 repetitions of a 3-trial cycle: `/ trials = [1,4,7,10,13 = trialA; 2,5,8,11,14 = trialB; 3,6,9,12,15 = trialC]`.
+
+### `/ validresponse = (noresponse)` requires a timeout or trialduration
+A trial with `noresponse` must also have `/ trialduration` or `/ timeout` set, otherwise Inquisit rejects it. For auto-advancing trials, just set `/ trialduration` and omit `/ validresponse` entirely.
+
+### `<instruct>` vs `<page>` for block/expt instructions
+Blocks and experiments reference `<page>` elements in `/ preinstructions` and `/ postinstructions`, NOT `<instruct>` elements. Using `<instruct>` wrappers with `/ lines` causes "defined more than once" errors. Just define `<page>` elements and reference them directly: `/ preinstructions = (my_page)`.
+
+### `list.X.nextvalue` returns one value per evaluation cycle
+Calling `list.X.nextvalue` multiple times in a single `ontrialbegin = [...]` block returns the **same** value each time. To draw N independent random values, use N separate `<list>` elements (e.g., `letters1`, `letters2`, `letters3`, `letters4`).
+
+### `<data>` element needed to export custom values
+Custom `values.*` fields do not appear in the .iqdat file by default. Add a `<data>` element with `/ columns = [...]` listing the standard columns plus any `values.*` you need. Without this, only built-in columns (latency, response, etc.) are recorded.
 
 ## Modular Development
 For complex experiments (500+ lines), build and test independent modules before combining. See the SKILL.md workflow for the full pipeline. Use `scaffold_experiment` to generate starter templates and `validate_merge` to check namespace conflicts before combining.
@@ -129,6 +148,12 @@ Reference docs are in `docs/`. Do NOT read these on startup — they are large. 
 - `values.*` for runtime variables, `expressions.*` for computed values
 - `stimulustimes` controls when stimuli appear (in ms from trial start)
 - `/ response = correct` with `/ correctresponse` for accuracy scoring
+- **No `/ iti` attribute** — use `/ posttrialpause` on trials
+- **No `/ size` on blocks** — control trial count via explicit position indices in `/ trials`
+- **Instructions use `<page>`, not `<instruct>`** — `/ preinstructions = (page_name)`
+- **`noresponse` needs a duration** — set `/ trialduration` or `/ timeout`
+- **One `nextvalue` per list per cycle** — use separate `<list>` elements for independent draws
+- **Add `<data>` for custom values** — `values.*` won't appear in .iqdat without explicit `/ columns`
 
 ### Reference Library
 - `scripts/library_v6/` — 202 plain-text .iqx files (directly greppable). **Use these when stuck.** Grep the v6 library first (single files, easier to parse), then v7 if needed.

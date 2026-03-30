@@ -44,6 +44,20 @@ Tell the user upfront: *"I'll run a quick warmup sequence that touches each tool
 
 If the user has already granted broad permissions, skip this step.
 
+## Git Branching Convention
+
+**master** is for InqBridge platform code only: runner, MCP server, CLAUDE.md, SKILL.md, library fragments, docs, setup infrastructure. Never commit experiment-specific files to master.
+
+**Experiments live on their own branches**, named `experiments/<experiment-name>` (e.g., `experiments/flower-prediction`). Each experiment branch is based on master and contains its `.iqx` files, stimuli, and run data under `experiments/<name>/`.
+
+When working on an experiment, Claude should:
+1. Create or check out the `experiments/<name>` branch
+2. Keep all experiment files under `experiments/<name>/`
+3. If infrastructure changes are discovered during experiment work (e.g., CLAUDE.md improvements, pyproject.toml fixes), commit those to master **separately** before or after the experiment commit
+4. Never mix platform commits with experiment commits
+
+When the user says "commit", ask if they want experiment and platform changes committed separately if both are present. When they say "merge", only merge platform changes to master — experiments stay on their branches unless the user explicitly says to merge them.
+
 ## Experiment Quality Rules
 - **Do not set `/ required = true` on survey questions** unless the user explicitly asks or the response value is needed downstream (piping, branching, group allocation). Default to `/ required = false`.
 - Never rely on console output alone.

@@ -169,6 +169,38 @@ Pre-built include fragments in `includes/library/`: demographics, consent, debri
 - Use `decompose_script` to split a large monolithic script into testable modules.
 - Use `prepare_delivery` for final packaging — it strips screenCapture, removes debug elements, validates, and packages.
 
+## Experiment Folder Convention
+
+Each experiment lives in its own folder under `experiments/`. This keeps experiment work separate from platform code without requiring git knowledge.
+
+### Folder structure
+```
+experiments/
+  flower_prediction/
+    EXPERIMENT.md        ← Required: status, plan, changelog, known issues
+    main.iqx             ← Entry point
+    config_inc.iqx       ← Shared config
+    *_inc.iqx            ← Module includes
+    stimuli/             ← Images, sounds, etc.
+    data/                ← Inquisit output (auto-created)
+```
+
+### EXPERIMENT.md (required per experiment)
+Every experiment folder must have an `EXPERIMENT.md` with:
+- **Status**: `planning` | `building` | `monkey-tested` | `human-tested` | `delivered`
+- **Description**: One paragraph explaining the experiment
+- **Plan**: Design decisions and module breakdown
+- **Modules**: Table of files and their roles
+- **Stimuli**: Table of stimuli files, their source (generated/provided/placeholder), and notes
+- **Changelog**: Dated entries tracking what changed and why
+- **Known Issues**: Anything unresolved
+
+### Rules
+- **Platform changes go in the project root** (CLAUDE.md, SKILL.md, runner/, mcp_server/, etc.)
+- **Experiment changes go in experiments/<name>/** — never mix platform and experiment changes in the same commit
+- **Do not delete experiment folders** — mark status as `abandoned` if no longer needed
+- **Stimuli stay inside the experiment folder** — keeps each experiment self-contained
+
 ## Safety Guardrails
 - Do not change task logic, scoring formulas, or response logic without explicit approval.
 - Do not delete data/artifact folders.

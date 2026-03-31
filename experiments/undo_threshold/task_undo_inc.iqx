@@ -1,0 +1,167 @@
+// ══════════════════════════════════════════════════════════════════════
+// task_undo_inc.iqx — Block B: Undo (Correction) condition
+//
+// Same perceptual decision task, but after the initial response,
+// participants have a 300ms window to press the OTHER key to correct.
+//
+// Two-trial chain:
+//   ut_trial_undo (collects initial response, recorddata=false)
+//     → ut_correction_trial (300ms window, recorddata=true = the data row)
+//     → feedback
+//
+// The correction trial carries all data via values.* so we get one clean
+// data row per experimental event, with both initial and final responses.
+// ══════════════════════════════════════════════════════════════════════
+
+// ── Stimulus Selection List ───────────────────────────────────────────
+// Separate list from noundo so each condition gets fresh randomization.
+<list ut_undo_stim>
+/ items = (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+           16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,
+           31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,
+           46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,
+           61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,
+           76,77,78,79,80,81,82,83,84,85,86,87,88,89,90)
+/ selectionmode = random
+/ replace = false
+</list>
+
+// ── Correction Window Cue ─────────────────────────────────────────────
+// Brief text shown during the 300ms correction window
+<text ut_correction_cue>
+/ items = ("Correction window — press other key to change")
+/ fontstyle = ("Arial", 2.2%, false, true, false, false, 5, 1)
+/ position = (50%, 80%)
+/ txcolor = gray
+</text>
+
+// ── Initial Response Trial ────────────────────────────────────────────
+// Identical stimulus presentation to noundo, but does NOT record data.
+// Data is recorded on the correction trial instead.
+<trial ut_trial_undo>
+/ stimulustimes = [0 = ut_fixation; 500 = ut_dot_stimulus, ut_key_labels]
+/ beginresponsetime = 500
+/ responseinterrupt = immediate
+/ validresponse = ("d", "k")
+/ timeout = parameters.ut_response_timeout
+/ recorddata = false
+
+// Before trial: select stimulus and decode (same logic as noundo)
+/ ontrialbegin = [
+    values.ut_stim_index = list.ut_undo_stim.nextvalue;
+
+    // Decode direction
+    if (values.ut_stim_index <= 45) {
+        values.ut_direction = 1;
+        values.ut_correct_key = "d";
+    } else {
+        values.ut_direction = 2;
+        values.ut_correct_key = "k";
+    };
+
+    // Decode coherence
+    values.ut_coh_offset = values.ut_stim_index;
+    if (values.ut_stim_index > 45) {
+        values.ut_coh_offset = values.ut_stim_index - 45;
+    };
+    if (values.ut_coh_offset <= 15) {
+        values.ut_coherence = 1;
+    } else if (values.ut_coh_offset <= 30) {
+        values.ut_coherence = 2;
+    } else {
+        values.ut_coherence = 3;
+    };
+]
+
+// After initial response: store it in values for the correction trial
+/ ontrialend = [
+    values.ut_initial_response = trial.ut_trial_undo.responsetext;
+    values.ut_initial_rt = trial.ut_trial_undo.latency;
+
+    if (trial.ut_trial_undo.responsetext == values.ut_correct_key) {
+        values.ut_initial_correct = 1;
+    } else {
+        values.ut_initial_correct = 0;
+    };
+]
+
+// Route: if timeout (no response), skip correction and go to timeout feedback.
+// Otherwise, go to correction trial.
+/ branch = [
+    if (trial.ut_trial_undo.response == 0) {
+        // No initial response: set final = empty, go to timeout feedback
+        values.ut_correction_made = 0;
+        values.ut_correction_response = "";
+        values.ut_correction_rt = 0;
+        values.ut_final_response = "";
+        values.ut_final_rt = 0;
+        values.ut_final_correct = 0;
+        return trial.ut_feedback_timeout;
+    };
+    return trial.ut_correction_trial;
+]
+</trial>
+
+// ── Correction Trial ──────────────────────────────────────────────────
+// Correction window. Accepts D or K. If participant presses the OTHER key
+// (different from initial), it counts as a correction.
+// Silent — no distracting text, just key labels remain visible.
+// This trial produces the data row for the entire trial sequence.
+<trial ut_correction_trial>
+/ stimulustimes = [0 = ut_key_labels]
+/ trialduration = parameters.ut_correction_window
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ validresponse = ("d", "k")
+/ recorddata = true
+
+// Initialize final = initial before correction window opens
+/ ontrialbegin = [
+    values.ut_correction_made = 0;
+    values.ut_correction_response = "";
+    values.ut_correction_rt = 0;
+    values.ut_final_response = values.ut_initial_response;
+    values.ut_final_rt = values.ut_initial_rt;
+    values.ut_final_correct = values.ut_initial_correct;
+]
+
+// After correction window: check if a different key was pressed
+/ ontrialend = [
+    // If a response was made during the correction window...
+    if (trial.ut_correction_trial.response != 0) {
+        values.ut_correction_response = trial.ut_correction_trial.responsetext;
+        values.ut_correction_rt = trial.ut_correction_trial.latency;
+
+        // Only count as correction if the key DIFFERS from initial
+        if (trial.ut_correction_trial.responsetext != values.ut_initial_response) {
+            values.ut_correction_made = 1;
+            values.ut_final_response = trial.ut_correction_trial.responsetext;
+            values.ut_final_rt = values.ut_initial_rt;
+
+            // Recompute final correctness
+            if (values.ut_final_response == values.ut_correct_key) {
+                values.ut_final_correct = 1;
+            } else {
+                values.ut_final_correct = 0;
+            };
+        };
+    };
+]
+
+// Route to feedback based on final correctness
+/ branch = [
+    if (values.ut_final_correct == 1) {
+        return trial.ut_feedback_correct;
+    };
+    return trial.ut_feedback_incorrect;
+]
+</trial>
+
+// ── Test Block ────────────────────────────────────────────────────────
+// 90 trials (each = initial response + correction window + feedback)
+<block ut_block_undo>
+/ onblockbegin = [
+    values.ut_condition = "undo";
+]
+/ trials = [1-90 = ut_trial_undo]
+</block>

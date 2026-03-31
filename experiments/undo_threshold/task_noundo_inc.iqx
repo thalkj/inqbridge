@@ -1,0 +1,104 @@
+// ══════════════════════════════════════════════════════════════════════
+// task_noundo_inc.iqx — Block A: No Undo condition
+//
+// Standard perceptual decision task. Participant sees dot-motion stimulus
+// and presses D (left) or K (right). Choice is final — no correction.
+//
+// Trial flow: fixation (500ms) → dot stimulus → response → feedback
+// Data: one row per trial from ut_trial_noundo.
+// ══════════════════════════════════════════════════════════════════════
+
+// ── Stimulus Selection List ───────────────────────────────────────────
+// 90 indices (1-90) mapping to items in ut_all_dots.
+// Drawn without replacement so each image is shown exactly once.
+<list ut_noundo_stim>
+/ items = (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+           16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,
+           31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,
+           46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,
+           61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,
+           76,77,78,79,80,81,82,83,84,85,86,87,88,89,90)
+/ selectionmode = random
+/ replace = false
+</list>
+
+// ── Main Trial ────────────────────────────────────────────────────────
+<trial ut_trial_noundo>
+// Stimulus sequence: fixation for 500ms, then dot pattern + key labels
+/ stimulustimes = [0 = ut_fixation; 500 = ut_dot_stimulus, ut_key_labels]
+/ beginresponsetime = 500
+/ responseinterrupt = immediate
+/ validresponse = ("d", "k")
+/ timeout = parameters.ut_response_timeout
+
+// Before trial: select stimulus and decode direction/coherence
+/ ontrialbegin = [
+    values.ut_stim_index = list.ut_noundo_stim.nextvalue;
+
+    // Decode direction: items 1-45 = left, 46-90 = right
+    if (values.ut_stim_index <= 45) {
+        values.ut_direction = 1;
+        values.ut_correct_key = "d";
+    } else {
+        values.ut_direction = 2;
+        values.ut_correct_key = "k";
+    };
+
+    // Decode coherence within each direction group
+    // Left: 1-15=high, 16-30=medium, 31-45=low
+    // Right: 46-60=high, 61-75=medium, 76-90=low
+    values.ut_coh_offset = values.ut_stim_index;
+    if (values.ut_stim_index > 45) {
+        values.ut_coh_offset = values.ut_stim_index - 45;
+    };
+    if (values.ut_coh_offset <= 15) {
+        values.ut_coherence = 1;
+    } else if (values.ut_coh_offset <= 30) {
+        values.ut_coherence = 2;
+    } else {
+        values.ut_coherence = 3;
+    };
+]
+
+// Use iscorrectresponse for native correctness via responsetext
+/ iscorrectresponse = [
+    return (trial.ut_trial_noundo.responsetext == values.ut_correct_key);
+]
+
+/ ontrialend = [
+    // Store initial response data (responsetext = "d" or "k")
+    values.ut_initial_response = trial.ut_trial_noundo.responsetext;
+    values.ut_initial_rt = trial.ut_trial_noundo.latency;
+    values.ut_initial_correct = trial.ut_trial_noundo.correct;
+
+    // No correction in this condition
+    values.ut_correction_made = 0;
+    values.ut_correction_response = "";
+    values.ut_correction_rt = 0;
+
+    // Final = initial (no correction possible)
+    values.ut_final_response = values.ut_initial_response;
+    values.ut_final_rt = values.ut_initial_rt;
+    values.ut_final_correct = values.ut_initial_correct;
+]
+
+// Route to appropriate feedback based on response
+/ branch = [
+    if (trial.ut_trial_noundo.response == 0) {
+        return trial.ut_feedback_timeout;
+    };
+    if (values.ut_final_correct == 1) {
+        return trial.ut_feedback_correct;
+    };
+    return trial.ut_feedback_incorrect;
+]
+</trial>
+
+// ── Test Block ────────────────────────────────────────────────────────
+// 90 trials (all images, no replacement), randomized order.
+<block ut_block_noundo>
+/ onblockbegin = [
+    values.ut_condition = "noundo";
+]
+/ trials = [1-90 = ut_trial_noundo]
+</block>

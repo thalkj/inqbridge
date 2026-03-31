@@ -1,0 +1,86 @@
+// ══════════════════════════════════════════════════════════════════════
+// main.iqx — Entry point: The "Undo" Effect on Decision Thresholds
+//
+// A Speed-Accuracy Trade-Off (SATO) experiment.
+// Participants classify random dot-motion direction (Left/Right).
+//   Block A (No Undo): choice is final.
+//   Block B (Undo): 300ms correction window after initial response.
+//
+// Hypothesis: The Undo option lowers the response threshold, producing
+// faster but less accurate initial responses.
+//
+// Counterbalanced: Group 1 = NoUndo first, Group 2 = Undo first.
+//
+// Participant flow (Group 1 example):
+//   Welcome → General instructions
+//   → NoUndo instructions → Practice NoUndo → Test intro → Test NoUndo (90 trials)
+//   → Transition → Undo instructions → Practice Undo → Test intro → Test Undo (90 trials)
+//   → Debrief
+//
+// Duration: ~15-20 minutes
+// ══════════════════════════════════════════════════════════════════════
+
+// ── Module Includes (config MUST be first) ────────────────────────────
+<include>
+/ file = "config_inc.iqx"
+</include>
+
+<include>
+/ file = "feedback_inc.iqx"
+</include>
+
+<include>
+/ file = "task_noundo_inc.iqx"
+</include>
+
+<include>
+/ file = "task_undo_inc.iqx"
+</include>
+
+<include>
+/ file = "practice_inc.iqx"
+</include>
+
+<include>
+/ file = "instructions_inc.iqx"
+</include>
+
+<include>
+/ file = "debrief_inc.iqx"
+</include>
+
+// ── Experiment: Group 1 — NoUndo first, then Undo ─────────────────────
+<expt ut_order_AB>
+/ groups = (1 of 2)
+/ blocks = [
+    1 = ut_block_welcome;
+    2 = ut_block_noundo_intro;
+    3 = ut_block_practice_noundo;
+    4 = ut_block_test_intro_noundo;
+    5 = ut_block_noundo;
+    6 = ut_block_transition;
+    7 = ut_block_undo_intro;
+    8 = ut_block_practice_undo;
+    9 = ut_block_test_intro_undo;
+    10 = ut_block_undo;
+    11 = ut_block_debrief;
+]
+</expt>
+
+// ── Experiment: Group 2 — Undo first, then NoUndo ─────────────────────
+<expt ut_order_BA>
+/ groups = (2 of 2)
+/ blocks = [
+    1 = ut_block_welcome;
+    2 = ut_block_undo_intro;
+    3 = ut_block_practice_undo;
+    4 = ut_block_test_intro_undo;
+    5 = ut_block_undo;
+    6 = ut_block_transition;
+    7 = ut_block_noundo_intro;
+    8 = ut_block_practice_noundo;
+    9 = ut_block_test_intro_noundo;
+    10 = ut_block_noundo;
+    11 = ut_block_debrief;
+]
+</expt>

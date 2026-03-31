@@ -127,7 +127,7 @@ The only Claude-specific parts are the `.claude/` directory structure and the `C
 
 **Claude doesn't recognize `/inqbridge` or the experiment workflow:**
 - Your working directory is probably a parent folder. Claude Code needs to be running with `inqbridge` as its working directory (the folder containing `CLAUDE.md`). Start a new session pointed at the `inqbridge` folder.
-- In the desktop app or web app, you don't need `/inqbridge` — just describe your experiment and Claude will activate the workflow.
+- In the desktop app or web app, you don't need to type `/inqbridge` — just describe your experiment and Claude will activate the workflow (if you are in the right folder).
 
 **Python not found:**
 - Claude will offer to install Python for you. Accept the prompt and it handles the rest.

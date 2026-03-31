@@ -231,11 +231,44 @@ Reference docs are in `docs/`. Do NOT read these on startup — they are large. 
 - **One `nextvalue` per list per cycle** — use separate `<list>` elements for independent draws
 - **Add `<data>` for custom values** — `values.*` won't appear in .iqdat without explicit `/ columns`
 
-### Reference Library
-- `scripts/library_v6/` — 202 plain-text .iqx files (directly greppable). **Use these when stuck.** Grep the v6 library first (single files, easier to parse), then v7 if needed.
-- `scripts/library_v7/` — 385 unzipped Inquisit 7 script folders.
-- `scripts/library_index.md` — Index with counts and grep usage examples.
-- **If libraries are empty**: Run `scripts/download_library_v6.py` and/or `scripts/download_library.py`.
+### Reference Library — 202 Real Inquisit 6 Scripts
+`scripts/library_v6/` contains 202 complete, working .iqx scripts from the Millisecond test library. These are **the single most valuable resource** for building correct Inquisit syntax. Each file is a standalone experiment (surveys, RT tasks, IATs, cognitive tasks, etc.).
+
+**When to consult the library:**
+- **Before writing any new element type** you haven't used before (e.g., first time using `<radiobuttons>`, `<slider>`, `<likert>`, `<picture>`, `<sound>`, `<shape>`, etc.) — grep the library to see how real scripts use it.
+- **When you get a compile error** you don't understand — grep for the attribute or element that's failing and see how working scripts handle it.
+- **When building a known paradigm** (IAT, Stroop, dot-probe, flanker, go/no-go, etc.) — find the matching library script and use it as a reference for structure, trial flow, and scoring.
+- **When unsure about attribute syntax** — e.g., how to set `stimulustimes`, `beginresponsetime`, `validresponse`, `ontrialbegin`, conditional branching, etc.
+
+**How to use the library:**
+```
+# Find scripts that use a specific element or attribute
+Grep: pattern="<likert" path="scripts/library_v6/"
+Grep: pattern="/ correctresponse" path="scripts/library_v6/"
+
+# Find a specific paradigm (e.g., IAT, Stroop, flanker)
+Grep: pattern="<trial " path="scripts/library_v6/iat_rf.iqx"  (read the whole IAT script)
+Grep: pattern="flanker" path="scripts/library_v6/"
+
+# See how scoring or data export works
+Grep: pattern="<data>" path="scripts/library_v6/"
+Grep: pattern="expressions\." path="scripts/library_v6/"
+```
+
+**Key scripts by paradigm** (filenames are self-explanatory):
+- IAT: `iat_rf.iqx`, `briefiat_german.iqx`, `eatingiat.iqx`, `angeriat.iqx`
+- Stroop: `stroopwithcontrolkeyboard_romanian.iqx`, `foodstroop_keyboardinput.iqx`
+- Go/No-Go: `affectivegonogo.iqx`, `shiftgng.iqx`
+- Dot-probe: `genericdotprobe_words.iqx`, `dpdt_richards.iqx`
+- Flanker: `flankertask.iqx`
+- Surveys: `demographicsurvey.iqx`, `phq_9.iqx`, `gad_7.iqx`, `dass21.iqx`, `bdi_orig.iqx`
+- RT tasks: `srtvisual.iqx`, `fourchoicereactiontimetask.iqx`, `lexicaldecisiontask.iqx`
+- Memory: `sternbergmemorytask.iqx`, `corsiblocktappingtask.iqx`, `automatedospan.iqx`
+- Task switching: `taskswitching.iqx`, `numberlettertask.iqx`
+
+Also available:
+- `scripts/library_v7/` — 385 Inquisit 7 script folders (if downloaded via `scripts/download_library.py`). Use v6 first — it's simpler.
+- `scripts/library_index.md` — Full index with grep examples.
 
 ### Screen Capture Policy
 Screen capture is controlled by `/ screenCapture = true` on individual trials in the .iqx script. To get captures:

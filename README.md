@@ -27,11 +27,11 @@ An MCP bridge that lets LLMs build, run, and iterate on [Inquisit](https://www.m
 - Windows 10/11
 - Python 3.12+
 - Inquisit 6 or 7 (from [Millisecond Software](https://www.millisecond.com/))
-- Claude Code (for the MCP integration)
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — available as CLI, desktop app, or IDE extension
 
 ## Getting Started
 
-1. Open Claude Code in this folder.
+1. Clone or download this repo, then open Claude Code in the folder.
 2. Say `/inq-bridge` or just describe the experiment you want to build.
 3. Claude handles everything: environment setup, Inquisit discovery, building, testing, and iteration.
 

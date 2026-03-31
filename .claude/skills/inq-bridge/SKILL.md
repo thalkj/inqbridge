@@ -96,12 +96,14 @@ Use this workflow when building a new experiment. For iterating on an existing s
 
 ### Phase 1 — Design
 
-1. **Identify experiment components**: demographics, instructions, practice, test blocks, debrief, etc.
-2. **List each module**, its purpose, and its dependencies on other modules.
-3. **Use `scaffold_experiment`** to generate starter files — or start from blank .iqx files.
+1. **Create the experiment folder** `experiments/<name>/` and write an initial `EXPERIMENT.md` with status `planning`, a description, and the design plan.
+2. **Identify experiment components**: demographics, instructions, practice, test blocks, debrief, etc.
+3. **List each module**, its purpose, and its dependencies on other modules.
+4. **Use `scaffold_experiment`** to generate starter files — or start from blank .iqx files.
    - For known paradigms (IAT, Stroop, survey, RT task): scaffold generates realistic reference templates.
    - For novel designs: use `experiment_type = "custom"` for minimal stubs.
    - Templates are starting points, not constraints — modify or discard freely.
+5. **Update EXPERIMENT.md**: list the modules table and stimuli table.
 
 ### Phase 2 — Build & Test Modules
 
@@ -131,6 +133,7 @@ Each module is a standalone .iqx that can be tested independently.
 2. `score_layout` + `score_layout_deep` on captures
 3. Read the screen captures to visually inspect layout
 4. Fix layout issues if any, re-capture and compare
+5. **Update EXPERIMENT.md**: set status to `building`, add changelog entry for what was built/fixed.
 
 ### Phase 3 — Integrate
 
@@ -149,6 +152,7 @@ Each module is a standalone .iqx that can be tested independently.
 3. Read captures to visually verify the participant experience.
 4. Fix any layout issues, re-capture, compare.
 5. Only after layout is clean, suggest a human run to the user.
+6. **Update EXPERIMENT.md**: set status to `monkey-tested`, add changelog entry.
 
 ### Phase 4 — Polish & Deliver
 
@@ -162,6 +166,7 @@ Each module is a standalone .iqx that can be tested independently.
    - Script is self-contained (folder with main .iqx, all includes, all stimuli)
    - Top-of-script comment explains the experiment
    - All elements have purpose comments
+5. **Update EXPERIMENT.md**: set status to `human-tested` or `delivered`, add final changelog entry.
 
 ### Working with Existing Scripts
 

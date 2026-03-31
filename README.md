@@ -61,11 +61,17 @@ Also included:
 
 ## Getting Started
 
+**Option A — Clone and open:**
 1. Clone or download this repo.
 2. Open Claude Code in the folder.
 3. Say `/inq-bridge` or just describe the experiment you want to build.
 
+**Option B — Just point your agent at the repo:**
+Tell Claude Code (or another AI coding agent): *"Use this tool: https://github.com/thalkj/inqbridge"* — it will likely clone the repo, set up the environment, and get everything working by itself.
+
 That's it. Claude handles environment setup, Inquisit discovery, and the full build-test-iterate workflow. You'll see a few permission prompts the first time — accept them and the rest of the session flows smoothly.
+
+> **Model recommendation:** Use **Claude Opus 4.6 or better**. The Inquisit scripting language has many subtle pitfalls (silent compile failures, inverted exit codes, undocumented attribute restrictions) that require strong reasoning to navigate. Weaker models will produce scripts that look correct but fail silently. If using a non-Anthropic LLM, choose the highest-reasoning model available.
 
 **Example prompts:**
 - *"Build a Stroop task with practice and test blocks"*

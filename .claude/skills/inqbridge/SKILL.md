@@ -1,5 +1,5 @@
 ---
-name: inq-bridge
+name: inqbridge
 description: Build Inquisit experiments from scratch or iterate on existing ones using the InqBridge MCP tools. Use for tasks involving Inquisit scripts, run artifacts, Monkey mode, screenCapture analysis, layout patching, and traceable experiment iteration.
 ---
 

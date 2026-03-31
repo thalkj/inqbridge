@@ -128,7 +128,7 @@ set "JSON_VENV=%PROJECT_ROOT:\=\\%\\.venv\\Scripts\\python.exe"
 (
     echo {
     echo   "mcpServers": {
-    echo     "inq-bridge": {
+    echo     "inqbridge": {
     echo       "command": "!JSON_VENV!",
     echo       "args": ["-m", "mcp_server.main"],
     echo       "cwd": "!JSON_ROOT!"
@@ -145,7 +145,7 @@ set "SETTINGS_JSON=%PROJECT_ROOT%\.claude\settings.local.json"
     echo {
     echo   "permissions": {},
     echo   "enableAllProjectMcpServers": true,
-    echo   "enabledMcpjsonServers": ["inq-bridge"]
+    echo   "enabledMcpjsonServers": ["inqbridge"]
     echo }
 ) > "%SETTINGS_JSON%"
 echo   Wrote .claude/settings.local.json

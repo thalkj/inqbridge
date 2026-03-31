@@ -29,7 +29,7 @@ from runner.decomposer import decompose_script as _decompose_script
 from runner.delivery import prepare_delivery as _prepare_delivery
 
 
-app = Server("inq-bridge")
+app = Server("inqbridge")
 
 
 @app.list_tools()

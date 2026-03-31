@@ -81,6 +81,8 @@ Claude handles Python installation (if needed), environment setup, Inquisit disc
 
 > **Note on `setup.bat`:** A `setup.bat` file is included for reference, but you do not need to run it. Claude performs all setup steps automatically. If you prefer manual setup (e.g., for CI or scripting), the bat file creates the virtual environment, installs dependencies, discovers Inquisit, and writes the configuration files.
 
+> **Model recommendation:** Use **Claude Opus 4.6 or better**. The Inquisit scripting language has many subtle pitfalls (silent compile failures, inverted exit codes, undocumented attribute restrictions) that require strong reasoning to navigate. Weaker models will produce scripts that look correct but fail silently. If using a non-Anthropic LLM, choose the highest-reasoning model available.
+
 **Example prompts:**
 - *"Build a Stroop task with practice and test blocks"*
 - *"I have this .iqx script, can you debug it?"*

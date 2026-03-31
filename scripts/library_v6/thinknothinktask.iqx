@@ -1,0 +1,1922 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+									*Think/Not Think Task*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 06-29-2020
+last updated:  04-20-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 04-20-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a Think/Not Think Task procedure to study the effect of thought suppression on
+memory. 
+
+Reference
+Anderson, M.C. & Green, C. (2001). Suppressing unwanted memories by executive control.
+NATURE, 410, 366-369.
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+
+Participants work through 3 phases:
+
+1. Phase I: Learning of 40 random word pairs where the left word is going to be the recall cue of the right word.
+Recall is tested via textbox input in this script.
+2. Phase II: Active Thought suppression instructions for some of these word pairs
+3. Phase III: Re-testing all word pair learning
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+
+Phase 1: ~5-10min per round
+Phase 2: ~20 minutes
+Phase 3: ~5 minutes
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'thinknotthinktask_raw*.iqdat'*
+
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block.
+										
+countPhaseI:						counts the number of phase I rounds run by this script
+pairNumber:							the pairNumber of the currently presented word pair
+
+index_cueword:						the itemnumber (item.words) of the cueword
+cueWord:							the cue word
+index_recallword:					the itemnumber (item.words) of the recall word
+recallWord:							the recall word
+										
+stimulusitem:						the presented stimuli in order of trial presentation
+									phase I: the word pair with the cue word on the left
+									phase II: the cue word
+									phase III: the cue word
+
+
+response:							the participant's response
+correct:							accuracy of response: 1 = correct response; 0 = otherwise
+latency: 							the response latency (in ms); measured from: onset of cue
+
+phaseII_firstcharlatency:			the latency (in ms) of the first input into the textbox during phase 2
+									(even if response was later erased)
+									=> if latency > 0 => participant attempted to respond to item
+
+
+(2) Summary data file: 'thinknotthinktask_summary*.iqdat'
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)		
+									
+Phase I:	
+countPhaseI:						the number of phase1 rounds run in this script					
+								
+propCorrect_Phase1:					the overall proportion correct recall performance during phase 1 
+									Note: if performance < parameters.minPropRecall_phase1 => phase2/phase3 are not run in this script
+
+Phase III:
+propCorrect_Phase3:					the overall proportion correct recall performance during phase 3
+
+propCorrect_Phase3_0Recall:			the proportion correct recall performance of baseline items randomly assigned to be the 'recall' condition comparison
+propCorrect_Phase3_0Suppression:	the proportion correct recall performance of baseline items randomly assigned the 'suppression' condition comparison
+
+propCorrect_Phase3_1Recall:			the proportion correct recall performance of items in the 'recall' condition that were presented only once during phaseII 
+propCorrect_Phase3_1Suppression:	the proportion correct recall performance of items in the 'suppression' condition that were presented only once during phaseII 
+
+propCorrect_Phase3_8Recall:			the proportion correct recall performance of items in the 'recall' condition that were presented 8 times during phaseII  
+propCorrect_Phase3_8Suppression:	the proportion correct recall performance of items in the 'suppression' condition that were presented 8 times during phaseII
+									
+propCorrect_Phase3_16Recall:		the proportion correct recall performance of items in the 'recall' condition that were presented 16 times during phaseII  
+propCorrect_Phase3_16Suppression:	the proportion correct recall performance of items in the 'suppression' condition that were presented 16 times during phaseII
+							
+							
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+1. Phase I: Learning of 40 random word pairs where the left word is going to be the recall cue of the right word. (study-phase)
+2. Phase II: Active Thought suppression instructions for some of these word pairs (suppression-phase)
+3. Phase III: Re-testing all word pair learning (test-phase)
+
+The 40 word pair associations are divided into 4 major 'repeat' groups:
+- Repeat16: 10 word pairs are repeated during phaseII 16 times (5 are 'recall' pairs, 5 are 'suppression' pairs)
+- Repeat8: 10 word pairs are repeated during phaseII 8 times (5 are 'recall' pairs, 5 are 'suppression' pairs)
+- Repeat1: 10 word pairs are presented only once during phaseII (5 are 'recall' pairs, 5 are 'suppression' pairs)
+- Repeat 0: 10 word pairs are never presented during phaseII (=baseline pairs, 5 are 'recall' pairs, 5 are 'suppression' pairs)
+
+'Recall' pairs: participants should recall the associated word given a particular cue word during phase II
+'Suppression' pairs: participants should supress the associated word given a particular cue word during phase II
+
+
+1) Word Pair Assignment:
+By default, this script runs preassigned fixed word pairs (the assignments were randomly generated).
+The word pairs can easily be edited by changing the assignment lists under section Editable Stimuli.
+The advantage of pre-fixed word pairs is that phaseI can be distributed across several sessions.
+
+2) Phase I:
+PhaseI is divided into a study and a recall phase:
+a) Study: each word pair is presented for 5000ms (default; editable parameter)
+b) Recall: each word pair is tested via textbox input
+
+Phase I Termination:
+By default phaseI is terminated after 100% correct recall (editable parameter) on all 40 
+word pairs (= successful completion) OR after 10 unsuccessful (editable parameter)
+rounds.
+
+If (and only if) successful phaseI completion => phase2 is started
+
+3) Phase II: 250 trials
+Participants are given the list of suppression cues during instructions.
+Each suppression and recall word pair is presented for 5000ms (editable parameter) together with a response textbox. 
+Participants are instructed to view the (suppression) cues for the entire duration and to try NOT to 
+think about the associated word pair. If participants respond to a 'suppression' cue word
+(responding that can be detected by computer: typing some input into the textbox even if it is erased),
+feedback is provided.
+
+The number of times as particular cue is presented differs according to 'repeat' group assignment.
+repeat1_recall pairs: 1 time (5 pairs presented once => 5 trials)
+repeat1_suppression pairs: 1 time (5 pairs presented once => 5 trials)
+repeat8_recall pairs: 8 times (5 pairs presented 8 times each => 40 trials)
+repeat8_suppression pairs: 8 times (5 pairs presented 8 times each => 40 trials)
+repeat16_recall pairs: 16 times (5 pairs presented 16 times each => 80 trials)
+repeat16_suppression pairs: 16 times (5 pairs presented 16 times each => 80 trials)
+=> Total of 250 trials
+
+4) Phase III:
+All 40 word pairs are re-tested once (via textbox input)
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+80 demo words provided by Millisecond Software - can easily be edited under section Editable Stimuli
+
+Note: the 80 demo words were randomly assigned to the 8 main experimental conditions:
+4 (number of repeats during phase 2: 0, 1, 2, 3) x 2 suppression condition (recall vs. suppress)
+(also words were randomly assigned to be the cue or the recall word).
+Assignments can easily be edited under section Editable Stimuli
+
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+//stim Sizing:
+/wordHeight = 5%						//the proportional sizing of the word pairs (default: 5%)
+
+//experimental design parameters:
+/runPhase1 = true						//true = phase1 is run by this script
+										//false = phase1 is skipped and script automatically starts with phase2
+										//Note: if false -> script assumes that phase1 criterium has been reached
+																				
+/runPhase2 = true						//true = phase2 is run by this script (if criterium for phase 1 has been reached)
+										//false = phase2 is skipped by this script
+										
+/runPhase3 = true						//true = phase3 is run by this script (if criterium for phase 1 has been reached)
+										//false = phase3 is skipped by this script										
+																				
+//Phase 1:	
+/acquisitionDuration = 5000				//the duration (in ms) that study word pairs are presented (default: 5000ms)
+									
+/minPropRecall_phase1 = 1.0				//the minimum proportion correct recall performance after phase1
+										//that is required to move on to phase 2 
+										//(default: 1.0 => 100% correct recall performance)
+										
+/maxStudyRepeats_phase1 = 10			//the max. number of study-recall repeats run in this session (default: 10)	
+										//Note: the script terminates after 10 unsuccessful phase1 rounds
+										
+//Phase 2:										
+/phase2Timeout = 5000					//the timeout (in ms) for responding during phase2
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item words>
+/ 1="mouth"
+/ 2="dawn"
+/ 3="sister"
+/ 4="trampoline"
+/ 5="breakfast"
+/ 6="boot"
+/ 7="helmet"
+/ 8="shovel"
+/ 9="chair"
+/ 10="maple"
+/ 11="pencil"
+/ 12="kitchen"
+/ 13="lake"
+/ 14="tenor"
+/ 15="mascara"
+/ 16="falcon"
+/ 17="zipper"
+/ 18="terrier"
+/ 19="winter"
+/ 20="princess"
+/ 21="clarinet"
+/ 22="rowboat"
+/ 23="theft"
+/ 24="monarchy"
+/ 25="acorn"
+/ 26="garnet"
+/ 27="green"
+/ 28="bark"
+/ 29="blender"
+/ 30="nutmeg"
+/ 31="peony"
+/ 32="dentist"
+/ 33="hornet"
+/ 34="hexagon"
+/ 35="lollipop"
+/ 36="rabbit"
+/ 37="radio"
+/ 38="plow"
+/ 39="polka"
+/ 40="linen"
+/ 41="breeze"
+/ 42="cement"
+/ 43="tomb"
+/ 44="blouse"
+/ 45="van"
+/ 46="box"
+/ 47="penguin"
+/ 48="scooter"
+/ 49="fork"
+/ 50="tennis"
+/ 51="apartment"
+/ 52="chalk"
+/ 53="meter"
+/ 54="navy"
+/ 55="west"
+/ 56="slime"
+/ 57="mug"
+/ 58="guppy"
+/ 59="oven"
+/ 60="mermaid"
+/ 61="junior"
+/ 62="scar"
+/ 63="physics"
+/ 64="electron"
+/ 65="judge"
+/ 66="dime"
+/ 67="crater"
+/ 68="bread"
+/ 69 ="snail"
+/ 70="rattle"
+/ 71="cello"
+/ 72="hydrant"
+/ 73="tent"
+/ 74="yogurt"
+/ 75="tin"
+/ 76="signature"
+/ 77="tornado"
+/ 78="hourglass"
+/ 79="clown"
+/ 80="party"
+</item>
+
+<list pairNumbers>
+/ poolSize = 80
+/ replace = false
+/ selectionrate = always
+/ resetinterval = 0
+</list>
+
+*********************************************************************
+The following lists create the fixed word pairs
+per trial type. The lists contain the pairNumbers of the
+respective words.
+
+The default pairings are randomly assembled.
+New random pairings can be generated by randomly distributing
+itemnumber 1-80 across these lists.
+*********************************************************************
+
+// pairNumbers of 5 words used as the cues for the baseline ('repeat0') )words
+<list repeat0_cueword_suppression>
+/ items = (55, 41, 50, 37, 34)
+</list>
+
+// pairNumbers of 5 words used as the recall words for the baseline ('repeat0') words
+//(the words are tied to the above cuewords by index)
+<list repeat0_recallword_suppression>
+/items = (78, 1, 5, 7, 20)
+</list>
+
+// pairNumbers of 5 words used as the cues for the baseline ('repeat0') words
+<list repeat0_cueword_recall>
+/ items = (43, 69, 15, 24, 21)
+</list>
+
+// pairNumbers of 5 words used as the recall words for the baseline ('repeat0') words
+//(the words are tied to the above cuewords by index)
+<list repeat0_recallword_recall>
+/items = (74, 61, 75, 16, 57)
+</list>
+
+// pairNumbers of 5 words used as the cues for the repeat1_suppression condition
+<list repeat1_cueword_suppression>
+/items = (60, 52, 45, 77, 42)
+</list>
+
+// pairNumbers of 5 words for the repeat1_cueword_suppressionrepeat1_suppression condition
+//(the words are tied to the above cuewords by index)
+<list repeat1_recallword_suppression>
+/items = (64, 32, 29, 18, 49)
+</list>
+
+// pairNumbers of 5 words used as the cues for the repeat1_recall condition
+<list repeat1_cueword_recall>
+/items = (54, 40, 2, 22, 36)
+</list>
+
+// pairNumbers of 5 words for the repeat1_recall condition
+//(the words are tied to the above cuewords by index)
+<list repeat1_recallword_recall>
+/ items = (46, 19, 79, 9, 8)
+</list>
+
+// pairNumbers of 5 words used as the cues for the repeat8_suppression condition
+<list repeat8_cueword_suppression>
+/items = (30, 47, 63, 33, 59)
+</list>
+
+// pairNumbers of 5 words for the repeat8_suppression condition
+//(the words are tied to the above cuewords by index)
+<list repeat8_recallword_suppression>
+/items = (67, 17, 58, 72, 31)
+</list>
+
+// pairNumbers of 5 words used as the cues for the repeat8_recall condition
+<list repeat8_cueword_recall>
+/items = (14, 76, 27, 44, 28)
+</list>
+
+// pairNumbers of 5 words for the repeat5_recall condition
+//(the words are tied to the above cuewords by index)
+<list repeat8_recallword_recall>
+/ items = (51, 23, 39, 62, 25)
+</list>
+
+// pairNumbers of 5 words used as the cues for the repeat16_suppression condition
+<list repeat16_cueword_suppression>
+/items = (10, 53, 70, 4, 6)
+</list>
+
+// pairNumbers of 5 words for the repeat16_suppression condition
+//(the words are tied to the above cuewords by index)
+<list repeat16_recallword_suppression>
+/ items = (35, 13, 11, 71, 65)
+</list>
+
+// pairNumbers of 5 words used as the cues for the repeat16_recall condition
+<list repeat16_cueword_recall>
+/items = (38, 66, 26, 3, 12)
+</list>
+
+// pairNumbers of 5 words for the repeat16_recall condition
+//(the words are tied to the above cuewords by index)
+<list repeat16_recallword_recall>
+/items = (48, 68, 80, 73, 56)
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text generalintro>
+/ items = ("<h1>Welcome!</h1><hr>
+We are interested in studying the nature of <i>thought suppression and unwanted memories</i>. Specifically we are interested in studying
+whether actively suppressing thoughts impacts your memory of them.<br><br>
+To this end, this study is divided into 3 phases:<br>
+1. Phase I: Learning of <i>word pair associations</i><br>
+2. Phase II: Active Thought Suppression of some of these learned word pair associations<br>
+3. Phase III: Retesting the studied word pair associations<br><br>
+
+Let's begin.")
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+</text>
+
+
+*************************************
+Phase I
+*************************************
+
+<text phaseI_intro>
+/ items = ("<h2>Phase I</h2><hr>
+You will be presented with 40 word pairs, one at a time.<br><br>
+Study them well. You will be given a Recall Test at the end.")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+</text>
+
+<text study_Instructions>
+/ items = ("Let's study the word pairs <%expressions.repeat%>")
+/ fontstyle = ("Arial", 7%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 20%)
+/ vjustify = center
+</text>
+
+<expressions>
+/repeat = if (values.countPhaseI > 1){
+	"some more"
+} else {
+	" "
+}
+</expressions>
+
+<text studyrecall_Instructions>
+/ items = ("Recall the word pairs!")
+/ fontstyle = ("Arial", 7%, true, false, false, false, 5, 1)
+/ position = (50%, 20%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text recallFeedback>
+/ items = ("Recall Performance: <%list.ACC_phaseI.mean*100%>% correct")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ position = (50%, 20%)
+/ size = (80%, 10%)
+/ vjustify = center
+</text>
+
+*************************************
+Phase II
+*************************************
+
+<text phaseII_intro1>
+/ items = ("<h2>Phase II</h2><hr>
+As before, you are given one of the words from the word pairs that you have studied. We will refer to this word as the 'Cue'.<br><br>
+Some of these cues require you to respond as before. Recall the associated word and enter it into the provided textbox.")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+</text>
+
+<text phaseII_intro2>
+/ items = ("But some of these cues require you to SUPPRESS the recall of the associated word.
+
+Whenever you see one of those SUPPRESSION cues, look at the cue but try NOT to think about the associated word. 
+
+In fact, do NOT allow these words to enter your consciousness at all.
+
+
+Continue on to get the list of SUPPRESSION cues.")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<text phaseII_intro3>
+/ items = ("These are the Suppression Cues:")
+/ position = (50%, 5%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+</text>
+
+<text phaseII_intro4>
+/ items = ("Remember:
+
+Whenever you see one of those SUPPRESSION cues, look at the cue but try NOT to think about the associated word at all.
+
+For any other cue, respond as before.
+
+
+Start when you are ready.")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<text phaseII_recallErrorMessage>
+/ items = ("Incorrect Recall")
+/ txcolor = red
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 80%)
+</text>
+
+<text phaseII_suppressionErrorMessage>
+/ items = ("Suppression Cue:
+
+Try not to think about the associated word!")
+/ txcolor = red
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ position = (50%, 7%)
+</text>
+
+
+*************************************
+Phase III
+*************************************
+
+<text phaseIII_intro1>
+/ items = ("<h1>Phase III</h1><hr>
+We will now present you with all the word pairs you have studied once more.<br><br>
+As before we will give you a cue word. Recall the associated word and enter it into the textbox.<br><br>
+There are NO MORE suppression cues. ALL cues require you to respond!<br><br><br>
+Start when you are ready.")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+</text>
+
+<text phaseIII_Instructions>
+/ items = ("Recall the word pairs!")
+/ fontstyle = ("Arial", 7%, true, false, false, false, 5, 1)
+/ position = (50%, 20%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+
+*************************************
+End
+*************************************
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<button exitbutton>
+/ caption = "EXIT"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 80%)
+/ size = (25%, 5%)
+/ valign = center
+/ halign = center
+</button>
+
+<button continuebutton>
+/ caption = "continue >>"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (75%, 95%)
+/ size = (25%, 5%)
+/ valign = center
+/ halign = center
+</button>
+
+<button backbutton>
+/ caption = "<< back"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (25%, 95%)
+/ size = (25%, 5%)
+/ valign = center
+/ halign = center
+</button>
+
+<button startbutton>
+/ caption = "start"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (75%, 95%)
+/ size = (25%, 5%)
+/ valign = center
+/ halign = center
+</button>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+/ inputdevice = mouse
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (
+build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum,
+values.countPhaseI,
+values.pairNumber, values.index_cueword, values.cueWord, values.index_recallword, values.recallWord,
+stimulusitem,response, correct, latency, values.phaseII_firstcharlatency)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+values.countPhaseI, values.propCorrect_Phase1, expressions.propCorrect_Phase3,
+expressions.propCorrect_Phase3_0Recall, expressions.propCorrect_Phase3_0Suppression,
+expressions.propCorrect_Phase3_1Recall, expressions.propCorrect_Phase3_1Suppression,
+expressions.propCorrect_Phase3_8Recall, expressions.propCorrect_Phase3_8Suppression,
+expressions.propCorrect_Phase3_16Recall, expressions.propCorrect_Phase3_16Suppression)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/pairNumber = 0
+/index_cueword = 0
+/index_recallword = 0
+
+/cueWord = ""
+/recallWord = ""
+
+/trialCount = 0
+
+/countPhaseI = 0
+/consecutiveCorrectRecall = 0
+
+/propCorrect_Phase1 = ""
+/Phase1Pass = false
+/phaseII_firstcharlatency = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+//Summary Variables:
+<expressions>
+/propCorrect_Phase3 = list.ACC_phaseIII.mean
+
+/propCorrect_Phase3_0Recall = list.ACC_phaseIII_0Recall.mean
+/propCorrect_Phase3_0Suppression = list.ACC_phaseIII_0Suppression.mean
+
+/propCorrect_Phase3_1Recall = list.ACC_phaseIII_1Recall.mean
+/propCorrect_Phase3_1Suppression = list.ACC_phaseIII_1Suppression.mean
+
+/propCorrect_Phase3_8Recall = list.ACC_phaseIII_8Recall.mean
+/propCorrect_Phase3_8Suppression = list.ACC_phaseIII_8Suppression.mean
+
+/propCorrect_Phase3_16Recall = list.ACC_phaseIII_16Recall.mean
+/propCorrect_Phase3_16Suppression = list.ACC_phaseIII_16Suppression.mean
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial generalintro>
+/ stimulusframes = [1 = generalintro, continuebutton]
+/ validresponse = (continuebutton)
+/ recorddata = false
+</trial>
+
+******************************************************
+Phase I
+******************************************************
+
+<trial phaseI_intro>
+/ stimulusframes = [1 = phaseI_intro, continueButton]
+/ validresponse = (continueButton)
+/ recorddata = false
+</trial>
+
+<trial studyInstructions>
+/ stimulusframes = [1 = study_Instructions, startButton]
+/ validresponse = (startButton)
+/ recorddata = false
+/ posttrialpause = 1000
+</trial>
+
+******************************************************
+Phase II
+******************************************************
+
+<trial phaseII_intro1>
+/ stimulusframes = [1 = phaseII_intro1, continuebutton]
+/ validresponse = (continuebutton)
+/ recorddata = false
+/ branch = [
+	return trial.phaseII_intro2;
+]
+</trial>
+
+<trial phaseII_intro2>
+/ stimulusframes = [1 = phaseII_intro2, continuebutton, backbutton]
+/ validresponse = (continuebutton, backbutton)
+/ recorddata = false
+/ branch = [
+	if (trial.phaseII_intro2.response == "backbutton"){
+		return trial.phaseII_intro1;
+	} else {
+		return trial.phaseII_intro3;
+	}
+]
+</trial>
+
+<trial phaseII_intro3>
+/ stimulusframes = [1 = phaseII_intro3, suppressionCues, continuebutton, backbutton]
+/ validresponse = (continuebutton, backbutton)
+/ recorddata = false
+/ branch = [
+	if (trial.phaseII_intro3.response == "backbutton"){
+		return trial.phaseII_intro2;
+	} else {
+		return trial.phaseII_intro4;
+	}
+]
+</trial>
+
+<trial phaseII_intro4>
+/ stimulusframes = [1 = phaseII_intro4, startbutton, backbutton]
+/ validresponse = (startbutton, backbutton)
+/ recorddata = false
+/ branch = [
+	if (trial.phaseII_intro4.response == "backbutton"){
+		return trial.phaseII_intro3;
+	}
+	return null;
+]
+</trial>
+
+******************************************************
+Phase III
+******************************************************
+
+<trial phaseIII_intro1>
+/ stimulusframes = [1 = phaseIII_intro1, startbutton]
+/ validresponse = (startbutton)
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+finish trial
+**************************************************************************************************************
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+<trial finish_mouse>
+/ inputdevice = mouse
+/ stimulusframes = [1 = finish, exitButton]
+/ validresponse = (exitButton)
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+//presents the cue word on the left and the recall word on the right
+<text wordPair>
+/ items = ("<%item.words.item(values.index_cueword)%> - <%item.words.item(values.index_recallword)%>")
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+</text>
+
+<text cue>
+/ items = ("<%item.words.item(values.index_cueword)%> - ")
+/ position = (49%, 50%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ halign = right
+/ vjustify = center
+</text>
+
+
+<text suppressionCues>
+/ items = ("
+<%item.words.item(list.repeat1_cueword_suppression.item(1))%>
+<%item.words.item(list.repeat1_cueword_suppression.item(2))%>
+<%item.words.item(list.repeat1_cueword_suppression.item(3))%>
+<%item.words.item(list.repeat1_cueword_suppression.item(4))%>
+<%item.words.item(list.repeat1_cueword_suppression.item(5))%>
+<%item.words.item(list.repeat8_cueword_suppression.item(1))%>
+<%item.words.item(list.repeat8_cueword_suppression.item(2))%>
+<%item.words.item(list.repeat8_cueword_suppression.item(3))%>
+<%item.words.item(list.repeat8_cueword_suppression.item(4))%>
+<%item.words.item(list.repeat8_cueword_suppression.item(5))%>
+<%item.words.item(list.repeat16_cueword_suppression.item(1))%>
+<%item.words.item(list.repeat16_cueword_suppression.item(2))%>
+<%item.words.item(list.repeat16_cueword_suppression.item(3))%>
+<%item.words.item(list.repeat16_cueword_suppression.item(4))%>
+<%item.words.item(list.repeat16_cueword_suppression.item(5))%>")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+</text>
+
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list repeat0_recall_pairNumbers>
+/ poolSize = 5
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list repeat0_suppression_pairNumbers>
+/ poolSize = 5
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list repeat1_recall_pairNumbers>
+/ poolSize = 5
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list repeat1_suppression_pairNumbers>
+/ poolSize = 5
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list repeat8_recall_pairNumbers>
+/ poolSize = 5
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list repeat8_suppression_pairNumbers>
+/ poolSize = 5
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list repeat16_recall_pairNumbers>
+/ poolSize = 5
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list repeat16_suppression_pairNumbers>
+/ poolSize = 5
+/ replace = false
+/ resetinterval = 0
+</list>
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_phaseI>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_phaseIII>
+</list>
+
+<list ACC_phaseIII_0Recall>
+</list>
+
+<list ACC_phaseIII_0Suppression>
+</list>
+
+<list ACC_phaseIII_1Recall>
+</list>
+
+<list ACC_phaseIII_1Suppression>
+</list>
+
+<list ACC_phaseIII_8Recall>
+</list>
+
+<list ACC_phaseIII_8Suppression>
+</list>
+
+<list ACC_phaseIII_16Recall>
+</list>
+
+<list ACC_phaseIII_16Suppression>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*****************************************************************************
+PHASE I: Study/Recall Phase Trials
+*****************************************************************************
+
+<trial study_repeat0RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat0_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat0_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat0_recallword_recall.item(values.pairNumber);	
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = wordPair]
+/timeout = parameters.acquisitionDuration
+/ recorddata = true
+</trial>
+
+<openended studyrecall_repeat0RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat0_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat0_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat0_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, studyrecall_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.studyrecall_repeat0RecallPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseI.appendItem(openended.studyrecall_repeat0RecallPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<trial study_repeat0SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat0_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat0_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat0_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = wordPair]
+/timeout = parameters.acquisitionDuration
+/ recorddata = true
+</trial>
+
+<openended studyrecall_repeat0SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat0_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat0_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat0_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, studyrecall_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.studyrecall_repeat0SuppressionPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseI.appendItem(openended.studyrecall_repeat0SuppressionPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+
+<trial study_repeat1RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat1_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat1_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat1_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = wordPair]
+/timeout = parameters.acquisitionDuration
+/ recorddata = true
+</trial>
+
+<openended studyrecall_repeat1RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat1_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat1_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat1_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, studyrecall_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.studyrecall_repeat1RecallPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseI.appendItem(openended.studyrecall_repeat1RecallPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<trial study_repeat1SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat1_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat1_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat1_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = wordPair]
+/timeout = parameters.acquisitionDuration
+/ recorddata = true
+</trial>
+
+<openended studyrecall_repeat1SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat1_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat1_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat1_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, studyrecall_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.studyrecall_repeat1SuppressionPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseI.appendItem(openended.studyrecall_repeat1SuppressionPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<trial study_repeat8RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat8_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat8_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat8_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = wordPair]
+/timeout = parameters.acquisitionDuration
+/ recorddata = true
+</trial>
+
+<openended studyrecall_repeat8RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat8_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat8_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat8_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, studyrecall_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.studyrecall_repeat8RecallPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseI.appendItem(openended.studyrecall_repeat8RecallPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<trial study_repeat8SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat8_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat8_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat8_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = wordPair]
+/timeout = parameters.acquisitionDuration
+/ recorddata = true
+</trial>
+
+<openended studyrecall_repeat8SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat8_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat8_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat8_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, studyrecall_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.studyrecall_repeat8SuppressionPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseI.appendItem(openended.studyrecall_repeat8SuppressionPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<trial study_repeat16RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat16_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat16_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat16_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = wordPair]
+/timeout = parameters.acquisitionDuration
+/ recorddata = true
+</trial>
+
+<openended studyrecall_repeat16RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat16_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat16_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat16_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, studyrecall_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.studyrecall_repeat16RecallPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseI.appendItem(openended.studyrecall_repeat16RecallPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<trial study_repeat16SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat16_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat16_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat16_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = wordPair]
+/timeout = parameters.acquisitionDuration
+/ recorddata = true
+</trial>
+
+<openended studyrecall_repeat16SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat16_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat16_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat16_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, studyrecall_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.studyrecall_repeat16SuppressionPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseI.appendItem(openended.studyrecall_repeat16SuppressionPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<trial studyrecall_feedback>
+/ stimulusframes = [1 = recallFeedback, continuebutton]
+/ validresponse = (continuebutton)
+/ recorddata = false
+</trial>
+
+*****************************************************************************
+PHASE II: 
+*****************************************************************************
+
+<openended phaseII_repeat1RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat1_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat1_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat1_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+	values.phaseII_firstcharlatency = 0;	
+]
+/ stimulusframes = [1 = cue]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ isvalidresponse = [
+	openended.phaseII_repeat1RecallPair.latency >= parameters.phase2Timeout;
+]
+/ iscorrectresponse = [
+	values.phaseII_firstcharlatency = openended.phaseII_repeat1RecallPair.firstcharlatency;
+	return (openended.phaseII_repeat1RecallPair.response == item.words.item(values.index_recallword));
+]
+/ timeout = parameters.phase2Timeout
+/ buttonlabel = "Wait"
+/ errormessage = true(text.phaseII_recallErrorMessage, 500)
+</openended>
+
+<openended phaseII_repeat1SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat1_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat1_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat1_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+	values.phaseII_firstcharlatency = 0;	
+]
+/ stimulusframes = [1 = cue]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ isvalidresponse = [
+	openended.phaseII_repeat1SuppressionPair.latency >= parameters.phase2Timeout;
+]
+/ iscorrectresponse = [
+	values.phaseII_firstcharlatency = openended.phaseII_repeat1SuppressionPair.firstcharlatency;
+	return (values.phaseII_firstcharlatency == 0);
+]
+/ timeout = parameters.phase2Timeout
+/ errormessage = true(text.phaseII_suppressionErrorMessage, 1000)
+/ buttonlabel = "Wait"
+</openended>
+
+<openended phaseII_repeat8RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat8_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat8_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat8_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+	values.phaseII_firstcharlatency = 0;	
+]
+/ stimulusframes = [1 = cue]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ isvalidresponse = [
+	openended.phaseII_repeat8RecallPair.latency >= parameters.phase2Timeout;
+]
+/ iscorrectresponse = [
+	values.phaseII_firstcharlatency = openended.phaseII_repeat8RecallPair.firstcharlatency;
+	return (openended.phaseII_repeat8RecallPair.response == item.words.item(values.index_recallword));
+]
+/ timeout = parameters.phase2Timeout
+/ errormessage = true(text.phaseII_recallErrorMessage, 500)
+/ buttonlabel = "Wait"
+</openended>
+
+
+<openended phaseII_repeat8SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat8_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat8_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat8_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+	values.phaseII_firstcharlatency = 0;	
+]
+/ stimulusframes = [1 = cue]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ isvalidresponse = [
+	openended.phaseII_repeat8SuppressionPair.latency >= parameters.phase2Timeout;
+]
+/ iscorrectresponse = [
+	values.phaseII_firstcharlatency = openended.phaseII_repeat8SuppressionPair.firstcharlatency;
+	return (values.phaseII_firstcharlatency == 0);
+]
+/ timeout = parameters.phase2Timeout
+/ errormessage = true(text.phaseII_suppressionErrorMessage, 1000)
+/ buttonlabel = "Wait"
+</openended>
+
+<openended phaseII_repeat16RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat16_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat16_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat16_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+	values.phaseII_firstcharlatency = 0;	
+]
+/ stimulusframes = [1 = cue]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ isvalidresponse = [
+	openended.phaseII_repeat16RecallPair.latency >= parameters.phase2Timeout;
+]
+/ iscorrectresponse = [
+	values.phaseII_firstcharlatency = openended.phaseII_repeat16RecallPair.firstcharlatency;
+	return (openended.phaseII_repeat16RecallPair.response == item.words.item(values.index_recallword));]
+/ timeout = parameters.phase2Timeout
+/ errormessage = true(text.phaseII_recallErrorMessage, 500)
+/ buttonlabel = "Wait"
+</openended>
+
+<openended phaseII_repeat16SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat16_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat16_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat16_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+	values.phaseII_firstcharlatency = 0;	
+]
+/ stimulusframes = [1 = cue]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ isvalidresponse = [
+	openended.phaseII_repeat16SuppressionPair.latency >= parameters.phase2Timeout;
+]
+/ iscorrectresponse = [
+	values.phaseII_firstcharlatency = openended.phaseII_repeat16SuppressionPair.firstcharlatency;
+	return (values.phaseII_firstcharlatency) == 0;
+]
+/timeout = parameters.phase2Timeout
+/ errormessage = true(text.phaseII_suppressionErrorMessage, 1000)
+/ buttonlabel = "Wait"
+</openended>
+
+<trial phaseII_feedback>
+/ stimulusframes = [1 = recallFeedback, continuebutton]
+/ validresponse = (continuebutton)
+/ recorddata = false
+</trial>
+
+*****************************************************************************
+PHASE III:
+*****************************************************************************
+
+<openended phaseIII_repeat0RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat0_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat0_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat0_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, phaseIII_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.phaseIII_repeat0RecallPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseIII.appendItem(openended.phaseIII_repeat0RecallPair.correct);
+	list.ACC_phaseIII_0Recall.appendItem(openended.phaseIII_repeat0RecallPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<openended phaseIII_repeat0SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat0_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat0_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat0_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, phaseIII_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.phaseIII_repeat0SuppressionPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseIII.appendItem(openended.phaseIII_repeat0SuppressionPair.correct);
+	list.ACC_phaseIII_0Suppression.appendItem(openended.phaseIII_repeat0SuppressionPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<openended phaseIII_repeat1RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat1_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat1_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat1_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, phaseIII_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.phaseIII_repeat1RecallPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseIII.appendItem(openended.phaseIII_repeat1RecallPair.correct);
+	list.ACC_phaseIII_1Recall.appendItem(openended.phaseIII_repeat1RecallPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<openended phaseIII_repeat1SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat1_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat1_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat1_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, phaseIII_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.phaseIII_repeat1SuppressionPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseIII.appendItem(openended.phaseIII_repeat1SuppressionPair.correct);
+	list.ACC_phaseIII_1Suppression.appendItem(openended.phaseIII_repeat1SuppressionPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<openended phaseIII_repeat8RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat8_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat8_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat8_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, phaseIII_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.phaseIII_repeat8RecallPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseIII.appendItem(openended.phaseIII_repeat8RecallPair.correct);
+	list.ACC_phaseIII_8recall.appendItem(openended.phaseIII_repeat8RecallPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<openended phaseIII_repeat8SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat8_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat8_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat8_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, phaseIII_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.phaseIII_repeat8SuppressionPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseIII.appendItem(openended.phaseIII_repeat8SuppressionPair.correct);
+	list.ACC_phaseIII_8Suppression.appendItem(openended.phaseIII_repeat8SuppressionPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<openended phaseIII_repeat16RecallPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat16_recall_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat16_cueword_recall.item(values.pairNumber);
+	values.index_recallword = list.repeat16_recallword_recall.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, phaseIII_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.phaseIII_repeat16RecallPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseIII.appendItem(openended.phaseIII_repeat16RecallPair.correct);
+	list.ACC_phaseIII_16recall.appendItem(openended.phaseIII_repeat16RecallPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<openended phaseIII_repeat16SuppressionPair>
+/ ontrialbegin = [
+	values.pairNumber = list.repeat16_suppression_pairNumbers.nextIndex;
+	values.index_cueword = list.repeat16_cueword_suppression.item(values.pairNumber);
+	values.index_recallword = list.repeat16_recallword_suppression.item(values.pairNumber);
+	values.cueWord = item.words.item(values.index_cueword);
+	values.recallWord = item.words.item(values.index_recallword);
+]
+/ stimulusframes = [1 = cue, phaseIII_Instructions]
+/ position = (75%, 56%)
+/ size = (50%, parameters.wordHeight*1.1%)
+/ fontstyle = ("Arial", parameters.wordHeight, true, false, false, false, 5, 1)
+/ iscorrectresponse = [openended.phaseIII_repeat16SuppressionPair.response == item.words.item(values.index_recallword)]
+/ ontrialend = [
+	list.ACC_phaseIII.appendItem(openended.phaseIII_repeat16SuppressionPair.correct);
+	list.ACC_phaseIII_16Suppression.appendItem(openended.phaseIII_repeat16SuppressionPair.correct);
+]
+/ monkeyresponse = (values.recallWord, "monkey")
+</openended>
+
+<trial phaseIII_feedback>
+/ stimulusframes = [1 = recallFeedback, continuebutton]
+/ validresponse = (continuebutton)
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block generalIntro>
+/ trials = [1 = generalintro]
+</block>
+
+***********************************************************************
+Phase I
+***********************************************************************
+
+<block phaseI_intro>
+/ skip = [
+	parameters.runPhase1 == false;
+]
+
+/ trials = [1 = phaseI_intro]
+</block>
+
+<block phaseI_study>
+/ skip = [
+	parameters.runPhase1 == false;
+]
+/ onblockbegin = [
+	values.trialCount = 0;
+	values.countPhaseI += 1;
+]
+/ ontrialbegin = [
+	values.trialCount += 1;
+]
+/ trials = [1 = studyInstructions;
+2 - 41 = noreplace(trial.study_repeat0RecallPair, trial.study_repeat0SuppressionPair,
+trial.study_repeat1RecallPair, trial.study_repeat1SuppressionPair,
+trial.study_repeat8RecallPair, trial.study_repeat8SuppressionPair,
+trial.study_repeat16RecallPair, trial.study_repeat16SuppressionPair)]
+/ branch = [
+	return block.phaseI_recall;
+]
+</block>
+
+
+<block phaseI_recall>
+/ skip = [
+	parameters.runPhase1 == false;
+]
+/ onblockbegin = [
+	values.trialCount = 0;
+	list.ACC_phaseI.reset();
+]
+/ ontrialbegin = [
+	values.trialCount += 1;
+]
+/ trials = [1 - 40 = noreplace(openended.studyrecall_repeat0RecallPair, openended.studyrecall_repeat0SuppressionPair,
+openended.studyrecall_repeat1RecallPair, openended.studyrecall_repeat1SuppressionPair,
+openended.studyrecall_repeat8RecallPair, openended.studyrecall_repeat8SuppressionPair,
+openended.studyrecall_repeat16RecallPair, openended.studyrecall_repeat16SuppressionPair);
+41 = studyrecall_feedback]
+/ onblockend = [
+	values.propCorrect_Phase1 = list.ACC_phaseI.mean;
+	if (values.propCorrect_Phase1 >= parameters.minPropRecall_phase1){
+		values.Phase1Pass = true;
+	}
+]
+
+/ branch = [
+	if (!values.Phase1Pass){//in case recall performance was too low
+		if (values.countPhaseI < parameters.maxStudyRepeats_phase1){//check the number of study blocks run so far
+			return block.phaseI_study;
+		} else if (monkey.monkeyMode){
+			values.Phase1Pass = true;
+		}
+	}
+	return null;
+]
+</block>
+
+***********************************************************************
+Phase II
+***********************************************************************
+
+<block phaseII_intro>
+/ skip = [
+	!values.Phase1Pass || parameters.runPhase2 == false
+]
+/ trials = [1 = phaseII_intro1]
+</block>
+
+<block phaseII>
+/ skip = [
+	!values.Phase1Pass || parameters.runPhase2 == false
+]
+/ trials = [1-250 = noreplace(
+////run the following recall/suppression pairs once
+openended.phaseII_repeat1RecallPair,openended.phaseII_repeat1SuppressionPair,
+openended.phaseII_repeat1RecallPair,openended.phaseII_repeat1SuppressionPair,
+openended.phaseII_repeat1RecallPair,openended.phaseII_repeat1SuppressionPair,
+openended.phaseII_repeat1RecallPair,openended.phaseII_repeat1SuppressionPair,
+openended.phaseII_repeat1RecallPair,openended.phaseII_repeat1SuppressionPair,
+
+//run the following recall/suppression pairs 8 times each
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+openended.phaseII_repeat8RecallPair,openended.phaseII_repeat8SuppressionPair,
+
+//run the remaining recall/suppression pairs 16 times each:
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair,
+openended.phaseII_repeat16RecallPair,openended.phaseII_repeat16SuppressionPair)]
+
+</block>
+
+***********************************************************************
+Phase III
+***********************************************************************
+
+<block phaseIII_intro>
+/ skip = [
+	!values.Phase1Pass || parameters.runPhase3 == false
+]
+/ trials = [1 = phaseIII_intro1]
+</block>
+
+<block phaseIII>
+/ skip = [
+	!values.Phase1Pass || parameters.runPhase3 == false
+]
+/ onblockbegin = [
+	values.trialCount = 0;
+	values.phaseII_firstcharlatency = "";
+]
+/ ontrialbegin = [
+	values.trialCount += 1;
+]
+/ trials = [1 - 40 = noreplace(openended.phaseIII_repeat0RecallPair, openended.phaseIII_repeat0SuppressionPair,
+openended.phaseIII_repeat1RecallPair, openended.phaseIII_repeat1SuppressionPair,
+openended.phaseIII_repeat8RecallPair, openended.phaseIII_repeat8SuppressionPair,
+openended.phaseIII_repeat16RecallPair, openended.phaseIII_repeat16SuppressionPair)]
+</block>
+
+
+***********************************************************************
+End
+***********************************************************************
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt thinknothink>
+/ onexptbegin = [
+	if (parameters.runPhase1 == false){//in case phase1 is skipped, it's automatically assumed that the criterium has been reached
+		values.Phase1Pass = true;
+	}
+]
+
+/ blocks = [
+	1 = generalIntro;
+	2 = phaseI_intro;
+	3 = phaseI_study;
+	4 = phaseII_intro;
+	5 = phaseII;
+	6 = phaseIII_intro;
+	7 = phaseIII;
+	8 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

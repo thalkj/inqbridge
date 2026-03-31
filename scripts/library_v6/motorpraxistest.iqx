@@ -1,0 +1,659 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Motor Praxis Task (MPT)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-03-2023
+last updated:  04-23-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 04-23-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+
+This script implements Millisecond Software's version of the Motor Praxis Task (MPT) described by Taylor
+et al (2019). The Motor Praxis Task tests psychomotor speed and visual tracking.
+
+Researchers can select to run the task with an absolute screen size to ensure that distances
+stay the same across devices. The default sizing settings are optimized for ipad touchscreens.
+See section Editable Parameters for more info.
+
+Reference:											
+Taylor, Y., Merat, N., & Jamson, S. (2019). The Effects of Fatigue on Cognitive Performance 
+in Police Officers and Staff During a Forward Rotating Shift Pattern. 
+Safety and Health at Work, 10(1), 67–74. 
+https://doi.org/10.1016/j.shaw.2018.08.003
+
+Gur, R. C., Richard, J., Hughett, P., Calkins, M. E., Macy, L., Bilker, W. B., 
+Brensinger, C., & Gur, R. E. (2010). A cognitive neuroscience-based computerized battery for 
+efficient measurement of individual differences: Standardization and initial construct validation. 
+Journal of Neuroscience Methods, 187(2), 254–262. 
+https://doi.org/10.1016/j.jneumeth.2009.11.017
+
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants are asked to quickly touch a series of blue dots as they appear on the screen in random
+locations. The dots continuously get smaller in size on each new trial.
+This script allows test administrators to set the start and end size of the dots as well as the number 
+of trials to run. Based on these three variables (number of trials, start- and end size), 
+the script calculates the size adjustment rate per trial. 
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'motorpraxistest_raw*.iqdat'
+
+//Screen Setup:
+(parameter) runAbsoluteSizes:	true (1) = should run absolutely sized canvas (see parameters- canvasHeight_inmm)
+								false (0) = should use proportionally sized canvas (uses width = 43*screenHeight)
+								
+canvasAdjustments:				NA: not applicable => parameters- runAbsoluteSize was set to 'false'
+								0: parameters- runAbsoluteSize was set to 'true' and screen size was large enough
+								1: parameters- runAbsoluteSize was set to 'true' BUT screen size was too small and 
+								adjustments had to be made
+
+activeCanvasHeight_inmm:		the width of the active canvas (by default: lightGray area) in mm 
+activeCanvasWidth_inmm:			the height of the active canvas in mm 
+display.canvasHeight:			the height of the active canvas in pixels
+display.canvasWidth:			the width of the active canvas in pixels
+
+px_per_mm:						the conversion factor to convert pixel data into mm-results for the current monitor
+								(Note: the higher resolution of the current monitor 
+								the more pixels cover the same absolute screen distance)
+								This factor is needed if you want to convert pixel data into absolute mm data or the other way around
+
+//built-in Inquisit variables:
+								
+blockcode, blocknum:		the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 		the name and number of the currently recorded trial (built-in Inquisit variable)
+								Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+								that do not store data to the data file. 
+								
+								Note: trial.searchEnd currently stores the summary of a target search.
+
+response:					the response of participant during current trial
+latency:					response latency (in ms); measured from onset of dot
+
+//custom variables:
+trialCounter:				counts the number of trials run
+x_inpct:					horizontal coordinate of the current dot (in %) 
+y_inpct:					vertical coordinate of the current dot (in %) 
+stimSize_adjust:			the percentage height adjustments done per trial
+stimHeight_inpct:			the height of the current in %of active canvas
+stimHeight_inmm:			the height of the current in mm
+
+
+(2) Summary data file: 'motorpraxistest_summary*.iqdat'
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)	
+
+
+//Screen Setup:
+(parameter) runAbsoluteSizes:	true (1) = should run absolutely sized canvas (see parameters- canvasHeight_inmm)
+								false (0) = should use proportionally sized canvas (uses width = 43*screenHeight)
+								
+canvasAdjustments:				NA: not applicable => parameters- runAbsoluteSize was set to 'false'
+								0: parameters- runAbsoluteSize was set to 'true' and screen size was large enough
+								1: parameters- runAbsoluteSize was set to 'true' BUT screen size was too small and 
+								adjustments had to be made
+
+activeCanvasHeight_inmm:		the width of the active canvas (by default: lightGray area) in mm 
+activeCanvasWidth_inmm:			the height of the active canvas in mm 
+display.canvasHeight:			the height of the active canvas in pixels
+display.canvasWidth:			the width of the active canvas in pixels
+
+px_per_mm:						the conversion factor to convert pixel data into mm-results for the current monitor
+								(Note: the higher resolution of the current monitor 
+								the more pixels cover the same absolute screen distance)
+								This factor is needed if you want to convert pixel data into absolute mm data or the other way around
+
+numberOfTrials:					the set number of test trials to run
+meanRT:							the mean response latency (in ms) 
+medianRT:						the median response latency (in ms)							
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+1. Practice: 5 trials (editable parameter)
+During the practice trials, the dot stays the same size.
+The Dot appears randomly somewhere on the active canvas. Participants are instructed to touch
+the dot as fast as possible. If no response occurs within the first 3se, a reminder text
+stimulus appears on screen.
+
+2. Test: 20 trials (editable parameter)
+During the test trials, the dot gradually decreases in size (see Editable Parameters for size
+settings). The Dot appears randomly somewhere on the active canvas. Participants are instructed to touch
+the dot as fast as possible. No reminder text appears on screen if participants fail to respond.
+
+Number of Trials in practice/test blocks as well as their color and size can be adjusted under
+section Editable Parameters.
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+
+provided by Millisecond Software 
+The color of practice and test dots as well as sizes can be adjusted 
+under section Editable Parameters.
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+
+provided by Millisecond Software - can be edited under section 'Editable Instructions'
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+//color parameter
+/canvascolor = black			//Display color of the actively used portion of the screen (the 'canvas')	
+									//Note: if set to a color other than the screencolor, the active canvas
+									//appears 'anchored' on the screen regardless of monitor size
+/screencolor = black			//Color of the screen not used by the canvas ('inactive screen')
+/defaultTextColor = white		//Default color of text items presented on active canvas
+
+//CANVAS SIZING PARAMETERS
+//Screen Sizes		
+/runAbsoluteSizes = false		//true = runs absolutely sized canvas (see parameters.canvasHeight_inmm)
+								//false = uses proportionally sized canvas (uses width = 4/3*screenHeight)
+								//the script will look for the larges 4:3 area it can find on the current screen
+																			
+//the setting of the active canvas in absolute mm is only relevant if parameters.runAbsoluteSizes = true (1)
+//=> IF the screen is not sufficiently big to allow for the absolute canvassize
+//the script will run a default width:height=4:3 and make a note in the data files
+//the default absolute sizes provided here are optimized for ipad use																																						
+/canvasHeight_inmm = 144				//the height (H) of the active canvas in mm (default: 144mm ~ ipad screen height)
+										//Note: the width of the active canvas (W) is automatically set at
+										//ratio: W:H ~ 4:3 => W= 4/3*canvasHeight_inmm = 144mm*4/3=192mm (default)
+
+//sizing Parameters in RELATIVE measurements
+//the remaining items are sized relative to CANVAS HEIGHT
+//=> Result: 
+//for absolute canvassizes: you achieve the same absolutely sized stimuli on all screens
+//for relative canvassizes: stimuli are proportionally sized on all screens	
+
+
+
+/startSize_inpct = 15%					//set the startSize (diameter) of the circle in percent (size during trial1)
+										//Note: for canvasHeight_inmm = 144, this startSize results in a circle with
+										//a diameter of ~ 22mm
+										
+/endSize_inpct = 3%						//set the endSize of the circle in percent (size during last trial)
+										//Note: for canvasHeight_inmm = 144, this endSize results in a circle with
+										//a diameter of ~ 4mm
+										
+/numberOfTrials = 20					//set the number of test trials to run										
+										
+										//Note: the script calculates the adjustment rate based on those
+										//three variables (see expressions.stimSize_adjust)
+										
+/stimColor_test = blue					//the color of the test dots									
+										
+										
+///practice:
+/numberOfPracticeTrials = 5				//set the number of practice trials to run										
+/stimColor_practice	= blue				//the color of the practice dots								
+
+									
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ navigationbuttonfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ screencolor = parameters.canvascolor
+/ txcolor = parameters.defaultTextColor
+/ finishlabel = "START"
+</instruct>
+
+<page intro>
+<h1>Welcome!</h1><hr><br>
+In this game you will be asked to track a <font color=<%parameters.stimColor_practice%>>blue</font> dot that appears in random positions on the screen.<br><br>
+<center>As soon as you see the <font color=<%parameters.stimColor_practice%>>blue</font> dot, <%expressions.buttonInstruct%> it <u>as fast as you can</u>!<br>
+Speed is of the essence in this task.</center><br><br>
+Let's practice.
+</page>
+
+<expressions>
+/buttonInstruct = if (computer.touch){
+	"touch"
+} else {
+	"click on"
+}
+</expressions>
+
+<page test>
+<h1>Game Start!</h1><hr><br>
+<center>As soon as you see the <font color=<%parameters.stimColor_test%>>blue</font> dot, <%expressions.buttonInstruct%> it <u>as fast as you can</u>!<br>
+Speed is of the essence in this task.</center><br><br>
+Let's start.
+</page>
+
+//played during practice trials if there is no response for 3s
+<text reminder>
+/ items = ("<%expressions.buttonInstruct%> the dot <u>as fast as you can</u>")
+/ position = (50%, 95%)
+/ txcolor = red
+</text>
+
+**************************************************************************************************************
+finish trial
+**************************************************************************************************************
+
+<text finish>
+/ items = ("<center><h1>Thank you!</h1></center>")
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+</text>
+
+<button exit>
+/ caption = "Exit"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (30%, 8%)
+</button>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, activeCanvas, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/ minimumversion = "6.6.1.0"
+/ screencolor = parameters.screencolor
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ txcolor = parameters.defaultTextColor
+/ txbgcolor = parameters.canvascolor
+/ canvassize = (expressions.canvasWidth, expressions.canvasHeight)
+/ inputdevice = mouse
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session,
+
+//screen parameters
+parameters.runAbsoluteSizes,
+expressions.canvasAdjustments,
+expressions.activeCanvasHeight_inmm, expressions.activeCanvasWidth_inmm,
+display.canvasHeight, display.canvasWidth,
+expressions.px_per_mm,
+
+  
+blockcode, blocknum, trialcode, trialnum,
+response, correct, latency,
+values.trialCounter,
+values.x_inpct, values.y_inpct, 
+expressions.stimSize_adjust,
+expressions.stimHeight_inpct, expressions.stimHeight_inmm)	
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+//screen parameters
+parameters.runAbsoluteSizes,
+expressions.canvasAdjustments,
+expressions.activeCanvasHeight_inmm, expressions.activeCanvasWidth_inmm,
+display.canvasHeight, display.canvasWidth,
+expressions.px_per_mm,
+
+parameters.numberOfTrials,
+expressions.meanRT, expressions.medianRT)
+</summarydata>
+	
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<values>
+/phase = 0
+/trialCounter = 0
+/x_inpx = 0
+/y_inpx = 0
+/x_inpct = 0
+/y_inpct = 0
+/maxTop_inpx = 0
+/maxBottom_inpx = 0
+/maxLeft_inpx = 0
+/maxRight_inpx = 0
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+//the size adjustment of the stim per trial
+/stimSize_adjust = (parameters.startSize_inpct - parameters.endSize_inpct)/(parameters.numberOfTrials-1)
+</expressions>
+
+<expressions>
+/stimHeight_inpct = if (values.phase == "practice"){
+	parameters.startSize_inpct;
+} else {
+	parameters.startSize_inpct - (values.trialCounter-1)*expressions.stimSize_adjust
+}
+
+/stimHeight_inpx = display.getPixelsY(expressions.stimHeight_inpct)
+/stimWidth_inpx = expressions.stimHeight_inpx
+/stimHeight_inmm = 1mm * display.getmmy(expressions.stimHeight_inpx)
+
+//coordinate field for stim coordinates:
+/maxTop_inpx = 0.5*expressions.stimHeight_inpx+0.5*expressions.stimHeight_inpx
+/maxBottom_inpx = expressions.activeCanvasHeight_inpx -0.5*expressions.stimHeight_inpx
+/maxLeft_inpx = 0.5*expressions.stimHeight_inpx+0.5*expressions.stimHeight_inpx
+/maxRight_inpx = expressions.activeCanvasWidth_inpx -0.5*expressions.stimHeight_inpx
+</expressions>
+
+//////summary variables
+<expressions>
+/meanRT = list.RT.mean
+/medianRT = list.RT.median
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+//////////////////////////////////////////////////////////////////////////////////
+The following expressions are used for canvas scaling
+//////////////////////////////////////////////////////////////////////////////////
+
+//functions to calculate screen/canvas areas of the current screen
+<expressions>
+/canvasWidth_inmm = 1mm*(parameters.canvasHeight_inmm*4/3)
+/ px_per_mm = display.height/display.getmmy(display.height, 1)
+/screenHeight_inmm = display.getmmy(display.height)
+/screenWidth_inmm = display.getmmx(display.width)
+/canvasHeight = if (parameters.runAbsoluteSizes == true && 
+	expressions.screenHeight_inmm >= parameters.canvasHeight_inmm &&
+	expressions.screenWidth_inmm >= expressions.canvasWidth_inmm){
+	1mm * parameters.canvasHeight_inmm;
+} else {
+	1px * display.height;	
+}
+
+/canvasWidth = if (parameters.runAbsoluteSizes == true && 
+	expressions.screenHeight_inmm >= parameters.canvasHeight_inmm &&
+	expressions.screenWidth_inmm >= expressions.canvasWidth_inmm){
+		1mm * expressions.canvasWidth_inmm;
+} else {
+		1px * display.height * 4/3;
+}
+/activeCanvasHeight = if (parameters.runAbsoluteSizes == true && 
+	expressions.screenHeight_inmm >= parameters.canvasHeight_inmm &&
+	expressions.screenWidth_inmm >= expressions.canvasWidth_inmm){
+		1mm * (parameters.canvasHeight_inmm);
+	} else {
+		1px * (expressions.canvasHeight)
+	}
+/activeCanvasWidth = if (parameters.runAbsoluteSizes == true && 
+	expressions.screenHeight_inmm >= parameters.canvasHeight_inmm &&
+	expressions.screenWidth_inmm >= expressions.canvasWidth_inmm){
+		1mm * (expressions.canvasWidth_inmm);
+	} else {
+		1px * (expressions.canvasWidth)
+	}	
+/canvasAdjustments = {
+	if (!parameters.runAbsoluteSizes){
+		return "N/A";
+	} else if (expressions.screenHeight_inmm >= parameters.canvasHeight_inmm &&
+		expressions.screenWidth_inmm >= expressions.canvasWidth_inmm){
+		return "0";
+	} else {
+		return "1";
+	}
+}
+
+//play area sizes in screen percent and pixels:
+/activeCanvasHeight_inmm = 1mm*display.getmmy(display.canvasHeight)
+/activeCanvasWidth_inmm = 1mm*display.getmmx(display.canvasWidth)
+/activeCanvasHeight_inpct = 100%
+/activeCanvasWidth_inpct = 100%
+/activeCanvasHeight_inpx = 1px*display.getPixelsY(expressions.activeCanvasHeight_inpct)
+/activeCanvasWidth_inpx = 1px*display.getPixelsX(expressions.activeCanvasWidth_inpct)
+
+/activeCanvas_center_y_inpx = 1px*display.getPixelsY(50%)
+/activeCanvas_center_x_inpx = 1px*display.getPixelsX(50%)
+
+/leftactiveCanvasBorder_inpx = 1px* (expressions.activeCanvas_center_x_inpx - 0.5*expressions.activeCanvasWidth_inpx)
+/rightactiveCanvasBorder_inpx = 1px* (expressions.activeCanvas_center_x_inpx + 0.5*expressions.activeCanvasWidth_inpx)
+/topactiveCanvasBorder_inpx = 1px* (expressions.activeCanvas_center_y_inpx - 0.5*expressions.activeCanvasHeight_inpx)
+/bottomactiveCanvasBorder_inpx = 1px* (expressions.activeCanvas_center_y_inpx + 0.5*expressions.activeCanvasHeight_inpx)
+</expressions>
+
+
+////////////////////////////////////////////////
+picture to distinguish canvas area
+////////////////////////////////////////////////
+
+<shape activeCanvas>
+/ shape = rectangle
+/ width = 100%
+/ height = 100%
+/ vposition = 50%
+/ hposition = 50%
+/ color = parameters.canvascolor
+/ erase = false
+</shape>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	LISTS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+******************************************************
+Data Lists
+
+latency: store the latency of correct responses
+******************************************************
+
+<list RT>
+</list>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<shape stim>
+/ shape = circle
+/ color = parameters.stimColor_test
+/ height = 1px*expressions.stimHeight_inpx
+/ width = 1px*expressions.stimHeight_inpx
+/ position = (50%, 50%)
+/ erase = false
+</shape>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<trial start>
+/ stimulusframes = [1 = activeCanvas]
+/ trialduration = 500
+/ recorddata = false
+</trial>
+
+<trial practice>
+/ ontrialbegin = [
+	values.trialCounter += 1;
+	values.y_inpx = rand(expressions.maxTop_inpx, expressions.maxBottom_inpx);
+	values.x_inpx = rand(expressions.maxLeft_inpx, expressions.maxRight_inpx);
+	shape.stim.hposition = 1px*values.x_inpx;
+	shape.stim.vposition = 1px*values.y_inpx;	
+	values.x_inpct = 1%*display.getpercentx(values.x_inpx);
+	values.y_inpct = 1%*display.getpercenty(values.y_inpx);	
+]
+/ stimulustimes = [0 = activeCanvas, stim; 3000 = reminder]
+/ validresponse = (stim)
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ branch = [
+	if (values.trialCounter < parameters.numberOfPracticeTrials){
+		return trial.practice;
+	}
+]
+</trial>
+
+<trial test>
+/ ontrialbegin = [
+	values.trialCounter += 1;
+	values.y_inpx = rand(expressions.maxTop_inpx, expressions.maxBottom_inpx);
+	values.x_inpx = rand(expressions.maxLeft_inpx, expressions.maxRight_inpx);
+	shape.stim.hposition = 1px*values.x_inpx;
+	shape.stim.vposition = 1px*values.y_inpx;	
+	values.x_inpct = 1%*display.getpercentx(values.x_inpx);
+	values.y_inpct = 1%*display.getpercenty(values.y_inpx);	
+]
+/ stimulusframes = [1 = activeCanvas, stim]
+/ validresponse = (stim)
+/ ontrialend = [
+	list.RT.appendItem(trial.test.latency);
+]
+/ branch = [
+	if (values.trialCounter < parameters.numberOfTrials){
+		return trial.test;
+	}
+]
+</trial>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<block practice>
+/ preinstructions = (intro)
+/ onblockbegin = [
+	values.phase = "practice";
+	shape.stim.color = parameters.stimColor_practice;	
+	values.trialCounter = 0;
+]
+/ trials = [1 = start; 2 = practice]
+</block>
+
+<block test>
+/ preinstructions = (test)
+/ onblockbegin = [
+	values.phase = "test";
+	shape.stim.color = parameters.stimColor_test;
+	values.trialCounter = 0;
+]
+/ trials = [1 = start; 2 = test]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expt motorPraxis>
+/ blocks = [
+	1 = practice;
+	2 = test;
+	3 = finish;
+]
+</expt>
+
+<monkey>
+/ latencydistribution=normal(100, 80)
+</monkey>
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

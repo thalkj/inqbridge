@@ -1,0 +1,951 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									CERTAINTY EQUIVALENT (CE) PROCEDURE 
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-16-2014
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+Millisecond Software thanks Dr. Jakub Traczyk and Kamil Fulawka for collaborating on this script!
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script runs the Certainty Equivalent (CE) Procedure to estimate CE Points described by:
+
+Paulus, M. P., & Frank, L. R. (2006). Anterior cingulate activity modulates nonlinear decision weight function 
+of uncertain prospects. NeuroImage,30, 668-677.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants work on 7 (default) probability prospects similarly to "would you rather have
+a 1/10 chance to win $1000 or get $333 for sure?" to determine the participants' CE points.
+The CE point for a given prospect is the sure pay-off at which a person has no preference for either
+option (~ indifference point). 
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'certaintyequivalentprocedure_raw*.iqdat'
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block. 
+										
+iteration_perprospect:				number of iterations (using smaller and smaller ranges of values) used to pinpoint CE for the current prospect
+										Note: set individually for each prospect via list.iterations_perprospect
+										
+select_prospect:					contains the itemnumber of the current prospect (1-7)
+										Note: the numbering refers to the list position of that prospect in 
+										list.winprobabilities/list.potentialwins. By default, the prospects are selected in sequence
+										
+gambling_p:							contains the current gambling probability p
+
+chancedescription:					contains the description of the gambling probability p used in the target question
+											(example: p = 0.1 => chance description: 1 in 10)
+											
+winprospect:						contains the max dollar amount that could be won by gambling
+current_bottom:						contains the current bottom value of the range tested for the current CE
+
+current_top:						contains the current upper value of the range tested for the current CE
+										NOTE: current_top & current_bottom are updated at the end of trial.surebet_middlethird
+										
+current_lowerthird:					contains the values at the lower third of the tested range (offered as sure win in trial.surebet_lowerthird)
+
+current_middlethird:				contains the values at the middle third of the tested range (offered as sure win in trial.surebet_middlethird)
+current_guaranteedwin:				contains the current guaranteed win (the sure amount currently offered)
+
+stimulusitem:						the presented stimuli in order of trial presentation
+response:							the participant's response (SCANCODE of response buttons)
+										2 => number 1 was pressed
+										3 => number 2 was pressed
+
+correct:							accuracy of response: 1 = correct response; 0 = otherwise
+latency: 							the response latency (in ms); measured from: onset of question
+
+low_response:						stores the response (1 or 2) that participant makes when offered values.current_lowerthird
+middle_response:					stores the response (1 or 2) that participant makes when offered values.current_middlethird
+next_bottom:						contains the next determined bottom value
+next_top:							contains the next determined top value
+
+CE:									calculates the Certainty Equivalent (CE) of the current prospect based on the last (aka next) estimated range
+									Notes: amount makes sense only at the end of a cycle (->trial.estimate_ce)
+EV:									calculates the expected value of the current gambling prospect
+
+
+(2) Summary data file: 'CertaintyEquivalentProcedure_summary*.iqdat'
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)	
+
+script_aborted:				0 (false)= script is not prematurely aborted
+							1 (true)= script is prematurely aborted after participant needed to repeat a trial sequence
+							too often (values.repeat > parameters.maxnr_repeats)
+
+iteration_perprospect:		number of iterations (using smaller and smaller ranges of values) used to pinpoint CE for the current prospect
+							Note: set individually for each prospect via list.iterations_perprospect
+										
+for each of the prospects separately (explained for prospect1):
+p1:							stores the winprobability of prospect1 
+							(numbering is based on the prospect's index in list.winprobabilities and NOT
+							whether it was the first prospect to be presented as the order can be set to be random)
+										
+winprospect1:				stores the pote of potential winning amount of prospect1 
+							(numbering is based on the prospect's index in list.potentialwins and NOT
+							whether it was the first prospectto be presented as the order can be set to be random)
+								
+EV1:						stores Expected Value for Prospect 1
+
+CE1:						stores the CE values for Prospect 1
+							=> Index refers to position of prospect in list.winprobabilities/list.potentialwins
+							(and not to its actual presentation as that could be randomized)
+							Note: if more than 7 prospects are tested 
+									=> add corresponding values (/CE7 = 0) under VALUES
+									=> add corresponding expressions (e.g. /p7 = ....) under EXPRESSIONS
+									=> update list.selectprospects
+									=> update trial.estimate_ce
+									=> update summary data file
+
+(same for remaining Prospects)
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+By default, 7 prospects are tested (to add/delete prospects, go to EDITABLE CODE -> Editable Lists and follow instructions)
+with 4 iterations (default; Editable Value) and 2 trials per iteration.
+=> Trial1 (trial.surebet_lowerthird) uses the lower third of the current range as the sure bet 
+=> Trial2 (trial.surebet_middlethird) uses the middle third of the current range as the sure bet
+Depending on the response pattern, the range is narrowed down to the lower third, middle third, or upper third of the last tested range.
+See more info regarding the algorithm used below.
+
+After participant selects her choice, the choice is highlighted for parameters.feedbackduration (default: 1s) and a posttrialpause of
+parameters.iti (default: 1s) is added before the next trial is started.
+
+At the end of each prospect, trial.estimate_CE estimates the CE for the current prospect as the the midpoint of the last determined range.
+
+CE- Estimation Algorithm (Paulus & Frank, 2006):
+The CE estimation procedure is to iterate through several sequences of dividing a range of possible numbers (e.g. 0-1000)
+into thirds (0-333, 333-666, 666-1000) to find the particular third that contains the CE and then use that narrowed down range 
+as the next possible range of numbers for the next iteration (e.g. 0-333). For each iteration, there are always two trials:
+1) the first trial that uses the lower third of the range as the sure bet (here: $333)
+2) the second trial that uses the middle third of the range as the sure bet (here: $666)
+
+Depending on the combination of answers to the first sure bet question ($333) and the second sure bet question ($666), 
+the range of the CE is adjusted (aka narrowed down). 4 possible combinations of responses:
+1) Participant prefers sure bet #1 ($333) AND sure bet #2 ($666) => the CE likely lies somewhere between 0-333 (new range)
+2) Participant prefers gamble over sure bet #1 BUT prefers the sure bet for #2 ($666) => the CE likely lies somewhere between 333-666 (new range)
+3) Participant prefers gamble over sure bet #1 AND prefers gamble over sure bet #2 => the CE likely lies somewhere between 666-1000 (new range)
+4) Participant prefers sure bet #1 BUT prefers the gamble over sure bet #2: this response pattern suggests that participant
+may not have understood the question or didn't read the question carefully (as it doesn't make 'sense' to accept the lower sure bet but
+prefer the gamble for the higher one). Paulus & Frank (2006) do not explicitly describe how their algorithm handles this response pattern.
+As suggested by Dr. Traczyk and Kamil Fulawka, participants are provided a certain number of repetitions of this iteration (editable parameter)
+to allow for self-correction. However, if participants still produce this 'irrational' response pattern after a certain number of repetitions,
+the entire task should be aborted as the data of these participants cannot be trusted.
+
+Once a certain number of successful iterations -narrowing the range of values each time- have been run, the CE is 
+simply calculated as the midpoint of the last determined range.
+
+NOTE: The number of iterations can vary between prospects in this script and are set for each prospect separately under 
+EDITABLE CODE -> Editable Lists -> list.iterations_perprospect. This is a deviation from the original algorithm by 
+Paulus & Frank (2006) (they suggest 4 iterations per prospect). This change allows experimenters to select an appropriate number 
+of iterations for each prospect to ensure that estimated CE points can lie above or below the EV for the currently tested prospect.
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+Default prospects are taken from Paulus & Frank (2006)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+Instructions used are the originals from Paulus & Frank (2006) with some minor edits.
+Instructions can be easily edited under section EDITABLE INSTRUCTIONS
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+											
+/responsekey_gamble:				the gamble response key (default: '1'); left response key
+/responsekey_surewin:				the sure win response key (default: '2'); right response key
+
+/feedbackduration:					duration of the feedback presentation (default: 2000ms)
+
+/iti:								duration of the inter trial interval between trials (after trial.surebet_lowerthird/trial.surebet_middlethird)
+									(default: 1000ms)
+									
+/maxnr_repeats:						max number of consecutive repetitions of a trial sequence before the entire task is aborted
+									Repetitions of trials are run if participant gives contradictory/irrational responses
+									to trial.surebet_lowerthird (= accepting sure amount) and trial.surebet_middlethird (= prefering gamble).
+									In such a case participant is given 1 (default) more try. If the same irrational response pattern is given 
+									the entire task is aborted.
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/responsekey_gamble = "1"
+/responsekey_surewin = "2"
+
+/feedbackduration = 1000
+/iti = 1000
+
+/maxnr_repeats = 1
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item repeatwarning>
+/1 = "Your choices have been inconsistent. 
+
+Please note, that if you accept the sure win of some amount of money (e.g. $300), and then choose to gamble when you have an option to take an even higher sure win (e.g. $600) for the same prospect, it can be considered irrational behavior. 
+
+You have <%values.repeats_left%> more attempt(s) to finish the task. If you choose irrationally again, we have to assume that you pick your answers randomly and the experiment will end.
+
+
+Please, press the <SPACEBAR> to continue"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.50%, false, false, false, false, 5, 1)
+</instruct>
+
+Note: these instructions are the originals from Paulus & Frank (2006) (small edits)
+<page intro>
+^In many situations you have to decide between a sure thing or a gamble, something that may or may not pay out. 
+^^In this task you select between a chance event and a sure thing. 
+^^You may see: 
+^1: 1 in 10 chance of winning $100 or 
+^2: A sure win of $10. 
+^^If you prefer option 1, press the '<%parameters.responsekey_gamble%>'- <%expressions.buttoninstruct1%>. 
+^If you prefer option 2, press the '<%parameters.responsekey_surewin%>' - <%expressions.buttoninstruct1%>. 
+^^After your selection the computer highlights your choice, the options disappear, and a new trial begins.
+</page>
+
+<text intro>
+/ items = ("In many situations you have to decide between a sure thing or a gamble, something that may or may not pay out. 
+In this task you select between a chance event and a sure thing. 
+
+You may see two options such as: 
+1: 1 in 10 chance of winning $100 or 
+2: A sure win of $10. 
+
+If you prefer option 1, press the '<%parameters.responsekey_gamble%>'- <%expressions.buttoninstruct1%>. 
+If you prefer option 2, press the '<%parameters.responsekey_surewin%>' - <%expressions.buttoninstruct1%>. 
+
+After your selection the computer highlights your choice, the options disappear, and a new trial begins.")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<text start>
+/ items = ("<press spacebar to start>")
+/ fontstyle = ("Courier New", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+</text>
+
+Note: information presented before each new prospect. If this page should not be presented,
+go to section BLOCKS and remove the corresponding code from block.prospect.
+<text next>
+/ items = ("Next Task
+
+Start when you are ready.")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Courier New", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"button";} else {"key";}
+</expressions>
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+
+Note: the default script assumes that 7 prospects are run.
+To run more/fewer prospects
+a) update all of the following lists to reflect the added/removed prospects
+b) under section "VALUES: automatically updated": add values.CE8 etc.
+c) under section "EXPRESSIONS": add expressions.p8, expressions.winprospect8 etc.
+d) under section TRIALS: update trial.estimate_ce to assign the appropropriate CE/EV value to values.CE8/values.EV8
+e) under section "DATA": add the additional values.CE8 (e.g.) to the summary data file
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: this list contains all 7 prospects and controls how they are selected.
+By defaults, they are selected sequentially
+To randomize the order delete /selectionmode = sequence and replace with /replace = false
+
+!While the order of the prospects can be randomized, they will still be referenced
+by their index number. For example:
+prospect1 is (P, x) = (0.002, 10000) regardless of whether it was shown as the first
+or the 7th prospect.
+<list selectprospects>
+/items = (1, 2, 3, 4, 5, 6, 7)
+/ selectionmode = sequence
+</list>
+
+Note: this list contains the win probabilities for the 7 prospects in sequence
+<list winprobabilities>
+/items = (0.002, 0.06, 0.1, 0.55, 0.7, 0.9, 0.99)
+/selectionmode = values.select_prospect
+</list>
+
+Note: this list contains the descriptions of the 7 win probabilities as used for the target question.
+Edit the descriptions to match your probabilities or to alter existing descriptions
+e.g. instead of "1 in 500" you could use "2 in 1000"
+<list chancedescriptions>
+/items = ("1 in 500", "6 in 100", "1 in 10", "11 in 20", "7 in 10", "9 in 10", "99 in 100")
+/ selectionmode = values.select_prospect
+</list>
+
+Note: this list contains the potential wins of the 7 prospects
+<list potentialwins>
+/items = (10000, 2000, 500, 700, 150, 400, 5000)
+/ selectionmode = values.select_prospect
+</list>
+
+Note: this list contains the individual iterations per prospect for the 7 prospects.
+The original algorithm (Paulus & Frank, 2006) suggests 4 per prospect; the default iterations in this script
+were chosen to ensure that the estimated CEs could be above or below the expected
+values for each of their respective prospects.
+<list iterations_perprospect>
+/items = (8, 4, 4, 4, 4, 4, 4)
+/ selectionmode = values.select_prospect
+</list>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+raw data
+********************
+											
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum,  
+values.iteration_perprospect,
+values.select_prospect, values.gambling_p, values.chancedescription, values.winprospect, values.current_bottom, values.current_top,
+values.current_lowerthird, values.current_middlethird, values.current_guaranteedwin,
+stimulusitem, response, correct, latency, values.low_response, values.middle_response, values.repeat, 
+values.next_bottom, values.next_top, expressions.CE, expressions.EV)
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+values.script_aborted, values.iteration_perprospect,
+expressions.p1, expressions.winprospect1, values.EV1, values.CE1, 
+expressions.p2, expressions.winprospect2, values.EV2, values.CE2,
+expressions.p3, expressions.winprospect3, values.EV3, values.CE3, 
+expressions.p4, expressions.winprospect4, values.EV4, values.CE4, 
+expressions.p5, expressions.winprospect5, values.EV5, values.CE5, 
+expressions.p6, expressions.winprospect6, values.EV6, values.CE6,
+expressions.p7, expressions.winprospect7, values.EV7, values.CE7)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/iteration_perprospect:						number of iterations for the current prospect (using smaller and smaller ranges of values) 
+											used to pinpoint CE (default: 4)
+/count_prospects:							counts the number of prospects run
+/select_prospect:							contains the index of the current prospect
+												Note: the numbering refers to the list position of that prospect in list.winprobabilities/list.potentialwins
+/gambling_p:								contains the current gambling probability p
+/chancedescription:							contains the description of the gambling probability p used in the target question
+											(example: p = 0.1 => chance description: 1 in 10)
+/winprospect:								contains the max dollar amount that could be won by gambling
+/count_iterations:							counts the number of iterations through trial.surebet_lowerthird per prospect
+													Paulus & Frank (2006) used 8 trials => 4 trial.surebet_lowerthird and 4 trial.surebet_middlethird
+													!!! IN THIS SCRIPT: IF participants select the sure win in trial.surebet_lowerthird, trial.surebet_middlethird
+													is skipped in order to avoid that participants could select 
+													the sure option for the lower sure pay-off but the gambling option for the
+													higher sure pay-off (Paulus & Frank do not offer a contingency for these selections)
+/current_bottom:							contains the current bottom value of the range tested for the current CE
+/current_top:								contains the current upper value of the range tested for the current CE
+/next_bottom:								contains the next determined bottom value
+/next_top:									contains the next determined top value
+/range:										contains the range of values tested for the current CE (e.g. bottom value = 0 and top value = 1000; range = 1000)
+/current_lowerthird:						contains the values at the lower third of the tested range (offered as sure win in trial.surebet_lowerthird)
+/current_middlethird:						contains the values at the middle third of the tested range (offered as sure win in trial.surebet_middlethird)
+/current_guaranteedwin:						contains the current guaranteed win (the sure amount currently offered)
+/low_response:								stores the response (1 or 2) that participant makes when offered values.current_lowerthird
+/middle_response:							stores the response (1 or 2) that participant makes when offered values.current_middlethird
+
+/repeat:									if participant gives contradictory responses to trial.surebet_lowerthird and trial.surebet_middlethird
+											(aka sure pay-off for trial.surebet_lowerthird but gamble for trial.surebet_middlethird), the
+											trial sequence is repeated up to parameters.maxnr_repeats times.
+/script_aborted:							0 = script is not prematurely aborted
+											1 = script is prematurely aborted after participant needed to repeat a trial sequence
+												too often (values.repeat > parameters.maxnr_repeats)
+/current_iti:								the iti for the current trial (unless the trial is a repeat, values.current_iti = parameters.iti)
+/repeats_left:								number of repeats left before task is aborted
+
+<values>
+/iteration_perprospect = 0
+/count_prospects = 0
+/select_prospect = 0
+/gambling_p = 0
+/chancedescription = 0
+/winprospect = 0
+/count_iterations = 0
+/current_bottom = 0
+/current_top = 0
+/next_bottom = 0
+/next_top = 0
+/range = 0
+/current_guaranteedwin = 0
+/current_lowerthird = 0
+/current_middlethird = 0
+/low_response = 0
+/middle_response = 0
+/repeat = 0
+/script_aborted = 0
+/current_iti = 0
+/repeats_left = 0
+</values>
+
+
+********************************************
+ADDING PROSPECTS: add values below
+********************************************
+
+EV1-EV7: 					Expected Value for each of the 7 prospects
+
+DV:
+CE1-CE7:					store the CE values for the 7 prospects
+							=> Index refers to position of prospect in list.winprobabilities/list.potentialwins
+							Note: if more than 7 prospects are tested 
+								=> add corresponding values (/CE7 = 0)
+								=> update list.selectprospects
+								=> update trial.estimate_ce
+
+<values>
+/EV1 = ""
+/EV2 = ""
+/EV3 = ""
+/EV4 = ""
+/EV5 = ""
+/EV6 = ""
+/EV7 = ""
+
+/CE1 = ""
+/CE2 = ""
+/CE3 = ""
+/CE4 = ""
+/CE5 = ""
+/CE6 = ""
+/CE7 = ""
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/EV:								calculates the expected value of the current gambling prospect
+/lowerthird:						calculates the value that corresponds to the lower third of the currently tested range
+/middlethird:						calculates the value that corresponds to the middle third of the currently tested range
+
+/CE:								calculates the Certainty Equivalent (CE) of the current prospect based on the last (aka next) determined
+									range
+
+<expressions>
+/EV = values.gambling_p * values.winprospect
+/lowerthird = values.current_bottom + round((values.range)/3)
+/middlethird = values.current_bottom + 2 * round((values.range)/3)
+
+/CE = (values.next_bottom + values.next_top)/2
+</expressions>
+
+****************************************
+ADDING PROSPECTS: add expressions below
+****************************************
+p1-p6:								win probability of prospect1 - prospect6
+winprospect1 - winprospect6:		win prospect of prospect 1 - prospect6
+									(index refers to position of prospect in list.winprobabilities/list.potentialwins)
+								
+									!!!!Note: if more than 7 prospects are run, add the necessary expressions below
+
+<expressions>
+/p1 = list.winprobabilities.item(1)
+/p2 = list.winprobabilities.item(2)
+/p3 = list.winprobabilities.item(3)
+/p4 = list.winprobabilities.item(4)
+/p5 = list.winprobabilities.item(5)
+/p6 = list.winprobabilities.item(6)
+/p7 = list.winprobabilities.item(7)
+/winprospect1 = list.potentialwins.item(1)
+/winprospect2 = list.potentialwins.item(2)
+/winprospect3 = list.potentialwins.item(3)
+/winprospect4 = list.potentialwins.item(4)
+/winprospect5 = list.potentialwins.item(5)
+/winprospect6 = list.potentialwins.item(6)
+/winprospect7 = list.potentialwins.item(7)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<trial intro>
+/ stimulusframes = [1 = intro, start]
+/ validresponse = (" ")
+</trial>
+
+<trial nextprospect>
+/ skip = [
+	(values.count_prospects >= list.selectprospects.itemCount)
+]
+/ stimulusframes = [1 = next, start]
+/ validresponse = (" ")
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<text gamblequestion_gamble>
+/items = ("1. <%values.chancedescription%> chance to win $<%values.winprospect%>")
+/position = (20%, 45%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/halign = left
+/erase = false
+</text>
+
+<text gamblequestion_surebet>
+/items = ("2. A sure win of $<%values.current_guaranteedwin%>")
+/position = (20%, 52%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/erase = false
+/halign = left
+</text>
+
+<text gamblequestion_question>
+/items = ("1 or 2?")
+/position = (20%, 65%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/halign = left
+</text>
+
+<shape background>
+/shape = rectangle
+/color = white
+/size = (100%, 100%)
+/position = (50%, 50%)
+/erase = false
+</shape>
+
+<text repeatwarning>
+/items = repeatwarning
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (50%, 50%)
+/size = (90%, 60%)
+/ hjustify = left
+</text>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Several iterations (= values.iteration_perprospect) through sequence trial.surebet_lowerthird-trial.surebet_middlethird are used 
+to pinpoint the CE for the current prospect. The range of tested values is repeatedly cut into
+thirds and the trials attempt to pinpoint the third the CE of the current prospect lies in.
+After 8 iterations (default), the CE is calculated as the midpoint of the last determined range.
+
+One Iteration: trial.surebet_lowerthird -> trial.surebet_lowerthird_feedback -> trial.surebet_middlethird -> trial.surebet_middlethird_feedback
+after the last iteration is finished: trial.estimate_CE
+
+********************************
+Trial Sequence (for one iteration)
+********************************
+
+Note: trial calculates value that corresponds to 1/3 of the currently tested range for the CE and
+uses that value as the current 'sure win'
+=> trial.surebet_middlethird is called (after feedback)
+
+<trial surebet_lowerthird>
+/ontrialbegin = [
+	values.low_response = 0; 
+	values.middle_response = 0;
+	text.gamblequestion_gamble.textColor = black; 
+	text.gamblequestion_surebet.textColor = black;
+	values.current_bottom = values.next_bottom; 
+	values.current_top = values.next_top;
+	if (values.repeat == 0) {
+		values.count_iterations += 1;
+	}
+	values.range = values.current_top - values.current_bottom;
+	values.current_lowerthird = expressions.lowerthird;
+	values.current_guaranteedwin = values.current_lowerthird;
+	values.current_middlethird = expressions.middlethird;
+	values.current_iti = parameters.iti;
+]
+/stimulusframes = [1 = background, gamblequestion_gamble, gamblequestion_surebet, gamblequestion_question]
+/validresponse = (parameters.responsekey_gamble, parameters.responsekey_surewin)
+/ ontrialend = [
+	if (trial.surebet_lowerthird.responseText == parameters.responsekey_gamble) {
+		values.low_response = 1;
+	} else {
+		values.low_response = 2;
+	}
+
+	if (values.low_response == 1) {
+		text.gamblequestion_gamble.textColor = blue;
+	} else {
+		text.gamblequestion_surebet.textColor = blue;
+	}
+]
+/branch = [return trial.surebet_lowerthird_feedback;]
+</trial>
+
+
+Note: trial highlights the selected choice for 2s (default) and adds a posttrialpause of 4s (default) after
+trial.surebet_lowerthird
+<trial surebet_lowerthird_feedback>
+/ontrialbegin = [
+	trial.surebet_lowerthird_feedback.insertStimulusTime(shape.background, parameters.feedbackduration);
+]
+/stimulusframes = [1 = gamblequestion_gamble, gamblequestion_surebet]
+/timeout = parameters.feedbackduration
+/ontrialend = [
+	trial.surebet_lowerthird_feedback.resetStimulusFrames();
+]
+/posttrialpause = values.current_iti
+/branch = [return trial.surebet_middlethird;]
+/recorddata = false
+</trial>
+
+Note: trial calculates value that corresponds to 2/3 of the currently tested range for the CE and
+uses that value as the current 'sure win'
+=> based on the response to trial.surebet_lowerthird and trial.surebet_middlethird the current
+top and bottom boundaries are readjusted 
+=> if more iterations are to be run, trial.surebet_lowerthird is called once more on the updated
+range (after feedback)
+=> if the requested iterations have been run, trial.estimate_ce is called to estimate the
+current CE (after feedback) 
+=> if a trial needs repeating because participant gave contradictory responses (sure thing for trial.surebet_lowerthird
+but gamble for trial.surebet_middlethird), the last sequence of the current prospect is repeated
+
+<trial surebet_middlethird>
+/ontrialbegin = [
+	text.gamblequestion_gamble.textColor = black; 
+	text.gamblequestion_surebet.textColor = black;
+	values.current_guaranteedwin = values.current_middlethird;
+]
+/stimulusframes = [1 = background, gamblequestion_gamble, gamblequestion_surebet, gamblequestion_question]
+/validresponse = (parameters.responsekey_gamble, parameters.responsekey_surewin)
+/ontrialend = [
+	if (trial.surebet_middlethird.responseText == parameters.responsekey_gamble) {
+		values.middle_response = 1;
+	} else {
+		values.middle_response = 2;
+	}
+	
+	if (values.middle_response == 1) {
+		text.gamblequestion_gamble.textColor = blue;
+	} else {
+		text.gamblequestion_surebet.textColor = blue;
+	}
+
+	if (script.subjectId == "monkey" && values.low_response == 2 && values.middle_response == 1) {
+		values.middle_response = 2;
+	}
+
+	if (values.low_response == 2){
+		if (values.middle_response == 1){
+			values.repeat += 1; 
+			values.current_iti = 100;
+		} else if (values.middle_response == 2){
+			values.next_top = values.current_lowerthird; 
+			values.repeat = 0; 
+			values.repeats_left = parameters.maxnr_repeats; 
+		}
+	} else if (values.low_response == 1){
+		if (values.middle_response == 2){
+			values.next_bottom = values.current_lowerthird; 
+			values.next_top = values.current_middlethird; 
+			values.repeat = 0; 
+			values.repeats_left = parameters.maxnr_repeats;
+		} else if (values.middle_response == 1){
+			values.next_bottom = values.current_middlethird; 
+			values.repeat = 0; 
+			values.repeats_left = parameters.maxnr_repeats;
+		}
+	}
+]
+/branch = [trial.surebet_middlethird_feedback]
+</trial>
+
+
+Note: trial highlights the selected choice for 2s (default) and adds a posttrialpause of 4s (default) after
+trial.surebet_middlethird
+<trial surebet_middlethird_feedback>
+/ontrialbegin = [
+	trial.surebet_middlethird_feedback.insertStimulusTime(shape.background, parameters.feedbackduration);
+]
+/stimulusframes = [1 = gamblequestion_gamble, gamblequestion_surebet]
+/timeout = parameters.feedbackduration
+/ontrialend = [
+	trial.surebet_middlethird_feedback.resetStimulusFrames();
+]
+/posttrialpause = values.current_iti
+/branch = [
+	if (values.count_iterations>= values.iteration_perprospect && values.repeat == 0) {
+		return trial.estimate_CE;
+	} else if (values.repeat != 0) {
+		return trial.repeatwarning;
+	} else {
+		return trial.surebet_lowerthird;
+	}
+]
+/recorddata = false
+</trial>
+
+Note: after an irrational response the participant is made aware of 
+a) the response inconsistency and
+b) how many repeat trials are allowed before the entire task is aborted
+ 
+<trial repeatwarning>
+/ontrialbegin = [
+	values.current_iti = parameters.iti;
+]
+/stimulusframes = [1 = repeatwarning]
+/validresponse = (" ")
+/ontrialend = [
+	values.repeats_left -= 1;
+]
+/branch = [return trial.surebet_lowerthird;]
+/posttrialpause = values.current_iti
+</trial>
+
+********************************
+CE Estimation
+********************************
+
+Note: trial estimates 
+1) current CE after the set amount of iterations as the midpoint of the
+last determined range of top and bottom boundaries.
+2) current Expected Value (EV)
+
+!!! If more than 7 prospects are run, add the necessary code to store the current CE
+<trial estimate_CE>
+/ontrialbegin = [
+	values.current_bottom = values.next_bottom; 
+	values.current_top = values.next_top;
+	
+	if (values.select_prospect == 1) {
+		values.ce1 = expressions.ce; 
+		values.EV1 = expressions.ev;
+	} else if (values.select_prospect == 2) {
+		values.ce2 = expressions.ce; 
+		values.EV2 = expressions.ev;
+	} else if (values.select_prospect == 3) {
+		values.ce3 = expressions.ce; 
+		values.EV3 = expressions.ev;
+	} else if (values.select_prospect == 4) {
+		values.ce4 = expressions.ce; 
+		values.EV4 = expressions.ev;
+	} else if (values.select_prospect == 5) {
+		values.ce5 = expressions.ce; 
+		values.EV5 = expressions.ev;
+	} else if (values.select_prospect == 6) {
+		values.ce6 = expressions.ce; 
+		values.EV6 = expressions.ev;
+	} else if (values.select_prospect == 7) {
+		values.ce7 = expressions.ce; 
+		values.EV7 = expressions.ev;
+	}
+]
+/trialduration = 0
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<block intro>
+/ trials = [1 = intro]
+</block>
+
+
+Note: block.prospect loops through as many prospects as set by list.selectprospects.itemCount under Editable Lists
+Block/Script is aborted if too many repetitions are needed for one trial sequence due to irrational response patterns
+
+<block prospect>
+/stop = [values.repeat > parameters.maxnr_repeats]
+/skip = [values.repeat > parameters.maxnr_repeats]
+/onblockbegin = [
+	values.count_prospects += 1;
+	values.select_prospect = list.selectprospects.nextValue;
+	values.winprospect = list.potentialwins.nextValue;
+	values.gambling_p = list.winprobabilities.nextValue;
+	values.chancedescription = list.chancedescriptions.nextValue;
+	values.iteration_perprospect = list.iterations_perprospect.nextValue;
+	values.next_bottom = 0;
+	values.next_top = values.winprospect;
+	values.count_iterations= 0;
+	values.repeats_left = parameters.maxnr_repeats;
+]
+/trials = [1 = surebet_lowerthird; 2 = nextprospect]
+/branch = [
+	if (values.repeat > parameters.maxnr_repeats) {
+		values.script_aborted = 1;
+		block.prematureEnd;
+	} else if (values.count_prospects < list.selectprospects.itemCount) {
+		block.prospect;
+	}
+]
+</block>
+
+<block prematureEnd>
+/ trials = [1 = finish]
+/ onblockend = [
+	script.abort();
+]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expt a>
+/blocks = [
+	1 = intro;
+	2 = prospect;
+	3 = finish;
+]
+</expt>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

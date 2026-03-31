@@ -1,0 +1,329 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									WORLD HEALTH ORGANIZATION
+									DISABILITY ASSESSMENT SCHEDULE 2.0 (WHO-DAS 2.0, self administered)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-28-2018
+last updated:  03-03-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 03-03-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized version of the World Health Organization Disability Assessment Schedule 2.0
+(self-administered)
+
+http://www.who.int/classifications/icf/whodasii/en/
+http://www.who.int/classifications/icf/WHODAS2.0_12itemsSELF.pdf
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+12 5-point likert questions + 3 additional questions
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minute to complete
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	 
+The default data stored in the data files are:
+
+(1) Raw data file: 'who_das_12.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		 with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale: 0 (none) - 4 (extreme or cannot do)
+									no reversed scored questions
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'who_das_12_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)	
+								
+Total:								the sum of the 12 multiple-choice scores (Range: 0 - 48)
+									("None" = 0, "Mild" = 1, "Moderate" = 2, "Severe" = 3, "Extreme or cannot do" = 4)
+								
+radiobuttons.q1.response-q12:		the individual scores of the 12 multiple-choice questions
+textbox.q13.response-q15: 			the responses (=days of impairment) to the additional 3 open-ended questions							
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.Total,
+radiobuttons.q1.response, radiobuttons.q2.response, radiobuttons.q3.response, radiobuttons.q4.response,
+radiobuttons.q5.response, radiobuttons.q6.response, radiobuttons.q7.response, radiobuttons.q8.response,
+radiobuttons.q9.response, radiobuttons.q10.response, radiobuttons.q11.response, radiobuttons.q12.response,
+textbox.q13.response, textbox.q14.response, textbox.q15.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/Total = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response +
+radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response +
+radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q11.response + radiobuttons.q12.response
+
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. Standing for long periods such as 30 minutes?"
+/ options = ("None", "Mild", "Moderate", "Severe", "Extreme~n or cannot do")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Taking care of your household responsibilities?"
+/ options = ("None", "Mild", "Moderate", "Severe", "Extreme~n or cannot do")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Learning a new task, for example, learning how to get to a new place?"
+/ options = ("None", "Mild", "Moderate", "Severe", "Extreme~n or cannot do")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. How much of a problem did you have joining in community activities (for example, festivities, religious or other activities) in the same way as anyone else can?"
+/ options = ("None", "Mild", "Moderate", "Severe", "Extreme~n or cannot do")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. How much have you been emotionally affected by your health problems?"
+/ options = ("None", "Mild", "Moderate", "Severe", "Extreme~n or cannot do")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Concentrating on doing something for ten minutes?"
+/ options = ("None", "Mild", "Moderate", "Severe", "Extreme~n or cannot do")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. Walking a long distance such as a kilometer [or equivalent]?"
+/ options = ("None", "Mild", "Moderate", "Severe", "Extreme~n or cannot do")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. Washing your whole body?"
+/ options = ("None", "Mild", "Moderate", "Severe", "Extreme~n or cannot do")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. Getting dressed?"
+/ options = ("None", "Mild", "Moderate", "Severe", "Extreme~n or cannot do")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. Dealing with people you do not know?"
+/ options = ("None", "Mild", "Moderate", "Severe", "Extreme~n or cannot do")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. Maintaining a friendship?"
+/ options = ("None", "Mild", "Moderate", "Severe", "Extreme~n or cannot do")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. Your day-to-day work?"
+/ options = ("None", "Mild", "Moderate", "Severe", "Extreme~n or cannot do")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<textbox q13>
+/ caption = "Overall, in the past 30 days, HOW MANY DAYS were these difficulties present?"
+/ mask = integer
+/ textboxsize = (15%, 5%)
+</textbox>
+
+<textbox q14>
+/ caption = "In the past 30 days, for how many days were you TOTALLY UNABLE to carry out your usual activities or work because of any health condition?"
+/ mask = integer
+/ textboxsize = (15%, 5%)
+</textbox>
+
+<textbox q15>
+/ caption = "In the past 30 days, not counting the days that you were totally unable, for how many days did you CUT BACK or REDUCE your usual activities or work because of any health condition?"
+/ mask = integer
+/ textboxsize = (15%, 5%)
+</textbox>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage who_das_12_1>
+/caption ="This questionnaire asks about difficulties due to health conditions. Health conditions include diseases or illnesses, other health problems that may be short or long lasting, injuries, mental or emotional problems, and problems with alcohol or drugs.
+
+Think back over the past 30 days and answer these questions, thinking about how much difficulty you had doing the following activities."
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+<surveypage who_das_12_2>
+/caption ="In the past 30 days, how much difficulty did you have in:
+"
+/questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage who_das_12_3>
+/caption ="In the past 30 days, how much difficulty did you have in:
+"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage who_das_12_4>
+/caption ="In the past 30 days, how much difficulty did you have in:
+"
+/questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage who_das_12_5>
+/caption ="In the past 30 days, how much difficulty did you have in:
+"
+/questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage who_das_12_6>
+/caption ="
+"
+/questions = [1 = q13, q14, q15]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey who_das_12>
+/pages = [
+	1 = who_das_12_1;
+	2 = who_das_12_2;
+	3 = who_das_12_3;
+	4 = who_das_12_4;
+	5 = who_das_12_5;
+	6 = who_das_12_6;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

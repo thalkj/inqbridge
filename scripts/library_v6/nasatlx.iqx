@@ -1,0 +1,231 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									NASA TASK LOAD INDEX- Survey (NASA TLX)
+___________________________________________________________________________________________________________________	
+
+last updated:  10-02-2020 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-02-2020 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the NASA TASK LOAD INDEX a tool to assess perceived workload 
+
+References:
+NASA (1986). Nasa Task Load Index (TLX) v. 1.0 Manual
+
+Hart, S. (2006). Nasa-Task Load Index (Nasa-TLX); 20 Years Later. Human Factors and Ergonomics Society 
+Annual Meeting Proceedings, 50, 904-908.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+The NASA TLX consists of six subscales: 
+Mental Demands, Physical Demands, and Temporal Demands, Frustration, Effort, and Performance	
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes less than a minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+Raw data file: 'nasatlx.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 1 (very low) - 21 (very high)
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+								
+								
+(2) Summary data file: 'nasatlx_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+textbox.name.response:			entered name 
+textbox.date.response:			entered date 
+textbox.task.response:			entered task
+
+Raw responses on the sliders:
+slider.effort.response, 
+slider.frustration.response, 
+slider.mentaldemand.response,
+slider.performance.response, 
+slider.physicaldemand.response, 
+slider.temporaldemand.response
+								
+
+</usermanual>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+*****************************************************************************************************
+*****************************************************************************************************
+	Summary Data
+*****************************************************************************************************
+*****************************************************************************************************
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+textbox.name.response, textbox.date.response, textbox.task.response,
+slider.effort.response, slider.frustration.response, slider.mentaldemand.response,
+slider.performance.response, slider.physicaldemand.response, slider.temporaldemand.response)
+</summarydata>
+
+*****************************************************************************************************
+*****************************************************************************************************
+	Questions
+*****************************************************************************************************
+*****************************************************************************************************
+
+<textbox name>
+/ caption = "Name:"
+</textbox>
+
+<textbox task>
+/ caption = "Task:"
+</textbox>
+
+<textbox date>
+/ caption = "Date (mm/dd/yyyy):"
+/ mask = date
+</textbox>
+
+<slider mentaldemand>
+/ caption = "Mental Demand:     How mentally demanding was the task?"
+/ subcaption = " "
+/ labels = ("Very Low", "Very High")
+/ showticks = true
+/ range = (1, 21)
+/ increment = 1
+/ slidersize = (50%, 3%)
+</slider>
+
+<slider physicaldemand>
+/ caption = "Physical Demand:     How physically demanding was the task?"
+/ subcaption = " "
+/ labels = ("Very Low", "Very High")
+/ showticks = true
+/ range = (1, 21)
+/ increment = 1
+/ slidersize = (50%, 3%)
+</slider>
+
+<slider temporaldemand>
+/ caption = "Temporal Demand:     How hurried or rushed was the pace of the task?"
+/ subcaption = " "
+/ labels = ("Very Low", "Very High")
+/ showticks = true
+/ range = (1, 21)
+/ increment = 1
+/ slidersize = (50%, 3%)
+</slider>
+
+<slider performance>
+/ caption = "Performance:     How successful were you in accomplishing what you were asked to do?"
+/ subcaption = " "
+/ labels = ("Very Low", "Very High")
+/ showticks = true
+/ range = (1, 21)
+/ increment = 1
+/ slidersize = (50%, 3%)
+</slider>
+
+<slider effort>
+/ caption = "Effort:     How hard did you have to work to accomplish your level of performance?"
+/ subcaption = " "
+/ labels = ("Very Low", "Very High")
+/ showticks = true
+/ range = (1, 21)
+/ increment = 1
+/ slidersize = (50%, 3%)
+</slider>
+
+<slider frustration>
+/ caption = "Frustration:     How insecure, discouraged, irritated, stressed, and annoyed were you?"
+/ subcaption = " "
+/ labels = ("Very Low", "Very High")
+/ showticks = true
+/ range = (1, 21)
+/ increment = 1
+/ slidersize = (50%, 3%)
+</slider>
+
+*****************************************************************************************************
+*****************************************************************************************************
+	Surveypages
+*****************************************************************************************************
+*****************************************************************************************************
+<surveypage intro>
+/ caption = "NASA Task Load Index"
+/ questions = [1 = name; 2 = task; 3 = date]
+</surveypage>
+
+<surveypage nasatlx1>
+/ questions = [1=sequence(mentaldemand, physicaldemand, temporaldemand)]
+</surveypage>
+
+<surveypage nasatlx2>
+/ questions = [1=sequence(performance, effort, frustration)]
+</surveypage>
+
+*****************************************************************************************************
+*****************************************************************************************************
+	Survey
+*****************************************************************************************************
+*****************************************************************************************************
+<survey NASATLX>
+/ pages = [1=sequence(intro, nasatlx1, nasatlx2)]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 0)
+/ subcaptionfontstyle = ("Arial", .5%, false, false, false, false, 5, 0)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 0)
+/ responsefontstyle = ("Arial", 3%, false, false, false, false, 5, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ showbackbutton = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 0)
+/ finishlabel = "Finish"
+</survey>
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

@@ -1,0 +1,1700 @@
+<userManual>
+___________________________________________________________________________________________________________________	
+
+							Negative Priming with Affective Stimuli
+___________________________________________________________________________________________________________________	
+
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 07-31-2024
+last updated:  08-22-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 08-22-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This Inquisit script implements a Negative Priming Procedure with affective stimuli. 
+Negative Priming is generally characterized as the implicit memory effect in which actively suppressing 
+information processing of a stimulus can impair processing of related material shortly there after.
+Negative Affective Priming uses stimuli of different valences (positive vs. negative).
+It has been used in the study of impaired cognitive processing in depression (Joorman & Gotlib, 2010)
+
+The implemented Negative Affective Priming procedure is based on the published paradigm 
+by Joorman & Gotlib (2010).
+
+//////Reference:											
+
+Joormann, J., & Gotlib, I. H. (2010). Emotion regulation in depression: Relation to cognitive inhibition.
+Cognition and Emotion, 24(2), 281–298. 
+https://doi.org/10.1080/02699930903407948
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+
+Participants see two words on top of each other. One is the target word (printed in blue)
+and one is the distractor (printed in red). The words come from different valence categories
+(one is positive and the other negative). Participants are asked to ignore the red words.
+Their task is to categorize the blue words as positive or negative via corresponding keyboard responses.
+
+Test trials are divided into 2 parts:
+Part1 are the Priming Trials (PTrials).
+Part2 are the Target Trials (TTrials).
+
+For Negative Priming (NP) trials, the valence of the ignored (red) word in 
+the PTrial (=distractor) is the same as the valence of the (blue) target word in the TTrial.
+The valence of the (blue) target in PTrials is opposite of the valence of the 
+(blue) target in TTrials
+=> negative priming is expected (slower responses in TTrials due to negative priming via the suppressed distractor of the same valence)
+=> since the attended targets are of opposite valences there should not be any 'positive' valence priming effect
+
+For Control (Ctrl) trials, the valence of the ignored (red) word in the PTrial
+is neutral compared to the positive or negative target word in the TTrial.
+The valence of the (blue) target in PTrials is opposite of the valence of the 
+(blue) target in TTrials (same as in NP trials)
+=> no negative priming is expected (neutral suppressed distractor should NOT negatively prime the target in the TTrial)
+=> since the attended targets are of opposite valences there should not be any 'positive' valence priming effect in Ctrl trials either
+
+Differences in TTrial Response Times in NP condition should be due to Negative Priming.
+
+Note: Although PTrials and TTrials are individual trials from a participant's 
+perspective, participants may nonetheless potentially catch on the predictable response pattern created 
+by PTrials and TTrial always requiring opposite responses. Thus, this script
+has the built functionality to add filler trials to obscure this response pattern.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 15 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'negativepriming_raw*.iqdat'
+
+build:						The specific Inquisit version used (the 'build') that was run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+date, time: 				date and time script was run 
+subject:					with the current subject id
+group: 						with the current group id
+session:					with the current session id
+
+blockcode, blocknum:		the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 		the name and number of the currently recorded trial (built-in Inquisit variable)
+								Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+								that do not store data to the data file.
+							
+						
+blockCounter: 				tracks the number of blocks run
+trialCounterPerBlock:		tracks the number of trials run per block (Test Trial = (PTrial + TTrial) count as one trial)
+trialPhase: 				"P" (PTrial), "T" (TTrial), "F" (Filler)
+
+/////IV: stays the same across PTtrial and TTrial
+trialType: 					1 = NP; 2 = Ctrl (Main IV); 3 = Filler (ignored for data analyses)
+targetValenceTTrial: 		1 = target in TTrial is negative; 2 = target in TTrial is positive
+targetPositionPTrial: 		1 = target in PTrial is on top; 2 = target in PTrial is on the bottom
+targetPositionTTrial: 		1 = target in TTrial is on top; 2 = target in TTrial is on the bottom
+
+////changes btw. PTrial and TTrial
+targetWord: 				the currently presented target word
+distractorWord:				the currently presented distractor word 
+targetValence: 				1 = the currently presented target is negative; 2 = the currently presented target is positive
+distractorValence: 			1 = the currently presented distractor is negative; 2 = the currently presented distractor is positive; 3 = distractor is neutral
+targetPosition: 			1 = current target is on top (distractor on bottom); 2 = current target is on the bottom (distractor on top)	
+correctResp: 				stores the correct response key for the current trial
+
+////DVs:
+response:					the response of participant (scancode of response button)
+responseText:				the response button pressed
+								Example:
+								response = 18 (scancode) => responseText = "E"
+								
+correct:					correctness of response (1 = correct, 0 = error)
+latency:					response latency (in ms); measured from: onset of words
+
+validRT:					1 = latency falls within 300 <= latency <= 2000 (see editable parameters)
+							0 = latency falls outside of specified range
+
+///////additional variables:
+targetY: 					stores the vertical screen coordinate of the target
+distractorY: 				stores the vertical screen coordinate of the distractor
+							Note: 0% = top of the screen -> 100% bottom of the screen
+
+////ratings of targets and distractors							
+tValence: 					the valence rating assigned to the current target
+tArousal: 					the arousal rating assigned to the current target 
+tDominance: 				the dominance rating assigned to the current target 
+tLength: 					the length of the current target
+dValence: 					the valence rating assigned to the current distractor
+dArousal: 					the arousal rating assigned to the current distractor
+dDominance: 				the dominance rating assigned to the current distractor 
+dLength: 					the length of the current distractor
+
+//previous stimuli used (to check that no repeats across pTrials and tTrials)
+prevDistractor:				stores the distractor stimulus from the previous trial
+prevTarget:					stores the target stimulus from the previous trials
+
+(2) Summary data file: 'negativepriming_summary*.iqdat'
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectId:					assigned subject id number
+groupId:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)	
+
+/////summary data//////
+Notes: 
+- summary variable based on TTrial performance only
+- latency data based on validRTs only (300 <= latency <= 2000)
+
+propCorrect:				proportion correct responses across all test trials (TTrial only)
+meanCorrRT:					mean correct response time across all test trials (TTrial only)
+								Note: extreme latency outliers removed (300 <= latency <= 2000)
+								
+propRTOutliers:				proportion removed latency data relative to all latency data (correct or incorrect responses)
+
+propCorrectNP:				proportion correct responses across all NP trials (TTrial only)
+meanCorrRTNP:				mean correct response time across all NP trials (TTrials only) - extreme outliers removed
+propCorrectCtrl:			proportion correct responses across all Control trials (TTrial only)
+meanCorrRTCtrl:				mean correct response time across all Control trials (TTrials only) - extreme outliers removed
+							
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+/////////////////////////
+(1) Practice:
+/////////////////////////
+- 10 practice trials
+- practice trials are individual trials (NOT 2-part trials like the test trials)
+- half the practice trials require a positive response (half a negative response)
+- the valence of the distractor is opposite to the target valence
+- half the practice trials present the target on top, half on the bottom (randomly selected)
+- the trial order is randomly determined
+- practice trials select from their own pool of stimuli
+- error feedback is provided
+
+/////////////////////////
+(2) Test: 5 test blocks (editable parameter)
+/////////////////////////
+
+- Each test block runs 32 test trials (each test trial has 2 parts) and 16 filler trials (see editable parameters)
+=> from a participant's perspective there are (2*32) + 16 = 80 individual trials to run
+- the order of the trials is randomly generated for each block
+- no feedback
+
+***Test Trials ('double trials')***
+2 trialtypes (NP vs. Ctrl) x 2 target valences in target trials (pos vs neg) x 2 target positions in PTrials (top vs. bottom) x 2 target positions in target trials (top vs.bottom)
+=> minimum of 16 test trials per block for a balanced design (each test trial runs 2 individual trials)
+=> with 32 test trials, each combination is run twice
+
+- Half the test trials are NP trials, half are Ctrl trials
+
+NP: 
+distractor valence in PTrial = target valence in TTrial (negative priming)
+target valence in PTrial opposite of target valence in TTrial (no positive priming)
+
+Ctrl:
+distractor valence in PTrial neutral and thus different than target valence in TTrial (no negative priming)
+target valence in PTrial opposite of target valence in TTrial (no positive priming)
+
+
+***Filler Trials ('single trials')***
+number of filler trials can be controlled via an editable parameter.
+By default, this script runs half as many filler trials as test trials
+=> 0.5*32 = 16 Filler Trials
+
+- filler trials randomly (with replacement) select neutral, positive or negative distractors
+- filler trial select a different valence for their targets
+- target screen position (top or bottom) is selected randomly with replacement
+
+
+***Trial Sequence***
+-> Fixation cross only for 500ms
+-> Target and Distractor until response
+
+
+///////Note on Stimuli Selection
+- all neutral stimuli are selected randomly without replacement from the pool of neutral stimuli
+(automatically resets once all stimuli have been selected)
+- all negative stimuli are selected randomly without replacement from the pool of negative stimuli
+(automatically resets once all stimuli have been selected)*
+- all positive stimuli are selected randomly without replacement from the pool of positive stimuli
+(automatically resets once all stimuli have been selected)*
+
+*The script ensures that no stimuli are repeated in PTrials and TTrials,
+thus the script forces a reset of the positive and negative selection lists if there are
+not at least 2 different stimuli left to select.
+Other consecutive trials can repeat stimuli however.
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+
+provided by Millisecond Software - can be edited and/or replaced under section 'Editable Stimuli'
+
+The stimuli are NOT original to Joorman & Gotlib (2010)*
+They were generated for the Inquisit script as follows:
+
+Words taken from the Affective Norms of English words (Bradley & Lang,1999)
+
+Bradley, MM.; Lang, PJ. Affective norms for English words (ANEW): Technical Manual and Affective
+Ratings. Gainesville, FL: The Center for Research in Psychophysiology, University of Florida; 1999.
+
+/////////////////////
+////Positive items:
+/////////////////////
+- valence rating >= 7
+- arousal rating: 4 <= arousal <= 6 (midlevel arousal)
+- dominance rating: 4 <= arousal <= 6 (midlevel dominance)
+- word length: 4 <= word length <= 6 (target and distractor should be within 2 letters of each other, and neither too short nor too long)
+
+Of the determined 41 stimuli, Millisecond selected the 32 words with the highest valence:
+
+Mean Valence: 7.52
+Mean Arousal: 5.01
+Mean Dominance: 5.55
+Mean word length: 5.13
+
+/////////////////////
+////Neutral items:
+/////////////////////
+- 4.5 <=valence rating <= 5.5
+- arousal rating: 4 <= arousal <= 6 (midlevel arousal)
+- dominance rating: 4 <= arousal <= 6 (midlevel dominance)
+- word length: 4 <= word length <= 6 (target and distractor should be within 2 letters of each other, and neither too short nor too long)
+
+Of the determined 38 stimuli, Millisecond selected the 16 words with a valence closest to 5:
+
+Mean Valence: 5.01
+Mean Arousal: 4.64
+Mean Dominance: 4.90
+Mean word length: 5.13
+
+
+/////////////////////
+////Negative items:
+/////////////////////
+- valence rating <= 3.5
+- arousal rating: 4 <= arousal <= 6 (midlevel arousal)
+- dominance rating: 4 <= arousal <= 6 (midlevel dominance)
+- word length: 4 <= word length <= 6 (target and distractor should be within 2 letters of each other, and neither too short nor too long)
+
+Of the determined 39 stimuli, Millisecond selected the 32 with the lowest valence rating:
+
+Mean Valence: 2.73
+Mean Arousal: 5.02
+Mean Dominance: 4.42
+Mean word length: 5.38
+
+/////////////////////
+////Practice items:
+/////////////////////
+The 7 positive and negative practice items were chosen from the pool
+of 'rejected' positive and negative items :)
+
+
+*Note: stimuli generation in Joorman & Gotlib (2010, p.5)
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+
+provided by Millisecond Software - can be edited under section 'Editable Instructions'
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+//////////// exp design elements
+/ numberOfBlocks = 5				//number of test blocks to run
+/ numberTTrialsPerBlock = 32		//number of TTrials run per block
+									//should be a multiple of 16 
+									//Note: if there are 32 TTrials in a block, there are also 32 PTrials 
+									//in a block (so from a participant's perspective there are 64 test trials)!
+
+/ ratioFillerToTTrial = 0.5			//script adds an additional (0.5*TTrials) number of filler trials to each block
+									//by default: 0.5*32 = 16 filler trials (filler trials are single trials not double ones!)
+									//for a total of 32 TTrials per block there will be: 32 PTrials + 32 TTrials + 16 filler trials = 80 single trials from participant perspective)
+											
+/ targetColor = blue				//the color of the target words (require a response)
+/ distractorColor = red				//the color of the distractor words (should be ignored)
+
+//latency outlier removal
+/ minLatency = 300					//the minimum acceptable response time (in ms)
+/ maxLatency = 2000					//the maximum acceptable response time (in ms)
+
+////////////////sizing and position parameters
+/ wordHeightPct = 8%				//the relative height of the words (relative to canvas height)
+
+//positions: the percent vertical active canvas position (top = 0 -> bottom = 100%)
+/ topY = 35%						//top canvas position
+/ bottomY = 65%						//bottom canvas position
+
+/////////////////timing parameters
+/ getreadyDuration = 3000			//the duration (in ms) of the get-ready trial
+/ fixationDurationMS = 500			//the duration (in ms) of the fixation cross
+
+//////////////////responseKeys:
+/ leftResponseKey = "A"				//the assigned left response key (left side on QWERTY keyboard)
+/ rightResponseKey = "L"			//the assigned right response key (right side on QWERTY keyboard)
+/ positiveResponseKey = parameters.rightResponseKey
+/ negativeResponseKey = parameters.leftResponseKey
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+//////////// exp design elements
+/ numberOfBlocks = 5				//number of test blocks to run
+/ numberTTrialsPerBlock = 32		//number of TTrials run per block
+									//should be a multiple of 16 
+									//Note: if there are 32 TTrials in a block, there are also 32 PTrials 
+									//in a block (so from a participant's perspective there are 64 test trials)!
+
+/ ratioFillerToTTrial = 0.5			//script adds an additional (0.5*TTrials) number of filler trials to each block
+									//by default: 0.5*32 = 16 filler trials (filler trials are single trials not double ones!)
+									//for a total of 32 TTrials per block there will be: 32 PTrials + 32 TTrials + 16 filler trials = 80 single trials from participant perspective)
+											
+/ targetColor = blue				//the color of the target words (require a response)
+/ distractorColor = red				//the color of the distractor words (should be ignored)
+
+//latency outlier removal
+/ minLatency = 300					//the minimum acceptable response time (in ms)
+/ maxLatency = 2000					//the maximum acceptable response time (in ms)
+
+////////////////sizing and position parameters
+/ wordHeightPct = 8%				//the relative height of the words (relative to canvas height)
+
+//positions: the percent vertical active canvas position (top = 0 -> bottom = 100%)
+/ topY = 35%						//top canvas position
+/ bottomY = 65%						//bottom canvas position
+
+/////////////////timing parameters
+/ getreadyDuration = 3000			//the duration (in ms) of the get-ready trial
+/ fixationDurationMS = 500			//the duration (in ms) of the fixation cross
+
+//////////////////responseKeys:
+/ leftResponseKey = "A"				//the assigned left response key (left side on QWERTY keyboard)
+/ rightResponseKey = "L"			//the assigned right response key (right side on QWERTY keyboard)
+/ positiveResponseKey = parameters.rightResponseKey
+/ negativeResponseKey = parameters.leftResponseKey
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+/////////////////////////////////
+//Practice
+/////////////////////////////////
+
+<item positiveWordsPractice>
+/ 1 = "spirit"
+/ 2 = "hope"
+/ 3 = "melody"
+/ 4 = "child"
+/ 5 = "father"
+/ 6 = "snow"
+/ 7 = "heal"
+</item>
+
+//Note: if you add or remove items from the above item list, update the itemnumbers accordingly
+<list itemNumbersPositivePractice>
+/ items = (1,2,3,4,5,6,7)
+/ replace = true
+/ selectionRate = always
+/ maxRunSize = 1
+</list>
+
+<item negativeWordsPractice>
+/ 1 = "frigid"
+/ 2 = "fault"
+/ 3 = "snob"
+/ 4 = "hooker"
+/ 5 = "spider"
+/ 6 = "urine"
+/ 7 = "beggar"
+</item>
+
+//Note: if you add or remove items from the above item list, update the itemnumbers accordingly
+<list itemNumbersNegativePractice>
+/ items = (1,2,3,4,5,6,7)
+/ replace = true
+/ selectionRate = always
+/ maxRunSize = 1
+</list>
+
+<text errorFeedback>
+/ items = ("X")
+/ fontStyle = ("Arial", 15%, true, false, false, false, 5, 1)
+/ txColor = red
+</text>
+
+
+/////////////////////////////////
+//Positive 
+/////////////////////////////////
+
+<item wordsPositive>
+/ 1 = "angel"
+/ 2 = "baby"
+/ 3 = "beach"
+/ 4 = "beauty"
+/ 5 = "bless"
+/ 6 = "bride"
+/ 7 = "bunny"
+/ 8 = "cake"
+/ 9 = "caress"
+/ 10 = "circus"
+/ 11 = "comedy"
+/ 12 = "cuddle"
+/ 13 = "cute"
+/ 14 = "earth"
+/ 15 = "family"
+/ 16 = "gold"
+/ 17 = "grin"
+/ 18 = "home"
+/ 19 = "kind"
+/ 20 = "nature"
+/ 21 = "ocean"
+/ 22 = "palace"
+/ 23 = "puppy"
+/ 24 = "reward"
+/ 25 = "silly"
+/ 26 = "soft"
+/ 27 = "soothe"
+/ 28 = "spouse"
+/ 29 = "star"
+/ 30 = "sunset"
+/ 31 = "treat"
+/ 32 = "useful"
+</item>
+
+<list itemNumbersPositive>
+/ poolSize = item.wordsPositive.itemCount //automatically adjusts to changes made to the above item list
+/ replace = false
+/ resetInterval = 0
+</list>
+
+<item valencePositive>
+/ 1 = "7.53"
+/ 2 = "8.22"
+/ 3 = "8.03"
+/ 4 = "7.82"
+/ 5 = "7.19"
+/ 6 = "7.34"
+/ 7 = "7.24"
+/ 8 = "7.26"
+/ 9 = "7.84"
+/ 10 = "7.3"
+/ 11 = "8.37"
+/ 12 = "7.72"
+/ 13 = "7.62"
+/ 14 = "7.15"
+/ 15 = "7.65"
+/ 16 = "7.54"
+/ 17 = "7.4"
+/ 18 = "7.91"
+/ 19 = "7.59"
+/ 20 = "7.65"
+/ 21 = "7.12"
+/ 22 = "7.19"
+/ 23 = "7.56"
+/ 24 = "7.53"
+/ 25 = "7.41"
+/ 26 = "7.12"
+/ 27 = "7.3"
+/ 28 = "7.58"
+/ 29 = "7.27"
+/ 30 = "7.68"
+/ 31 = "7.36"
+/ 32 = "7.14"
+</item>
+ 
+<item arousalPositive>
+/ 1 = "4.83"
+/ 2 = "5.53"
+/ 3 = "5.53"
+/ 4 = "4.95"
+/ 5 = "4.05"
+/ 6 = "5.55"
+/ 7 = "4.06"
+/ 8 = "5"
+/ 9 = "5.14"
+/ 10 = "5.97"
+/ 11 = "5.85"
+/ 12 = "4.4"
+/ 13 = "5.53"
+/ 14 = "4.24"
+/ 15 = "4.8"
+/ 16 = "5.76"
+/ 17 = "5.27"
+/ 18 = "4.21"
+/ 19 = "4.46"
+/ 20 = "4.37"
+/ 21 = "4.95"
+/ 22 = "5.1"
+/ 23 = "5.85"
+/ 24 = "4.95"
+/ 25 = "5.88"
+/ 26 = "4.63"
+/ 27 = "4.4"
+/ 28 = "5.21"
+/ 29 = "5.83"
+/ 30 = "4.2"
+/ 31 = "5.62"
+/ 32 = "4.26"
+</item>
+
+<item dominancePositive>
+/ 1 = "4.97"
+/ 2 = "5"
+/ 3 = "5.44"
+/ 4 = "5.53"
+/ 5 = "5.52"
+/ 6 = "5.74"
+/ 7 = "4.97"
+/ 8 = "5.16"
+/ 9 = "5.83"
+/ 10 = "5.39"
+/ 11 = "5.44"
+/ 12 = "5.85"
+/ 13 = "4.86"
+/ 14 = "5.61"
+/ 15 = "6"
+/ 16 = "5.85"
+/ 17 = "6"
+/ 18 = "5.9"
+/ 19 = "5.95"
+/ 20 = "4.95"
+/ 21 = "5.53"
+/ 22 = "5.69"
+/ 23 = "5.51"
+/ 24 = "6"
+/ 25 = "6"
+/ 26 = "6"
+/ 27 = "5.36"
+/ 28 = "5.53"
+/ 29 = "4.68"
+/ 30 = "5.66"
+/ 31 = "5.78"
+/ 32 = "5.93"
+</item>
+
+/////////////////////////////////
+//Neutral 
+/////////////////////////////////
+
+<item wordsNeutral>
+/ 1 = "aloof"
+/ 2 = "cannon"
+/ 3 = "clock"
+/ 4 = "ennui"
+/ 5 = "hammer"
+/ 6 = "icebox"
+/ 7 = "month"
+/ 8 = "rattle"
+/ 9 = "razor"
+/ 10 = "storm"
+/ 11 = "stove"
+/ 12 = "swamp"
+/ 13 = "tank"
+/ 14 = "tease"
+/ 15 = "tool"
+/ 16 = "trunk"
+</item>
+
+<list itemNumbersNeutral>
+/ poolSize = item.wordsNeutral.itemCount //automatically adjusts to changes made to the above item list
+/ replace = false
+/ resetInterval = 0
+</list>
+
+<item valenceNeutral>
+/ 1 = "4.9"
+/ 2 = "4.9"
+/ 3 = "5.14"
+/ 4 = "5.09"
+/ 5 = "4.88"
+/ 6 = "4.95"
+/ 7 = "5.15"
+/ 8 = "5.03"
+/ 9 = "4.81"
+/ 10 = "4.95"
+/ 11 = "4.98"
+/ 12 = "5.14"
+/ 13 = "5.16"
+/ 14 = "4.84"
+/ 15 = "5.19"
+/ 16 = "5.09"
+</item>
+
+<item arousalNeutral>
+/ 1 = "4.28"
+/ 2 = "4.71"
+/ 3 = "4.02"
+/ 4 = "4.4"
+/ 5 = "4.58"
+/ 6 = "4.17"
+/ 7 = "4.03"
+/ 8 = "4.36"
+/ 9 = "5.36"
+/ 10 = "5.71"
+/ 11 = "4.51"
+/ 12 = "4.86"
+/ 13 = "4.88"
+/ 14 = "5.87"
+/ 15 = "4.33"
+/ 16 = "4.18"
+</item>
+
+<item dominanceNeutral>
+/ 1 = "4.69"
+/ 2 = "5.17"
+/ 3 = "4.67"
+/ 4 = "4.67"
+/ 5 = "4.75"
+/ 6 = "5.05"
+/ 7 = "4.85"
+/ 8 = "4.17"
+/ 9 = "4.91"
+/ 10 = "4.54"
+/ 11 = "5.36"
+/ 12 = "5.29"
+/ 13 = "4.78"
+/ 14 = "4.67"
+/ 15 = "5.67"
+/ 16 = "5.14"
+</item>
+
+
+/////////////////////////////////
+//Negative 
+/////////////////////////////////
+
+<item wordsNegative>
+/ 1 = "broken"
+/ 2 = "coffin"
+/ 3 = "crime"
+/ 4 = "crude"
+/ 5 = "cruel"
+/ 6 = "dirty"
+/ 7 = "foul"
+/ 8 = "fungus"
+/ 9 = "gripe"
+/ 10 = "impair"
+/ 11 = "insane"
+/ 12 = "maggot"
+/ 13 = "malice"
+/ 14 = "manure"
+/ 15 = "menace"
+/ 16 = "mildew"
+/ 17 = "moody"
+/ 18 = "morbid"
+/ 19 = "pest"
+/ 20 = "prison"
+/ 21 = "putrid"
+/ 22 = "rotten"
+/ 23 = "scum"
+/ 24 = "scurvy"
+/ 25 = "slime"
+/ 26 = "stench"
+/ 27 = "stink"
+/ 28 = "trash"
+/ 29 = "ugly"
+/ 30 = "upset"
+/ 31 = "waste"
+/ 32 = "whore"
+</item>
+
+<list itemNumbersNegative>
+/ poolSize = item.wordsNegative.itemCount//automatically adjusts to changes made to the above item list
+/ replace = false
+/ resetInterval = 0
+</list>
+
+<item valenceNegative>
+/ 1 = "3.05"
+/ 2 = "2.56"
+/ 3 = "2.89"
+/ 4 = "3.12"
+/ 5 = "1.97"
+/ 6 = "3.08"
+/ 7 = "2.81"
+/ 8 = "3.06"
+/ 9 = "3.14"
+/ 10 = "3.18"
+/ 11 = "2.85"
+/ 12 = "2.06"
+/ 13 = "2.69"
+/ 14 = "3.1"
+/ 15 = "2.88"
+/ 16 = "3.17"
+/ 17 = "3.2"
+/ 18 = "2.87"
+/ 19 = "3.13"
+/ 20 = "2.05"
+/ 21 = "2.38"
+/ 22 = "2.26"
+/ 23 = "2.43"
+/ 24 = "3.19"
+/ 25 = "2.68"
+/ 26 = "2.19"
+/ 27 = "3"
+/ 28 = "2.67"
+/ 29 = "2.43"
+/ 30 = "2"
+/ 31 = "2.93"
+/ 32 = "2.3"
+</item>
+
+<item arousalNegative>
+/ 1 = "5.43"
+/ 2 = "5.03"
+/ 3 = "5.41"
+/ 4 = "5.07"
+/ 5 = "5.68"
+/ 6 = "4.88"
+/ 7 = "4.93"
+/ 8 = "4.68"
+/ 9 = "5"
+/ 10 = "4.04"
+/ 11 = "5.83"
+/ 12 = "5.28"
+/ 13 = "5.86"
+/ 14 = "4.17"
+/ 15 = "5.52"
+/ 16 = "4.08"
+/ 17 = "4.18"
+/ 18 = "5.06"
+/ 19 = "5.62"
+/ 20 = "5.7"
+/ 21 = "5.74"
+/ 22 = "4.53"
+/ 23 = "4.88"
+/ 24 = "4.71"
+/ 25 = "5.36"
+/ 26 = "4.36"
+/ 27 = "4.26"
+/ 28 = "4.16"
+/ 29 = "5.38"
+/ 30 = "5.86"
+/ 31 = "4.14"
+/ 32 = "5.85"
+</item>
+
+<item dominanceNegative>
+/ 1 = "4.14"
+/ 2 = "4.08"
+/ 3 = "4.12"
+/ 4 = "4.27"
+/ 5 = "4.24"
+/ 6 = "4.7"
+/ 7 = "4.51"
+/ 8 = "4.06"
+/ 9 = "4.67"
+/ 10 = "4.09"
+/ 11 = "4.12"
+/ 12 = "4.03"
+/ 13 = "4.74"
+/ 14 = "4.67"
+/ 15 = "4.98"
+/ 16 = "4.4"
+/ 17 = "4.39"
+/ 18 = "4.34"
+/ 19 = "5.29"
+/ 20 = "4.2"
+/ 21 = "4.89"
+/ 22 = "4.32"
+/ 23 = "4.26"
+/ 24 = "4.48"
+/ 25 = "4.17"
+/ 26 = "4.29"
+/ 27 = "4.16"
+/ 28 = "5.24"
+/ 29 = "4.26"
+/ 30 = "4.08"
+/ 31 = "4.72"
+/ 32 = "4.61"
+</item>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontStyle = ("Arial", 3.25%, false, false, false, false, 5, 1)
+/ navigationButtonFontStyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ finishLabel = "press [space] to START"
+</instruct>
+
+<page intro>
+<center><h2>Welcome to the Word Categorization Task!</h2><br></center>
+Two words will appear simultaneously in the middle of the screen, one over the other.<br>
+One of the words will be printed in <font color='blue'>BLUE</font>.
+The other word will be printed in <font color='red'>RED</font>.<br>
+
+<center><b>Ignore</b> the <font color='red'>RED</font> word!<br>
+Just <b>attend</b> to the <font color='blue'>BLUE</font> word.<br><br>
+<div style='background-color:powderblue;'>Decide whether the <font color='blue'>BLUE</font> word is <u>positive or negative</u> as quickly as possible.<br><br>
+Press:<br>
+<b>[<%parameters.positiveResponseKey%>]</b> if the <font color='blue'>BLUE</font> word is <b>positive</b><br>
+<b>[<%parameters.negativeResponseKey%>]</b> if the <font color='blue'>BLUE</font> word is <b>negative</b></div><br>
+
+<i>Always respond as quickly as you can without making too many errors!<i><br><br><br>
+
+Let's practice this task first. If you make a mistake during practice, a red X is flashed onto the screen.
+</page>
+
+<page testStart>
+<center><h2>Test Start</h2><br></center>
+Practice is over and the test is about to start. There will be no more error feedback.<br><br>
+
+Two words will appear simultaneously in the middle of the screen, one over the other.<br>
+One of the words will be printed in <font color='blue'>BLUE</font>.
+The other word will be printed in <font color='red'>RED</font>.<br>
+
+<center><b>Ignore</b> the <font color='red'>RED</font> word!<br>
+Just <b>attend</b> to the <font color='blue'>BLUE</font> word.<br><br>
+<div style='background-color:powderblue;'>Decide whether the <font color='blue'>BLUE</font> word is <u>positive or negative</u> as quickly as possible.<br><br>
+Press:<br>
+<b>[<%parameters.positiveResponseKey%>]</b> if the <font color='blue'>BLUE</font> word is <b>positive</b><br>
+<b>[<%parameters.negativeResponseKey%>]</b> if the <font color='blue'>BLUE</font> word is <b>negative</b></div><br>
+
+<i>Always respond as quickly as you can without making too many errors!<i><br><br><br>
+
+Let's start.
+</page>
+
+<page blockStart>
+<br><br><br><br>
+<center><h1>Block <%values.blockCounter%> of <%parameters.numberOfBlocks%></h1><br><br>
+Start when you are ready.</center>
+</page>
+
+<text responseReminderKeys>
+/ items = ("<%expressions.responseKeyAssignments%>")
+/ position = (50,90)
+/ erase = false
+/ txColor = gray
+</text>
+<expressions>
+/ responseKeyAssignments = {
+	if (parameters.positiveResponseKey == parameters.leftResponseKey){
+		return "POSITIVE											NEGATIVE"
+	} else {
+		return "NEGATIVE											POSITIVE"
+	}
+}
+</expressions>
+
+
+**************************************************************************************************************
+get-ready trial
+**************************************************************************************************************
+
+<text getReady>
+/ items = ("
+<center><h1>Get ready!</h1><br>
+<%expressions.getReadyInstruct%></center>")
+</text>
+
+<expressions>
+/ getReadyInstruct = {
+	if (!computer.hasKeyboard && computer.touch){
+		return "Place your fingers over the response keys"
+	} else {
+		return "Put your index fingers on the left [<%parameters.leftResponseKey%>] and right [<%parameters.rightResponseKey%>] keys"
+	}
+}
+</expressions>
+
+
+<trial getReady>
+/ stimulusFrames = [1 = getReady, responseReminderKeys]
+/ trialDuration = parameters.getreadyDuration
+/ validResponse = (parameters.leftResponseKey, parameters.rightResponseKey)
+/ isValidResponse = [
+	//for touchscreen devices the keys should already be presented, albeit inactive
+	return false;
+]
+/ errorMessage = false
+/ recordData = false
+</trial>
+
+**************************************************************************************************************
+finish trial
+**************************************************************************************************************
+
+<text finish>
+/ items = ("<center><h1>Thank you!</h1></center>")
+/ fontStyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+</text>
+
+<trial finish>
+/ stimulusFrames = [1 = clearScreen, finish]
+/ timeout = 500
+</trial>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit "6.6.2.0" or higher
+
+<defaults>
+/ canvasAspectRatio = (4,3)
+/ minimumVersion = "6.6.2.0"
+/ fontStyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txBGColor = white
+/ txColor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (
+build, computer.platform, date, time, subject, group, session,  
+blockcode, blocknum, trialcode, trialnum,
+values.blockCounter, values.trialCounterPerBlock,
+values.trialPhase, values.trialType, values.targetValenceTTrial, values.targetPositionPTrial, values.targetPositionTTrial,
+values.targetWord, values.distractorWord, 
+values.targetValence, values.distractorValence, values.targetPosition, 
+values.correctResp, response, responseText, correct, latency,values.validRT,
+values.targetY, values.distractorY,
+values.tValence, values.tArousal, values.tDominance, values.tLength,
+values.dValence, values.dArousal, values.dDominance, values.dLength,
+values.prevDistractor, values.prevTarget
+)	
+</data>
+
+********************
+summary data
+********************
+
+<summaryData>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+expressions.propCorrect, expressions.meanCorrRT, expressions.propRTOutliers,
+expressions.propCorrectNP, expressions.meanCorrRTNP,
+expressions.propCorrectCtrl, expressions.meanCorrRTCtrl
+)
+</summarydata>
+	
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<values>
+/ trialType = null
+/ targetValenceTTrial = null
+/ targetPositionPTrial = null
+/ targetPositionTTrial = null
+
+/ distractorPosition = null
+/ targetPosition = null
+/ distractorY = null
+/ targetY = null
+
+/ distractorValence = null
+/ targetValence = null
+
+/ tValence = null
+/ dValence = null
+/ dArousal = null
+/ dDominance = null
+/ tArousal = null
+/ tDominance = null
+
+/ dLength = 0
+/ tLength = 0
+
+/ trialPhase = "P" //vs. "T"
+/ trialCounterPerBlock = 0
+/ blockCounter = 0
+/ distractorWord = ""
+/ targetWord = ""
+/ correctResp = null
+/ validRT = null
+/ prevDistractor = null
+/ prevTarget = null
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/ propCorrect = return list.accTTrial.mean
+/ propRTOutliers = return ((list.rt.itemCount - list.rtValid.itemCount)/list.rt.itemCount)
+/ meanCorrRT = return list.corrRTTTrial.mean
+
+/ propCorrectNP = return list.accTTrialNP.mean
+/ meanCorrRTNP = return list.corrRTTTrialNP.mean
+
+/ propCorrectCtrl = return list.accTTrialCtrl.mean
+/ meanCorrRTCtrl = return list.corrRTTTrialCtrl.mean
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	LISTS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+///////////////////////////////////////
+//Practice
+///////////////////////////////////////
+
+<list targetValencePractice>
+/ items = (1,2,1,2,1,2,1,2,1,2)
+/ replace = false
+</list>
+
+<list distractorValencePractice>
+/ items = (2,1,2,1,2,1,2,1,2,1)
+/ selectionMode = list.targetValencePractice.currentIndex
+</list>
+
+<list targetPositionPractice>
+/ items = (1,2,1,2,1,2,1,2,1,2)
+/ replace = false
+/ selectionRate = always
+</list>
+
+
+///////////////////////////////////////
+//Test
+///////////////////////////////////////
+
+//1 = test trial (NP or Ctrl trial)
+//2 = filler trial
+<list trialSelector>
+/ items = (1,2)
+/ itemProbabilities = (expressions.propTTrial, expressions.propFiller)
+/ poolSize = expressions.finalTrialCountPerBlock
+/ replace = false
+/ resetInterval = 1
+</list>
+<expressions>
+/ finalTrialCountPerBlock = return (parameters.numberTTrialsPerBlock + parameters.ratioFillerToTTrial*parameters.numberTTrialsPerBlock)
+/ propTTrial = return (parameters.numberTTrialsPerBlock/expressions.finalTrialCountPerBlock)
+/ propFiller = return (1-expressions.propTTrial)
+</expressions>
+
+
+////////////////////////////////////////////////
+//applies to test trials (NP + Ctrl) trials only
+////////////////////////////////////////////////
+
+1 = NP trial (target in target trial (TTrial) has the same valence as the distractor in prime trial (PTrial))
+2 = control trial (target in TTrial has a different valence than the distractor in PTrial)
+<list trialType>
+/ items = (1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2)
+/ resetInterval = 0
+</list>
+
+1 = target in TTrial is NEGATIVE
+2 = target in TTrial is POSITIVE
+<list targetValenceTTrial>
+/ items = (1,1,1,1,2,2,2,2,1,1,1,1,2,2,2,2)
+/ selectionMode = list.trialType.currentIndex
+/ resetInterval = 0
+</list>
+
+1 = target on top in prime trial
+2 = target on bottom in prime trial
+<list targetPositionPTrial>
+/ items = (1,1,2,2,1,1,2,2,1,1,2,2,1,1,2,2)
+/ selectionMode = list.trialType.currentIndex
+/ resetInterval = 0
+</list>
+
+1 = target on top in target trial
+2 = target on bottom in target trial
+<list targetPositionTTrial>
+/ items = (1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2)
+/ selectionMode = list.trialType.currentIndex
+/ resetInterval = 0
+</list>
+
+******************************************************
+Data Lists
+
+accuracy: store 1 for each correct trial; 0 = otherwise
+latency: store the latency of correct responses
+******************************************************
+
+<list accTTrial>
+</list>
+
+<list corrRTTTrial>
+</list>
+
+<list accTTrialNP>
+</list>
+
+<list corrRTTTrialNP>
+</list>
+
+<list accTTrialCtrl>
+</list>
+
+<list corrRTTTrialCtrl>
+</list>
+
+<list rt>
+</list>
+
+<list rtValid>
+</list>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<text target>
+/ items = ("<%values.targetWord%>")
+/ hPosition = 50%
+/ fontStyle = ("Arial", parameters.wordHeightPct, false, false, false, false, 5, 1)
+/ vJustify = center
+/ txColor = parameters.targetColor
+</text>
+
+<text distractor>
+/ items = ("<%values.distractorWord%>")
+/ hPosition = 50%
+/ fontStyle = ("Arial", parameters.wordHeightPct, false, false, false, false, 5, 1)
+/ vJustify = center
+/ txColor = parameters.distractorColor
+</text>
+
+<text fixation>
+/ items = ("+")
+/ fontStyle = ("Arial", parameters.wordHeightPct, false, false, false, false, 5, 1)
+</text>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<trial practice>
+/ onTrialBegin = [
+	values.trialCounterPerBlock += 1;
+	values.targetValence = list.targetValencePractice.nextValue;
+	values.distractorValence = list.distractorValencePractice.nextValue;
+	values.targetPosition = list.targetPositionPractice.nextValue;
+	//select Stimuli based on valence:
+	if (values.targetValence == 1) {
+		//negative
+		values.targetWord = item.negativeWordsPractice.item(list.itemNumbersNegativePractice.nextValue);
+	} else {
+		values.targetWord = item.positiveWordsPractice.item(list.itemNumbersPositivePractice.nextValue);
+	}
+	if (values.distractorValence == 1) {
+		//negative
+		values.distractorWord = item.negativeWordsPractice.item(list.itemNumbersNegativePractice.nextValue);
+	} else {
+		values.distractorWord = item.positiveWordsPractice.item(list.itemNumbersPositivePractice.nextValue);
+	}
+	if (values.targetPosition == 1) {
+		//target on top
+		text.target.vPosition = parameters.topY;
+		text.distractor.vPosition = parameters.bottomY;
+	} else {
+		//target on bottom
+		text.target.vPosition = parameters.bottomY;
+		text.distractor.vPosition = parameters.topY;
+	}
+	values.targetY = text.target.vPosition;
+	values.distractorY = text.distractor.vPosition;
+	//determine correct response based on target valence
+	if (values.targetValence == 1) {
+		values.correctResp = parameters.negativeResponseKey;
+	} else {
+		values.correctResp = parameters.positiveResponseKey;
+	}
+	//dynamic stimuli insertion
+	trial.practice.resetStimulusFrames();
+	trial.practice.insertStimulusTime(text.distractor, parameters.fixationDurationMS);
+	trial.practice.insertStimulusTime(text.target, parameters.fixationDurationMS);
+]
+/ stimulusTimes = [0 = clearScreen, responseReminderKeys, fixation]
+/ validResponse = (parameters.leftResponseKey, parameters.rightResponseKey)
+/ correctResponse = (values.correctResp)
+/ errorMessage = true(text.errorFeedback, 100)
+</trial>
+
+
+//Trial selects either PTrial-TTrial sequence or a filler trial
+<trial testTrialSelection>
+/ skip = [
+	return (list.trialSelector.unselectedCount <= 0)
+]
+/ onTrialBegin = [
+	values.validRT = null;
+]
+/ branch = [
+	if (list.trialSelector.nextValue == 1) {
+		//need to make sure that PTrial and TTrial never run the same stimuli
+		if (list.itemNumbersNegative.unselectedCount < 2) {
+			list.itemNumbersNegative.reset();
+		}
+		if (list.itemNumbersPositive.unselectedCount < 2) {
+			list.itemNumbersPositive.reset();
+		}
+		return trial.pTrial;
+	} else {
+		return trial.filler;
+	}
+]
+/ trialDuration = 0
+/ recordData = false
+</trial>
+
+//////////////////////////////////////////////////
+Filler Trials:
+//////////////////////////////////////////////////
+
+<trial filler>
+/ onTrialBegin = [
+	//prevDistractor/prevTarget
+	values.prevDistractor = values.distractorWord;
+	values.prevTarget = values.targetWord;
+
+	values.trialCounterPerBlock += 1;
+	values.trialPhase = "F";
+	values.trialType = 3;
+	
+		
+	//filler trial
+	values.targetValenceTTrial = "N/A";
+	values.targetPositionPTrial = "N/A";
+	values.targetPositionTTrial = "N/A";
+	//determine valence of target and distractor words in filler trial
+	values.distractorValence = replace(1,2,3);
+	//random selection with replacement
+	if (values.distractorValence == 1) {
+		values.targetValence = 2;
+	} else if (values.distractorValence == 2) {
+		values.targetValence = 1;
+	} else {
+		values.targetValence = replace(1,2);
+		//random selection with replacement
+	}
+	if (values.distractorValence == 1) {
+		values.distractorWord = item.wordsNegative.item(list.itemNumbersNegative.nextIndex);
+		values.dValence = item.valenceNegative.item(list.itemNumbersNegative.currentIndex);
+		values.dArousal = item.arousalNegative.item(list.itemNumbersNegative.currentIndex);
+		values.dDominance = item.dominanceNegative.item(list.itemNumbersNegative.currentIndex);
+	} else if (values.distractorValence == 2) {
+		values.distractorWord = item.wordsPositive.item(list.itemNumbersPositive.nextIndex);
+		values.dValence = item.valencePositive.item(list.itemNumbersPositive.currentIndex);
+		values.dArousal = item.arousalPositive.item(list.itemNumbersPositive.currentIndex);
+		values.dDominance = item.dominancePositive.item(list.itemNumbersPositive.currentIndex);
+	} else {
+		values.distractorWord = item.wordsNeutral.item(list.itemNumbersNeutral.nextIndex);
+		values.dValence = item.valenceNeutral.item(list.itemNumbersNeutral.currentIndex);
+		values.dArousal = item.arousalNeutral.item(list.itemNumbersNeutral.currentIndex);
+		values.dDominance = item.dominanceNeutral.item(list.itemNumbersNeutral.currentIndex);
+	}
+	if (values.targetValence == 1) {
+		values.targetWord = item.wordsNegative.item(list.itemNumbersNegative.nextIndex);
+		values.tValence = item.valenceNegative.item(list.itemNumbersNegative.currentIndex);
+		values.tArousal = item.arousalNegative.item(list.itemNumbersNegative.currentIndex);
+		values.tDominance = item.dominanceNegative.item(list.itemNumbersNegative.currentIndex);
+	} else {
+		values.targetWord = item.wordsPositive.item(list.itemNumbersPositive.nextIndex);
+		values.tValence = item.valencePositive.item(list.itemNumbersPositive.currentIndex);
+		values.tArousal = item.arousalPositive.item(list.itemNumbersPositive.currentIndex);
+		values.tDominance = item.dominancePositive.item(list.itemNumbersPositive.currentIndex);
+	}
+	//determine length of target/distractor
+	values.tLength = length(values.targetWord);
+	values.dLength = length(values.distractorWord);
+	//determine screen position of target and distractor
+	values.targetPosition = replace(1,2);
+	if (values.targetPosition == 1) {
+		//target on top in PTrial
+		text.target.vPosition = parameters.topY;
+		text.distractor.vPosition = parameters.bottomY;
+	} else {
+		//target on bottom in PTrial
+		text.target.vPosition = parameters.bottomY;
+		text.distractor.vPosition = parameters.topY;
+	}
+	values.targetY = text.target.vPosition;
+	values.distractorY = text.distractor.vPosition;
+	//determine correct response based on target valence
+	if (values.targetValence == 1) {
+		values.correctResp = parameters.negativeResponseKey;
+	} else {
+		values.correctResp = parameters.positiveResponseKey;
+	}
+	//dynamic stimuli insertion
+	trial.filler.resetStimulusFrames();
+	trial.filler.insertStimulusTime(text.distractor, parameters.fixationDurationMS);
+	trial.filler.insertStimulusTime(text.target, parameters.fixationDurationMS);
+]
+/ stimulusTimes = [0 = clearScreen, responseReminderKeys, fixation]
+/ validResponse = (parameters.leftResponseKey, parameters.rightResponseKey)
+/ correctResponse = (values.correctResp)
+/ onTrialEnd = [
+	//check for RT outliers:
+	if (trial.filler.latency >= parameters.minLatency && trial.filler.latency <= parameters.maxLatency) {
+		//valid latencies
+		values.validRT = 1;
+	} else {
+		values.validRT = 0;
+	}
+]
+/ branch = [
+	return trial.testTrialSelection;
+]
+</trial>
+
+
+//////////////////////////////////////////////////
+Test Trials:
+//////////////////////////////////////////////////
+
+<trial pTrial>
+/ onTrialBegin = [
+	//prevDistractor/prevTarget
+	values.prevDistractor = values.distractorWord;
+	values.prevTarget = values.targetWord;
+
+	values.trialCounterPerBlock += 1;
+	values.trialPhase = "P";	
+	values.trialType = list.trialType.nextValue;
+	values.targetValenceTTrial = list.targetValenceTTrial.nextValue;
+	values.targetPositionPTrial = list.targetPositionPTrial.nextValue;
+	values.targetPositionTTrial = list.targetPositionTTrial.nextValue;
+	//determine valence of target and distractor words in Ptrial
+	if (values.targetValenceTTrial == 1) {
+		//1 = Negative Target in TTrial
+		if (values.trialType == 1) {
+			//the distractors differ between NP and Ctrl trials
+			values.distractorValence = 1;
+			//the distractor in PTrial is negative
+			values.distractorWord = item.wordsNegative.item(list.itemNumbersNegative.nextIndex);
+			values.dValence = item.valenceNegative.item(list.itemNumbersNegative.currentIndex);
+			values.dArousal = item.arousalNegative.item(list.itemNumbersNegative.currentIndex);
+			values.dDominance = item.dominanceNegative.item(list.itemNumbersNegative.currentIndex);
+		} else {
+			//ctrl trials
+			values.distractorValence = 3;
+			//the distractor in PTrial is neutral
+			values.distractorWord = item.wordsNeutral.item(list.itemNumbersNeutral.nextIndex);
+			values.dValence = item.valenceNeutral.item(list.itemNumbersNeutral.currentIndex);
+			values.dArousal = item.arousalNeutral.item(list.itemNumbersNeutral.currentIndex);
+			values.dDominance = item.dominanceNeutral.item(list.itemNumbersNeutral.currentIndex);
+		}
+		values.targetValence = 2;
+		//the target in PTrial is positive (so no 'positive' priming for either NP nor Ctrl trials)
+		values.targetWord = item.wordsPositive.item(list.itemNumbersPositive.nextIndex);
+		values.tValence = item.valencePositive.item(list.itemNumbersPositive.currentIndex);
+		values.tArousal = item.arousalPositive.item(list.itemNumbersPositive.currentIndex);
+		values.tDominance = item.dominancePositive.item(list.itemNumbersPositive.currentIndex);
+	} else {
+		//Positive Target in TTrial
+		if (values.trialType == 1) {
+			//the distractors differ between NP and Ctrl trials
+			values.distractorValence = 2;
+			//the distractor in PTrial is positive
+			values.distractorWord = item.wordsPositive.item(list.itemNumbersPositive.nextIndex);
+			values.dValence = item.valencePositive.item(list.itemNumbersPositive.currentIndex);
+			values.dArousal = item.arousalPositive.item(list.itemNumbersPositive.currentIndex);
+			values.dDominance = item.dominancePositive.item(list.itemNumbersPositive.currentIndex);
+		} else {
+			//ctrl trials
+			values.distractorValence = 3;
+			//the distractor in PTrial is neutral
+			values.distractorWord = item.wordsNeutral.item(list.itemNumbersNeutral.nextIndex);
+			values.dValence = item.valenceNeutral.item(list.itemNumbersNeutral.currentIndex);
+			values.dArousal = item.arousalNeutral.item(list.itemNumbersNeutral.currentIndex);
+			values.dDominance = item.dominanceNeutral.item(list.itemNumbersNeutral.currentIndex);
+		}
+		values.targetValence = 1;
+		//the target in PTrial is negative (no 'positive' priming effect)	
+		values.targetWord = item.wordsNegative.item(list.itemNumbersNegative.nextIndex);
+		values.tValence = item.valenceNegative.item(list.itemNumbersNegative.currentIndex);
+		values.tArousal = item.arousalNegative.item(list.itemNumbersNegative.currentIndex);
+		values.tDominance = item.dominanceNegative.item(list.itemNumbersNegative.currentIndex);
+	}
+	//determine length of target/distractor
+	values.tLength = length(values.targetWord);
+	values.dLength = length(values.distractorWord);
+	//determine screen position of target and distractor
+	if (values.targetPositionPTrial == 1) {
+		//target on top in PTrial
+		values.targetPosition = 1;
+		text.target.vPosition = parameters.topY;
+		text.distractor.vPosition = parameters.bottomY;
+	} else {
+		//target on bottom in PTrial
+		values.targetPosition = 2;
+		text.target.vPosition = parameters.bottomY;
+		text.distractor.vPosition = parameters.topY;
+	}
+	values.targetY = text.target.vPosition;
+	values.distractorY = text.distractor.vPosition;
+	//determine correct response based on target valence
+	if (values.targetValence == 1) {
+		values.correctResp = parameters.negativeResponseKey;
+	} else {
+		values.correctResp = parameters.positiveResponseKey;
+	}
+	//dynamic stimuli insertion
+	trial.pTrial.resetStimulusFrames();
+	trial.pTrial.insertStimulusTime(text.distractor, parameters.fixationDurationMS);
+	trial.pTrial.insertStimulusTime(text.target, parameters.fixationDurationMS);
+]
+/ stimulusTimes = [0 = clearScreen, responseReminderKeys, fixation]
+/ validResponse = (parameters.leftResponseKey, parameters.rightResponseKey)
+/ correctResponse = (values.correctResp)
+/ branch = [
+	return trial.tTrial;
+]
+</trial>
+
+<trial tTrial>
+/ onTrialBegin = [
+	//prevDistractor/prevTarget
+	values.prevDistractor = values.distractorWord;
+	values.prevTarget = values.targetWord;
+
+	values.trialPhase = "T";
+	//determine valence of target and distractor words in TTrial (same for NP and control trials)
+	if (values.targetValenceTTrial == 1) {
+		//1 = Negative Target in TTrial
+		values.distractorValence = 2;
+		//the distractor in TTrial is positive
+		values.targetValence = 1;
+		//the target in TTrial is negative	
+		values.distractorWord = item.wordsPositive.item(list.itemNumbersPositive.nextIndex);
+		values.targetWord = item.wordsNegative.item(list.itemNumbersNegative.nextIndex);
+		values.dValence = item.valencePositive.item(list.itemNumbersPositive.currentIndex);
+		values.dArousal = item.arousalPositive.item(list.itemNumbersPositive.currentIndex);
+		values.dDominance = item.dominancePositive.item(list.itemNumbersPositive.currentIndex);
+		values.tValence = item.valenceNegative.item(list.itemNumbersNegative.currentIndex);
+		values.tArousal = item.arousalNegative.item(list.itemNumbersNegative.currentIndex);
+		values.tDominance = item.dominanceNegative.item(list.itemNumbersNegative.currentIndex);
+	} else {
+		//Positive Target in TTrial
+		values.distractorValence = 1;
+		//the distractor in TTrial is negative
+		values.targetValence = 2;
+		//the target in TTrial is positive
+		values.distractorWord = item.wordsNegative.item(list.itemNumbersNegative.nextIndex);
+		values.targetWord = item.wordsPositive.item(list.itemNumbersPositive.nextIndex);
+		values.dValence = item.valenceNegative.item(list.itemNumbersNegative.currentIndex);
+		values.dArousal = item.arousalNegative.item(list.itemNumbersNegative.currentIndex);
+		values.dDominance = item.dominanceNegative.item(list.itemNumbersNegative.currentIndex);
+		values.tValence = item.valencePositive.item(list.itemNumbersPositive.currentIndex);
+		values.tArousal = item.arousalPositive.item(list.itemNumbersPositive.currentIndex);
+		values.tDominance = item.dominancePositive.item(list.itemNumbersPositive.currentIndex);
+	}
+	//determine length of target/distractor
+	values.tLength = length(values.targetWord);
+	values.dLength = length(values.distractorWord);
+	//determine screen position of target and distractor
+	if (values.targetPositionPTrial == 1) {
+		//target on top in PTrial
+		values.targetPosition = 1;
+		text.target.vPosition = parameters.topY;
+		text.distractor.vPosition = parameters.bottomY;
+	} else {
+		//target on bottom in PTrial
+		values.targetPosition = 2;
+		text.target.vPosition = parameters.bottomY;
+		text.distractor.vPosition = parameters.topY;
+	}
+	values.targetY = text.target.vPosition;
+	values.distractorY = text.distractor.vPosition;
+	//determine correct response based on target valence
+	if (values.targetValence == 1) {
+		values.correctResp = parameters.negativeResponseKey;
+	} else {
+		values.correctResp = parameters.positiveResponseKey;
+	}
+	//dynamic stimuli insertion
+	trial.tTrial.resetStimulusFrames();
+	trial.tTrial.insertStimulusTime(text.distractor, parameters.fixationDurationMS);
+	trial.tTrial.insertStimulusTime(text.target, parameters.fixationDurationMS);
+]
+/ stimulusTimes = [0 = clearScreen, responseReminderKeys, fixation]
+/ validResponse = (parameters.leftResponseKey, parameters.rightResponseKey)
+/ correctResponse = (values.correctResp)
+/ onTrialEnd = [
+	//summary variables
+	list.accTTrial.appendItem(trial.tTrial.correct);
+	list.rt.appendItem(trial.tTrial.latency);
+	//check for RT outliers:
+	if (trial.tTrial.latency >= parameters.minLatency && trial.tTrial.latency <= parameters.maxLatency) {
+		//valid latencies
+		values.validRT = 1;
+		list.rtValid.appendItem(trial.tTrial.latency);
+	} else {
+		values.validRT = 0;
+	}
+	if (trial.tTrial.correct && values.validRT) {
+		list.corrRTTTrial.appendItem(trial.tTrial.latency);
+	}
+	//by trialType
+	if (values.trialType == 1) {
+		//negative priming trial
+		list.accTTrialNP.appendItem(trial.tTrial.correct);
+		if (trial.tTrial.correct && values.validRT) {
+			list.corrRTTTrialNP.appendItem(trial.tTrial.latency);
+		}
+	} else {
+		//control trial
+		list.accTTrialCtrl.appendItem(trial.tTrial.correct);
+		if (trial.tTrial.correct && values.validRT) {
+			list.corrRTTTrialCtrl.appendItem(trial.tTrial.latency);
+		}
+	}
+]
+/ branch = [
+	return trial.testTrialSelection;
+]
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+<block practice>
+/ preInstructions = (intro)
+/ postInstructions = (testStart)
+/ onBlockBegin = [
+	values.trialCounterPerBlock += 1;
+	values.trialType = "practice";
+	values.targetValenceTTrial = null;
+	values.targetPositionPTrial = null;
+	values.targetPositionTTrial = null;
+	values.dValence = null;
+	values.dArousal = null;
+	values.dDominance = null;
+	values.dLength = null;
+	values.tValence = null;
+	values.tArousal = null;
+	values.tDominance = null;
+	values.tLength = null;
+	
+	values.prevDistractor = null;
+	values.prevTarget = null;	
+]
+/ trials = [1 = getReady; 2-11 = practice]
+</block>
+
+
+<block negativePriming>
+/ preInstructions = (blockStart)
+/ onBlockBegin = [
+	values.blockCounter += 1;
+	values.trialCounterPerBlock = 0;
+	//reset lists:
+	list.itemNumbersPositive.reset();
+	list.itemNumbersNegative.reset();
+	list.itemNumbersNeutral.reset();
+	list.trialType.reset();
+	list.targetValenceTTrial.reset();
+	list.targetPositionPTrial.reset();
+	list.targetPositionTTrial.reset();
+	
+	values.prevDistractor = null;
+	values.prevTarget = null;	
+]
+/ trials = [1 = getReady; 2 = testTrialSelection]//loops through specified number of trials per block
+/ branch = [
+	if (values.blockCounter < parameters.numberOfBlocks) {
+		return block.negativePriming;
+	}
+	return null;
+]
+</block>
+
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expt np>
+/ onExptBegin = [
+	if (monkey.monkeyMode) {
+		parameters.minLatency = 20;
+		parameters.maxLatency = 200;
+	}
+]
+/ blocks = [
+	1 = practice;
+	2 = negativePriming;
+	3 = finish;
+]
+</expt>
+
+<monkey>
+/ latencyDistribution = normal(100, 80)
+</monkey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

@@ -1,0 +1,1643 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+									Affective Go/Nogo Task
+___________________________________________________________________________________________________________________	
+
+script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 08-15-2018
+last updated:  10-03-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-03-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+Go/Nogo Tasks are used as behavioral measures of inhibition and cognitive control. 
+This script implements a Go/Nogo Task procedure to study inhibition in the context of valenced stimuli.
+
+The implemented procedure is based on:
+
+Chuang, Jie-Yu et al (2017). Adolescent Major Depressive Disorder: Neuroimaging Evidence of Sex Difference during an 
+Affective Go/No-Go Task. Frontiers in Psychiatry, 8, 1-12.   
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+Participants view positive, negative or neutral words and are asked to: 
+Condition 1: press the space bar when they see a positive word ("go") and only then (nogo words: neutral words)
+Condition 2: press the space bar when they see a neutral word ("go") and only then (nogo words: positive words)
+Condition 3: press the space bar when they see a positive word ("go") and only then (nogo words: negative words)
+Condition 4: press the space bar when they see a negative word ("go") and only then (nogo words: positive words)
+Condition 5: press the space bar when they see a negative word ("go") and only then (nogo words: neutral words)
+Condition 6: press the space bar when they see a neutral word ("go") and only then (nogo words: negative words)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 15 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'affectivegonogo_raw*.iqdat'*
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (winmaciosandroid)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block. 
+									
+condition:						HN: go = positivehappy; nogo = neutral (by default: positive words are repeated twice after reset; neutral words are repeated once)
+								NH: go = neutral; nogo = positive (by default: neutral words are repeated twice after reset; positive words are repeated once)
+								HS: go = positivehappy; nogo = negative (by default: positive words are repeated twice after reset; negative words are repeated once)
+								SH: go = negativesad; nogo = positive (by default: negative words are repeated twice after reset; positive words are repeated once)
+								SN: go = negativesad; nogo = neutral (by default: negative words are repeated twice after reset; neutral words are repeated once)
+								NS: go = neutral; nogo = negative (by default: neutral words are repeated twice after reset; negative words are repeated once)										
+									
+									
+GoStim:							"NEUTRAL" vs. "HAPPY" vs. "SAD" (current go words)
+NoGoStim:						"NEUTRAL" vs. "HAPPY" vs. "SAD" (current nogo words)
+iti:							current intertrial interval in ms (default: 0)
+word:							the currently presented word
+response:						Scancode of the pressed response key (Example:)
+									57 = space bar
+									0 = no response
+									(21 = Y; 49 = N)
+									
+correct:						accuracy of response: 1 = correct response; 0 = otherwise
+
+responseCategory:				go trials: HIT (correctly pressing response key), MISS (response key was not pressed); 
+								nogo trials: FA (false alarm = incorrectly pressing response key), CR (correct rejection: response key was not pressed)
+								
+latency: 						the latency (in ms) of the current trial (does not have to be a go, nogo trial)
+
+respRT:							response time (in ms) of current practice and test gonogo trials, 
+								measured from onset of word until response (Note: if no response, 'response RT' is empty)
+								
+
+(2) Summary data file: 'affectivegonogo_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+
+
+Note: this script does not remove outliers
+Note: the following expressions calculate z-scores based on hit and FA rate.(see Gregg & Sedikides, 2010, p.148)
+If the hitrate or FA rate is 0 => 0.005 is used instead
+IF the hitrate or FA rate is 1.0 => 0.995 is used instead
+
+Reference:
+Gregg, A. & Sedikides, C. (2010). Narcissistic Fragility:
+Rethinking Its Links to Explicit and Implicit Self-esteem, Self and Identity, 9:2, 142-161 (p.148)
+
+
+hitrate:			the overall hitrate across all blocks (hit = pressing space bar for go stimuli)
+missrate:			the overall missrate across all blocks (miss = not pressing spacebar for go stimuli)
+FArate:				the overall False Alarm rate across all blocks (FA = pressing space bar for nogo stimuli)
+CRrate:				the overall Correct Rejection rate across all blocks (CR = not pressing spacebar for nogo stimuli)
+
+z_hitrate:			the z-score of the overall hitrate
+z_FA:				the z-score of the overall FA rate
+dprime:				difference btw. (zscore of hitrate - zscore of FArate): measure of Sensitivity
+									=> Range (in this script): 
+									-5.1516586840152740479 <= dprime <= 5.1516586840152740479 (=perfect performance)
+									=> The higher the value, the better signals  were overall distinguished from noise 
+									(d' = 0: chance performance; negative d-primes: participant treated nontargets as targets and targets as nontargets)									
+
+c: 					c-criterion in signal detection:The absolute value of c provides an indication of the strength of
+					the response bias/response style
+					negative: participant more likely to report that signal is present (liberal response style);
+					may favor faster responding in speed-accuracy trade-off response paradigms
+					positive: favoring caution (conservative response style)
+									
+mean_hitRT:			the overall mean hit response time (in ms) 
+SD_hitRT:			standard deviation of the hit response times across blocks (in ms)
+
+/////////////////////
+per conditions
+/////////////////////
+hitrate_HN:			the hitrate in HN block  (go: positivehappy words, nogo: neutral words)
+missrate_HN:		the missrate in HN block
+FArate_HN:			the false alarm rate (commission rate) in HN block
+CRrate_HN:			the correct rejection rate in HN block
+									
+z_hitrate_HN:		the z-score of the HN hitrate
+z_FA_HN:			the z-score of the HN FA-rate
+
+dprime_HN:			difference btw. (z_hitrate - z_FA) in HN block: measure of Sensitivity
+c_HN:				c-criterion for block HN
+ 									
+hitRT_HN:			mean hit response time (in ms) in HN block
+(same for all other conditions)
+
+HN: positive/happy GO, neutral NOGO
+NH: neutral GO, positivehappy NOGO
+HS: positive/happy GO, negativesad NOGO
+SH: negative/sad GO, positivehappy NOGO
+SN: negative/sad GO, neutral NOGO
+NS: neutral GO, negativesad NOGO
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+Practice: optional (see parameters.runPractice)
+* 10 trials (5 go, 5 nogo)
+* script uses 'living things' as GO stimuli and 'non-living things' as NOGO stimuli
+* provides feedback
+
+Test: 
+* 3 rounds of testing 
+* each round consists of 6 Conditions (Note: this script does not run the 7th condition run by Chuang et al): 
+order of conditions is randomly determined
+HN: go = positive/happy; nogo = neutral (by default: positive words are repeated twice after reset; neutral words are repeated once)
+NH: go = neutral; nogo = positive (by default: neutral words are repeated twice after reset; positive words are repeated once)
+HS: go = positive/happy; nogo = negative (by default: positive words are repeated twice after reset; negative words are repeated once)
+SH: go = negative/sad; nogo = positive (by default: negative words are repeated twice after reset; positive words are repeated once)
+SN: go = negative/sad; nogo = neutral (by default: negative words are repeated twice after reset; neutral words are repeated once)
+NS: go = neutral; nogo = negative (by default: neutral words are repeated twice after reset; negative words are repeated once)
+
+* Each condition runs 20 trials (10 go trials, 10 nogo trial); trial order of go-nogo trials is generated at random
+(go: nogo ratio can be changed under section BLOCKS)
+* each condition runs all 10 stimuli of the GO and NOGO category once
+
+
+Default Trial Sequence:
+word (450ms) -> clearScreen (750ms): response timeout after 1200ms
+-> iti = 0 (see list.iti) (iti presents clearScreen)
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+provided by Millisecond Software - can be edited/exchanged under section Editable Stimuli
+
+words selected from: 
+Bradley, M.M., & Lang, P.J. (1999). Affective norms for English words (ANEW): Instruction
+manual and affective ratings. Technical Report C-1, The Center for Research in
+Psychophysiology, University of Florida.
+
+The words are roughly matched in mean valence and mean length
+10 negative words (scale: 1-9): mean valence: 1.47 (range: 1.25-1.61), mean length: 6.8
+10 neutral words (scale: 1-9): mean valence: 5 (range: 4.95-5.05), mean length: 6.1
+10 positive words (scale: 1-9): mean valence: 8.57 (range: 8.39-8.82), mean length: 7
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+provided by Millisecond Software - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/fixationSize:				proportional sizing of fixation cross (relative to canvas height) (default: 10%)
+/wordSize:					proportional sizing of words (relative to canvas height) (default: 8%)
+
+/runPractice:				true: script runs a short practice session with item.practice as the go items
+							false: script does not run a practice session
+
+/practiceFeedbackDuration:	the duration (in ms) of the correct practice Feedback (default: 1000ms)
+								Note: error feedback terminates by space bar press
+								
+/getReadyDuration:			the  duration (in ms) of the 'ready' trial (default: 5000ms)
+/startFixation:				the duration (in ms) of the first fixation cross in a block (default: 2500ms)
+/endFixation:				the duration (in ms) of the last (red) fixation cross in a block (default: 2000ms)
+/stimDuration:				the duration (in ms) of the words (default: 450ms)
+/responseDuration:			the response timeout (in ms), measured from onset of word (default: 1200ms)
+								Note: for a stim duration of 500ms, a blank screen is presented for the remaining 1000ms
+
+/goKey:						go-key (default: " " = space bar)
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/fixationSize = 10%
+/wordSize = 8%
+
+/runPractice = true
+
+/practiceFeedbackDuration = 1000
+/getReadyDuration = 5000
+/startFixation = 2500
+/endFixation = 2000
+/stimDuration = 450
+/responseDuration = 1200
+
+/goKey = " "
+</parameters>
+
+
+Note: this list controls the inter trial intervals; by default they are all 0ms
+<list iti>
+/items = (0)
+/ poolSize = 30
+/ replace = false
+</list>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: words selected from: 
+Bradley, M.M., & Lang, P.J. (1999). Affective norms for English words (ANEW): Instruction
+manual and affective ratings. Technical Report C-1, The Center for Research in
+Psychophysiology, University of Florida.
+
+<item negative_catLABEL>
+/1 = "SAD"
+</item>
+
+<item negative>
+/1="RAPE"
+/2="DEATH"
+/3="CANCER"
+/4="SUICIDE"
+/5="UNHAPPY"
+/6="FUNERAL"
+/7="TORTURE"
+/8="REJECTED"
+/9="MURDERER"
+/10="SUFFOCATE"
+</item>
+Mean Valence (scale: 1-9): 1.47
+Mean Length: 6.8
+
+<item positive_catLABEL>
+/1 = "HAPPY"
+</item>
+
+<item positive>
+/1="JOY"
+/2="LOVE"
+/3="HUMOR"
+/4="MIRACLE"
+/5="FRIENDLY"
+/6="PARADISE"
+/7="CHAMPION"
+/8="LAUGHTER"
+/9="AFFECTION"
+/10="TRIUMPHANT"
+</item>
+Mean Valence (scale: 1-9): 8.6
+Mean Length: 7
+
+<item neutral_catLABEL>
+/1 = "NEUTRAL"
+</item>
+
+<item neutral>
+/1="TAXI"
+/2="FOOT"
+/3="STOVE"
+/4="METAL"
+/5="STORM"
+/6="ICEBOX"
+/7="CABINET"
+/8="HYDRANT"
+/9="SCISSORS"
+/10="INHABITANT"
+</item>
+Mean Valence (scale: 1-9): 5
+Mean Length: 6.1
+
+<item practiceGo_catLABEL>
+/1 = "LIVING THINGS"
+</item>
+
+<item practicewords>
+/1 = "CROW"
+/2 = "MOUSE"
+/3 = "LION"
+/4 = "SNAKE"
+/5 = "FROG"
+</item>
+
+<item practiceNoGo_catLABEL>
+/1 = "NON-LIVING THINGS"
+</item>
+
+<item practicewords_nogo>
+/1 = "CAR"
+/2 = "SOFA"
+/3 = "ROCK"
+/4 = "MUG"
+/5 = "PEN"
+</item>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+</instruct>
+
+<item instructions>
+/1 = "In this task, you will see a series of words one at a time.
+ 
+Press the space bar when you see a word from a specific category, but do NOT press at other times.  
+
+Press space bar to learn more."
+/2 = "Across the task, the rules on what category word to respond to will change, and an instruction screen will tell you the new rules.
+  
+Press space bar to get your first instructions and start <%expressions.instructions%>."
+/3 = "The test is about to start. It takes approximately 10 minutes. 
+
+The words during the test will be either <%item.positive_catLABEL.item(1)%>, <%item.negative_catLABEL.item(1)%> or <%item.neutral_catLABEL.item(1)%> words. There will be no more feedback.
+~n~n~n~n~n~n
+Take a moment to get familiar with the words and then press space bar to start."
+</item>
+
+<expressions>
+/instructions = if (parameters.runPractice == true){
+	"a practice session"
+} else {
+	"the test"
+}
+</expressions>
+
+<item blockInstructions>
+/1 = "Press the SPACE BAR whenever you see words from the '<%values.GoStim%>' category. 
+
+Don't press for other words, only the words from the  '<%values.GoStim%>' category. 
+~nRemember to go as fast as you can without making any mistakes. 
+
+
+Press the space bar to start."
+</item>
+
+<text getReady>
+/ items = ("Get Ready")
+/ fontstyle = ("Arial", 8.00%, true, false, false, false, 5, 1)
+/ size = (80%, 10%)
+/ txcolor = yellow
+/ vjustify = center
+</text>
+
+<text spacebarreminder>
+/ items = ("<%expressions.buttoninstruct1%>")
+/ fontstyle = ("Arial", 3.00%, true, false, false, false, 5, 1)
+/ size = (80%, 10%)
+/ txcolor = yellow
+/ vjustify = center
+/ position = (50%, 75%)
+</text>
+
+<expressions>
+/buttoninstruct1 = if (computer.hasKeyboard){
+	"place your index finger on the space bar key"
+} else {
+	"place your index finger over the space bar button"
+}
+</expressions>
+
+<text correctFeedback>
+/ items = ("Correct")
+/ position = (50%, 80%)
+/ size = (80%, 8%)
+/ fontstyle = ("Arial", 5.00%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ txcolor = green
+</text>
+
+<text MissFeedback>
+/ items = ("Incorrect
+
+'<%values.word%>' belongs to the <%item.practiceGo_catLABEL.item(1)%> category.
+
+Remember: Press for words from the <%item.practiceGo_catLABEL.item(1)%> category
+
+
+Press space bar to continue.")
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ fontstyle = ("Arial", 5.00%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ txcolor = red
+</text>
+
+<text FAFeedback>
+/ items = ("Incorrect
+
+'<%values.word%>' does NOT belong to the <%item.practiceGo_catLABEL.item(1)%> category.
+
+Remember: Press ONLY for words from the <%item.practiceGo_catLABEL.item(1)%> category
+
+Press space bar to continue.")
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ fontstyle = ("Arial", 5.00%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ txcolor = red
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+</text>
+
+<text exit>
+/ items = ("<press space bar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+</text>
+
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = black
+/ txcolor = white
+/ screencolor = black
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session,
+blockcode, blocknum, trialcode, trialnum,
+values.condition, values.GoStim, values.NoGoStim, values.iti, values.word, response, correct, values.responseCategory, 
+latency, values.respRT)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId,
+script.elapsedTime, script.completed,
+
+expressions.hitrate, expressions.missrate, expressions.FArate, expressions.CRrate,
+expressions.z_hitrate, expressions.z_FA, expressions.dprime, expressions.c,
+expressions.mean_hitRT, expressions.SD_hitRT,
+
+expressions.hitrate_HN, expressions.missrate_HN, expressions.FArate_HN, expressions.CRrate_HN, 
+expressions.z_hitrate_HN,  expressions.z_FA_HN, expressions.dprime_HN, expressions.c_HN,
+expressions.hitRT_HN, 
+
+expressions.hitrate_NH, expressions.missrate_NH, expressions.FArate_NH, expressions.CRrate_NH, 
+expressions.z_hitrate_NH,  expressions.z_FA_NH, expressions.dprime_NH, expressions.c_NH,
+expressions.hitRT_NH, 
+
+expressions.hitrate_HS, expressions.missrate_HS, expressions.FArate_HS, expressions.CRrate_HS, 
+expressions.z_hitrate_HS,  expressions.z_FA_HS, expressions.dprime_HS, expressions.c_HS,
+expressions.hitRT_HS, 
+ 
+expressions.hitrate_SH, expressions.missrate_SH, expressions.FArate_SH, expressions.CRrate_SH, 
+expressions.z_hitrate_SH,  expressions.z_FA_SH, expressions.dprime_SH, expressions.c_SH,
+expressions.hitRT_SH, 
+
+expressions.hitrate_SN, expressions.missrate_SN, expressions.FArate_SN, expressions.CRrate_SN, 
+expressions.z_hitrate_SN,  expressions.z_FA_SN, expressions.dprime_SN, expressions.c_SN,
+expressions.hitRT_SN,
+ 
+expressions.hitrate_NS, expressions.missrate_NS, expressions.FArate_NS, expressions.CRrate_NS, 
+expressions.z_hitrate_NS,  expressions.z_FA_NS, expressions.dprime_NS, expressions.c_NS,
+expressions.hitRT_NS)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/index:					helper variable to access the current trialinformation
+/iti:					current intertrial interval
+
+/respRT:				response time (in ms), measured from onset of word (Note: if no response, values.respRT is empty)
+/responseCategory:		go trials: HIT, MISS; nogo trials: FA (false alarm), CR (correct rejection)
+
+/GoStim:				"neutral" vs. "SAD" vs. "happy"
+
+<values>
+/index = 1
+/iti = 1000
+
+/respRT = 0
+/responseCategory = ""
+
+/GoStim = "neutral"
+/NoGoStim = ""
+/condition = ""
+/word = ""
+/feedback = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: the following expressions calculate z-scores based on hit and FA rate.(see Gregg & Sedikides, 2010, p.148)
+If the hitrate / FA rate is 0 => 0.005 is used instead
+IF the hitrate / FA rate is 1.0 => 0.995 is used instead
+
+Gregg, A. & Sedikides, C. (2010). Narcissistic Fragility:
+Rethinking Its Links to Explicit and Implicit Self-esteem, Self and Identity, 9:2, 142-161 (p.148)
+
+/hitrate:				the overall hitrate across all blocks
+/z_hitrate:				the z-score of the overall hitrate
+/FArate:				the overall False Alarm rate across all blocks
+/z_FA:					the z-score of the overall FA rate
+/dprime:				difference btw. (z_hitrate - z_FA): measure of Sensitivity
+/mean_hitRT:			the overall mean hit response time (in ms)
+/SD_hitRT:				standard deviation of the hit response times across blocks (in ms)
+/SD_FAs:				standard deviation of the false alarm rates
+
+/hitrate_NF:			the hitrate in NF block  (NF = neutral go, fear nogo)
+/z_hitrate_NF:			the z-score of the NF hitrate
+/FArate_NF:				the false alarm rate in NF block
+/z_FA_NF:				the z-score of the NF FA-rate
+/dprime_NF:				difference btw. (z_hitrate - z_FA) in NF block: measure of Sensitivity
+/hitRT_NF:				mean hit response time (in ms) in NF block
+/z_hitRT_NF:			standardized mean hit response time using the overall mean hit response time and standard deviation
+/z_FA_NF_2:				standardized FA rate using the overall FA rate and its standard deviation
+
+/hitrate_FN:			the hitrate in FN block (FN = fear go, neutral nogo)
+/z_hitrate_FN:			the z-score of the FN hitrate
+/FArate_FN:				the false alarm rate in FN block
+/z_FA_FN:				the z-score of the FN FA-rate
+/dprime_FN:				difference btw. (z_hitrate - z_FA) in FN block: measure of Sensitivity
+/hitRT_FN:				mean hit response time (in ms) in FN block
+
+(same for all other conditions)
+
+
+<expressions>
+/hitrate = return list.Hits.mean
+/missrate = return (1-expressions.hitrate)
+/FArate = return list.FAs.mean
+/CRrate = return (1-expressions.FArate)
+/z_hitrate = {
+	if (expressions.hitrate == 0){
+		return zofp(expressions.hitrate + 0.005)		
+	} else if (expressions.hitrate == 1){
+		return zofp(expressions.hitrate - 0.005)
+	} else {
+		return zofp(expressions.hitrate)	
+	}
+}
+/z_FA = {
+	if (expressions.FArate == 0){
+		return zofp(expressions.FArate + 0.005)		
+	} else if (expressions.FArate == 1){
+		return zofp(expressions.FArate - 0.005)
+	} else {
+		return zofp(expressions.FArate)	
+	}	
+}
+/dprime = expressions.z_hitrate - expressions.z_FA
+/c = return (-1*((expressions.z_hitrate + expressions.z_FA)/2))
+/mean_hitRT = list.hitRT.mean
+/SD_hitRT = list.hitRT.standarddeviation
+/SD_FAs = list.FAs.standarddeviation
+
+
+/hitrate_HN = list.Hits_HN.mean
+/missrate_HN = (1-expressions.hitrate_HN)
+/FArate_HN = list.FAs_HN.mean
+/CRrate_HN = (1-expressions.FArate_HN)
+/z_hitrate_HN = {
+	if (expressions.hitrate_HN == 0){
+		zofp(expressions.hitrate_HN + 0.005)		
+	} else if (expressions.hitrate_HN == 1){
+		zofp(expressions.hitrate_HN - 0.005)
+	} else {
+		zofp(expressions.hitrate_HN)	
+	}
+}
+/z_FA_HN = {
+	if (expressions.FArate_HN == 0){
+		zofp(expressions.FArate_HN + 0.005)		
+	} else if (expressions.FArate_HN == 1){
+		zofp(expressions.FArate_HN - 0.005)
+	} else {
+		zofp(expressions.FArate_HN)	
+	}	
+}
+/dprime_HN = expressions.z_hitrate_HN - expressions.z_FA_HN
+/c_HN = return (-1*((expressions.z_hitrate_HN + expressions.z_FA_HN)/2))
+/hitRT_HN = list.hitRT_HN.mean
+/z_hitRT_HN = (expressions.hitRT_HN - expressions.mean_hitRT)/expressions.SD_hitRT
+/z_FA_HN_2 = (expressions.FArate_HN - expressions.FArate)/expressions.SD_FAs
+
+/hitrate_NH = list.Hits_NH.mean
+/missrate_NH = (1-expressions.hitrate_NH)
+/FArate_NH = list.FAs_NH.mean
+/CRrate_NH = (1-expressions.FArate_NH)
+/z_hitrate_NH = {
+	if (expressions.hitrate_NH == 0){
+		zofp(expressions.hitrate_NH + 0.005)		
+	} else if (expressions.hitrate_NH == 1){
+		zofp(expressions.hitrate_NH - 0.005)
+	} else {
+		zofp(expressions.hitrate_NH)	
+	}
+}
+/z_FA_NH = {
+	if (expressions.FArate_NH == 0){
+		zofp(expressions.FArate_NH + 0.005)		
+	} else if (expressions.FArate_NH == 1){
+		zofp(expressions.FArate_NH - 0.005)
+	} else {
+		zofp(expressions.FArate_NH)	
+	}	
+}
+/dprime_NH = expressions.z_hitrate_NH - expressions.z_FA_NH
+/c_NH = return (-1*((expressions.z_hitrate_NH + expressions.z_FA_NH)/2))
+/hitRT_NH = list.hitRT_NH.mean
+
+/hitrate_HS = list.Hits_HS.mean
+/missrate_HS = (1-expressions.hitrate_HS)
+/FArate_HS = list.FAs_HS.mean
+/CRrate_HS = (1-expressions.FArate_HS)
+/z_hitrate_HS = {
+	if (expressions.hitrate_HS == 0){
+		zofp(expressions.hitrate_HS + 0.005)		
+	} else if (expressions.hitrate_HS == 1){
+		zofp(expressions.hitrate_HS - 0.005)
+	} else {
+		zofp(expressions.hitrate_HS)	
+	}
+}
+/z_FA_HS = {
+	if (expressions.FArate_HS == 0){
+		zofp(expressions.FArate_HS + 0.005)		
+	} else if (expressions.FArate_HS == 1){
+		zofp(expressions.FArate_HS - 0.005)
+	} else {
+		zofp(expressions.FArate_HS)	
+	}	
+}
+/dprime_HS = expressions.z_hitrate_HS - expressions.z_FA_HS
+/c_HS = return (-1*((expressions.z_hitrate_HS + expressions.z_FA_HS)/2))
+/hitRT_HS = list.hitRT_HS.mean
+/z_hitRT_HS = (expressions.hitRT_HS - expressions.mean_hitRT)/expressions.SD_hitRT
+/z_FA_HS_2 = (expressions.FArate_HS - expressions.FArate)/expressions.SD_FAs
+
+/hitrate_SH = list.Hits_SH.mean
+/missrate_SH = (1-expressions.hitrate_SH)
+/FArate_SH = list.FAs_SH.mean
+/CRrate_SH = (1-expressions.FArate_SH)
+/z_hitrate_SH = {
+	if (expressions.hitrate_SH == 0){
+		zofp(expressions.hitrate_SH + 0.005)		
+	} else if (expressions.hitrate_SH == 1){
+		zofp(expressions.hitrate_SH - 0.005)
+	} else {
+		zofp(expressions.hitrate_SH)	
+	}
+}
+/z_FA_SH = {
+	if (expressions.FArate_SH == 0){
+		zofp(expressions.FArate_SH + 0.005)		
+	} else if (expressions.FArate_SH == 1){
+		zofp(expressions.FArate_SH - 0.005)
+	} else {
+		zofp(expressions.FArate_SH)	
+	}	
+}
+/dprime_SH = expressions.z_hitrate_SH - expressions.z_FA_SH
+/c_SH = return (-1*((expressions.z_hitrate_SH + expressions.z_FA_SH)/2))
+/hitRT_SH = list.hitRT_SH.mean
+
+/hitrate_SN = list.Hits_SN.mean
+/missrate_SN = (1-expressions.hitrate_SN)
+/FArate_SN = list.FAs_SN.mean
+/CRrate_SN = (1-expressions.FArate_SN)
+/z_hitrate_SN = {
+	if (expressions.hitrate_SN == 0){
+		zofp(expressions.hitrate_SN + 0.005)		
+	} else if (expressions.hitrate_SN == 1){
+		zofp(expressions.hitrate_SN - 0.005)
+	} else {
+		zofp(expressions.hitrate_SN)	
+	}
+}
+/z_FA_SN = {
+	if (expressions.FArate_SN == 0){
+		zofp(expressions.FArate_SN + 0.005)		
+	} else if (expressions.FArate_SN == 1){
+		zofp(expressions.FArate_SN - 0.005)
+	} else {
+		zofp(expressions.FArate_SN)	
+	}	
+}
+/dprime_SN = expressions.z_hitrate_SN - expressions.z_FA_SN
+/c_SN = return (-1*((expressions.z_hitrate_SN + expressions.z_FA_SN)/2))
+/hitRT_SN = list.hitRT_SN.mean
+/z_hitRT_SN = (expressions.hitRT_SN - expressions.mean_hitRT)/expressions.SD_hitRT
+/z_FA_SN_2 = (expressions.FArate_SN - expressions.FArate)/expressions.SD_FAs
+
+/hitrate_NS = list.Hits_NS.mean
+/missrate_NS = (1-expressions.hitrate_NS)
+/FArate_NS = list.FAs_NS.mean
+/CRrate_NS = (1-expressions.FArate_NS)
+/z_hitrate_NS = {
+	if (expressions.hitrate_NS == 0){
+		zofp(expressions.hitrate_NS + 0.005)		
+	} else if (expressions.hitrate_NS == 1){
+		zofp(expressions.hitrate_NS - 0.005)
+	} else {
+		zofp(expressions.hitrate_NS)	
+	}
+}
+/z_FA_NS = {
+	if (expressions.FArate_NS == 0){
+		zofp(expressions.FArate_NS + 0.005)		
+	} else if (expressions.FArate_NS == 1){
+		zofp(expressions.FArate_NS - 0.005)
+	} else {
+		zofp(expressions.FArate_NS)	
+	}	
+}
+/dprime_NS = expressions.z_hitrate_NS - expressions.z_FA_NS
+/c_NS = return (-1*((expressions.z_hitrate_NS + expressions.z_FA_NS)/2))
+/hitRT_NS = list.hitRT_NS.mean
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text blockInstructions>
+/ items = blockInstructions
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</text>
+
+<trial blockInstructions>
+/ stimulusframes = [1 = blockInstructions]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<text instructions>
+/ items = Instructions
+/ select = sequence
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ resetinterval = 0
+</text>
+
+<trial instructions>
+/ stimulusframes = [1 = instructions]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<text testInstructions>
+/ items = instructions
+/ select = 3
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = left
+/ size = (90%, 90%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ resetinterval = 0
+</text>
+
+<text positiveWords>
+/ items = ("<%item.positive.items.1%>
+<%item.positive.items.2%>
+<%item.positive.items.3%>
+<%item.positive.items.4%>
+<%item.positive.items.5%>
+<%item.positive.items.6%>
+<%item.positive.items.7%>
+<%item.positive.items.8%>
+<%item.positive.items.9%>
+<%item.positive.items.10%>")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ size = (30%, 30%)
+/ vjustify = center
+/ hposition = text.positiveWords_header.hposition
+/ vposition = text.positiveWords_header.vposition + 0.75*text.positiveWords_header.height
+/ valign = top
+</text>
+
+<text neutralWords>
+/ items = ("<%item.neutral.items.1%>
+<%item.neutral.items.2%>
+<%item.neutral.items.3%>
+<%item.neutral.items.4%>
+<%item.neutral.items.5%>
+<%item.neutral.items.6%>
+<%item.neutral.items.7%>
+<%item.neutral.items.8%>
+<%item.neutral.items.9%>
+<%item.neutral.items.10%>")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ size = (40%, 30%)
+/ vjustify = center
+/ hposition = text.neutralWords_header.hposition
+/ vposition = text.neutralWords_header.vposition + 0.75*text.neutralWords_header.height
+/ valign = top
+</text>
+
+<text negativeWords>
+/ items = ("<%item.negative.items.1%>
+<%item.negative.items.2%>
+<%item.negative.items.3%>
+<%item.negative.items.4%>
+<%item.negative.items.5%>
+<%item.negative.items.6%>
+<%item.negative.items.7%>
+<%item.negative.items.8%>
+<%item.negative.items.9%>
+<%item.negative.items.10%>")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ size = (40%, 30%)
+/ vjustify = center
+/ hposition = text.negativeWords_header.hposition
+/ vposition = text.negativeWords_header.vposition + 0.75*text.negativeWords_header.height
+/ valign = top
+</text>
+
+<text positiveWords_header>
+/ items = ("<%item.positive_catLABEL.item(1)%>")
+/ fontstyle = ("Arial", 2%, true, false, true, false, 5, 1)
+/ size = (30%, 2.5%)
+/ vjustify = center
+/ position = (25%, 43%)
+</text>
+
+<text neutralWords_header>
+/ items = ("<%item.neutral_catLABEL.item(1)%>")
+/ fontstyle = ("Arial", 2%, true, false, true, false, 5, 1)
+/ size = (30%, 2.5%)
+/ vjustify = center
+/ position = (50%, 43%)
+</text>
+
+<text negativeWords_header>
+/ items = ("<%item.negative_catLABEL.item(1)%>")
+/ fontstyle = ("Arial", 2%, true, false, true, false, 5, 1)
+/ size = (30%, 2.5%)
+/ vjustify = center
+/ position = (75%, 43%)
+</text>
+
+<trial testInstructions>
+/ stimulusframes = [1 = testInstructions, positiveWords_header, 
+positiveWords, neutralWords_header, neutralWords, negativeWords_header, negativeWords]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial getReady>
+/ stimulusframes = [1 = getReady, spacebarreminder]
+/ validresponse = (" ")
+/ beginresponsetime = parameters.getReadyDuration
+/ trialduration = parameters.getReadyDuration
+/ recorddata = false
+</trial>
+
+
+<trial finish>
+/ stimulusframes = [1 = finish]
+/ timeout = 250
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text fixation>
+/ items = ("+")
+/ fontstyle = ("Arial", parameters.fixationSize, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ erase = false
+/ vjustify = center
+</text>
+
+<text positive>
+/ items = positive
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.wordSize, true, false, false, false, 5, 1)
+/ size = (80%, parameters.wordSize*2)
+/ erase = false
+/ vjustify = center
+</text>
+
+<text neutral>
+/ items = neutral
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.wordSize, true, false, false, false, 5, 1)
+/ size = (80%, parameters.wordSize*2)
+/ erase = false
+/ vjustify = center
+</text>
+
+<text negative>
+/ items = negative
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.wordSize, true, false, false, false, 5, 1)
+/ size = (80%, parameters.wordSize*2)
+/ erase = false
+/ vjustify = center
+</text>
+
+<text practice>
+/ items = practicewords
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.wordSize, true, false, false, false, 5, 1)
+/ size = (80%, parameters.wordSize*2)
+/ erase = false
+/ vjustify = center
+</text>
+
+<text practice_comp>
+/ items = practicewords_nogo
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.wordSize, true, false, false, false, 5, 1)
+/ size = (80%, parameters.wordSize*2)
+/ erase = false
+/ vjustify = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = hit; 0 = miss for go trials in CF condition
+<list Hits>
+</list>
+
+Note: list stores 1 = FA; 0 = CR for nogo trials in CF condition
+<list FAs>
+</list>
+
+Note: list stores the latency of correct hits for CF condition
+<list hitRT>
+</list>
+
+
+Note: list stores 1 = hit; 0 = miss for go trials in CF condition
+<list Hits_HN>
+</list>
+
+Note: list stores 1 = FA; 0 = CR for nogo trials in CF condition
+<list FAs_HN>
+</list>
+
+Note: list stores the latency of correct hits for CF condition
+<list hitRT_HN>
+</list>
+
+
+Note: list stores 1 = hit; 0 = miss for go trials in FC condition
+<list Hits_NH>
+</list>
+
+Note: list stores 1 = FA; 0 = CR for nogo trials in FC condition
+<list FAs_NH>
+</list>
+
+Note: list stores the latency of correct hits for FC condition
+<list hitRT_NH>
+</list>
+
+
+Note: list stores 1 = hit; 0 = miss for go trials in CH condition
+<list Hits_HS>
+</list>
+
+Note: list stores 1 = FA; 0 = CR for nogo trials in CH condition
+<list FAs_HS>
+</list>
+
+Note: list stores the latency of correct hits for CH condition
+<list hitRT_HS>
+</list>
+
+
+Note: list stores 1 = hit; 0 = miss for go trials in HC condition
+<list Hits_SH>
+</list>
+
+Note: list stores 1 = FA; 0 = CR for nogo trials in HC condition
+<list FAs_SH>
+</list>
+
+Note: list stores the latency of correct hits for HC condition
+<list hitRT_SH>
+</list>
+
+Note: list stores 1 = hit; 0 = miss for go trials in CS condition
+<list Hits_SN>
+</list>
+
+Note: list stores 1 = FA; 0 = CR for nogo trials in CS condition
+<list FAs_SN>
+</list>
+
+Note: list stores the latency of correct hits for CS condition
+<list hitRT_SN>
+</list>
+
+
+Note: list stores 1 = hit; 0 = miss for go trials in SC condition
+<list Hits_NS>
+</list>
+
+Note: list stores 1 = FA; 0 = CR for nogo trials in SC condition
+<list FAs_NS>
+</list>
+
+Note: list stores the latency of correct hits for SC condition
+<list hitRT_NS>
+</list>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	PRACTICE TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial go_practice>
+/ ontrialbegin = [
+	trial.go_practice.insertStimulusTime(clearScreen, parameters.stimDuration);	
+]
+/ stimulustimes = [0 = practice]
+/ validresponse = (parameters.goKey)
+/ correctresponse = (parameters.goKey)
+/ beginresponsetime = 0
+/ responseinterrupt = frames
+/ timeout = parameters.responseDuration
+/ ontrialend = [
+	trial.go_practice.resetStimulusFrames();
+	values.respRT = trial.go_practice.latency;
+	
+	values.word = text.practice.currentItem;
+
+	if (trial.go_practice.correct){
+		values.responseCategory = "HIT";
+	} else {
+		values.responseCategory = "MISS";
+		values.respRT = "";
+	}
+]
+/ branch = [
+	if (values.responseCategory == "HIT"){
+		return trial.correctfeedback;
+	} else {
+		return trial.errorfeedback;
+	}
+]
+</trial>
+		
+<trial nogo_practice>
+/ ontrialbegin = [
+	trial.nogo_practice.insertStimulusTime(clearScreen, parameters.stimDuration);	
+]
+/ stimulustimes = [0 = practice_comp]
+/ validresponse = (parameters.goKey)
+/ correctresponse = (0)
+/ beginresponsetime = 0
+/ responseinterrupt = frames
+/ timeout = parameters.responseDuration
+/ ontrialend = [
+	trial.nogo_practice.resetStimulusFrames();
+	values.respRT = trial.nogo_practice.latency;
+
+	values.word = text.practice_comp.currentItem;
+
+	if (trial.nogo_practice.correct){
+		values.responseCategory = "CR";
+		values.respRT = "";
+	} else {
+		values.responseCategory = "FA";
+	}
+]
+/ branch = [
+	if (values.responseCategory == "CR"){
+		return trial.correctfeedback;
+	} else {
+		return trial.errorfeedback;
+	}
+]
+</trial>	
+
+
+<trial correctfeedback>
+/ stimulusframes = [1 = correctFeedback]
+//for touchscreens: present inactive response button
+/ validresponse = (parameters.goKey)
+/ isvalidresponse = [
+	return false;
+]
+/timeout = parameters.practiceFeedbackDuration
+/ posttrialpause = 500
+/ recorddata = true
+</trial>
+
+
+<trial errorfeedback>
+/ ontrialbegin = [
+	if (values.responseCategory == "FA"){
+		text.MissFeedback.skip	= true;
+		text.FAFeedback.skip = false;		
+	} else {
+		text.MissFeedback.skip	= false;
+		text.FAFeedback.skip = true;		
+	}
+
+]
+/ stimulusframes = [1 = MissFeedback, FAFeedback]
+/ validresponse = (" ")
+/ posttrialpause = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial start>
+/ ontrialbegin = [
+	text.fixation.textColor = white;
+]
+/ stimulusframes = [1 = fixation]
+
+//for touchscreens: present inactive response button
+/ validresponse = (parameters.goKey)
+/ isvalidresponse = [
+	return false;
+]
+
+/ trialduration = parameters.startFixation
+/ recorddata = false
+</trial>
+
+<trial end>
+/ ontrialbegin = [
+	text.fixation.textColor = red;
+]
+/ stimulusframes = [1 = fixation]
+
+//for touchscreens: present inactive response button
+/ validresponse = (parameters.goKey)
+/ isvalidresponse = [
+	return false;
+]
+
+/ trialduration = parameters.endFixation
+/ recorddata = false
+</trial>
+	
+<trial go>
+/ ontrialbegin = [
+
+	//select the appropriate go stim that should be dynamically presented at the start of the trial depending on which block is currently run
+	if (values.condition == "NH"){
+		trial.go.insertStimulusTime(text.neutral, 0);
+	} else if (values.condition == "NS"){
+		trial.go.insertStimulusTime(text.neutral, 0);
+	} else if (values.condition == "HS"){
+		trial.go.insertStimulusTime(text.positive, 0);
+	} else if (values.condition == "HN"){
+		trial.go.insertStimulusTime(text.positive, 0);
+	} else if (values.condition == "SH"){
+		trial.go.insertStimulusTime(text.negative, 0);
+	} else if (values.condition == "SN"){
+		trial.go.insertStimulusTime(text.negative, 0);
+	}
+	
+	//remove the presented stim after stimDuration
+	trial.go.insertStimulusTime(clearScreen, parameters.stimDuration);
+	
+	//select the duration of the inter trial interval to be run after this trial
+	values.iti = list.iti.nextValue;
+]
+/ validresponse = (parameters.goKey)
+/ correctresponse = (parameters.goKey)
+/ beginresponsetime = 0
+/ responseinterrupt = frames
+/ timeout = parameters.responseDuration
+/ ontrialend = [
+	trial.go.resetStimulusFrames();//due the use of dynamic stimulus presentation, the trials needs to be reset for future uses
+	values.respRT = trial.go.latency;
+	
+	//Summary Variables:
+	
+	//add 1 (correct = Hit) or 0 (incorrect = Miss) to the list that collects responses in go trials (those are either hits or misses)
+	//and store correct response latencies
+	
+	//across all different blocks
+	list.Hits.appendItem(trial.go.correct);
+	if (trial.go.correct){
+		list.hitRT.appendItem(trial.go.latency);
+	}
+
+	//separately for each experimental block	
+	if (values.condition == "NH"){
+		values.word = text.neutral.currentItem;
+		list.Hits_NH.appendItem(trial.go.correct);
+		if (trial.go.correct){
+			values.responseCategory = "HIT";
+			list.hitRT_NH.appendItem(trial.go.latency);
+		} else {
+			values.responseCategory = "MISS";
+			values.respRT = "";
+		}
+		
+	} else if (values.condition == "HN"){
+		values.word = text.positive.currentItem;
+		list.Hits_HN.appendItem(trial.go.correct);
+		if (trial.go.correct){
+			values.responseCategory = "HIT";
+			list.hitRT_HN.appendItem(trial.go.latency);
+		} else {
+			values.responseCategory = "MISS";
+			values.respRT = "";
+		}
+		
+	} else if (values.condition == "NS"){
+		values.word = text.neutral.currentItem;
+		list.Hits_NS.appendItem(trial.go.correct);
+		if (trial.go.correct){
+			values.responseCategory = "HIT";
+			list.hitRT_NS.appendItem(trial.go.latency);
+		} else {
+			values.responseCategory = "MISS";
+			values.respRT = "";
+		}
+		
+	}  else if (values.condition == "HS"){
+		values.word = text.positive.currentItem;
+		list.Hits_HS.appendItem(trial.go.correct);
+		if (trial.go.correct){
+			values.responseCategory = "HIT";
+			list.hitRT_HS.appendItem(trial.go.latency);
+		} else {
+			values.responseCategory = "MISS";
+			values.respRT = "";
+		}
+		
+	}  else if (values.condition == "SH"){
+		values.word = text.negative.currentItem;
+		list.Hits_SH.appendItem(trial.go.correct);
+		if (trial.go.correct){
+			values.responseCategory = "HIT";
+			list.hitRT_SH.appendItem(trial.go.latency);
+		} else {
+			values.responseCategory = "MISS";
+			values.respRT = "";		}
+		
+	}  else if (values.condition == "SN"){
+		values.word = text.negative.currentItem;
+		list.Hits_SN.appendItem(trial.go.correct);
+		if (trial.go.correct){
+			values.responseCategory = "HIT";
+			list.hitRT_SN.appendItem(trial.go.latency);
+		} else {
+			values.responseCategory = "MISS";
+			values.respRT = "";
+		}
+		
+	}
+]
+/ posttrialpause = values.iti
+</trial>
+	
+<trial nogo>
+/ ontrialbegin = [
+	//select the appropriate NOGO stim that should be dynamically presented at the start of the trial depending on which block is currently run
+	if (values.condition == "HN"){
+		trial.nogo.insertStimulusTime(text.neutral, 0);
+	} else if (values.condition == "NH"){
+		trial.nogo.insertStimulusTime(text.positive, 0);
+	} else if (values.condition == "HS"){
+		trial.nogo.insertStimulusTime(text.negative, 0);
+	} else if (values.condition == "SH"){
+		trial.nogo.insertStimulusTime(text.positive, 0);
+	} else if (values.condition == "SN"){
+		trial.nogo.insertStimulusTime(text.neutral, 0);
+	} else if (values.condition == "NS"){
+		trial.nogo.insertStimulusTime(text.negative, 0);
+	}
+		
+	trial.nogo.insertStimulusTime(clearScreen, parameters.stimDuration);	
+	values.iti = list.iti.nextValue;	
+]
+/ validresponse = (parameters.goKey)
+/ correctresponse = (0)
+/ beginresponsetime = 0
+/ responseinterrupt = frames
+/ timeout = parameters.responseDuration
+/ ontrialend = [
+	trial.nogo.resetStimulusFrames();
+	values.respRT = trial.nogo.latency;
+
+	//Summary Variables:
+	//because it's a nogo trial, correct responses are correct rejections (CR) and incorrect responses are false alarms (FA)
+	
+	//across all blocks:
+	list.FAs.appendItem(trial.nogo.error);
+	
+	//separately by block:
+	if (values.condition == "HN"){
+		values.word = text.neutral.currentItem;
+		list.FAs_HN.appendItem(trial.nogo.error);
+		if (trial.nogo.correct){
+			values.responseCategory = "CR";
+			values.respRT = "";
+		} else {
+			values.responseCategory = "FA";
+		}
+		
+	} else if (values.condition == "NH"){
+		values.word = text.positive.currentItem;
+		list.FAs_NH.appendItem(trial.nogo.error);
+		if (trial.nogo.correct){
+			values.responseCategory = "CR";
+			values.respRT = "";
+		} else {
+			values.responseCategory = "FA";
+		}
+	} else if (values.condition == "HS"){
+		values.word = text.negative.currentItem;
+		list.FAs_HS.appendItem(trial.nogo.error);
+		if (trial.nogo.correct){
+			values.responseCategory = "CR";
+			values.respRT = "";
+		} else {
+			values.responseCategory = "FA";
+		}
+	}  else if (values.condition == "SH"){
+		values.word = text.positive.currentItem;
+		list.FAs_SH.appendItem(trial.nogo.error);
+		if (trial.nogo.correct){
+			values.responseCategory = "CR";
+			values.respRT = "";
+		} else {
+			values.responseCategory = "FA";
+		}
+	} else if (values.condition == "SN"){
+		values.word = text.neutral.currentItem;
+		list.FAs_SN.appendItem(trial.nogo.error);
+		if (trial.nogo.correct){
+			values.responseCategory = "CR";
+			values.respRT = "";
+		} else {
+			values.responseCategory = "FA";
+		}
+	}  else if (values.condition == "NS"){
+		values.word = text.negative.currentItem;
+		list.FAs_NS.appendItem(trial.nogo.error);
+		if (trial.nogo.correct){
+			values.responseCategory = "CR";
+			values.respRT = "";
+		} else {
+			values.responseCategory = "FA";
+		}
+	}
+]
+/ posttrialpause = values.iti;
+</trial>	
+		
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block intro>
+/ onblockbegin = [
+	values.GoStim = "";
+	values.NoGoStim = "";
+]
+/ trials = [1-2 = instructions]
+</block>
+
+<block practice>
+/ skip = [
+	parameters.runPractice == false;
+]
+/ onblockbegin = [
+	values.GoStim = item.practiceGo_catLABEL.item(1); //selects the appropriate label for the practice GO category
+	values.NoGoStim = item.practiceNoGo_catLABEL.item(1); //selects the appropriate label for the practice NOGO category
+	values.condition = "practice";
+]
+/ trials = [
+	1 = blockInstructions; 
+	2 = getReady; 
+	3 = start; 
+	4-13 = noreplace(go_practice, nogo_practice); //calls 10 practice trials: 5 go and 5 nogo trials
+	14 = end;
+]
+</block>
+
+<block testInstructions>
+/ trials = [1 = testInstructions]
+</block>
+
+
+//HN = positive go, neutral nogo
+<block HN>
+/ onblockbegin = [
+	values.condition = "HN";
+	values.GoStim = item.positive_catLABEL.item(1); //selects the appropriate label (positive) for the HN GO category
+	values.NoGoStim = item.neutral_catLABEL.item(1); //selects the appropriate label (neutral) for the HN NOGO category
+	text.instructions.textColor = turquoise;
+	list.iti.reset();
+	text.neutral.resetSelection();//resets the lists of positive words, so that all positive words are available for selection again
+	text.positive.resetSelection(); //resets the lists of neutral words, so that all neutral words are available for selection again
+]
+/ trials = [1 = blockInstructions; 2 = getReady; 3 = start; 4-23 = noreplace(go, nogo); 24 = end]
+</block>
+//Note: to change the ratio to 2 Go: 1 Nogo trial use: / trials = [1 = blockInstructions; 2 = getReady; 3 = start; 4-33 = noreplace(go, go, nogo); 34 = end]
+
+
+//NH = neutral go, positive nogo
+<block NH>
+/ onblockbegin = [
+	values.condition = "NH";
+	values.GoStim = item.neutral_catLABEL.item(1);
+	values.NoGoStim = item.positive_catLABEL.item(1);
+	text.instructions.textColor = yellow;
+	list.iti.reset();
+	text.neutral.resetSelection();
+	text.positive.resetSelection();
+]
+/ trials = [1 = blockInstructions; 2 = getReady; 3 = start; 4-23 = noreplace(go, nogo); 24 = end]
+</block>
+
+//HS = positive go and negative nogo
+<block HS>
+/ onblockbegin = [
+	values.condition = "HS";
+	values.GoStim = item.positive_catLABEL.item(1);
+	values.NoGoStim =item.negative_catLABEL.item(1);
+	text.instructions.textColor = turquoise;
+	list.iti.reset();
+	text.positive.resetSelection();
+	text.negative.resetSelection();
+]
+/ trials = [1 = blockInstructions; 2 = getReady; 3 = start; 4-23 = noreplace(go, nogo); 24 = end]
+</block>
+
+//SH = negative go and positive nogo
+<block SH>
+/ onblockbegin = [
+	values.condition = "SH";
+	values.GoStim =item.negative_catLABEL.item(1);
+	values.NoGoStim = item.positive_catLABEL.item(1);
+	text.instructions.textColor = red;
+	list.iti.reset();
+	text.positive.resetSelection();
+	text.negative.resetSelection();
+]
+/ trials = [1 = blockInstructions; 2 = getReady; 3 = start; 4-23 = noreplace(go, nogo); 24 = end]
+</block>
+
+//SN: negative go and neutral nogo
+<block SN>
+/ onblockbegin = [
+	values.condition = "SN";
+	values.GoStim = item.negative_catLABEL.item(1);
+	values.NoGoStim = item.neutral_catLABEL.item(1);
+	text.instructions.textColor = turquoise;
+	list.iti.reset();
+	text.neutral.resetSelection();
+	text.negative.resetSelection();
+]
+/ trials = [1 = blockInstructions; 2 = getReady; 3 = start; 4-23 = noreplace(go, nogo); 24 = end]
+</block>
+
+//NS: neutral go and negative nogo
+<block NS>
+/ onblockbegin = [
+	values.condition = "NS";
+	values.GoStim = item.neutral_catLABEL.item(1);
+	values.NoGoStim = item.negative_catLABEL.item(1);
+	text.instructions.textColor = red;
+	list.iti.reset();
+	text.neutral.resetSelection();
+	text.negative.resetSelection();
+]
+/ trials = [1 = blockInstructions; 2 = getReady; 3 = start; 4-23 = noreplace(go, nogo); 24 = end]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt a>
+/ blocks = [
+	1 = intro;
+	2 = practice;
+	3 = testInstructions;
+	
+				//3 rounds of testing: each round calls each of the 6 experimental condition blocks in random order
+	
+	4-9 = noreplace(block.HN, block.NH, block.HS, block.SH, block.SN, block.NS);
+	10-15 = noreplace(block.HN, block.NH, block.HS, block.SH, block.SN, block.NS);	
+	16-21 = noreplace(block.HN, block.NH, block.HS, block.SH, block.SN, block.NS);
+	
+	22 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

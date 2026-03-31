@@ -1,0 +1,1136 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Word List Learning with Word Dropout Procedure
+___________________________________________________________________________________________________________________	
+
+Script Author: David Nitz (dave@millisecond.com) for Millisecond Software, LLC
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+	This script implements the learning experiment described in:
+	
+	Karpicke, J. D. & Roediger, H. L. (2008). The critical importance of retrieval for learning.
+	Science, 319, 966-968.
+
+__________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+	This is a learning experiment. Participants are presented a total of 40 Swahili-English word
+	pairs one at a time. Subjects are required to learn these items so that they are able to recall
+	the correct English translation given the Swahili word. There are a total of 4 study and 4 test
+	periods and an intermittent distracter task. There are four experimental conditions:
+	
+	(1) ST
+	Subjects study the whole list of 40 items in each study period.
+	Subjects are tested on the whole list of 40 items in each test period.
+
+	(2) SnT
+	Subjects study only those items they have not recalled previously.
+	Subjects are tested on the whole list of 40 items in each test period.
+	
+	(3) STn
+	Subjects study the whole list of 40 items in each study period.
+	Subjects are tested only on those items they have not recalled previously.
+	
+	(4) SnTn
+	Subjects study only those items they have not recalled previously.
+	Subjects are tested only on those items they have not recalled previously.
+
+	Please refer to the cited source(s) for a more detailed description of the procedure.											  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+depends on selected condition:
+the default set-up of the ST condition takes appr. 40 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'karpickeroediger2008_raw*.iqdat'
+
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group, 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block. 
+												
+condition:						The assigned experimental condition as collected at task onset: 1=ST, 2=SnT, 3=STn, 4=SnTn.
+taskphase:						Name of the current task phase ("study phase", "test phase", "math phase", "delayed test phase").
+												
+response:						the participant's entered response
+resptolower:					converts participants' typed answers to lowercase in order to ensure accurate 
+								but not overly strict scoring of correct and incorrect responses.
+									
+correct:						the correctness of the response (1 = correct; 0 = incorrect)
+error:							1 = error; 0 = no error
+correctCount:					running total of correct responses in the current block
+
+latency: 						the response latency (in ms) 
+								for openended responses: measured until "next" box is clicked
+							
+openended.testtrial.firstcharlatency:		latency (in ms) measured until input of first character
+openended.testtrial.lastcharlatency: 		latency (in ms) measured until input of last character
+
+trialcount:						Number of trials run in the current study or test period.
+ncorrect:						Number of correct responses in the current test period.
+itemnumber:						Holds the unique itemnumber of the currently selected pair. Used for proper item selection and validation, scoring, etc.
+itemstate:						Encodes whether a given item is active (1) or inactive (0) in the current study or test period (-> 'trial.itemselect', 'list.studystate','list.teststate').
+swahili/english: 				return the currently used Swahili-English word pair for data logging purposes.
+text.mathproblem.currentItem:	the currently presented math problems
+
+
+
+(2) Summary data file: 'karpickeroediger2008_summary*.iqdat'
+
+inquisit.version:		Inquisit version run
+computer.platform:		the platform the script was run on (win/mac/ios/android)
+startDate:				date script was run
+startTime:				time script was started
+subjectid:				assigned subject id number
+groupid:				assigned group id number
+sessionid:				assigned session id number
+elapsedTime:			time it took to run script (in ms); measured from onset to offset of script
+completed:				0 = script was not completed (prematurely aborted); 
+						1 = script was completed (all conditions run)
+
+condition:				The assigned experimental condition as collected at task onset: 1=ST, 2=SnT, 3=STn, 4=SnTn.
+taskphase:				Name of the current task phase ("study phase", "test phase", "math phase", "delayed test phase").
+trialcount:				Number of trials run in the current study or test period.
+ncorrect:				Number of correct responses in the current test period.
+
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+* 4 different experimental conditions:
+	(1) ST
+	Subjects study the whole list of 40 items in each study period.
+	Subjects are tested on the whole list of 40 items in each test period.
+
+	(2) SnT
+	Subjects study only those items they have not recalled previously.
+	Subjects are tested on the whole list of 40 items in each test period.
+	
+	(3) STn
+	Subjects study the whole list of 40 items in each study period.
+	Subjects are tested only on those items they have not recalled previously.
+	
+	(4) SnTn
+	Subjects study only those items they have not recalled previously.
+	Subjects are tested only on those items they have not recalled previously.
+	
+* Two Sessions (1 week apart): Session ID is entered at start of script together with Subject and Group id
+(1) Initial: four study-distractor-test periods of 40 Swahili-English word pairs;
+Phase ends with participants predicting their performance in the follow-up session
+(2) Follow-up: a single test period is completed one week after the initial session. 
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+see section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+see section Editable Instruction
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+	studytimeout:				Display duration during study trials. Default: 5000 ms.
+	testtimeout:				Timeout for test trials. Default: 8000 ms.
+	delayedtesttimeout:			Timeout for the delayed test trials (2nd session). Default: 15000 ms.
+	distractertimeout:			Global timeout for the distracter block. Default: 30000 ms.
+	posttrialdelay:				Variable posttrial delay for study and test trials. Default: 500 ms.
+	
+	debugmode:					1 = debuginfo is displayed on screen
+								0 = script runs in testmode; no debuginfo is displayed
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ studytimeout = 5000
+/ testtimeout = 8000
+/ delayedtesttimeout = 15000
+/ distractertimeout = 30000
+/ posttrialdelay = 500
+/ debugmode = 0
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+<item swahiliwords>
+/ 1 = "adhama"
+/ 2 = "adui"
+/ 3 = "bustani"
+/ 4 = "buu"
+/ 5 = "chakula"
+/ 6 = "dafina"
+/ 7 = "elimu"
+/ 8 = "embe"
+/ 9 = "fagio"
+/ 10 = "farasi"
+/ 11 = "fununu"
+/ 12 = "godoro"
+/ 13 = "goti"
+/ 14 = "hariri"
+/ 15 = "kaa"
+/ 16 = "kaburi"
+/ 17 = "kaputula"
+/ 18 = "leso"
+/ 19 = "maiti"
+/ 20 = "malkia"
+/ 21 = "mashua"
+/ 22 = "ndoo"
+/ 23 = "nyanya"
+/ 24 = "pazia"
+/ 25 = "pipa"
+/ 26 = "pombe"
+/ 27 = "punda"
+/ 28 = "rembo"
+/ 29 = "roho"
+/ 30 = "sala"
+/ 31 = "sumu"
+/ 32 = "tabibu"
+/ 33 = "theluji"
+/ 34 = "tumbili"
+/ 35 = "usingizi"
+/ 36 = "vuke"
+/ 37 = "yai"
+/ 38 = "zeituni"
+/ 39 = "ziwa"
+/ 40 = "zulia"
+</item>
+
+<item englishwords>
+/ 1 = "honor"
+/ 2 = "enemy"
+/ 3 = "garden"
+/ 4 = "maggot"
+/ 5 = "food"
+/ 6 = "treasure"
+/ 7 = "science"
+/ 8 = "mango"
+/ 9 = "broom"
+/ 10 = "horse"
+/ 11 = "rumour"
+/ 12 = "mattress"
+/ 13 = "knee"
+/ 14 = "silk"
+/ 15 = "crab"
+/ 16 = "grave"
+/ 17 = "shorts"
+/ 18 = "scarf"
+/ 19 = "corpse"
+/ 20 = "queen"
+/ 21 = "boat"
+/ 22 = "bucket"
+/ 23 = "tomato"
+/ 24 = "curtain"
+/ 25 = "barrel"
+/ 26 = "beer"
+/ 27 = "donkey"
+/ 28 = "ornament"
+/ 29 = "soul"
+/ 30 = "prayer"
+/ 31 = "poison"
+/ 32 = "doctor"
+/ 33 = "snow"
+/ 34 = "monkey"
+/ 35 = "sleep"
+/ 36 = "steam"
+/ 37 = "egg"
+/ 38 = "olives"
+/ 39 = "lake"
+/ 40 = "carpet"
+</item>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<item instructions>
+/ 1 = "In this learning task you will learn a list of 40 Swahili 
+vocabulary words and their English translations during a series of 8 
+alternating study and test periods.
+~nEach word pair will be displayed in the middle of the screen for 5 
+seconds. Study each pair so that you are able to recall the English 
+word given the Swahili word.
+~nDuring test periods, you will be shown only the Swahili words one
+at a time. You have 8 seconds to type in the corresponding English 
+translation for each word.
+~nYou will study all 40 pairs during each of the 4 study periods and 
+you will be tested on all 40 pairs in every test period.
+~nYou will also have to solve a few simple math problems after each 
+study period.
+~nPress the spacebar to begin."
+/ 2 = "In this learning task you will learn a list of 40 Swahili 
+vocabulary words and their English translations during a series of 8 
+alternating study and test periods. 
+~nEach word pair will be displayed in the middle of the screen for 5 
+seconds. Study each pair so that you are able to recall the English 
+word given the Swahili word.
+~nDuring test periods, you will be shown only the Swahili words one
+at a time. You have 8 seconds to type in the corresponding English 
+translation for each word.
+~nYou will re-study only those pairs that you have not recalled
+correctly. However, you will be tested on all 40 pairs in every 
+test period.
+~nYou will also have to solve a few simple math problems after each 
+study period.
+~nPress the spacebar to begin."
+/ 3 = "In this learning task you will learn a list of 40 Swahili 
+vocabulary words and their English translations during a series of 8 
+alternating study and test periods. 
+~nEach word pair will be displayed in the middle of the screen for 5 
+seconds. Study each pair so that you are able to recall the English 
+word given the Swahili word. 
+~nDuring test periods, you will be shown only the Swahili words one
+at a time. You have 8 seconds to type in the corresponding English 
+translation for each word. 
+~nYou will study all 40 pairs during each of the 4 study periods. 
+However, you will be re-tested only on those pairs you have not 
+recalled correctly.
+~nYou will also have to solve a few simple math problems after each 
+study period.
+~nPress the spacebar to begin."
+/ 4 = "In this learning task you will learn a list of 40 Swahili 
+vocabulary words and their English translations during a series of 8 
+alternating study and test periods. 
+~nEach word pair will be displayed in the middle of the screen for 5 
+seconds. Study each pair so that you are able to recall the English 
+word given the Swahili word. 
+~nDuring test periods, you will be shown only the Swahili words one
+at a time. You have 8 seconds to type in the corresponding English 
+translation for each word.
+~nYou will re-study only those pairs that you have not recalled
+correctly. You will be only be re-tested on those pairs you have not 
+recalled correctly.
+~nYou will also have to solve a few simple math problems after each 
+study period. 
+~nPress the spacebar to begin."
+</item>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ screencolor = white
+/ txbgcolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+values.condition, values.taskphase, response, expressions.resptolower,
+correct, error, expt.kr2008.correctCount, latency, 
+openended.testtrial.firstcharlatency, openended.testtrial.lastcharlatency, 
+values.trialcount, values.ncorrect, values.itemnumber, values.itemstate, 
+expressions.swahili, expressions.english, text.mathproblem.currentItem)
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+values.condition, values.taskphase, values.trialcount, values.ncorrect)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+	condition:					The assigned experimental condition as collected at task onset:
+								1=ST, 2=SnT, 3=STn, 4=SnTn.
+	taskphase:					Name of the current task phase ("study phase", "test phase", "math 
+								phase", "delayed test phase").
+	trialcount:					Number of trials run in the current study or test period.
+	ncorrect:					Number of correct responses in the current test period.
+	itemstate:					Encodes whether a given item is active (1) or inactive (0) in the 
+								current study or test period (-> 'trial.itemselect', 'list.studystate',
+								'list.teststate').
+	itemnumber:					Holds the unique itemnumber of the currently selected pair. Used for
+								proper item selection and validation, scoring, etc.
+	stopblock:					A pseudo-boolean switch updated at runtime. Once all active items
+								have been displayed, this value is automatically set to '1' in order to
+								stop the current study or test period.
+	math01:						First component of the randomly assembled multiplication problem 
+								used in distracter trials.
+	math02:						Second component of the randomly assembled multiplication problem 
+								used in distracter trials.
+	mathtruefalse:				'1' if the displayed answer should be correct, '0' if the displayed result
+								should be false.
+	mathrand:					A random value added to the math problems true result in order to
+								make it false (-> 'values.mathtruefalse').
+	mathresult:					The result displayed on screen (true or false according to 
+								'values.mathtruefalse' and 'values.mathrand').
+
+
+<values taskparams>
+/ condition = 0
+/condition_inwords = ""
+/ taskphase = ""
+/ trialcount = 0
+/ ncorrect = 0
+/ itemstate = 0
+/ itemnumber = 1
+/ stopblock = 0
+/ math01 = 0
+/ math02 = 0
+/ mathtruefalse = 0
+/ mathrand = 0
+/ mathresult = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+	'expressions.resptolower' converts participants' typed answers to lowercase in order to ensure
+	accurate but not overly strict scoring of correct and incorrect responses.
+	'expressions.swahili' and 'expressions.english' return the currently used Swahili-English word 
+	pair for data logging purposes.
+
+<expressions>
+/ resptolower = tolower(openended.testtrial.response)
+/ swahili = item.swahiliwords.item(values.itemnumber)
+/ english = item.englishwords.item(values.itemnumber)
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text instructtxt>
+/ items = instructions
+/ select = values.condition
+/ fontstyle = ("Arial", 2.50%, true)
+/ size = (90%, 90%)
+/ position = (50%, 50%)
+/ vjustify = center
+/ erase = true(white)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text english>
+/ items = englishwords
+/ position = (70%, 50%)
+/ halign = right
+/ select = values.itemnumber
+/ erase = true(white)
+</text>
+
+<text swahili>
+/ items = swahiliwords
+/ position = (30%, 50%)
+/ halign = left
+/ select = values.itemnumber
+/ erase = true(white)
+</text>
+
+**************************************************************************************************************
+	Utility Text Elements
+**************************************************************************************************************
+<text equalsign>
+/ items = ("=")
+/ position = (50%, 50%)
+/ erase = true(white)
+</text>
+
+<text questionmark>
+/ items = ("?")
+/ position = (70%, 50%)
+/ halign = right
+/ erase = true(white)
+</text>
+
+<text correctmsg>
+/ items = ("Correct!")
+/ txcolor = green
+/ position = (50%, 25%)
+/ erase = true(white)
+</text>
+
+<text errormsg>
+/ items = ("Wrong!")
+/ txcolor = red
+/ position = (50%, 25%)
+/ erase = true(white)
+</text>
+
+<text predict>
+/ items = ("You will be tested again one week from now. Please tell us:
+How many of the 40 words do you think you'll be able to recall?")
+/ size = (90%, 30%)
+/ position = (50%, 40%)
+</text>
+
+**************************************************************************************************************
+	Debug Text Items
+**************************************************************************************************************
+	Change 'txcolor' to 'black' for these text elements to get onscreen debugging information.
+	
+<text debugstudy>
+/ onprepare = [text.debugstudy.skip = !parameters.debugmode;]
+/ items = ("Condition <%values.condition%>|Item <%values.itemnumber%>|State <%values.itemstate%>|Correct <%values.ncorrect%>|Trial <%values.trialcount%>")
+/ fontstyle = ("Arial", 3.00%, true)
+/ txcolor = red
+/ position = (50%, 5%)
+/ erase = true(white)
+</text>
+
+<text debugtest>
+/ onprepare = [text.debugtest.skip = !parameters.debugmode;]
+/ items = ("Condition <%values.condition%>|Item <%values.itemnumber%>|State <%values.itemstate%>|Correct <%values.ncorrect%>|Trial <%values.trialcount%>")
+/ fontstyle = ("Arial", 3.00%, true)
+/ txcolor = red
+/ position = (50%, 5%)
+/ erase = true(white)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Study Period
+**************************************************************************************************************
+
+	This list encodes whether an item will be presented in the task's study period 
+	(also see 'block.studyperiod' and 'trial.studytrial'). Once an item has been recalled correctly,
+	its corresponding value in 'list.studystate' will change to '0', marking the item as inactive for
+	those conditions that require subjects to study only previously unrecalled items.
+	(-> conditions SnT and SnTn).
+
+<list studystate>
+/ items = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+/ selectionmode = values.itemnumber
+</list>
+
+**************************************************************************************************************
+	Test Period
+**************************************************************************************************************
+	This list encodes whether an item will be presented in the task's test period 
+	(also see 'block.testperiod' and 'openended.testtrial'). Once an item has been recalled correctly,
+	its corresponding value in 'list.teststate' will change to '0', marking the item as inactive for
+	those conditions that require subjects to be tested on previously unrecalled items only 
+	(-> conditions STn and SnTn).
+
+<list teststate>
+/ items = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+/ selectionmode = values.itemnumber
+</list>
+
+**************************************************************************************************************
+	Unique Item Number
+**************************************************************************************************************
+	'list.itemnumber' is used to properly identify and select from the 40 Swahili-English word 
+	pairs. The list effectively assigns a unique item number to each pair which is later used
+	to assign proper values to 'list.studystate' and 'list.teststate' which encode whether an
+	item is active or inactive for the subsequent study and test periods. A given item's state is 
+	determined according to both participants' performance (item recalled vs. not recalled) and 
+	according to the assigned experimental condition.
+
+<list itemnumber>
+/ items = (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,
+	21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40)
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Distracter Task
+**************************************************************************************************************
+**************************************************************************************************************
+	The multiplication problems used in the distracter block are generated automatically. Random 
+	values are drawn from 'list.mathitem01' and 'list.mathitem02'. Another random value 
+	sampled from 'list.mathtruefalse' determines whether the participant should be presented
+	a true or a false answer for the current math problem. In case of a false answer, a random 
+	value between -5 and +5 taken from 'list.mathrand' is added or subtracted from the true 
+	answer (-> see 'trial.distractertrial').
+
+<list mathitem01>
+/ items = (3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+/ maxrunsize = 1
+</list>
+
+<list mathitem02>
+/ items = (3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+/ maxrunsize = 1
+</list>
+
+<list mathtruefalse>
+/ items = (1, 1, 1, 1, 1, 0, 0, 0, 0, 0)
+</list>
+
+<list mathrand>
+/ items = (1, 2, 3, 4, 5, -1, -2, -3, -4, -5)
+</list>
+
+<text mathproblem>
+/ items = ("<%values.math01%> x <%values.math02%> = <%values.mathresult%> ?")
+/ position = (50%, 50%)
+/ erase = true(white)
+</text>
+
+**************************************************************************************************************
+	Onscreen Instructions for Distracter Task
+**************************************************************************************************************
+<text DKey>
+/ items = ("Press 'D' if the answer is correct.")
+/ fontstyle = ("Arial", 3.00%, true)
+/ position = (20%, 75%)
+/ size = (25%, 5%)
+/ erase = true(white)
+</text>
+
+<text KKey>
+/ items = ("Press 'K' if the answer is wrong.")
+/ fontstyle = ("Arial", 3.00%, true)
+/ position = (80%, 75%)
+/ size = (25%, 5%)
+/ erase = true(white)
+</text>
+
+<text getready>
+/ items = ("Get ready for the following <%values.taskphase%>.~r~rPress the spacebar to begin!")
+/ fontstyle = ("Arial", 3.00%, true)
+/ position = (50%, 50%)
+/ size = (75%, 10%)
+/ erase = true(white)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Configuration Trial
+**************************************************************************************************************
+
+	'surveypage.configuration' is run once at the beginning of the experiment to collect the 
+	following task parameters:
+	(1) A unique participant identifier: The participant's name or some kind of suitable code.
+	(2) The learning condition the participant is assigned to (1 out of 4).
+	(3) The actual session number (1st or 2nd session).
+	The script will automatically adjust according to these configuration parameters.
+/ options = ("1 = ST", "2 = SnT", "3 = STn", "4 = SnTn")
+<surveypage configuration>
+/ questions = [1=condition]
+/ ontrialend = [
+	values.condition=dropdown.condition.selectedvalue;
+	if (values.condition == 1){
+		values.condition_inwords = "ST";
+	} else if (values.condition == 2){
+		values.condition_inwords = "SnT";
+	} else if (values.condition == 3){
+		values.condition_inwords = "STn";
+	} else if (values.condition == 4){
+		values.condition_inwords = "SnTn";
+	}
+
+	if ( monkey.monkeyMode == true ) { 
+		values.condition = mod(script.groupId - 1, 4) + 1; 
+	}
+]
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ showquestionnumbers = false
+/ showpagenumbers = false
+/ navigationbuttonsize = (25%, 5%)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (35%, 80%)
+/ branch = [
+	return surveypage.configurationConfirm;
+]
+</surveypage>
+
+<surveypage configurationConfirm>
+/ caption = "You have selected the following parameters:
+
+Subject ID: <%script.subjectId%>
+Session Nr: <%script.sessionId%>
+Condition: <%values.condition_inwords%>
+"
+/ questions = [1 = configurationConfirm]
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Submit"
+/ ontrialend = [
+	if (radiobuttons.configurationConfirm.response == "No" && !monkey.monkeyMode){
+		script.abort();
+	}
+]
+</surveypage>
+
+<radiobuttons configurationConfirm>
+/ caption = "Do you want to continue with these parameters?"
+/ options = ("Yes", "No")
+/ txcolor = blue
+</radiobuttons>
+
+
+<dropdown condition>
+/ caption = "Condition:
+"
+/ options = ("1 = ST", "2 = SnT", "3 = STn", "4 = SnTn")
+/ optionvalues = ("1", "2", "3", "4")
+/ defaultresponse = "1"
+/ monkeyresponse = (script.groupId)
+/ position = (40%, 25%)
+/ required = true
+</dropdown>
+
+
+**************************************************************************************************************
+	Instructions Trial
+**************************************************************************************************************
+	This trial displays general instructions at the beginning of the experiment.
+
+<trial instructtrial>
+/ skip = [script.sessionId !=1]
+/ stimulusframes = [1=instructtxt]
+/ validresponse = (" ")
+/ beginResponseTime = 2000
+</trial>
+
+
+**************************************************************************************************************
+	Main Trial Elements
+**************************************************************************************************************
+**************************************************************************************************************
+	General Purpose Item Selection Trial
+**************************************************************************************************************
+
+	'trial.itemselect' selects a Swahili-English word pair as specified by 'list.itemnumber'. After
+	that, the trial checks whether the selected item is currently active or inactive. This depends
+	on experimental condition and participants' prior performance (-> 'list.studystate' and 
+	'list.teststate'). If the item is still active, the trial branches to the appropriate study or test 
+	trial.
+<trial itemselect>
+/ ontrialbegin = [
+	if(list.itemnumber.unselectedCount==0){
+		values.stopblock=1;
+	}
+	values.itemnumber=list.itemnumber.nextValue;
+	
+	if(script.currentblock=="studyperiod"){
+		values.itemstate=list.studystate.item(values.itemnumber);
+	} else if(script.currentblock=="testperiod"){
+		values.itemstate=list.teststate.item(values.itemnumber);
+	} else if(script.currentblock=="delayedtestperiod"){
+		values.itemstate=list.teststate.item(values.itemnumber);
+	}
+]
+/ validresponse = (noresponse)
+/ trialduration = 0
+/ recorddata = false
+/ branch = [
+	if(script.currentblock=="studyperiod"){
+		if (values.itemstate==1){
+			return trial.studytrial;
+		} else if (values.itemstate==0){
+			return trial.itemselect;
+		}
+	} else if(script.currentblock=="testperiod"){
+		if (values.itemstate==1){
+			return openended.testtrial;
+		} else if (values.itemstate==0){
+			return trial.itemselect;
+		}
+	} else if(script.currentblock=="delayedtestperiod"){
+		return openended.testtrial;
+	}
+]
+</trial>
+
+
+**************************************************************************************************************
+	Study Period Trial
+**************************************************************************************************************
+
+	'trial.studytrial' presents a Swahili-English word pair as selected by 'trial.itemselect'. Items
+	are presented in the middle of the screen for a period of 5000 ms.
+
+<trial studytrial>
+/ skip = [values.itemstate==0]
+/ ontrialbegin = [
+	values.trialcount+=1;
+]
+/ stimulusframes = [1=equalsign, swahili, english, debugstudy]
+/ validresponse = (noresponse)
+/ timeout = parameters.studytimeout
+/ posttrialpause = parameters.posttrialdelay
+/ ontrialend = [
+	if(list.itemnumber.unselectedCount==0){
+		values.stopblock=1;
+	}
+]
+/ branch = [return trial.itemselect;]
+</trial>
+
+
+**************************************************************************************************************
+	Test Period Trial
+**************************************************************************************************************
+
+	'openended.testtrial' presents a single Swahili word as selected by 'trial.itemselect'. Items
+	are presented in the middle of the screen for a period of 8000 ms. During this time, subjects
+	are supposed to enter the corresponding English word into a textbox.
+	By default, participants are not given feedback about correct / incorrect responses.
+	Add the two lines below to 'openended.testtrial' to activate performance feedback.
+
+	/ correctmessage = (correctmsg, 500)
+	/ errormessage = (errormsg, 500)
+
+<openended testtrial>
+/ skip = [values.itemstate==0]
+/ ontrialbegin = [
+	values.trialcount+=1;
+]
+/ stimulusframes = [1=equalsign, swahili, questionmark, debugtest]
+/ position = (50%, 70%)
+/ size = (25%, 10%)
+/ iscorrectresponse = [
+	return (expressions.resptolower==expressions.english);
+]
+/ timeout = parameters.testtimeout
+/ ontrialend = [
+	if(values.condition==2 && openended.testtrial.correct==1){
+		list.studystate.setitem(0, values.itemnumber);
+	} else if(values.condition==3 && openended.testtrial.correct==1){
+		list.teststate.setitem(0, values.itemnumber);
+	} else if(values.condition==4 && openended.testtrial.correct==1){
+		list.studystate.setitem(0, values.itemnumber);
+		list.teststate.setitem(0, values.itemnumber);
+	}
+	if(list.itemnumber.unselectedCount==0){
+		values.stopblock=1;
+	}
+	if(openended.testtrial.correct==1){
+		values.ncorrect+=1;
+	}
+]
+/ branch = [return trial.itemselect;]
+/ monkeyresponse = [expressions.english; expressions.english; expressions.english; expressions.english; expressions.english; expressions.english; "i don't know";]
+</openended>
+
+
+**************************************************************************************************************
+	Recall Prediction Trial
+**************************************************************************************************************
+	This trial is run at the very end of the first session. Participants are supposed to indicate, how
+	many items they will be able to recall during the second session (one week later).
+
+
+<openended recallprediction>
+/ stimulusframes = [1=predict]
+/ validresponse = (anyresponse)
+/ mask = integer
+/ range = (0, 40)
+/ charlimit = 2
+/ required = true
+/ position = (50%, 75%)
+/ size = (25%, 5%)
+/ monkeyresponse = [rand(0, 40)]
+</openended>
+
+
+**************************************************************************************************************
+	Distracter Task Trial
+**************************************************************************************************************
+
+	'trial.distractertrial' generates a random multiplication problem with either a true or false
+	answer displayed on screen. Participants are supposed to indicate whether the given answer
+	is correct or incorrect by pressing the 'D' or 'K' key on their keyboard (-> 'list.mathitem01',
+	'list.mathitem02', 'list.mathtruefalse', 'list.mathrand').
+
+<trial distractertrial>
+/ ontrialbegin = [
+	values.math01=list.mathitem01.nextValue;
+	values.math02=list.mathitem02.nextValue;
+	values.mathtruefalse=list.mathtruefalse.nextValue;
+
+	if(values.mathtruefalse==1){
+		values.mathresult=values.math01*values.math02;
+	} else if(values.mathtruefalse==0){
+		values.mathrand=list.mathrand.nextValue;
+		values.mathresult=values.math01*values.math02+values.mathrand;
+	}
+]
+/ stimulusframes = [1=mathproblem, DKey, KKey]
+/validresponse = ("D", "K")
+/ iscorrectresponse = [
+	return ((values.mathtruefalse==0 && trial.distractertrial.responseText=="K") ||
+	(values.mathtruefalse==1 && trial.distractertrial.responseText=="D"));
+]
+/ recorddata = true
+/ correctmessage = (correctmsg, 500)
+/ errormessage = (errormsg, 500)
+/ ontrialend = [
+	if(block.distractertask.elapsedTime>=parameters.distractertimeout+trial.startup.latency){
+		values.stopblock=1;
+	}
+]
+/ branch = [return trial.distractertrial;]
+</trial>
+
+**************************************************************************************************************
+	Startup Trial
+**************************************************************************************************************
+	This trial displays a short startup message at the beginning of each task phase. Subjects are
+	required to press the spacebar as soon as they're ready to start.
+
+<trial startup>
+/ stimulusframes = [1=getready]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Configuration Block
+**************************************************************************************************************
+	This block element is allows the experimenter to enter important parameters at task onset.
+	Note that this is a multi-session procedure: Subjects are required to complete an initial session
+	consisting of four study and four test periods. A second session consisting of a single test 
+	period is completed one week after the initial session. To allow for convenient data matching, 
+	the following parameters should be entered at the beginning of each session:
+	(1) A unique participant identifier: The participant's name or some kind of suitable code.
+	(2) The learning condition the participant is assigned to (1 out of 4).
+	(3) The actual session number (1st or 2nd session).
+	The script will automatically adjust according to these configuration parameters.
+
+<block taskconfiguration>
+/ trials = [
+	1=configuration; 
+	2=instructtrial;
+]
+/ recorddata = false
+</block>
+
+**************************************************************************************************************
+	Study & Test Period Blocks
+**************************************************************************************************************
+	In the task's first session, each participant has to complete a total of four study and four test
+	periods. There will be 40 trials in each subject's first study and test periods. After that, the 
+	number of trials will vary according to experimental condition and participants' responses.
+
+****************************
+	Study Period Block
+****************************
+
+<block studyperiod>
+/ skip = [script.sessionId!=1]
+/ onblockbegin = [
+	values.trialcount=0; 
+	values.stopblock=0; 
+	values.taskphase="study phase"; 
+	list.itemnumber.reset();
+]
+
+/ stop = [values.stopblock==1]
+/ trials = [
+	1=startup; 
+	2=itemselect;
+]
+/ onblockend = [
+	values.stopblock=0;
+]
+</block>
+
+***************************
+	Test Period Block
+***************************
+
+<block testperiod>
+/ skip = [script.sessionId!=1]
+/ onblockbegin = [
+	values.trialcount=0; 
+	values.stopblock=0; 
+	values.ncorrect=0; 
+	values.taskphase="test period"; 
+	list.itemnumber.reset();
+]
+/ stop = [values.stopblock==1]
+/ trials = [
+	1=startup; 
+	2=itemselect;
+]
+/ onblockend = [
+	values.stopblock=0;
+]
+</block>
+
+**************************************************************************************************************
+	Recall Prediction Block
+**************************************************************************************************************
+	After completing the four study and four test periods in the first session, subjects are asked
+	to indicate how many items they will be able to recall in the second session (one week later).
+
+<block recallprediction>
+/ skip = [script.sessionId!=1]
+/ trials = [1=recallprediction]
+</block>
+
+**************************************************************************************************************
+	Delayed Test Period Block
+**************************************************************************************************************
+
+	This is the block element for the final test period in the second session (one week after the 
+	initial session).
+
+<block delayedtestperiod>
+/ onblockbegin = [
+	parameters.testtimeout=parameters.delayedtesttimeout; 
+	values.taskphase="delayed test phase";
+]
+/ skip = [script.sessionId<2]
+/ trials = [
+	1=startup; 
+	2=itemselect;
+]
+/ stop = [values.stopblock==1]
+</block>
+
+**************************************************************************************************************
+	Distracter Task Block
+**************************************************************************************************************
+	In the first session, participants have to verify simple multiplication problems as a simple 
+	distracter task in between each of the four study and four test periods. The distracter task
+	lasts approximately 30 seconds.
+
+<block distractertask>
+/ skip = [script.sessionId !=1]
+/ onblockbegin = [
+	values.stopblock=0; 
+	values.taskphase="math phase";
+]
+/ stop = [values.stopblock==1]
+/ trials = [
+	1=startup; 
+	2=distractertrial;
+]
+/ onblockend = [
+	values.stopblock=0;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+	Note: The blocks that will actually run depend on the startup parameters collected at task 
+	onset (-> 'block.taskconfiguration' and 'surveypage.configuration').
+
+<expt kr2008>
+/ blocks = [
+	1=taskconfiguration; 
+	2-5=sequence(studyperiod, distractertask, testperiod);
+	6=recallprediction; 
+	7=delayedtestperiod;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

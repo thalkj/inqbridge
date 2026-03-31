@@ -1,0 +1,715 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*SENTENCE COMPLETION TASK*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-09-2013
+last updated:  03-13-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 03-13-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a Sentence Completion Task (SCT). SCT are general instruments to study
+information processing and can be used to study - amongst others- cognitive priming effects, 
+semantic bias, and autobiographical memory.
+
+The implemented procedure uses the study of autobiographical memory as an example.
+It is based on:
+
+Raes, F., Hermans, D., Williams, J.M.G. & Eelen, P. (2007). A sentence completion procedure as an alternative to the 
+Autobiographical Memory Test for assessing overgeneral memory in non-clinical populations.  Memory, 15, 495-507.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION
+___________________________________________________________________________________________________________________
+Participants are given 11 sentence completion tasks (11 Stems) to complete. Afterwards they are asked
+to categorize their own responses into several categories.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 7 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+
+This script generates 3 data files:
+- SentenceCompletionTask.iqdat => raw data of sentence completion task
+- SentenceCompletionTask_Rating.iqdat => raw data of response categorizations
+- SentenceCompletionTask_summary.iqdat => summary file that contains responses to SCT task AND categorization task
+
+(1) Raw data file: 'sentencecompletiontask_survey.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Raw data file: 'sentencecompletiontask_rating_survey.iqdat' 
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values: 1-8)
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+(3) Summary data file: 'sentencecompletiontask_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+textbox.Stem1.response-
+textbox.Stem11.response:			the responses to the 11 Stem qu
+
+radiobuttons.Rating1.response-
+radiobuttons.Rating11.response:		the individual ratings (1-8)
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+
+2 surveys:
+SentenceCompletionTask: 11 sentence completion task with default Stems (see section Editable Parameters)
+Ratings (optional): Participant categorization of the responses 
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/stem1-stem11:						the particular Stems used in this script
+/instructions:						the instructions to appear with the Stem questions
+
+/participant_responserating:    	1 = participants are asked to categorize their sentences (default)
+									Note: to change the response categories go to RATING QUESTIONS
+									and change the setting OPTIONS for each question
+									0 = participants are not asked to categorize their sentences
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/stem1 = "I still remember well how . . ."
+/stem2 = "I still recall how/that I . . ."
+/stem3 = "Last year . . ."
+/stem4 = "In the past . . ."
+/stem5 = "Last week I . . ."
+/stem6 = "I can still picture how . . ."
+/stem7 = "When I think back to/of . . ."
+/stem8 = "I will never forget . . ."
+/stem9 = "The most important thing that I have ever . . ."
+/stem10 = "Last year I . . ."
+/stem11 = "At the time when I . . ."
+
+/instructions = "Below you will find eleven incomplete sentences.
+The purpose of the task is for you to complete each of these sentences. 
+You can complete the sentences any way you want, just as long as what you write corresponds to the provided sentence. 
+Also make sure that each of the sentences is on a different topic.~n"
+
+/participant_responserating = 1
+</parameters>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+"SentenceCompletionTask.iqdat"
+"SentenceCompletionTask_Rating.iqdat"
+
+***********************
+summary data file
+***********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+textbox.stem1.response, textbox.stem2.response, textbox.stem3.response, textbox.stem4.response,
+textbox.stem5.response, textbox.stem6.response, textbox.stem7.response, textbox.stem8.response,
+textbox.stem9.response, textbox.stem10.response, textbox.stem11.response,
+radiobuttons.rating_response1.response, radiobuttons.rating_response2.response, radiobuttons.rating_response3.response,
+radiobuttons.rating_response4.response, radiobuttons.rating_response5.response, radiobuttons.rating_response6.response,
+radiobuttons.rating_response7.response, radiobuttons.rating_response8.response, radiobuttons.rating_response9.response,
+radiobuttons.rating_response10.response, radiobuttons.rating_response11.response)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/response_stem1-response_stem11:			stores the answers to the 11 stem questions
+
+<values>
+/response_stem1 = ""
+/response_stem2 = ""
+/response_stem3 = ""
+/response_stem4 = ""
+/response_stem5 = ""
+/response_stem6 = ""
+/response_stem7 = ""
+/response_stem8 = ""
+/response_stem9 = ""
+/response_stem10 = ""
+/response_stem11 = ""
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SCT STEM QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<textbox stem1>
+/caption= "<%parameters.stem1%>"
+/textboxsize = (70%, 10%)
+/required = true
+</textbox>
+
+<textbox stem2>
+/caption= "<%parameters.stem2%>"
+/textboxsize = (70%, 10%)
+/required = true
+</textbox>
+
+<textbox stem3>
+/caption= "<%parameters.stem3%>"
+/textboxsize = (70%, 10%)
+/required = true
+</textbox>
+
+<textbox stem4>
+/caption= "<%parameters.stem4%>"
+/textboxsize = (70%, 10%)
+/required = true
+</textbox>
+
+<textbox stem5>
+/caption= "<%parameters.stem5%>"
+/textboxsize = (70%, 10%)
+/required = true
+</textbox>
+
+<textbox stem6>
+/caption= "<%parameters.stem6%>"
+/textboxsize = (70%, 10%)
+/required = true
+</textbox>
+
+<textbox stem7>
+/caption= "<%parameters.stem7%>"
+/textboxsize = (70%, 10%)
+/required = true
+</textbox>
+
+<textbox stem8>
+/caption= "<%parameters.stem8%>"
+/textboxsize = (70%, 10%)
+/required = true
+</textbox>
+
+<textbox stem9>
+/caption= "<%parameters.stem9%>"
+/textboxsize = (70%, 10%)
+/required = true
+</textbox>
+
+<textbox stem10>
+/caption= "<%parameters.stem10%>"
+/textboxsize = (70%, 10%)
+/required = true
+</textbox>
+
+<textbox stem11>
+/caption= "<%parameters.stem11%>"
+/textboxsize = (70%, 10%)
+/required = true
+</textbox>
+
+Add additional stems
+textbox stem12>
+/caption= "<%parameters.stem12%>"    <= under Editable Values create the value caption for stem12 OR simply write the caption here
+/textboxsize = (70%, 10%)
+/required = false
+</textbox>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SCT SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage SCT1>
+/caption = "<h2>Sentence Completion Task</h2>"
+/subcaption = "<%parameters.instructions%>"
+/questions = [1 = stem1; 2 = stem2; 3 = stem3]
+/ontrialend = [
+	values.response_stem1 = textbox.stem1.response;
+	values.response_stem2 = textbox.stem2.response;
+	values.response_stem3 = textbox.stem3.response;
+]
+</surveypage>
+
+<surveypage SCT2>
+/caption = "<h2>Sentence Completion Task</h2>"
+/subcaption = "<%parameters.instructions%>"
+/questions = [1 = stem4; 2 = stem5; 3 = stem6]
+/ontrialend = [
+	values.response_stem4 = textbox.stem4.response;
+	values.response_stem5 = textbox.stem5.response;
+	values.response_stem6 = textbox.stem6.response;
+]
+</surveypage>
+
+<surveypage SCT3>
+/caption = "<h2>Sentence Completion Task</h2>"
+/subcaption = "<%parameters.instructions%>"
+/questions = [1 = stem7; 2 = stem8; 3 = stem9]
+/ontrialend = [
+	values.response_stem7 = textbox.stem7.response;
+	values.response_stem8 = textbox.stem8.response;
+	values.response_stem9 = textbox.stem9.response;
+]
+</surveypage>
+
+<surveypage SCT4>
+/caption = "<h2>Sentence Completion Task</h2>"
+/subcaption = "<%parameters.instructions%>"
+/questions = [1 = stem10; 2 = stem11]
+/ontrialend = [
+	values.response_stem10 = textbox.stem10.response;
+	values.response_stem11 = textbox.stem11.response;
+]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SCT SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<survey SentenceCompletionTask>
+/pages = [
+	1 = SCT1; 
+	2 = SCT2; 
+	3 = SCT3; 
+	4 = SCT4;
+]
+/fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/itemspacing = 3%
+/itemfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</survey>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	RATING QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<radiobuttons rating_response1>
+/caption = "<%values.response_stem1%>
+"
+/ options=("1: what you wrote down refers to one specific moment or a particular time
+", 
+"2: what you wrote down refers to a repeated activity or a category of similar events without the specification of a particular time
+", 
+"3: what you wrote down refers to an extended period of time which lasted longer than a day
+",
+"4: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to one specific moment or a particular time
+",
+"5: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers to a repeated activity or a category of similar events without the specification of a particular time
+",
+"6: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers refers to an extended period of time which lasted longer than a day
+",
+"7: you seriously tried to complete the sentence, but could not come up with something
+",
+"8: you did not seriously try to complete the sentence in a meaningful way")
+/ required=true
+</radiobuttons>
+
+<radiobuttons rating_response2>
+/caption = "<%values.response_stem2%>
+"
+/ options=("1: what you wrote down refers to one specific moment or a particular time
+", 
+"2: what you wrote down refers to a repeated activity or a category of similar events without the specification of a particular time
+", 
+"3: what you wrote down refers to an extended period of time which lasted longer than a day
+",
+"4: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to one specific moment or a particular time
+",
+"5: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers to a repeated activity or a category of similar events without the specification of a particular time
+",
+"6: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers refers to an extended period of time which lasted longer than a day
+",
+"7: you seriously tried to complete the sentence, but could not come up with something
+",
+"8: you did not seriously try to complete the sentence in a meaningful way")
+/ required=true
+</radiobuttons>
+
+<radiobuttons rating_response3>
+/caption = "<%values.response_stem3%>
+"
+/ options=("1: what you wrote down refers to one specific moment or a particular time
+", 
+"2: what you wrote down refers to a repeated activity or a category of similar events without the specification of a particular time
+", 
+"3: what you wrote down refers to an extended period of time which lasted longer than a day
+",
+"4: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to one specific moment or a particular time
+",
+"5: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers to a repeated activity or a category of similar events without the specification of a particular time
+",
+"6: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers refers to an extended period of time which lasted longer than a day
+",
+"7: you seriously tried to complete the sentence, but could not come up with something
+",
+"8: you did not seriously try to complete the sentence in a meaningful way")
+/ required=true
+</radiobuttons>
+
+<radiobuttons rating_response4>
+/caption = "<%values.response_stem4%>
+"
+/ options=("1: what you wrote down refers to one specific moment or a particular time
+", 
+"2: what you wrote down refers to a repeated activity or a category of similar events without the specification of a particular time
+", 
+"3: what you wrote down refers to an extended period of time which lasted longer than a day
+",
+"4: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to one specific moment or a particular time
+",
+"5: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers to a repeated activity or a category of similar events without the specification of a particular time
+",
+"6: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers refers to an extended period of time which lasted longer than a day
+",
+"7: you seriously tried to complete the sentence, but could not come up with something
+",
+"8: you did not seriously try to complete the sentence in a meaningful way")
+/ required=true
+</radiobuttons>
+
+<radiobuttons rating_response5>
+/caption = "<%values.response_stem5%>
+"
+/ options=("1: what you wrote down refers to one specific moment or a particular time
+", 
+"2: what you wrote down refers to a repeated activity or a category of similar events without the specification of a particular time
+", 
+"3: what you wrote down refers to an extended period of time which lasted longer than a day
+",
+"4: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to one specific moment or a particular time
+",
+"5: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers to a repeated activity or a category of similar events without the specification of a particular time
+",
+"6: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers refers to an extended period of time which lasted longer than a day
+",
+"7: you seriously tried to complete the sentence, but could not come up with something
+",
+"8: you did not seriously try to complete the sentence in a meaningful way")
+/ required=true
+</radiobuttons>
+
+<radiobuttons rating_response6>
+/caption = "<%values.response_stem6%>
+"
+/ options=("1: what you wrote down refers to one specific moment or a particular time
+", 
+"2: what you wrote down refers to a repeated activity or a category of similar events without the specification of a particular time
+", 
+"3: what you wrote down refers to an extended period of time which lasted longer than a day
+",
+"4: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to one specific moment or a particular time
+",
+"5: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers to a repeated activity or a category of similar events without the specification of a particular time
+",
+"6: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers refers to an extended period of time which lasted longer than a day
+",
+"7: you seriously tried to complete the sentence, but could not come up with something
+",
+"8: you did not seriously try to complete the sentence in a meaningful way")
+/ required=true
+</radiobuttons>
+
+
+<radiobuttons rating_response7>
+/caption = "<%values.response_stem7%>
+"
+/ options=("1: what you wrote down refers to one specific moment or a particular time
+", 
+"2: what you wrote down refers to a repeated activity or a category of similar events without the specification of a particular time
+", 
+"3: what you wrote down refers to an extended period of time which lasted longer than a day
+",
+"4: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to one specific moment or a particular time
+",
+"5: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers to a repeated activity or a category of similar events without the specification of a particular time
+",
+"6: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers refers to an extended period of time which lasted longer than a day
+",
+"7: you seriously tried to complete the sentence, but could not come up with something
+",
+"8: you did not seriously try to complete the sentence in a meaningful way")
+/ required=true
+</radiobuttons>
+
+<radiobuttons rating_response8>
+/caption = "<%values.response_stem8%>
+"
+/ options=("1: what you wrote down refers to one specific moment or a particular time
+", 
+"2: what you wrote down refers to a repeated activity or a category of similar events without the specification of a particular time
+", 
+"3: what you wrote down refers to an extended period of time which lasted longer than a day
+",
+"4: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to one specific moment or a particular time
+",
+"5: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers to a repeated activity or a category of similar events without the specification of a particular time
+",
+"6: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers refers to an extended period of time which lasted longer than a day
+",
+"7: you seriously tried to complete the sentence, but could not come up with something
+",
+"8: you did not seriously try to complete the sentence in a meaningful way")
+/ required=true
+</radiobuttons>
+
+<radiobuttons rating_response9>
+/caption = "<%values.response_stem9%>
+"
+/ options=("1: what you wrote down refers to one specific moment or a particular time
+", 
+"2: what you wrote down refers to a repeated activity or a category of similar events without the specification of a particular time
+", 
+"3: what you wrote down refers to an extended period of time which lasted longer than a day
+",
+"4: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to one specific moment or a particular time
+",
+"5: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers to a repeated activity or a category of similar events without the specification of a particular time
+",
+"6: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). 
+What you had in mind refers to refers refers to an extended period of time which lasted longer than a day 
+",
+"7: you seriously tried to complete the sentence, but could not come up with something
+",
+"8: you did not seriously try to complete the sentence in a meaningful way
+")
+/ required=true
+</radiobuttons>
+
+<radiobuttons rating_response10>
+/caption = "<%values.response_stem10%>
+"
+/ options=("1: what you wrote down refers to one specific moment or a particular time
+", 
+"2: what you wrote down refers to a repeated activity or a category of similar events without the specification of a particular time
+", 
+"3: what you wrote down refers to an extended period of time which lasted longer than a day
+",
+"4: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to one specific moment or a particular time
+",
+"5: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers to a repeated activity or a category of similar events without the specification of a particular time
+",
+"6: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers refers to an extended period of time which lasted longer than a day
+",
+"7: you seriously tried to complete the sentence, but could not come up with something
+",
+"8: you did not seriously try to complete the sentence in a meaningful way")
+/ required=true
+</radiobuttons>
+
+<radiobuttons rating_response11>
+/caption = "<%values.response_stem11%>
+"
+/ options=("1: what you wrote down refers to one specific moment or a particular time
+", 
+"2: what you wrote down refers to a repeated activity or a category of similar events without the specification of a particular time
+", 
+"3: what you wrote down refers to an extended period of time which lasted longer than a day
+",
+"4: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to one specific moment or a particular time
+",
+"5: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers to a repeated activity or a category of similar events without the specification of a particular time
+",
+"6: you had something in mind, but did not want to write it down for whatever reason(e.g., too personal). What you had in mind refers to refers refers to an extended period of time which lasted longer than a day
+",
+"7: you seriously tried to complete the sentence, but could not come up with something
+",
+"8: you did not seriously try to complete the sentence in a meaningful way")
+/ required=true
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	RATING SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage rating1>
+/caption = "Please categorize your responses"
+/questions = [1 = rating_response1]
+</surveypage>
+
+<surveypage rating2>
+/caption = "Please categorize your responses"
+/questions = [1 = rating_response2]
+</surveypage>
+
+<surveypage rating3>
+/caption = "Please categorize your responses"
+/questions = [1 = rating_response3]
+</surveypage>
+
+<surveypage rating4>
+/caption = "Please categorize your responses"
+/questions = [1 = rating_response4]
+</surveypage>
+
+<surveypage rating5>
+/caption = "Please categorize your responses"
+/questions = [1 = rating_response5]
+</surveypage>
+
+<surveypage rating6>
+/caption = "Please categorize your responses"
+/questions = [1 = rating_response6]
+</surveypage>
+
+<surveypage rating7>
+/caption = "Please categorize your responses"
+/questions = [1 = rating_response7]
+</surveypage>
+
+<surveypage rating8>
+/caption = "Please categorize your responses"
+/questions = [1 = rating_response8]
+</surveypage>
+
+<surveypage rating9>
+/caption = "Please categorize your responses"
+/questions = [1 = rating_response9]
+</surveypage>
+
+<surveypage rating10>
+/caption = "Please categorize your responses"
+/questions = [1 = rating_response10]
+</surveypage>
+
+<surveypage rating11>
+/caption = "Please categorize your responses"
+/questions = [1 = rating_response11]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	RATING SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note:
+- survey.rating only runs if parameters.participant_responserating = 1 (Editable Value)
+
+<survey SentenceCompletionTask_Rating>
+/skip = [parameters.participant_responserating != 1]
+/pages = [
+	1 = rating1; 
+	2 = rating2; 
+	3 = rating3; 
+	4 = rating4; 
+	5 = rating5; 
+	6 = rating6; 
+	7 = rating7; 
+	8 = rating8;
+	9 = rating9; 
+	10 = rating10; 
+	11 = rating11;
+]
+/fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/itemspacing = 3%
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</survey>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expt sentenceCompletion>
+/blocks = [
+	1 = SentenceCompletionTask; 
+	2 = SentenceCompletionTask_Rating;
+]
+</expt>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

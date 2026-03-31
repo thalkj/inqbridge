@@ -1,0 +1,595 @@
+﻿<usermanual>															
+___________________________________________________________________________________________________________________	
+
+								*SEX ROLE ORIENTATION SCALE (SRO)*
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 03-08-2017
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a computerized version of the SRO scale as described in:
+
+Brogan, D. & Kutner, N.G., 1976: Measuring sex-role orientations: A normative approach. 
+Journal of Marriage and The Family 38, 31-40.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+36 6-point Likert Scales, scored with 1-6 (the lower the score the more traditional the view of sex roles)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	 
+The default data stored in the data files are:
+
+(1) Raw data file: 'sro_scale.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	   	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1(strongly agree) - 6 (strongly disagree)
+								R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'sro_scale_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+								
+sro_total: 						total score (Min: 36 - Max:216); 
+								=> the lower the score the more traditional the view of sex roles
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+instructions can be changed under section Editable Parameters.
+To change the wording of the questions, go to section QUESTIONS
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:		the general instructions that appear at the top of each surveypage	
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "Please answer the following questions.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.sro_total)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/sro_total: 	total score (Min: 36 - Max:216); the lower the score the more traditional the view of sex roles are
+
+<expressions>
+/sro_total = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3R.response + radiobuttons.q4.response +
+radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response  + 
+radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q11.response + radiobuttons.q12R.response + 
+radiobuttons.q13.response + radiobuttons.q14R.response + radiobuttons.q15.response + radiobuttons.q16.response + 
+radiobuttons.q17R.response + radiobuttons.q18R.response + radiobuttons.q19.response + radiobuttons.q20R.response +
+radiobuttons.q21R.response + radiobuttons.q22.response + radiobuttons.q23R.response + radiobuttons.q24R.response + 
+radiobuttons.q25R.response + radiobuttons.q26.response + radiobuttons.q27R.response + radiobuttons.q28.response +
+radiobuttons.q29.response + radiobuttons.q30.response + radiobuttons.q31R.response + radiobuttons.q32R.response +
+radiobuttons.q33.response + radiobuttons.q34.response + radiobuttons.q35R.response + radiobuttons.q36R.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. It is more important for a wife to help her husband's career than to have a career herself."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. The idea of young girls participating in Little League baseball competition is ridiculous."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3R>
+/caption = "3. The relative amounts of time and energy devoted to a career on the one hand, and to home and family on the other hand, should be determined by one's personal desires and interests rather than by one's sex."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. It is more important for a woman to keep her figure and dress becomingly than it is for a man."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. The old saying that 'a woman's place is in the home' is still basically true and should remain true."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. A woman should refrain from being too competitive with men and keep her peace rather than show a man he is wrong."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. A woman whose job involves contact with the public, e.g., salesperson or teacher, should not continue to work when she is noticeably pregnant."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. The husband should take primary responsibility for major family decisions, such as the purchase of a home or car."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. In groups that have both male and female members, it is appropriate that top leadership positions be held by males."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. Unless it is economically necessary, married women who have school-aged children should not work outside the home."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q11>
+/caption = "11. If there are two candidates for a job, one a man and the other a woman, and the woman is slightly better qualified, the job should nevertheless go to the man because he is likely to have a family to support."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12R>
+/caption = "12. Marriage is a partnership in which the wife and husband should share the economic responsibility of supporting the family."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. A woman should not accept a career promotion if it would require her family to move and her husband to find another job."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14R>
+/caption = "14. A married woman who chooses not to have children because she prefers to pursue her career should not feel guilty."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. Unless it is economically necessary, married women who have preschool-age children should not work outside the home."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "16. It is generally better to have a man at the head of a department composed of both men and women employees."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17R>
+/caption = "17. A husband should not feel uncomfortable if his wife earns a larger salary than he does."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18R>
+/caption = "18. It is all right for women to hold local political offices."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. If a male student and a female student are equally qualified for a certain scholarship; it should be awarded to the male student on the grounds that he has greater 'career potential'."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20R>
+/caption = "20. The use of profane or obscene language by a woman is no more objectionable than the same usage by a man."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q21R>
+/caption = "21. It is certainly acceptable for boys, as well as girls, to play with dolls."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "22. Girls should primarily be counseled to enter 'feminine' vocations such as nursing, public school teaching, library science, etc."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23R>
+/caption = "23. Women should not feel inhibited about competing in any form of athletics."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q24R>
+/caption = "24. Parents should encourage just as much independence in their daughters as in their sons."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q25R>
+/caption = "25. Women should be able to compete with men for jobs that have traditionally belonged to men, such as telephone lineman."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q26>
+/caption = "26. It is O.K. for a wife to retain her maiden name if she wants to."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q27R>
+/caption = "27. There is no reason why a woman should not be president of the United States."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q28>
+/caption = "28. Career education for boys should have higher priority with parents and teachers than career education for girls."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q29>
+/caption = "29. Even though a wife works outside the home, the husband should be the main breadwinner and the wife should have the responsibility for running the household."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q30>
+/caption = "30. In elementary school, girls should wear dresses rather than slacks."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q31R>
+/caption = "31. It is acceptable for a woman to become a member of the church clergy."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q32R>
+/caption = "32. It is acceptable for women to hold important elected political offices in state and national government."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q33>
+/caption = "33. It is not a good idea for a husband to stay home and care for the children while his wife employed full-time outside the home."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q34>
+/caption = "34. The only reason girls need career education is that they may not marry or remain married."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q35R>
+/caption = "35. There is no particular reason why a man should always offer his seat to a woman who is standing on a crowded bus."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q36R>
+/caption = "36. Men should be able to compete with women for jobs that have traditionally belonged to women, such as telephone operator."
+/ options = ("strongly~nagree", "moderately~nagree", "agree~nslightly more~nthan disagree", "disagree~nslightly more~nthan agree", "moderately~ndisagree", "strongly~ndisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage SRO1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1, q2]
+</surveypage>
+
+<surveypage SRO2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q3R, q4]
+</surveypage>
+
+<surveypage SRO3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q5, q6]
+</surveypage>
+
+<surveypage SRO4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7, q8]
+</surveypage>
+
+<surveypage SRO5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q9, q10]
+</surveypage>
+
+<surveypage SRO6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q11, q12R]
+</surveypage>
+
+<surveypage SRO7>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13, q14R]
+</surveypage>
+
+<surveypage SRO8>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q15, q16]
+</surveypage>
+
+<surveypage SRO9>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q17R, q18R]
+</surveypage>
+
+<surveypage SRO10>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q19, q20R]
+</surveypage>
+
+<surveypage SRO11>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q21R, q22]
+</surveypage>
+
+<surveypage SRO12>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q23R, q24R]
+</surveypage>
+
+<surveypage SRO13>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q25R, q26]
+</surveypage>
+
+<surveypage SRO14>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q27R, q28]
+</surveypage>
+
+<surveypage SRO15>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q29, q30]
+</surveypage>
+
+<surveypage SRO16>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q31R, q32R]
+</surveypage>
+
+<surveypage SRO17>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q33, q34]
+</surveypage>
+
+<surveypage SRO18>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q35R, q36R]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey sro_scale>
+/pages = [
+	1 = SRO1; 
+	2 = SRO2; 
+	3 = SRO3; 
+	4 = SRO4; 
+	5 = SRO5; 
+	6 = SRO6; 
+	7 = SRO7; 
+	8 = SRO8; 
+	9 = SRO9;
+	10 = SRO10;
+	11 = SRO11;
+	12 = SRO12;
+	13 = SRO13;
+	14 = SRO14;
+	15 = SRO15;
+	16 = SRO16;
+	17 = SRO17;
+	18 = SRO18;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+/ itemspacing = 10%
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

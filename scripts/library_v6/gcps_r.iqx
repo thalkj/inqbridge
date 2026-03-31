@@ -1,0 +1,338 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*Graded Chronic Pain Scale - Revised (GCPS-R)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-06-2020
+last updated:  02-23-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-23-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the Graded Chronic Pain Scale-Revised (GCPS-R). 
+The GCPS-R uses a standard 3-month recall period for assessing chronic pain and high-impact chronic pain, 
+as well as a  1-week time frame for assessing current pain severity.
+
+Reference
+
+Von Korff, M.; DeBar, L.L.; Krebs, E.E,c; Kerns, R.D.; Deyo, R.A; Keefe, F.J.(2020).
+Graded chronic pain scale revised: mild, bothersome, and high-impact chronic pain.
+PAIN,161,651-661.
+doi: 10.1097/j.pain.0000000000001758
+
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+This script runs 2 screening question regarding chronic pain during the last 3 months as well as
+well as 4 questions regarding pain severity during the last week. 
+
+If the answer to the first question is 0 ("no pain during the last 3 months"), the remaining questions are
+skipped.
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'gradedchronicpainscale_revised.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale:
+									R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'gradedchronicpainscale_revised_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+								
+grade:								0: chronic pain absent
+									1: mild chronic pain
+									2: bothersome chronic pain
+									3: high impact chronic pain
+
++ responses to the individual 6 questions								
+								
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________								
+		
+6 likert-type questions:
+
+grade scoring follows the algorithm outline in vonKorff et al (2020):
+q1 = if response is Never/Some days => grade 0
+q2 = if response is Most Days/Every Day => grade3
+(q3+q4+q5) >= 12 => grade 2 else grade 1		
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:					the general instructions provided
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please answer the following questions.  
+"
+</parameters>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed, values.grade,
+radiobuttons.q1.response, radiobuttons.q2.response, radiobuttons.q3.response, radiobuttons.q4.response,
+radiobuttons.q5.response, radiobuttons.q6.response)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES/EXPRESSIONS: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/skip = 0
+
+/grade = 0
+</values>
+
+<expressions>
+/PEG = radiobuttons.q3.response + radiobuttons.q4.response + radiobuttons.q5.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. In the <u>past 3 months</u>, <b>how often</b> did you have pain?"
+/ options = ("Never", "Some days", "Most days", "Every day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Over the past 3 months, <b>how often did pain limit your life or work activities?</b>"
+/ options = ("Never", "Some days", "Most days", "Every day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<caption instruct>
+/ caption = "
+<br>
+<br>
+<br>
+Now think about pain you have had during <u>the past 7 days</u>..."
+</caption>
+
+<radiobuttons q3>
+/caption = "3. What number best describes <b>your pain, on average?</b>"
+/ options = ("0<br><small>No<br>pain</small>", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br><small>Pain<br>as bad as<br>you can<br>imagine</small>")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. During the past 7 days, what number best describes how <b></u>pain has interfered with your enjoyment of life?</u><b>"
+/ options = ("0<br><small>Does not<br>interfere</small>", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br><small>Completely<br>interferes</small>")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+/ responsefontstyle = ("Arial", 2.25%, false, false, false, false, 5, 1)
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. During the past 7 days, what number best describes how <b></u>pain has interfered with your general activity?</u><b>"
+/ options = ("0<br><small>Does not<br>interfere</small>", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br><small>Completely<br>interferes</small>")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+/ responsefontstyle = ("Arial", 2.25%, false, false, false, false, 5, 1)
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Are you <u><b>not working or unable to work<b></u> due to pain or a pain condition?"
+/ options = ("Yes", "No")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage gcps_r_1>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q1]
+/ ontrialend = [
+	if (radiobuttons.q1.response == 0){
+		values.skip = 1;
+	}
+]
+</surveypage>
+
+<surveypage gcps_r_end>
+/ skip = [
+	values.skip == 0;
+]
+/ caption ="
+
+
+You have reached the end of the survey - Thank you!"
+/ fontstyle = ("Arial", 5%, false, true, false, false, 5, 1)
+/ showbackbutton = false
+/ nextlabel = "Finish"
+</surveypage>
+
+<surveypage gcps_r_2>
+/ skip = [
+	values.skip == 1;
+]
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q2, instruct, q3]
+/ showbackbutton = false
+</surveypage>
+
+<surveypage gcps_r_3>
+/ skip = [
+	values.skip == 1;
+]
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q4, q5, q6]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey gcps_r>
+/pages = [
+	1 = gcps_r_1;
+	2 = gcps_r_end;	
+	3 = gcps_r_2;
+	4 = gcps_r_3;
+]
+/ onblockend = [
+	if (radiobuttons.q1.response <= 1){
+		values.grade = 0;
+	} else {
+		if (radiobuttons.q2.response >= 2){
+			values.grade = 3;
+		} else {
+			if (expressions.PEG >= 12){
+				values.grade = 2;
+			} else {
+				values.grade = 1;
+			}
+		}
+	}
+]
+
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Finish - Thank you!"
+</survey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

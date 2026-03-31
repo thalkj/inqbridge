@@ -1,0 +1,562 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+										*Short Dark Triad (SD3)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 07-01-2021
+last updated: 07-01-2021 by K.Borchert (katjab@millisecond.com) for Millisecond Software LLC
+
+Script Copyright © 07-01-2021 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the Short Dark Triad Questionnaire (SD3) to assess the 'dark triad' of the
+three socially aversive traits: Machiavellianism, narcissism, and psychopathy.
+
+Reference
+Jones, Daniel & Paulhus, Delroy. (2013). Introducing the Short Dark Triad ( SD3): 
+A Brief Measure of Dark Personality Traits. 
+Assessment. 21. 10.1177/1073191113514105. 
+
+More info (including norming data) at:
+https://www.psych.ubc.ca/~dpaulhus/Paulhus_measures/SD3.1.1.doc
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+27 items (9 items per subscale) tested with 5-point Likert type questions.
+The subscales are tested in the following order: 
+(1) Machiavellianism
+(2) narcissism
+(3) psychopathy.
+
+(1) Machiavellianism:
+- callous affect 
+- manipulativeness
+- a strategic-calculating orientation (focus on long-term goals)
+
+(2) Narcissism
+- callous affect
+- grandiosity
+- quest for ego-reinforcement
+
+(2) Psychopathy
+- callous affect
+- self-control deficits/impulsivity (focus on short-term goals)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'sd3.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale: 1 (Disagree strongly) to 5 (Agree strongly)
+									R = automatically reversed scored questions
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'sd3_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+									
+M:									the mean score (1-5) on the Machiavellianism subscale
+M_zscore:							the calculated Machiavellianism z-score based on provided norming data (see below)
+M_percentile:						the calculated percentile of the Machiavellianism z-score based on provided norming data (see below)
+									
+N:									the mean score (1-5) on the Narcissism subscale	
+N_zscore:							the calculated Narcissism z-score based on provided norming data (see below)
+N_percentile:						the calculated percentile of the Narcissism z-score based on provided norming data (see below)
+
+P:									the mean score (1-5) on the Psychopathy subscale	
+N_zscore:							the calculated Psychopathy z-score based on provided norming data (see below)
+N_percentile:						the calculated percentile of the Psychopathy z-score based on provided norming data (see below)
+
+
++ 27 individual responses			
+___________________________________________________________________________________________________________________
+Norming data
+___________________________________________________________________________________________________________________								
+
+Norming data: obtained from 
+https://www.psych.ubc.ca/~dpaulhus/Paulhus_measures/SD3.1.1.doc
+(means and standard deviations based on a sample of 387 undergraduate students)
+								
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please indicate how much you agree with each of the following statements.<br>"
+</parameters>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed,
+//summary scores
+expressions.M, expressions.M_zscore, expressions.M_percentile,
+expressions.N, expressions.N_zscore, expressions.N_percentile,
+expressions.P, expressions.P_zscore, expressions.P_percentile,
+
+//individual responses
+radiobuttons.q1_M.response, radiobuttons.q2_M.response, radiobuttons.q3_M.response,
+radiobuttons.q4_M.response, radiobuttons.q5_M.response, radiobuttons.q6_M.response,
+radiobuttons.q7_M.response, radiobuttons.q8_M.response, radiobuttons.q9_M.response,
+radiobuttons.q1_N.response, radiobuttons.q2R_N.response, radiobuttons.q3_N.response,
+radiobuttons.q4_N.response, radiobuttons.q5_N.response, radiobuttons.q6R_N.response,
+radiobuttons.q7_N.response, radiobuttons.q8R_N.response, radiobuttons.q9_N.response,
+radiobuttons.q1_P.response, radiobuttons.q2R_P.response, radiobuttons.q3_P.response,
+radiobuttons.q4_P.response, radiobuttons.q5_P.response, radiobuttons.q6_P.response,
+radiobuttons.q7R_P.response, radiobuttons.q8_P.response, radiobuttons.q9_P.response
+)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES/EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+Norming data: obtained from 
+https://www.psych.ubc.ca/~dpaulhus/Paulhus_measures/SD3.1.1.doc
+(means and standard deviations based on a sample of 387 undergraduate students)
+<values>
+/M_mean = 3.1
+/M_SD = 0.76
+
+/N_mean = 2.8
+/N_SD = 0.88
+
+/P_mean = 2.4
+/P_SD = 1.0
+</values>
+
+
+//summary scores:
+<expressions>
+/M = (radiobuttons.q1_M.response + radiobuttons.q2_M.response + radiobuttons.q3_M.response +
+radiobuttons.q4_M.response + radiobuttons.q5_M.response + radiobuttons.q6_M.response +
+radiobuttons.q7_M.response + radiobuttons.q8_M.response + radiobuttons.q9_M.response)/9
+
+/M_zscore = (expressions.M - values.M_mean)/(values.M_SD)
+/M_percentile = pofz(expressions.M_zscore)
+
+/N = (radiobuttons.q1_N.response + radiobuttons.q2R_N.response + radiobuttons.q3_N.response +
+radiobuttons.q4_N.response + radiobuttons.q5_N.response + radiobuttons.q6R_N.response +
+radiobuttons.q7_N.response + radiobuttons.q8R_N.response + radiobuttons.q9_N.response)/9
+
+/N_zscore = (expressions.N - values.N_mean)/values.N_SD
+/N_percentile = pofz(expressions.N_zscore)
+
+/P = (radiobuttons.q1_P.response + radiobuttons.q2R_P.response + radiobuttons.q3_P.response +
+radiobuttons.q4_P.response + radiobuttons.q5_P.response + radiobuttons.q6_P.response +
+radiobuttons.q7R_P.response + radiobuttons.q8_P.response + radiobuttons.q9_P.response)/9
+
+/P_zscore = (expressions.P - values.P_mean)/values.P_SD
+/P_percentile = pofz(expressions.P_zscore)
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+////////////////////////////////////////////////
+Machiavellianism
+////////////////////////////////////////////////
+
+<radiobuttons q1_M>
+/caption = "1. It’s not wise to tell your secrets."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_M>
+/caption = "2. I like to use clever manipulation to get my way."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_M>
+/caption = "3. Whatever it takes, you must get the important people on your side."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_M>
+/caption = "4. Avoid direct conflict with others because they may be useful in the future."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_M>
+/caption = "5. It’s wise to keep track of information that you can use against people later."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_M>
+/caption = "6. You should wait for the right time to get back at people."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_M>
+/caption = "7. There are things you should hide from other people to preserve your reputation."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_M>
+/caption = "8. Make sure your plans benefit yourself, not others."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_M>
+/caption = "9. Most people can be manipulated."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+////////////////////////////////////////////////
+Narcissism
+////////////////////////////////////////////////
+
+<radiobuttons q1_N>
+/caption = "10. People see me as a natural leader."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2R_N>
+/caption = "11. I hate being the center of attention."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_N>
+/caption = "12. Many group activities tend to be dull without me."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_N>
+/caption = "13. I know that I am special because everyone keeps telling me so."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_N>
+/caption = "14. I like to get acquainted with important people."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6R_N>
+/caption = "15. I feel embarrassed if someone compliments me."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_N>
+/caption = "16. I have been compared to famous people."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8R_N>
+/caption = "17. I am an average person."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_N>
+/caption = "18. I insist on getting the respect I deserve."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+////////////////////////////////////////////////
+Psychopathy
+////////////////////////////////////////////////
+
+<radiobuttons q1_P>
+/caption = "19. I like to get revenge on authorities."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2R_P>
+/caption = "20. I avoid dangerous situations."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_P>
+/caption = "21. Payback needs to be quick and nasty."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_P>
+/caption = "22. People often say I’m out of control."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_P>
+/caption = "23. It’s true that I can be mean to others."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_P>
+/caption = "24. People who mess with me always regret it."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7R_P>
+/caption = "25. I have never gotten into trouble with the law."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_P>
+/caption = "26. I enjoy having sex with people I hardly know."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_P>
+/caption = "27. I’ll say anything to get what I want."
+/ options = ("Disagree<br>strongly", "<br>Disagree", "Neither agree<br>nor disagree", "<br>Agree", "Agree<br>strongly")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<caption end>
+/ caption = "- END OF QUESTIONNAIRE -"
+/ position = (45%, 93%)
+/ fontstyle = ("Arial", 2%, false, true, false, false, 5, 1)
+/ txcolor = gray
+</caption>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage sd3_1>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q1_M, q2_M, q3_M]
+</surveypage>
+
+<surveypage sd3_2>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q4_M, q5_M, q6_M]
+</surveypage>
+
+<surveypage sd3_3>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q7_M, q8_M, q9_M]
+</surveypage>
+
+<surveypage sd3_4>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q1_N, q2R_N, q3_N]
+</surveypage>
+
+<surveypage sd3_5>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q4_N, q5_N, q6R_N]
+</surveypage>
+
+<surveypage sd3_6>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q7_N, q8R_N, q9_N]
+</surveypage>
+
+<surveypage sd3_7>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q1_P, q2R_P, q3_P]
+</surveypage>
+
+<surveypage sd3_8>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q4_P, q5_P, q6_P]
+</surveypage>
+
+<surveypage sd3_9>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q7R_P, q8_P, q9_P, end]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey sd3>
+/pages = [
+	1 = sd3_1;
+	2 = sd3_2;
+	3 = sd3_3;
+	4 = sd3_4;
+	5 = sd3_5;
+	6 = sd3_6;
+	7 = sd3_7;
+	8 = sd3_8;
+	9 = sd3_9;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Submit"
+</survey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

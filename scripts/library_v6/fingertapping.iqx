@@ -1,0 +1,694 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+									FINGER TAPPING TEST (FTT)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+last updated:  10-01-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-01-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script offers an adaptation of the Finger Tapping Test (aka Finger Tapping Oscillation Test) - FTT- for the computer. 
+The FTT is a test of self-directed motor-speed.
+
+More background information can be found under:
+
+http://books.google.com/books?id=jQ7n4QVw7-0C&pg=PA1043&lpg=
+PA1043&dq=Finger+Tapping+Test&source=bl&ots=F52XMBRtZ5&sig=
+6fAZl7iCbkBccO4sws0OMiflUCk&hl=en&sa=X&ei=Pwn6ToKgKIrjiALoqdyhDg&ved=0CF0Q6AEwBg#v=
+onepage&q=Finger%20Tapping%20Test&f=false 
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants are instructed to tap the SPACEBAR with either the index finger of their dominant or non-dominant hand 
+as often as they can within a 10s time period (=default). The 10s time period starts with the first tap. 
+Valid taps are those that occur within that 10s time period.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 7 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'fingertapping_raw*.iqdat'
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+										
+response:							response in the current trial (e.g. 57 = spacebar press)										
+ 															
+dominanthand:						whether the dominant (1) or the non-dominant hand (0) is tested
+blockcount:							keeps track of the number of blocks run for each hand
+tapcount:							counts the valid taps in each round (=score)
+rank1-values.rank10					the ranking of the scores
+ScoreDetermined:					1 = the final score was determined; 0 =otherwise
+FinalScore							the final score for the current hand
+score_dominant:						the final score for the dominant hand
+score_nondominant:					the final score for the non-dominant hand
+
+restperiod:							the duration of the restperiod after a round
+parameters.maxdifference:			the max difference in scores of the five scores used to calculate final score
+parameters.blocklength:				the duration of a block ("round") - after the first tap
+
+
+(2) Summary data file: 'fingertapping_summary*.iqdat'
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+									
+score_dominant:						the final score for the dominant hand
+score_nondominant:					the final score for the non-dominant hand
+									Note: see scoring information below
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+Scoring: 							Participants run through a mandatory number of 5 rounds (=blocks). The scores (=number of taps) get ranked from lowest to highest
+									If the scores of these 5 rounds are within 5 (=default) taps of each other, the final score is the mean tapping score.
+									If the score of these 5 rounds are not within 5 taps of each other, an additional block is run, until 5 scores can
+									be found that are within a 5-point range (checking starts from the 5 highest ranked scores to the lowest ranked scores).
+									The final score is the mean of these 5 scores. 
+									The maximum number of rounds is 10. If no 5 scores can be found that are within a 5 point range from each other,
+									the final score is the mean of all 10 tapping scores. A separate score for the dominant and the non-dominant hand is kept.
+
+Order:								Testing starts with a practice round, followed by 5-10 testing rounds with the dominant hand and ends
+									after 5-10 rounds of testing with the non-dominant hand.
+									After each round of testing, participants receive feedback and get at least a 10s (=default) rest period. 
+									After every 3 (=default) testing rounds, this resting period is increased to 60s (=default).		
+
+
+
+1. Practice Phase: 10s (Task: press the spacebar as many times as you can)
+
+2. Test Phase 1: Dominant Hand
+* runs minimum 5 blocks (10s each) and maximum 10
+* after 5 blocks are run, the tapping counts are ranked and compared to each other: if 5 scores are are within 5 taps (default) of each other 
+the FinalScore is calculated. If the FinalScore is found, no more blocks are run for the current hand. If the
+FinalScore is not found, an additional block is run. The Phase ends after max. 10 blocks.
+If no five scores can be found that are within 5 taps of each other after 10 blocks, the average tapping count is used as the Final Score
+
+2. Test Phase 2: Non-Dominant Hand
+* runs minimum 5 blocks (10s each) and maximum 10
+* after 5 blocks are run, the tapping counts are ranked and compared to each other: if 5 scores are are within 5 taps (default) of each other 
+the FinalScore is calculated. If the FinalScore is found, no more blocks are run for the current hand. If the
+FinalScore is not found, an additional block is run. The Phase ends after max. 10 blocks.
+If no five scores can be found that are within 5 taps of each other after 10 blocks, the average tapping count is used as the Final Score
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+see section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+maxdifference:						the maximal difference between 5 consecutive scores (default is 5)
+blocklength:						determines the length of the block (default: 10s)
+longrestperiod:						determines how long the restperiod is after block3 (and block6)
+regularrestperiod:					determines the regular restperiod after a block
+longrestperiodblock:				determines after how many blocks there should be a longer restperiod (default: after every 3 testing blocks)
+
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/maxdifference = 5
+/blocklength = 10000
+/longrestperiod = 60000
+/regularrestperiod = 10000
+/longrestperiodblock = 3
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.50%, false, false, false, false, 5, 0)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 0)
+/ nextKey = (28)
+</instruct>
+
+*********************************
+INTRO/FINAL FEEDBACK
+*********************************
+
+<page intro>
+<h1>FINGER TAPPING TASK</h1><hr>
+<br>In this simple test your task is: <i>to tap the [space] <%expressions.buttoninstruct1%> with your index finger as often as 
+you can within a 10s time period.</i>
+<br><br>In the <b>first round</b> of testing, you will be asked to use the index finger of your <b>DOMINANT</b> hand.<br>
+<br>In the <b>second round</b> of testing, you will be asked to use the index finger of your <b>NON-DOMINANT</b> hand.
+<br><br><br>There will be a practice session before the actual testing starts to familiarize you with the set-up.
+</page>
+
+<text finish>
+/ items = ("<h1>THANK YOU!</h1><hr>
+<br>Your final score for your <b>dominant</b> hand is: <%values.score_dominant%><br>
+<br>Your final score for your <b>non-dominant</b> hand is: <%values.score_nondominant%>")
+</text>
+
+<trial finish>
+/ stimulusFrames = [1 = clearScreen, finish]
+/ timeout = 2000
+</trial>
+
+
+
+*********************************
+PRACTICE
+*********************************
+
+<page practiceintro>
+<h1>PRACTICE SESSION</h1><hr>
+<br>Use the index finger of your <b>DOMINANT</b> hand for the practice session.<br>
+<br>Start tapping the SPACEBAR <%expressions.buttoninstruct1%> when you see a prompt on the screen (the 10s start with your first tap).<br>
+<br>Tap the SPACEBAR <%expressions.buttoninstruct1%> as often as you can within the 10s.
+<br>Only use your index finger to tap the spacebar. <u>Do NOT use your entire hand</u>.<br>
+<br><br>Continue to start practice.
+</page>
+
+<page practicefeedback>
+<h1>END OF PRACTICE</h1><hr>
+<br>Your score for your Practice round  is: <%values.tapcount%><br>
+<br><br>Continue for further instructions.
+</page>
+
+*********************************
+TESTING
+*********************************
+
+<page dominanthand>
+<h1>DOMINANT HAND</h1><hr>
+<br>Use the index finger of your <b>DOMINANT</b> hand for the coming testing session.<br>
+<br>Start tapping the SPACEBAR <%expressions.buttoninstruct1%> when you see a prompt on the screen (the 10s start with your first tap).<br>
+<br>Tap the SPACEBAR <%expressions.buttoninstruct1%> as often as you can within the 10s.
+<br>Only use your index finger to tap the spacebar. <u>Do NOT use your entire hand.</u><br>
+<br>There will be at least 5 rounds of testing with your dominant hand (but there can be as many as 10).<br>
+<br><br>Start testing when you are ready.
+</page>
+
+<page nondominanthand>
+<h1>NON-DOMINANT HAND</h1><hr>
+<br>Use the index finger of your <b>NON-DOMINANT</b> hand for the coming testing session.<br>
+<br>Start tapping the SPACEBAR <%expressions.buttoninstruct1%> when you see a prompt on the screen (the 10s start with your first tap).<br>
+<br>Tap the SPACEBAR <%expressions.buttoninstruct1%> as often as you can within the 10s.
+<br>Only use your index finger to tap the spacebar. <u>Do NOT use your entire hand.</u><br>
+<br>There will be at least 5 rounds of testing with your non-dominant hand (but there can be as many as 10).<br>
+<br><br>Start testing when you are ready.
+</page>
+
+*********************************
+FEEDBACK ("resting") ROUNDS
+*********************************
+Notes:
+* these are the text instructions used for the resting block
+<text restinstructions1>
+/ items = ("Your score for Round  <%values.blockcount%> is: <%values.tapcount%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 0)
+/ position = (50%, 50%)
+/ color = black
+</text>
+
+<item restinstruction>
+/1 = "The next round will start after <%(values.restperiod / 1000)%> s"
+/2 = "Your final score for your dominant hand  is: <% values.FinalScore%>"
+/3 = "Your final score for your non-dominant hand  is: <% values.FinalScore%>"
+</item>
+
+*********************************
+Prompt
+*********************************
+Notes:
+this is the prompt that reminds participants to tap the spacebar during a round of testing.
+<text remindertext>
+/ items = ("TAP the SPACEBAR <%expressions.buttoninstruct1%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 0)
+/ position = (50%, 50%)
+/ color = black
+</text>
+
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"button";} else {"key";}
+</expressions>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+</defaults>
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+**********************
+raw data
+**********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum, 
+response,values.dominanthand, values.blockcount, values.tapcount, 
+values.rank1, values.rank2, values.rank3, values.rank4, values.rank5, values.rank6, values.rank7, values.rank8, values.rank9, values.rank10,
+values.ScoreDetermined, values.FinalScore, values.score_dominant, values.score_nondominant,
+values.restperiod, parameters.maxdifference, parameters.blocklength)
+</data>
+
+**********************
+summary data
+**********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+values.score_dominant, values.score_nondominant)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+tapcount:											counts the valid taps in a block (the ones within the 10s time period)
+rank1 - rank10:										ranked ordered Fingertapping scores of Block 1 to Block 10 (depends on how many blocks are necessary)
+FinalScore:											stores the final fingertapping score for a participant
+ScoreDetermined:									determines whether the FinalScore has been determined yet; used to decide if more blocks are
+														necessary to run (0 = final score not determined yet, 1 = final score is determined)
+restitemselect:										used to determine which text to show during a restperiod
+restperiod:											determines the duration of the resttrial
+start10speriod:										stores the startTime of the 10s period that the block should run
+blockcount:											counts the number of blocks run (resets for each hand)
+dominanthand:										stores whether the dominant (value = 1) or the non-dominant hand is tested (value = 0)
+score_dominant:										stores the final score of the dominant hand
+score_nondominant:									stores the final score of the non-dominant hand
+
+
+<values>
+/tapcount =0
+/rank1 = 0
+/rank2 = 0
+/rank3 = 0
+/rank4 = 0
+/rank5 = 0
+/rank6 = 0
+/rank7 = 0
+/rank8 = 0
+/rank9 = 0
+/rank10 = 0
+/FinalScore = 0
+/ScoreDetermined = 0
+/restitemselect = 1
+/restperiod = 0
+/start10speriod = 0
+/blockcount = 0
+/dominanthand = 1
+/score_dominant = 0
+/score_nondominant = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS/LISTS
+**************************************************************************************************************
+**************************************************************************************************************
+
+//stores the tapCounts for each round (resets for each hand)
+<list tapCounts>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	MAIN TRIAL/STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+*NOTES:
+(1) trial ftt presents a counter on the screen that counts the taps
+(2) the first trial.ftt within a block sets values.start10speriod which is used to calculate the 10s (default) time period the blocks needs to run
+(3) a valid  count is one where the participant hits the keyboard (Spacebar) within the 10s time period
+(4) trial.ftt calls itself until the stop condition of the calling block is reached (=time is up)
+(5) no individual data are recorded (can be changed under /recorddata)
+
+
+<text tapcounter>
+/ items = ("<%values.tapcount%>")
+/ position = (50%, 60%)
+/ fontstyle = ("Arial", 2.33%, false, false, false, false, 5, 0)
+/ txcolor = black
+</text>
+
+<trial ftt>
+/ inputdevice = keyboard
+/ validresponse = (" ")
+/ ontrialend = [
+	values.tapcount += 1;
+] 
+/ branch = [return trial.ftt]
+/ recorddata = false
+/ stimulusframes = [1 = tapcounter]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	MAIN BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+************************
+FTT Block
+************************
+
+Note: this block runs the first tap and then calls the time controlled block.ftt
+<block fttStart>
+/ skip = [
+	return (values.ScoreDetermined);
+]
+/ bgstim = (remindertext)
+/ onblockbegin = [ 
+	values.blockcount += 1; 
+	values.tapcount= 0;
+]
+/ trials = [1 = ftt]
+/ stop = [
+	return (trial.ftt.trialCount > 1);
+]
+/ branch = [
+	return block.ftt;
+]
+</block>
+
+<block ftt>
+/ bgstim = (remindertext)
+/ trials = [1 = ftt]
+/ onblockend = [
+	//update tapCounts:
+	list.tapCounts.appendItem(values.tapcount);
+	list.tapCounts.sort(true,false);//sort from smallest to largest tapcount
+	var i = 1;
+	while (i <= list.tapCounts.itemCount){
+		if (i == 1){
+			values.rank1 = list.tapCounts.item(i);
+		} else if (i == 2){
+			values.rank2 = list.tapCounts.item(i);
+		} else if (i == 3){
+			values.rank3 = list.tapCounts.item(i);
+		} else if (i == 4){
+			values.rank4 = list.tapCounts.item(i);
+		} else if (i == 5){
+			values.rank5 = list.tapCounts.item(i);
+		} else if (i == 6){
+			values.rank6 = list.tapCounts.item(i);
+		} else if (i == 7){
+			values.rank7 = list.tapCounts.item(i);
+		} else if (i == 8){
+			values.rank8 = list.tapCounts.item(i);
+		} else if (i == 9){
+			values.rank9 = list.tapCounts.item(i);
+		} else if (i == 10){
+			values.rank10 = list.tapCounts.item(i);
+		}
+		i += 1;
+	}
+	
+	//start checking for scores (list is ordered from lowest to highest) when there are 5 or more scores to compare
+	if (list.tapCounts.itemCount >= 5){
+		values.FinalScore = 0;
+		var high = list.tapCounts.itemCount;
+		var low = high - 4;
+		
+		while (low > 0 && !values.ScoreDetermined){
+			//compare the current high score with the current low score and check if the difference is acceptable for score determination
+			if (list.tapCounts.item(high) - list.tapCounts.item(low) <= parameters.maxdifference) {//found 5 values that were within 5 tapCounts of each other
+				i = low; //check the highest 5 scores first
+				while (i <= high){
+					values.FinalScore += list.tapCounts.item(i);				
+					i += 1;
+				}
+				values.FinalScore = values.FinalScore/5;
+				values.ScoreDetermined = 1;
+			}			
+			high -= 1;
+			low -= 1; 
+		}
+		
+		//if no score could be determined and the blockCount is 10 already: take the average 
+		if (!values.ScoreDetermined && values.blockcount == 10){
+			values.FinalScore = list.tapCounts.mean;
+			values.ScoreDetermined = 1;
+		}	
+	}
+]
+/ timeout = parameters.blocklength //runs for the predetermine time
+/ branch = [return block.restblock;]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	UTILITY TRIALS/BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+Notes:
+* the "resting" block offers feedback (=tapping score) after each round as well as feedback regarding the final score 
+* it determines a restperiod before the next round is started (if any)
+* this restperiod is usually 10s unless the block is a multiplier of 3, then the restperiod is increased to 60s (unless the final score has been determined)
+* relevant data are stored in data file during the rest trials
+
+<text restinstructions2>
+/ items = restinstruction
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 0)
+/ position = (50%, 60%)
+/ color = black
+/select = values.restitemselect
+</text>
+
+<clock restclock>
+/mode = timer
+/timeout = (values.restperiod)
+/position = (50%, 80%)
+</clock>
+
+
+<trial resttrial>
+/ ontrialbegin = [
+	if (mod(values.blockcount, parameters.longrestperiodblock) == 0) {
+		values.restitemselect = 1;
+		values.restperiod = parameters.longrestperiod;
+	}
+				
+	if (values.ScoreDetermined == 1){
+		if (values.dominanthand == 1){
+			values.restitemselect = 2;
+			values.restperiod = parameters.regularrestperiod;
+		} else if (values.dominanthand == 0){
+			values.restitemselect = 3;
+			values.restperiod = parameters.regularrestperiod;
+		}
+	}
+	
+	if (values.blockcount !=3 &&  values.blockcount !=6 &&  values.ScoreDetermined != 1){
+		values.restitemselect = 1;
+		values.restperiod = parameters.regularrestperiod;
+	}
+] 
+/ stimulusframes = [1 = restinstructions1, restinstructions2, restclock]
+/ recorddata = true
+/validresponse = ("")
+/ ontrialend = [
+	if (values.ScoreDetermined == 1){
+		if (values.dominanthand == 1) {
+			values.score_dominant = values.FinalScore;
+		} else if (values.dominanthand == 0) {
+			values.score_nondominant = values.FinalScore;
+		}
+	}
+]
+/trialduration = values.restperiod
+</trial>
+
+<block restblock>
+/trials = [1 = resttrial]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	UTILITY BLOCK: PRACTICE BLOCK
+**************************************************************************************************************
+**************************************************************************************************************
+
+Notes:
+This block calls instructions as well as feedback for a practice block. No data are recorded.
+
+<block practiceStart>
+/ preinstructions = (practiceintro)
+/ bgstim = (remindertext)
+/ onblockbegin = [ 
+	values.blockcount += 1; 
+	values.tapcount= 0;
+]
+/ stop = [
+	return (trial.ftt.trialCount > 1);
+]
+/ trials = [1 = ftt]
+/ branch = [
+	return block.practice;
+]
+</block>
+
+<block practice>
+/ postinstructions = (practicefeedback)
+/ bgstim = (remindertext)
+/ trials = [1 = ftt]
+/ timeout = parameters.blocklength
+/ onblockend = [
+	values.blockcount = 0; 
+]
+/ recorddata = false
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	UTILITY BLOCKS: DOMINANT HAND
+**************************************************************************************************************
+**************************************************************************************************************
+
+Notes:
+these blocks simply call instructions for the dominant/non-dominant condition and set -as well as reset- appropriate values.
+
+<block DOMINANT>
+/ preinstructions = (dominanthand)
+/ onblockbegin = [
+	values.rank1 = 0; 
+	values.rank2 = 0; 
+	values.rank3 = 0; 
+	values.rank4 = 0; 
+	values.rank5 = 0;						
+	values.rank6 = 0; 
+	values.rank7 = 0; 
+	values.rank8 = 0; 
+	values.rank9 = 0; 
+	values.rank10 = 0;
+	
+	values.blockcount = 0; 
+	values.dominanthand = 1; 
+	values.FinalScore = 0; 
+	values.ScoreDetermined = 0;
+	list.tapCounts.reset();
+]
+/ recorddata = false
+</block>
+
+<block NONDOMINANT>
+/ preinstructions = (nondominanthand)
+/ onblockbegin = [
+	values.rank1 = 0; 
+	values.rank2 = 0; 
+	values.rank3 = 0; 
+	values.rank4 = 0; 
+	values.rank5 = 0;	
+	values.rank6 = 0; 
+	values.rank7 = 0; 
+	values.rank8 = 0; 
+	values.rank9 = 0; 
+	values.rank10 = 0;
+	
+	values.blockcount = 0; 
+	values.dominanthand = 0; 
+	values.FinalScore = 0; 
+	values.ScoreDetermined = 0;
+	list.tapCounts.reset();
+]
+/ recorddata = false
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT
+**************************************************************************************************************
+**************************************************************************************************************
+
+Notes:
+Experiment starts with a practice block, followed by 5-10 blocks for the dominant hand (Blocks 6-10 are skipped if the Final Score has already be
+determined), and 5-10 blocks for the non-dominant hand. At the end, participant receive feedback in regard to their dominant and non-dominant
+tapping score.
+
+<expt fingertapping>
+/ blocks = [
+	1 = practiceStart; 
+	2 = DOMINANT; 
+	3-12 = fttStart;
+	13 = NONDOMINANT;
+	14-23 = fttStart;
+	24 = finish;
+]
+/ preinstructions = (intro)
+</expt>
+
+*********************************************************************************************************************************************************************
+																						END OF SCRIPT
+*********************************************************************************************************************************************************************

@@ -1,0 +1,320 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									*Generalized Anxiety Disorder (GAD-7)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-02-2021
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a computerized version of the Generalized Anxiety Disorder (GAD-7) questionnaire
+by Spitzer et al (2006).
+
+
+Reference:
+Spitzer, R. L., Kroenke, K., Williams, J. B. W., & Lowe, B. (2006). 
+A brief measure for assessing generalized anxiety disorder - The GAD-7. 
+Archives of Internal Medicine, 166, 1092-1097.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+The scale consists of 7 4-point Likert scale items.
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes < 1 min to complete.
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'gad_7.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale: q1-q7: 0 (Not at all) - 3 (Nearly every day)
+									Scale: q8: 0 (Not difficult at all) - 3 (Extremely difficult)
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'gad_7_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+																				
+gad_7_totalscore:					Total Score (Range: 0 - 21)
+									Spitzer et al (2006, p.1095):
+									"A score of 10 or greater on the GAD-7 represents a reasonable cut point for identifying cases of
+									GAD. Cut points of 5, 10, and 15 might be interpreted
+									as representing mild, moderate, and severe levels of anxiety
+									on the GAD-7 [...]"
+
+individual responses: 
+Scale: q1-q7: 0 (Not at all) - 3 (Nearly every day)
+Scale: q8: 0 (Not difficult at all) - 3 (Extremely difficult)
+
+radiobuttons.q1.response to 
+expressions.q8 (*Note: q8 is only presented if participant has indicated any 
+possible response > 0 for any of the seven questions. If 
+all responses = 0, q8 is automatically scored as 0)
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Over the <u>last 2 weeks</u>, how often have you been bothered by any of the following problems?<br>
+"
+</parameters>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, 
+script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId,
+script.elapsedTime, script.completed,
+
+expressions.gad_7_totalscore,
+
+radiobuttons.q1.response,
+radiobuttons.q2.response,
+radiobuttons.q3.response,
+radiobuttons.q4.response,
+radiobuttons.q5.response,
+radiobuttons.q6.response,
+radiobuttons.q7.response,
+expressions.q8
+)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES/EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<expressions>
+/q8 = {
+	if (radiobuttons.q1.response == 0 &&
+	radiobuttons.q2.response == 0 &&	
+	radiobuttons.q3.response == 0 &&	
+	radiobuttons.q4.response == 0 &&	
+	radiobuttons.q5.response == 0 &&	
+	radiobuttons.q6.response == 0 &&	
+	radiobuttons.q7.response == 0){
+		0;
+	} else {
+		radiobuttons.q8.response;
+	}
+}
+/gad_7_totalscore = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response +
+radiobuttons.q4.response + radiobuttons.q5.response + radiobuttons.q6.response +
+radiobuttons.q7.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. Feeling nervous, anxious or on edge"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Not being able to stop or control worrying"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Worrying too much about different things"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. Trouble relaxing"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. Being so restless that it is hard to sit still"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Becoming easily annoyed or irritable"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. Feeling afraid as if something awful might happen"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. If you checked off any problems, how <u>difficult</u> have those problems made it for you to do your work, take care of things at home, or get along with other people?<br>"
+/ options = ("Not difficult ~nat all", "Somewhat ~ndifficult", "Very ~ndifficult", "Extremely ~ndifficult")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage gad_7_1>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage gad_7_2>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q4, q5]
+</surveypage>
+
+<surveypage gad_7_3>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q6, q7]
+</surveypage>
+
+<surveypage gad_7_4>
+/ skip = [
+	radiobuttons.q1.response == 0 &&
+	radiobuttons.q2.response == 0 &&	
+	radiobuttons.q3.response == 0 &&	
+	radiobuttons.q4.response == 0 &&	
+	radiobuttons.q5.response == 0 &&	
+	radiobuttons.q6.response == 0 &&	
+	radiobuttons.q7.response == 0
+]
+/ questions = [1 = q8]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey gad_7>
+/pages = [
+	1 = gad_7_1;
+	2 = gad_7_2;
+	3 = gad_7_3;
+	4 = gad_7_4;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Submit"
+</survey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

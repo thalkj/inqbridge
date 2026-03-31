@@ -1,0 +1,509 @@
+﻿<usermanual>								
+___________________________________________________________________________________________________________________	
+
+							*PTSD Checklist Civilian Version (PCL-C) - DSM IV checklist*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 03-13-2018
+last updated:  02-25-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-25-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the PTSD Checklist Civilian Version (PCL-C) by the 
+National Center for PTSD - Behavioral Science Division
+The PCL-C is a PTSD Checklist for DSM-IV
+
+Reference:
+https://www.ptsd.va.gov/professional/assessment/adult-sr/ptsd-checklist.asp
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION
+___________________________________________________________________________________________________________________	
+17 5-point Likert scale, self-report
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'PCL_C.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values 1-5, no reverse coding required)
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this 
+								particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'pcl_c_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+									
+Scoring:for more info, see: https://www.ptsd.va.gov/professional/assessment/documents/PCL-5_Standard.pdf
+
+totalSeverityScore:	the sum of all individual questions (Range: 17 - 85)
+								a score of 44 is considered to be PTSD positive in general population
+									
+DSMIV_criteria:					DSMIV_criteria = 1 (responses reached DSM IV criteria for PTSD)
+								=> positive criteriaB, positive criteriaC, positive criteriaD						
+								DSMIV_criteria = 0 => the responses did not reach DSM IV criteria for PTSD
+
+criteriaB:						1 (positive for DSM IV criteria B for PTSD): 
+								At least one B-item was 'positively' rated (= 3 or above) (B-items: question 1-5)								
+								0 = negative for DSM IV criteria B for PTSD
+								
+criteriaC:						1 (positive for DSM IV criteria C for PTSD): 
+								At least three C-item were 'positively' rated (= 3 or above) (C-items: question 6-12)								
+								0 = negative for DSM IV criteria C for PTSD	
+	
+criteriaD:						1 (positive for DSM IV criteria D for PTSD): 
+								At least two D-items were 'positively' rated (= 3 or above) (D-items: question 13-17)								
+								0 = negative for DSM IV criteria D for PTSD
+	
+
+for each individual question (values.q1-values.q17), the raw response score (1-5) was binary coded as 
+								1 = the response was 3 or above (participant chose at least 'moderately' for the individual question) => positive
+								0 = the response was 1 or 2 => negative
+							
+___________________________________________________________________________________________________________________	
+QUESTIONNAIRE SET-UP 
+___________________________________________________________________________________________________________________	
+17 5-point Likert scale, self-report
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+see section Editable Parameters
+	
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to further
+ customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Below is a list of problems and complaints that people sometimes have in response to stressful life experiences.
+ 
+Please read each one carefully, then indicate how much you have been bothered by that problem in the PAST MONTH.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+
+<page end>
+Thank you!
+</page>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 5.0.11.0
+
+<defaults>
+/minimumversion = "5.0.11.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.totalSeverityScore, values.DSMIV_criteria,
+values.criteriaB, values.criteriaC, values.criteriaD, 
+values.q1, values.q2, values.q3, values.q4, values.q5, values.q6, values.q7, values.q8, values.q9, values.q10,
+values.q11, values.q12, values.q13, values.q14, values.q15, values.q16, values.q17)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+<values>
+/q1 = 0
+/q2 = 0
+/q3 = 0
+/q4 = 0
+/q5 = 0
+/q6 = 0
+/q7 = 0
+/q8 = 0
+/q9 = 0
+/q10 = 0
+/q11 = 0
+/q12 = 0
+/q13 = 0
+/q14 = 0
+/q15 = 0
+/q16 = 0
+/q17 = 0
+
+/criteriaB = 0
+/criteriaC = 0
+/criteriaD = 0
+/DSMIV_criteria = 0
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/totalSeverityScore = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response +
+radiobuttons.q4.response + radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response +
+radiobuttons.q8.response + radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q11.response + 
+radiobuttons.q12.response + radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q15.response + 
+radiobuttons.q16.response + radiobuttons.q17.response
+/alternativeScoring = {
+	if (radiobuttons.q1.response > 2){
+		values.q1 = 1;
+	}
+	if (radiobuttons.q2.response > 2){
+		values.q2 = 1;
+	}	
+	if (radiobuttons.q3.response > 2){
+		values.q3 = 1;
+	}	
+	if (radiobuttons.q4.response > 2){
+		values.q4 = 1;
+	}	
+		if (radiobuttons.q5.response > 2){
+		values.q5 = 1;
+	}
+	if (radiobuttons.q6.response > 2){
+		values.q6 = 1;
+	}
+	if (radiobuttons.q7.response > 2){
+		values.q7 = 1;
+	}	
+	if (radiobuttons.q8.response > 2){
+		values.q8 = 1;
+	}	
+	if (radiobuttons.q9.response > 2){
+		values.q9 = 1;
+	}	
+	if (radiobuttons.q10.response > 2){
+		values.q10 = 1;
+	}		
+	if (radiobuttons.q11.response > 2){
+		values.q11 = 1;
+	}
+	if (radiobuttons.q12.response > 2){
+		values.q12 = 1;
+	}	
+	if (radiobuttons.q13.response > 2){
+		values.q13 = 1;
+	}	
+	if (radiobuttons.q14.response > 2){
+		values.q14 = 1;
+	}	
+	if (radiobuttons.q15.response > 2){
+		values.q15 = 1;
+	}
+	if (radiobuttons.q16.response > 2){
+		values.q16 = 1;
+	}
+	if (radiobuttons.q17.response > 2){
+		values.q17 = 1;
+	}	
+
+	
+	if (max(values.q1, values.q2, values.q3, values.q4, values.q5) == 1){
+		values.criteriaB = 1;
+	}
+	if ((values.q6 + values.q7 + values.q8 + values.q9 + values.q10 + values.q11 + values.q12) > 2){
+		values.criteriaC = 1;
+	}
+	if ((values.q13 + values.q14 + values.q15 + values.q16 + values.q17) > 1){
+		values.criteriaD = 1;
+	}
+
+	if (values.criteriaB == 1 && values.criteriaC == 1 && values.criteriaD == 1){
+		values.DSMIV_criteria = 1;
+	}
+		
+}
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. Repeated, disturbing MEMORIES, THOUGHTS, or IMAGES of a stressful experience from the past?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Repeated, disturbing DREAMS of a stressful experience from the past?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Suddenly ACTING or FEELING as if a stressful experience WERE HAPPENING AGAIN (as if you were reliving it)?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. Feeling VERY UPSET when SOMETHING REMINDED YOU of a stressful experience from the past?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. Having PHYSICAL REACTIONS (e.g., heart pounding, trouble breathing, sweating) when SOMETHING REMINDED YOU of a stressful experience from the past?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Avoiding THINKING ABOUT or TALKING ABOUT a stressful experience from the past or avoiding HAVING FEELINGS related to it?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. Avoiding ACTIVITIES or SITUATIONS because THEY REMINDED YOU of a STRESSFUL EXPERIENCE from the past?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. Trouble REMEMBERING IMPORTANT PARTS of a stressful experience from the past?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. LOSS OF INTEREST in activities that you used to enjoy?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. Feeling DISTANT or CUT OFF from other people?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. Feeling EMOTIONALLY NUMB being unable to have loving feelings for those close to you?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. Feeling as if your FUTURE will somehow be CUT SHORT?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. Trouble FALLING or STAYING ASLEEP?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "14. Feeling IRRITABLE or having ANGRY OUTBURSTS?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. Having DIFFICULTY CONCENTRATING?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "16. Being 'SUPER ALERT' or watchful or on guard?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. Feeling JUMPY or easily startled?"
+/ options = ("Not at all  ", "A little bit  ", "Moderately  ", "Quite a bit  ", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage PCL_C1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage PCL_C2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage PCL_C3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage PCL_C4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage PCL_C5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage PCL_C6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q16, q17]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey PCL_C>
+/pages = [
+	1 = PCL_C1;
+	2 = PCL_C2;
+	3 = PCL_C3;
+	4 = PCL_C4;
+	5 = PCL_C5;
+	6 = PCL_C6;
+]
+/screencapture = false
+/ onblockend = [
+	expressions.alternativeScoring;
+]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

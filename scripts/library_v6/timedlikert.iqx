@@ -1,0 +1,281 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+										*TIMED LIKERT SCALE DEMO*
+___________________________________________________________________________________________________________________	
+
+
+Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-20-2013
+last updated:  03-02-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 03-02-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a demonstration of a Timed Likert scale as used by:
+
+Ferrando, P.J. & Lorenzo-Seva, U. (2007). A Measurement Model for Likert Responses That Incorporates Response Time.
+MULTIVARIATE BEHAVIORAL RESEARCH, 42, 675–706.
+
+The likert scale implemented in this script has 5 anchors like the one used by Ferrando & Lorenzo-Seva (2007).
+According to the article "A five-point response is the upper limit recommended by Fazio (1990) when the 
+information provided by the latencies is taken into account. (p.677/678)"
+
+NOTE:
+The build-in Inquisit likert scale used in this script does NOT let participants change their original response. 
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+Participants are asked to select a response button on a five-point- Likert Scale in response to a given statement.
+
+The reciprocals of the reaction times (converted from ms to s, and corrected for large and small reaction times 
+are calculated for each question (see Ferrando & Lorenzo-Seva, 2007)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes under a minute to complete.
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'timedlikert_raw*.iqdat'
+
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.
+									
+stimulusitem:					the presented stimuli in order of trial presentation
+response:						the participant's response (scancode of response buttons)
+latency: 						the response latency (in ms); measured from: onset of stim
+
+corrected_rt_s:					corrected RT for large (>40) and small (< 0.5) reaction times (measured in seconds NOT ms)
+								as suggested by Ferrando & Lorenzo-Seva (2007), p.689
+									
+reciprocal_rt_s:				the inverse of the reaction times (measured in seconds NOT ms)
+ 
+(2) Summary data file: 'timedlikert_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+___________________________________________________________________________________________________________________	
+CUSTOMIZE ITEMS
+___________________________________________________________________________________________________________________	
+
+* Go to section EDITABLE STIMULI -> item.questions to edit/add items of interest
+* Go to ssection BLOCKS -> block.timedlikert to edit the number of times the likert trial needs to be called
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/questionfontsize:				sets the fontsize of the question in canvas percentages (default: 5%)
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ questionfontsize = 5%
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item questions>
+/ 1 = "I am a happy person today"
+/ 2 = "I was a happy person yesterday"
+/ 3 = "I will be a happy person tomorrow"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<page intro>
+^Rate how much you agree with the following statement. <%expressions.buttoninstruct1%> the response box that BEST represents your answer.
+^^You cannot change your answer once you <%expressions.buttoninstruct2%>ed a response box.
+</page>
+
+<page end>
+You have reached the end of the task.
+^^Thank you!
+</page>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/ buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"Tap";} else {"Click";}
+/ buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"tap";} else {"click";}
+</expressions>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ txcolor = black
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+stimulusitem, response, latency,
+expressions.corrected_rt_s, expressions.reciprocal_rt_s)
+</data>
+
+***********************
+summary data file
+***********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/rt:							contains the latency of the current response
+
+<values>
+/ rt = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/corrected_rt_s:		corrected rt for large (>40) and small (< 0.5) reaction times (measured in seconds NOT ms)
+						as suggested by Ferrando & Lorenzo-Seva (2007), p.689
+/reciprocal_rt_s:		the inverse of the reaction times (measured in seconds NOT ms)
+
+<expressions>
+/ corrected_rt_s = if (values.rt / 1000 > 40) 40 else if (values.rt / 1000 < 0.5) 0.5 else values.rt
+/ 1000
+/ reciprocal_rt_s = 1 / (expressions.corrected_rt_s)
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text question>
+/ items = questions
+/ select = sequence
+/ position = (50%, 40%)
+/ erase = false
+/ size = (80%, 10%)
+/ fontstyle = ("Arial", parameters.questionfontsize, false, false, false, false, 5, 1)
+/ txcolor = black
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<likert timedlikert>
+/ labels = ("agree a lot", "agree slightly", "neither", "disagree slightly", "disagree a lot")
+/ anchorwidth = 12%
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ stimulusframes = [1 = question]
+/ ontrialend = [
+	values.rt = likert.timedlikert.latency;
+]
+</likert>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block timedlikert>
+/ trials = [1-3 = timedlikert]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt timedlikert>
+/ preinstructions = (intro)
+
+/ blocks = [1 = timedlikert]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

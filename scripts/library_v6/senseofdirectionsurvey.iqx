@@ -1,0 +1,423 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							Santa Barbara Sense of Direction Scale (SBSOD)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-12-2017
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of the 'Santa Barbara Sense of Direction Scale'
+as described in:
+
+Hegarty, M. Richardson, A. E., Montello, D. R., Lovelace, K & Subbiah, I. (2002). 
+Development of a Self-Report Measure of Environmental Spatial Ability. Intelligence, 30, 425-447.
+
+downloaded from:
+http://spatiallearning.org/index.php/testsainstruments											  
+											  											  
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+15 7-point Likert Scale questions on sense of direction (self-report)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'senseofdirectionsurvey.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (strongly agree)-7 (strongly disagree)
+								R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'senseofdirectionsurvey_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+SODtotal:						sum of all 15 scores (reversed scoring automatically applied)
+
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________	
+
+15 questions: 7 point Likert Scales
+2, 6, 8, 10, 11, 12, 13, 15: strongly agree = 1 - strongly disagree = 7
+1R, 3R, 4R, 5R, 7R, 9R, 14R: strongly agree = 7 - strongly disagree = 1
+=> higher rating indicates a better self-report SOD
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+minimally altered (=>to reflect the computerized input modality) original instructions;
+can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+/pageinstructions2:		the instructions that appear at the top of each surveypage
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "This questionnaire consists of several statements about your spatial and navigational abilities, preferences, and experiences. After each statement, you should select a number to indicate your level of agreement with the statement."
+
+/pageinstructions2= "Select '1' if you strongly agree that the statement applies to you, '7' if you strongly disagree, or some number in between if your agreement is intermediate. Select '4' if you neither agree nor disagree.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.SODtotal)
+</summarydata>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/SODtotal:			sum of all 15 scores
+
+<expressions>
+/SODtotal = radiobuttons.q1R.response + radiobuttons.q2.response + radiobuttons.q3R.response +
+radiobuttons.q4R.response + radiobuttons.q5R.response + radiobuttons.q6.response +
+radiobuttons.q7R.response + radiobuttons.q8.response + radiobuttons.q9R.response +
+radiobuttons.q10.response + radiobuttons.q11.response + radiobuttons.q12.response +
+radiobuttons.q13.response + radiobuttons.q14R.response + radiobuttons.q15.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+****optional*****
+
+<radiobuttons gender>
+/caption = "Your gender:"
+/ options = ("Female", "Male")
+/ optionvalues = ("1", "2", "3")
+/ other = "Other (please, explain):"
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<textbox age>
+/ caption = "Your age:"
+/ mask = integer
+/ maxchars = 3
+/ required = false
+</textbox>
+
+Note: by default all remaining questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1R>
+/caption = "1. I am very good at giving directions."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. I have a poor memory of where I left things."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3R>
+/caption = "3. I am very good at judging distances."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4R>
+/caption = "4. My 'sense of direction' is very good."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5R>
+/caption = "5. I tend to think of my environment in terms of cardinal directions (N, S, E, W)."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. I very easily get lost in a new city."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7R>
+/caption = "7. I enjoy reading maps."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. I have trouble understanding directions."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9R>
+/caption = "9. I am very good at reading maps."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. I don't remember routes very well while riding as a passenger in a car."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. I don't enjoy giving directions."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. It's not important to me to know where I am."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. I usually let someone else do the navigational planning for long trips."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14R>
+/caption = "14. I can usually remember a new route after I have traveled it only once."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. I don't have a very good 'mental map' of my environment."
+/ options = ("1~nstrongly~nagree", "2", "3", "4", 
+"5", "6", "7~nstrongly~ndisagree")
+
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+****optional demographic survey page - can be added to beginning or end of survey****
+<surveypage demographics>
+/caption ="Demographic Information
+"
+/questions = [1 = gender, age]
+</surveypage>
+
+
+<surveypage SOD1>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "<%parameters.pageinstructions2%>"
+/questions = [1 = q1R, q2, q3R]
+</surveypage>
+
+<surveypage SOD2>
+/questions = [1 = q4R, q5R, q6]
+</surveypage>
+
+<surveypage SOD3>
+/questions = [1 = q7R, q8, q9R]
+</surveypage>
+
+<surveypage SOD4>
+/questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage SOD5>
+/questions = [1 = q13, q14R, q15]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey senseofdirectionsurvey>
+/pages = [
+	1 = SOD1; 
+	2 = SOD2; 
+	3 = SOD3;
+	4 = SOD4;
+	5 = SOD5;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

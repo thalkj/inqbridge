@@ -1,0 +1,1613 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+									TRIER MENTAL CHALLENGE TEST (TMCT)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 06-30-2015
+last updated:  03-03-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 03-03-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Trier Mental Challenge Test (TMCT). The TMCT can be used to induce stress; 
+particularly if used in a group setting.
+
+Reference:
+
+Pruessner J.C., Hellhammer D.H., & Kirschbaum C. (1999). Low self-esteem, induced failure and the
+adrenocortical stress response. Personality and Interindividual Differences 27, 477-489.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants are asked to solve arithmetic problems of 5 different difficulty levels (levels increase if
+performance increases and decreases if performance decreases) in 5s each (default).
+- After each block (default: 3 minutes), a performance summary is provided to participant/experimenter
+(that could be made 'public')
+- A timer can be made visible that counts down the seconds 1-5 
+- The total points can be made visible on screen for participants to see
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 10 minutes to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'triermentalchallengetest_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.
+										
+blockcount:						counts the challenge blocks
+level:							level 1-5 of the current math problem
+problem:						stores the currently selected problem
+solution:						stores the solution to the currently selected problem
+stimulusitem:					the presented stimuli in order of trial presentation
+
+response:						the scancode of the key OR dial button pressed
+suggestedsolution:				the solution suggested by participants 
+correct:						the correctness of the suggested solution (1 = correct; 0 = incorrect)
+latency: 						the response latency (in ms)
+
+oldTotalPoints:					stores the totalpoints at the start of each trial
+newTotalPoints:					stores the updated totalpoints at the end of the trial
+percentcorrect:					the current percent correct
+										if (parameter) resetvalues = true: percentcorrect of the current block only
+										if (parameter) resetvalues = false: percentcorrect across blocks
+
+meancorrectrt:					mean response time of correct responses
+										if (parameter) resetvalues = true: mean response time of correct responses of the current block only
+										if (parameter) resetvalues = false: mean response time of correct responses across blocks
+										
+										
+(2) Summary data file: 'triermentalchallengetest_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+(parameter) numberOfBlocks:		sets the number of test blocks run (default: 3)
+(parameter) startpoints:		the number of points at the start of the task (default: 30)
+
+(parameter) resetvalues:		true (1): after each block totalpoints (and trialcounts) reset to the startpoints (0)
+								false (0): totalpoints (and trialcounts) do not reset (default: true)
+									
+newTotalPoints:					stores the current totalpoints (at the end of the trial)
+									Note: if (parameter) resetvalues = false -> totalpoints are counted across all blocks
+									otherwise the value reflects on the totalpoints of the last block
+									
+totalpoints_perblock:			stores the totalpoints at the end of each of the rounds
+									Note: if (parameter) resetvalues = false -> cumulative totalpoints across all blocks
+									otherwise the totalpoints start over at startvalue for each block
+									
+percentcorrect_perblock:		stores the percent corrects at the end of the rounds
+									Note: if (parameter) reservalues = false -> cumulative percent correct across all blocks
+									otherwise the percent correct values stored reflect the current block only
+									
+meanrt_perblock:				stores the mean correct latencies at the end of each round
+									Note: if (parameter) reservalues = false -> cumulative reaction time across all blocks
+									otherwise the mean reaction times stored reflect the current block only
+									
+trialcount_perblock: 			stores the number of trials attempted at the end of each round
+									Note: if (parameter) reservalues = false -> cumulative trialcount across blocks
+									otherwise the trialcount is only for the given block
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+* by default this script runs 3 challenge blocks; each for 3 minutes (see section Editable Parameters)
+Note: to change the number of blocks run, go to section EXPERIMENT
+* a performance summary is presented after each block
+* each block presents arithmetic problems of varying difficulties (5 levels); 
+the level of the currently presented arithmetic problem depends
+on the totalpoints gained (see section Editable Parameters): 
+		- fewer than 36 points: level 1
+		- 36-40: level2, 
+		- 41-45 level3, 
+		- 46-50 level4, 
+		- over 50 level 5
+* each problem has a solution ranging from 0-9; a response dial is provided and responses 
+are made by selecting the corresponding button by touch/mouse
+* each problem has max. 5s (see section Editable Parameters)
+* by default, participants start with 30 totalpoints (see section Editable Values) -
+these points reset by default for each new block (see section Editable Values)
+* if response is correct, the totalpoints increase by 1; otherwise the totalpoints decrease by 1
+* if response was incorrect or no response was given, visual error feedback is provided
+* a timer is optional (see section Editable Parameters); by default the timer is presented
+* an intertrial interval inbetween trials can be set under section Editable Parameters (default: 0ms)
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+The problems for each level were pre-generated by Millisecond Software and are stored in lists that can be edited under 
+section Editable Lists.
+
+All problems have solutions ranging from 0-9 
+The problems were generated using the following guidelines*:
+
+Level1: simple addition/subtraction: 1-2 digit** integers (at least one number has to be single digit, double digits only from the teens), one operator (addition or subtraction)
+Level2: simple multiplication/division: 1-2 digit integers (at least one number has to be single digit, double digits only from the teens), one operator (multiplication or division)
+Level3: multiple addition/subtraction: 1-2 digit integers (at least 3 numbers are single digits, double digits only from the teens), 3 operators (addition and/or subtraction)
+Level4: multiple multiplication/division: 1 digit integers,  3 operators (multiplication and/or division)
+Level5: multiple, mixed operations: 1-2 digit integers (at least 3 numbers are single digits, double digits only from the teens), 3 operators (at least 1 addition or subtraction AND at least 1 multiplication or division)
+
+*Note: the applied constraints built on the guidelines provided by Pruessner et al (1999, p.479) but were imposed by 
+Millisecond Software. Furthermore, level2 (simple multiplication/division) and level3 (multiple addition/subtraction) 
+in this script  switch the level2 and level3 categories suggested by Pruessner et al (1999)
+
+**Note: while 0 could be a solution, 0 itself was not used as a digit in any of the provided problems
+
+To change out the specific problems or expand the lists used for each level, go to section Editable Lists 
+and replace the individual problems with new ones or add new problems to the lists.
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+Instructions were written by Millisecond Software and can be edited under section Editable Instructions/Stimuli
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/numberOfBlocks:		sets the number of test blocks run (default: 3)
+/blockduration:			the duration of each block in ms (default: 18zerozeroms -> 3min)
+/max_trialduration:		the max duration of each trial in ms (default: 5zero0ms -> 5s)
+/startpoints:			the number of points at the start of the task (default: 30)
+/resetvalues:			true (1): after each block points (trialcounts) reset to the startpoints (0) (default
+						false (0): totalpoints (trialcounts) do not reset
+/startlevel2:			the lowest number of points that result in level 2 problems (default: 36)	
+							Note: below this number, participants receive level 1 problems
+/startlevel3:			the lowest number of points that result in level 3 problems (default: 41)		
+/startlevel4:			the lowest number of points that result in level 4 problems (default: 46)		
+/startlevel5:			the lowest number of points that result in level 5 problems (default: 51)		
+
+/presenttimer:			true (1) = a timer is presented together with the problem that counts down the seconds (default)
+						false (0)= no timer is presented 
+/showtotalpoints:		true (1)= the totalpoints are presented on screen (default)
+						false (0)= the totalpoints are not presented on screen
+
+/iti:					intertrial interval in ms (default: 0ms)
+
+/circleproportion:		proportion of canvas height used for the circle radius of response dial (default: 0.3)
+
+/debugmode:				true: trials run with displaying the correct solution
+						false: trials run without displaying the correct solution (default)
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/numberOfBlocks = 3
+/blockduration = 180000
+/max_trialduration = 5000
+/startpoints = 30
+/resetvalues = true
+/startlevel2 = 36
+/startlevel3 = 41
+/startlevel4 = 46
+/startlevel5 = 51
+
+/presenttimer = true
+/showtotalpoints = true
+/iti = 0
+
+/ circleproportion = 0.3
+
+/debugmode = false
+</parameters>
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item feedback>
+/1 = "PERFORMANCE SUMMARY
+
+
+trials attempted <%expressions.wording%>: <%values.counttrials%>
+
+% correct <%expressions.wording%>: <%expressions.percentcorrect%>
+
+mean reaction time of correct responses (in ms) <%expressions.wording%>: <%expressions.meancorrectrt%>"
+</item>
+
+<expressions>
+/wording = {
+	if (parameters.resetvalues == true){
+		"(this round only)"
+	} else {
+		"(across all rounds)"
+	}
+}
+</expressions>
+
+
+<item continue>
+/1 = "Press Spacebar to continue"
+</item>
+
+<item start>
+/1 = "Press Spacebar to start"
+</item>
+
+<text header>
+/ items = ("Math Task")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 10%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item instructions>
+/1 = "You will be shown arithmetic problems to solve. 
+You have a max of <%parameters.max_trialduration/1000%> seconds for each problem.
+All problems have solutions ranging from 0-9.
+
+A response dial with buttons 0-9 will appear on the screen. Press the button that corresponds to the solution.
+
+If you make a mistake, a red X is presented to remind you to be more careful.
+
+Press CONTINUE to start a demo trial."
+/2 ="Get ready.
+For each round, you will have <%parameters.blockduration/1000/60%> minutes to solve as many problems as you can.
+
+
+Press START to start the round."
+</item>
+
+<button continueButton>
+/ caption = "CONTINUE"
+/ size = (25%, 8%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (50%, 85%)
+</button>
+
+<button startButton>
+/ caption = "START"
+/ size = (25%, 8%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (50%, 85%)
+</button>
+
+<instruct>
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</instruct>
+
+<page End>
+^^^^^Thank you!
+</page>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+NOTE:
+The following lists contain the problems used for the 5 different levels of difficulty in this script.
+The lists can be easily edited.
+
+contains level1 problems
+* only 1-2 digit integers (at least one has to be single digit, double digits only from the teens, no 0)
+* only 1 operator
+* only addition or subtraction problems
+=> problems can be edited or replaced
+<list level1>
+/items = (
+"1 - 1", "2 - 1", "3 - 1", "4 - 1", "5 - 1", "6 - 1", "7 - 1", "8 - 1", "9 - 1", "2 - 2",
+"3 - 2", "4 - 2", "5 - 2", "6 - 2", "7 - 2", "8 - 2", "9 - 2", "3 - 3", "4 - 3", "5 - 3", 
+"6 - 3", "7 - 3", "8 - 3", "9 - 3", "4 - 4", "5 - 4", "6 - 4", "7 - 4", "8 - 4", "9 - 4", 
+"5 - 5", "6 - 5", "7 - 5", "8 - 5", "9 - 5", "6 - 6", "7 - 6", "8 - 6", "9 - 6", "7 - 7", 
+"8 - 7", "9 - 7", "8 - 8", "9 - 8", "9 - 9", 
+"1 + 1", "2 + 1", "3 + 1", "4 + 1",
+"5 + 1", "6 + 1", "7 + 1", "8 + 1", "1 + 2","2 + 2","3 + 2","4 + 2","5 + 2",
+"6 + 2", "7 + 2", "1 + 3", "2 + 3", "3 + 3","4 + 3","5 + 3","6 + 3",
+"1 + 4", "2 + 4", "3 + 4", "4 + 4", "5 + 4", "1 + 5","2 + 5","3 + 5","4 + 5",
+"1 + 6", "2 + 6", "3 + 6", "1 + 7", "2 + 7", "1 + 8",
+"10 - 1", "10 - 2", "10 - 3", "10 - 4", "10 - 5", "10 - 6", "10 - 7", "10 - 8", "10 - 9",
+"11 - 2", "11 - 3", "11 - 4", "11 - 5", "11 - 6", "11 - 7", "11 - 8", "11 - 9",
+"12 - 3", "12 - 4", "12 - 5", "12 - 6", "12 - 7", "12 - 8", "12 - 9",
+"13 - 4", "13 - 5", "13 - 6", "13 - 7", "13 - 8", "13 - 9",
+"14 - 5", "14 - 6", "14 - 7", "14 - 8", "14 - 9",
+"15 - 6", "15 - 7", "15 - 8", "15 - 9",
+"16 - 7", "16 - 8", "16 - 9",
+"17 - 8", "17 - 9",
+"18 - 9")
+/ replace = false
+</list>
+
+contains level2 problems
+* only 1-2 digit integers (at least one has to be single digit, double digits only from the teens, no 0)
+* only 1 operator
+* only multiplication or division
+=> problems can be edited or replaced
+
+<list level2>
+/items = (
+"1 * 1", "1 * 2", "1 * 3", "1 * 4", "1 * 5", "1 * 6", "1 * 7", "1 * 8", "1 * 9",
+"2 * 1", "2 * 2", "2 * 3", "2 * 4", 
+"3 * 1", "3 * 2", "3 * 3",
+"4 * 1", "4 * 2",
+"5 * 1",
+"6 * 1",
+"7 * 1",
+ "8 * 1",
+"9 * 1",
+"1 / 1", "2 / 1", "3 / 1", "4 / 1", "5 / 1", "6 / 1", "7 / 1", "8 / 1", "9 / 1",
+"2 / 2", "4 / 2", "6 / 2", "8 / 2", "10 / 2", "12 / 2", "14 / 2", "18 / 2",
+"3 / 3", "6 / 3", "9 / 3", "12 / 3", "15 / 3", "18 / 3", 
+"4 / 4", "8 / 4", "12 / 4", "16 / 4", 
+"5 / 5", "10 / 5", "15 / 5", 
+"6 / 6", "12 / 6", "18 / 6", 
+"7 / 7", "14 / 7", 
+"8 / 8", "16 / 8", 
+"9 / 9", "18 / 9")
+/ replace = false
+</list>
+
+
+contains level3 problems
+* only 1-2 digit integers (double digits only from the teens, no 0)
+* at least 3 numbers are single digits
+* 3 operators (=> 4 numbers)
+* only addition or subtraction problems
+=> problems can be edited or replaced
+<list level3>
+/ items = (
+"4 - 8 - 8 + 12", "5 + 2 + 4 - 10", "7 + 6 + 1 - 8", "5 + 10 - 4 - 6", "5 + 3 - 10 + 7", "5 - 10 + 9 + 3", 
+"2 + 2 + 8 - 6", "17 - 4 - 1 - 6", "9 - 5 - 1 + 6", "11 - 3 + 6 - 9", "12 - 1 - 1 - 6", "5 + 3 + 4 - 5", 
+"7 + 7 + 8 - 16", "6 + 8 - 3 - 6", "16 - 9 - 8 + 7", "5 + 1 + 3 - 9", "19 - 6 - 2 - 7", "12 - 1 - 6 + 4", 
+"9 + 1 + 8 - 17", "8 + 3 + 7 - 18", "4 + 7 + 1 - 12", "10 - 6 - 7 + 8", "7 + 5 - 6 - 3", "9 + 9 + 3 - 17", 
+"8 + 1 - 1 - 8", "3 - 8 - 7 + 18", "9 - 7 + 8 - 9", "1 - 6 + 8 + 2", "16 - 2 - 9 - 4", "9 - 8 - 2 + 5", 
+"7 - 8 + 15 - 6", "2 - 4 - 7 + 13", "2 - 7 - 3 + 10", "5 + 10 - 2 - 7", "8 + 3 - 5 + 2", "8 + 1 - 6 + 5", 
+"3 + 9 + 5 - 16", "6 + 9 + 1 - 11", "4 - 3 + 2 - 3", "3 - 1 + 9 - 4", "6 + 9 - 19 + 7", "5 + 4 + 8 - 13", 
+"17 - 9 - 7 + 4", "6 - 7 + 7 + 1", "14 + 6 - 7 - 7", "14 - 1 - 9 + 2", "8 + 11 - 8 - 7", "8 - 1 + 6 - 9", 
+"13 - 1 - 3 - 9", "5 - 5 + 14 - 9", "9 + 7 - 4 - 4", "3 + 3 + 11 - 9", "19 - 6 - 9 - 3", "10 - 4 + 1 + 1", 
+"8 - 19 + 5 + 7", "4 + 7 + 9 - 19", "6 - 5 - 2 + 3", "1 + 16 - 3 - 7", "3 + 17 - 8 - 3", "8 - 5 + 2 + 1", 
+"3 + 2 + 10 - 6", "16 - 6 + 1 - 8", "9 + 8 - 1 - 13", "6 - 8 - 6 + 14", "19 - 1 - 4 - 8", "13 - 7 + 3 - 5", 
+"6 - 5 + 3 - 1", "4 - 12 + 8 + 9", "4 - 5 + 12 - 6", "5 - 9 + 16 - 4", "19 - 9 - 9 + 6", "8 - 2 - 4 + 1", 
+"9 + 6 - 6 - 8", "4 + 14 - 4 - 8", "14 + 1 + 2 - 8", "2 + 2 + 7 - 9", "7 + 9 + 5 - 15", "8 - 5 + 8 - 8", 
+"3 + 5 + 3 - 9", "3 + 16 - 6 - 7", "4 + 7 - 18 + 9", "1 + 2 - 7 + 11", "14 - 4 + 1 - 9", "6 - 8 - 1 + 11", 
+"2 + 3 + 1 + 3", "4 + 18 - 7 - 9", "12 + 1 - 8 - 5", "14 + 5 - 5 - 7", "5 - 9 - 4 + 12", "4 + 13 - 4 - 5", 
+"9 - 19 + 7 + 7", "11 - 6 + 2 - 4", "5 + 16 - 8 - 6", "7 - 1 - 7 + 6", "4 + 3 - 3 - 4", "19 - 6 - 4 - 4", 
+"7 - 9 - 6 + 17", "4 - 1 + 6 - 5", "18 - 4 - 1 - 4", "6 - 8 - 9 + 11", "2 + 2 - 6 + 6", "3 - 9 + 1 + 6", 
+"7 + 7 - 17 + 3", "3 - 3 + 2 + 5", "16 - 8 + 7 - 6", "10 - 4 + 6 - 4", "5 - 8 + 1 + 2", "4 - 4 + 3 - 2", 
+"12 + 2 - 8 + 1", "7 - 12 + 7 + 3", "11 + 7 - 8 - 4")
+/ replace = false
+</list>
+
+
+contains level4 problems
+* only 1 digit integers (no 0)
+* 3 operators
+* only multiplication or division
+=> problems can be edited or replaced
+<list level4>
+/ items = (
+"2 / 6 * 6 * 3", "2 * 3 * 6 / 9", "1 * 2 / 2 * 2", "3 * 4 / 8 * 2", 
+"7 / 7 / 1 * 2", "5 / 1 / 2 * 2", "9 * 2 * 2 / 4", "2 / 7 / 1 * 7", 
+"7 / 7 * 4 / 2", "1 / 1 / 1 * 9", "2 * 1 * 8 / 2", "7 * 8 / 8 * 1", 
+"1 / 6 * 4 * 3", "8 / 1 * 6 / 8", "3 * 9 / 3 / 1", "9 / 2 * 4 / 3", 
+"5 * 1 / 5 * 3", "3 / 1 * 7 / 3", "4 / 4 / 7 * 7", "3 / 5 * 5 * 3", 
+"3 * 2 * 9 / 6", "4 * 3 / 1 / 4", "2 / 1 * 4 / 8", "6 * 6 * 2 / 8", 
+"4 / 7 * 7 / 2", "9 / 9 * 2 * 2", "1 * 6 / 2 * 2", "8 / 8 / 8 * 8", 
+"1 / 3 / 1 * 9", "9 / 1 * 2 / 3", "3 * 4 / 6 / 1", "9 * 2 / 9 * 4", 
+"5 * 8 / 2 / 5", "4 * 3 / 2 / 1", "8 / 2 * 5 / 4", "4 / 1 * 6 / 3", 
+"5 * 3 / 9 * 3", "4 * 2 * 2 / 8", "3 / 6 * 8 / 2", "9 / 9 * 4 * 2", 
+"2 * 6 * 4 / 6", "4 / 1 / 6 * 3", "5 / 5 * 6 / 3", "8 * 3 / 2 / 6", 
+"2 * 4 / 4 * 3", "9 / 3 * 9 / 3", "1 * 2 / 7 * 7", "7 / 7 * 1 * 6", 
+"5 / 5 / 5 * 5", "4 * 2 * 2 / 4", "2 / 2 / 1 * 9", "9 / 1 * 1 * 1", 
+"8 * 6 / 3 / 2", "4 * 2 / 8 * 5", "8 * 1 / 4 * 2", "4 * 8 / 4 / 4", 
+"6 * 2 / 6 * 4", "4 * 3 / 2 / 3", "4 * 1 * 6 / 4", "1 / 4 * 8 * 1", 
+"9 * 2 / 6 * 2", "8 / 4 / 3 * 9", "2 * 9 / 2 / 1", "8 / 3 * 3 / 1", 
+"1 * 4 / 4 / 1", "2 * 4 / 8 * 9", "4 * 2 / 4 * 1", "8 * 6 / 2 / 8", 
+"9 / 6 / 6 * 4", "7 * 2 * 2 / 7", "2 * 8 * 2 / 8", "8 * 7 / 7 / 4", 
+"5 / 5 / 7 * 7", "1 / 6 * 6 / 1", "4 * 3 * 1 / 2", "3 * 2 / 2 * 2", 
+"6 * 1 * 4 / 4", "5 / 9 / 5 * 9", "9 / 1 / 1 / 9", "6 * 6 / 6 / 6", 
+"9 / 3 / 3 * 8", "4 / 8 * 2 * 1", "8 / 8 * 5 / 5", "6 * 5 / 5 / 3", 
+"6 * 6 / 4 / 9", "3 / 3 * 2 * 2", "2 * 6 * 3 / 9", "6 * 1 / 2 / 3", 
+"3 / 9 / 1 * 6", "4 / 1 * 4 / 4", "1 / 5 * 5 * 1", "5 * 8 / 4 / 2", 
+"3 * 3 * 1 / 1", "9 * 1 / 9 * 8", "8 * 4 / 1 / 8", "9 * 7 / 3 / 7")
+/ replace = false
+</list>
+
+contains level5 problems (mixed operations)
+* only 1-2 digit integers (at least 3 numbers are single digits, double digits only from the teens, no 0)
+* 3 operators
+* at least 1 addition or subtraction operator AND at least 1 multiplication or division operator
+=> problems can be edited or replaced
+<list level5>
+/ items = (
+"3 * 3 + 6 - 8", "2 - 5 / 1 + 4", "8 - 8 + 6 * 1", "1 * 4 - 3 + 2", "1 * 1 - 6 + 11", "2 - 4 + 3 / 1", 
+"7 - 5 / 5 - 5", "10 / 4 * 2 + 2", "11 - 4 - 2 / 1", "1 * 5 + 2 - 1", "1 * 12 / 4 + 3", "5 / 8 * 16 - 3", 
+"1 * 3 - 3 + 8", "7 - 8 / 1 + 1", "6 + 3 - 18 / 6", "2 * 2 + 8 - 7", "4 - 8 / 1 + 7", "9 - 4 * 5 + 12", 
+"1 / 1 + 1 - 1", "1 - 1 * 2 + 2", "3 - 1 + 1 * 7", "9 - 3 / 1 - 1", "8 / 6 * 9 - 8", "13 / 8 + 3 / 8", 
+"1 * 6 * 1 - 5", "2 + 5 - 9 / 9", "4 / 4 * 2 - 2", "8 + 14 / 7 - 1", "1 * 5 + 10 / 5", "8 - 1 * 8 + 9", 
+"5 - 2 + 2 / 1", "1 * 5 * 3 - 7", "9 - 2 / 4 * 10", "7 * 2 * 1 - 9", "3 * 5 - 7 - 6", "7 * 1 + 9 - 7", 
+"8 / 4 + 2 + 4", "2 / 18 - 1 / 9", "7 - 12 + 3 * 2", "3 + 12 / 1 - 8", "8 - 1 * 13 + 5", "8 + 1 * 4 - 9", 
+"14 / 2 / 7 + 2", "4 + 6 - 1 * 10", "4 + 16 - 5 * 4", "4 + 14 - 5 * 3", "14 / 7 - 2 + 2", "8 / 8 - 2 + 8", 
+"8 + 2 - 2 / 2", "18 / 9 - 2 * 1", "2 * 6 + 2 - 9", "5 / 5 + 3 + 3", "5 + 5 * 4 - 16", "8 / 1 - 5 + 6", 
+"14 - 1 - 1 * 9", "5 * 3 + 4 - 11", "16 - 4 * 2 - 2", "4 * 4 + 1 - 11", "19 - 1 - 6 * 3", "9 + 16 / 8 - 4", 
+"17 - 1 * 9 - 3", "3 - 15 + 3 * 5", "2 * 6 / 3 + 3", "7 + 7 - 12 / 1", "18 - 8 / 1 - 5", "1 / 7 * 7 + 4", 
+"5 - 4 / 18 * 9", "10 - 4 - 2 * 3", "2 * 3 / 6 + 7", "9 - 16 / 8 - 2", "7 * 2 - 14 + 6", "2 + 2 / 4 * 12", 
+"2 - 9 + 3 * 4", "16 - 6 / 3 - 5", "3 - 1 - 2 / 1", "17 / 3 * 3 - 8", "7 - 4 / 7 * 7", "17 - 7 - 1 * 1", 
+"6 - 12 / 6 * 2", "10 / 1 - 8 + 5", "6 + 6 * 6 / 18", "5 - 9 * 5 / 15", "7 - 6 + 3 * 2", "2 - 2 * 7 + 12", 
+"6 / 4 - 7 / 14", "2 * 6 - 18 / 3", "8 + 2 * 1 - 4", "9 / 9 * 6 - 4", "4 / 12 * 6 + 6", "2 + 1 * 1 - 1", 
+"7 + 4 / 4 - 2", "11 / 2 + 1 / 2", "5 * 4 / 2 - 6", "7 * 4 - 19 - 4", "19 / 1 - 4 * 4", "2 - 19 + 6 * 4", 
+"3 * 8 - 17 - 3", "9 + 1 - 10 / 5", "12 - 4 - 8 / 4", "8 + 6 / 2 / 3", "17 - 3 * 1 - 5", "10 - 7 - 4 / 2", 
+"4 - 16 / 8 + 4", "8 - 4 / 1 + 1", "8 * 1 - 8 / 2", "15 / 2 * 2 - 8", "4 * 2 - 8 + 3", "3 * 6 / 1 - 16", 
+"1 * 6 + 10 - 8", "4 + 12 / 4 - 2", "15 / 9 * 6 - 6", "7 * 6 - 9 * 4", "4 - 8 + 4 * 2", "5 + 10 - 5 * 2", 
+"1 + 3 * 8 - 17")
+/ replace = false
+</list>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ inputdevice = mouse
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+values.blockcount,
+values.level, values.problem, values.solution, 
+stimulusitem, response, values.suggestedsolution, correct, latency, 
+values.oldTotalPoints, values.newTotalPoints, 
+expressions.percentcorrect, expressions.meancorrectrt, parameters.debugmode)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+parameters.numberOfBlocks, parameters.startpoints, parameters.resetvalues, 
+values.newTotalPoints, values.totalpoints_perblock, values.percentcorrect_perblock, 
+values.meanrt_perblock,values.trialcount_perblock)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/level:						level 1-5 of the math problem
+/problem:					stores the currently selected problem
+/solution:					stores the solution to the currently selected problem
+/completeproblem:			stores the presented problem (currently selected problem + '= ?')
+/newTotalPoints:			stores the updated totalpoints at the end of the trial
+/oldTotalPoints:			stores the totalpoints at the start of each trial
+/totalpoints_perblock:		stores the totalpoints at the end of each of the rounds
+								Note: if parameters.resetvalues = false -> cumulative totalpoints 
+								otherwise the totalpoints start over at startvalue for each block
+/percentcorrect_perblock:	stores the percent corrects at the end of the rounds
+								Note: if parameters.reservalues = false -> cumulative percent correct
+								otherwise the percent correct values stored reflect each block performance
+/meanRT_perblock:			stores the mean correct latencies at the end of each round
+								Note: if parameters.reservalues = false -> cumulative reaction time
+								otherwise the mean reaction times stored reflect each block performance
+/trialcount_perblock: 		stores the number of trials attempted at the end of each round
+								Note: if parameters.reservalues = false -> cumulative trialcount across blocks
+								otherwise the trialcount is only for the given block
+/blockcount:				counts the challenge blocks
+/suggestedsolution:			the provided solution
+/correct:					1 = response is correct; 0 = response is incorrect
+
+<values>
+/level = 0
+/problem = 0
+/solution = 0
+/completeproblem = 0
+/newTotalPoints = 0
+/oldTotalPoints = 0
+/totalpoints_perblock = ""
+/percentcorrect_perblock = ""
+/trialcount_perblock = ""
+/meanRT_perblock = ""
+/blockcount = 0
+/suggestedsolution = 0
+/correct = 0
+</values>
+
+
+<values>
+/counttrials = 0
+/counttrials1 = 0
+/counttrials2 = 0
+/counttrials3 = 0
+/counttrials4 = 0
+/counttrials5 = 0
+/countcorrect = 0
+/sumrt_correct = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+/percentcorrect:	the current percent correct
+					if parameters.resetvalues = true: percentcorrect of the current block only
+					if parameters.resetvalues = false: percentcorrect across blocks
+
+/meancorrectRT:		mean response time of correct responses
+					if parameters.resetvalues = true: mean response time of correct responses of the current block only
+					if parameters.resetvalues = false: mean response time of correct responses across blocks
+
+<expressions>
+/percentcorrect = 100 * (values.countcorrect/values.counttrials)
+/meancorrectRT = values.sumrt_correct/values.countcorrect
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS: CIRCLE COORDINATES
+**************************************************************************************************************
+**************************************************************************************************************
+The following expressions are used to calculate the coordinates of the 10 circle positions (in px)
+
+/centerx-
+/centery:					x and y center coordinates in pixels based on canvas dimensions
+/radius_px:					the radius of the circle in pixels
+/Radians_angle0 -
+/Radians_angle324:			the radians angles of the 10 circle positions
+/heightchange_angle36: 		change in height (measured from screen center) for circleposition on angle36 with radius expressions.radius_px
+/widthchange_angle36: 		change in width (measured from screen center) for circleposition on angle36 with radius expressions.radius_px
+(same for all other angles)
+
+
+<expressions>
+/ centerx = 0.5*display.canvasWidth
+/ centery = 0.5*display.canvasHeight
+/ radius_px = parameters.circleproportion * display.canvasHeight
+
+/ Radians_angle0 = rad(0)
+/ Radians_angle36 = rad(36)
+/ Radians_angle72 = rad(72)
+/ Radians_angle108 = rad(108)
+/ Radians_angle144 = rad(144)
+/ Radians_angle180 = rad(180)
+/ Radians_angle216 = rad(216)
+/ Radians_angle252 = rad(252)
+/ Radians_angle288 = rad(288)
+/ Radians_angle324 = rad(324)
+
+/ heightchange_angle36 = sin(expressions.Radians_angle36) * expressions.radius_px
+/ widthchange_angle36 = cos(expressions.Radians_angle36) * expressions.radius_px
+/ heightchange_angle72 = sin(expressions.Radians_angle72) * expressions.radius_px
+/ widthchange_angle72 = cos(expressions.Radians_angle72) * expressions.radius_px
+/ heightchange_angle108 = sin(expressions.Radians_angle108) * expressions.radius_px
+/ widthchange_angle108 = cos(expressions.Radians_angle108) * expressions.radius_px
+/ heightchange_angle144 = sin(expressions.Radians_angle144) * expressions.radius_px
+/ widthchange_angle144 = cos(expressions.Radians_angle144) * expressions.radius_px
+/ heightchange_angle180 = sin(expressions.Radians_angle180) * expressions.radius_px
+/ widthchange_angle180 = cos(expressions.Radians_angle180) * expressions.radius_px
+/ heightchange_angle216 = sin(expressions.Radians_angle216) * expressions.radius_px
+/ widthchange_angle216 = cos(expressions.Radians_angle216) * expressions.radius_px
+/ heightchange_angle252 = sin(expressions.Radians_angle252) * expressions.radius_px
+/ widthchange_angle252 = cos(expressions.Radians_angle252) * expressions.radius_px
+/ heightchange_angle288 = sin(expressions.Radians_angle288) * expressions.radius_px
+/ widthchange_angle288 = cos(expressions.Radians_angle288) * expressions.radius_px
+/ heightchange_angle324 = sin(expressions.Radians_angle324) * expressions.radius_px
+/ widthchange_angle324 = cos(expressions.Radians_angle324) * expressions.radius_px
+/ heightchange_angle0 = 0
+/ widthchange_angle0 = expressions.radius_px
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text instructions>
+/ items = instructions
+/ select = sequence
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ txcolor = black
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = left
+/ size = (90%, 90%)
+</text>
+
+<trial instructions>
+/ inputdevice = mouse
+/ stimulusframes = [1 = instructions, header, button.continueButton, button.startButton]
+/ validresponse = (continueButton)
+/ recorddata = true
+/ ontrialend = [
+	button.continueButton.skip = true;
+	button.startButton.skip = false;
+]
+</trial>
+
+<trial demo>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.level = 1;
+	values.problem = list.level1.nextValue;
+	values.solution = evaluate(values.problem);
+	values.completeproblem = concat(values.problem, " = ?");
+	text.zero.textBgColor = gray;
+	text.1.textBgColor = gray;	
+	text.2.textBgColor = gray;		
+	text.3.textBgColor = gray;		
+	text.4.textBgColor = gray;		
+	text.5.textBgColor = gray;
+	text.6.textBgColor = gray;	
+	text.7.textBgColor = gray;	
+	text.8.textBgColor = gray;	
+	text.9.textBgColor = gray;	
+]
+/ stimulusframes = [1 = problem, totalpoints, timer, solution, 1, 2, 3, 4, 5, 6, 7, 8, 9, zero]
+/ validresponse = (zero, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+/ iscorrectresponse = [
+	if (trial.demo.response == zero) {
+		values.suggestedsolution = 0;							
+	} else if (trial.demo.response == 0){
+		values.suggestedsolution ="no response";						
+	} else {
+		values.suggestedsolution = trial.demo.response;						
+	}
+
+	if (values.solution == values.suggestedsolution) {
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+	}
+	return (values.correct == 1);
+]
+/ timeout = parameters.max_trialduration
+/ ontrialend = [
+	if (values.suggestedsolution == values.solution) {
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+	}
+]
+
+/ posttrialpause = parameters.iti
+/ errormessage = true(errorfeedback, 0)
+/ responsemessage = (zero, text.zero_HL, 0)
+/ responsemessage = (1, text.1_HL, 0)
+/ responsemessage = (2, text.2_HL, 0)
+/ responsemessage = (3, text.3_HL, 0)
+/ responsemessage = (4, text.4_HL, 0)
+/ responsemessage = (5, text.5_HL, 0)
+/ responsemessage = (6, text.6_HL, 0)
+/ responsemessage = (7, text.7_HL, 0)
+/ responsemessage = (8, text.8_HL, 0)
+/ responsemessage = (9, text.9_HL, 0)
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+<text problem>
+/ items = ("<%values.completeproblem%>")
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (35%, 10%)
+/ valign = center
+</text>
+
+<clock timer>
+/ onprepare = [clock.timer.skip = !parameters.presenttimer;]
+/ mode = timer
+/ timeout = parameters.max_trialduration
+/ resetrate = trial
+/ txcolor = yellow
+/ txbgcolor = black
+/ position = (50%, 90%)
+/ format = "mm:ss"
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (20%, 10%)
+</clock>
+
+<text totalpoints>
+/ onprepare = [text.totalpoints.skip = !parameters.showtotalpoints;]
+/ items = ("  Points: <%values.oldTotalpoints%>  ")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 10%)
+/ erase = false
+</text>
+
+<text feedback>
+/ items = feedback
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+</text>
+
+<text start>
+/ items = start
+/ fontstyle = ("Courier New", 2%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+</text>
+
+<text errorfeedback>
+/ items = ("X")
+/ position = (50%, 60%)
+/ size = (25%,25%)
+/ fontstyle = ("Arial", 25%, true, false, false, false, 5, 1)
+/ txcolor = red
+/ vjustify = center
+/ txbgcolor = transparent
+</text>
+
+<text RoundInfo>
+/ items = ("Round <%values.blockcount%>")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+</text>
+
+*Debug Element*
+<text solution>
+/ onprepare = [text.solution.skip = !parameters.debugmode;]
+/ items = ("correct: <%values.solution%>")
+/ position = (50%, 60%)
+/ txcolor = blue
+</text>
+
+
+***************************
+Response Dial
+***************************
+
+<text 4>
+/ erase = false
+/ items = ("4")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle36)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle36)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = gray
+/ txcolor = white
+</text>
+
+<text 5>
+/ erase = false
+/ items = ("5")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle72)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle72)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = gray
+/ txcolor = white
+</text>
+
+<text 6>
+/ erase = false
+/ items = ("6")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle108)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle108)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = gray
+/ txcolor = white
+</text>
+
+<text 7>
+/ erase = false
+/ items = ("7")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle144)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle144)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = gray
+/ txcolor = white
+</text>
+
+<text 8>
+/ erase = false
+/ items = ("8")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle180)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle180)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = gray
+/ txcolor = white
+</text>
+
+<text 9>
+/ erase = false
+/ items = ("9")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle216)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle216)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = gray
+/ txcolor = white
+</text>
+
+<text zero>
+/ erase = false
+/ items = ("0")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle252)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle252)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = gray
+/ txcolor = white
+</text>
+
+<text 1>
+/ erase = false
+/ items = ("1")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle288)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle288)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = gray
+/ txcolor = white
+</text>
+
+<text 2>
+/ erase = false
+/ items = ("2")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle324)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle324)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = gray
+/ txcolor = white
+</text>
+
+<text 3>
+/ erase = false
+/ items = ("3")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle0)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle0)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = gray
+/ txcolor = white
+</text>
+
+<text 4_HL>
+/ erase = false
+/ items = ("4")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle36)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle36)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = yellow
+/ txcolor = white
+</text>
+
+<text 5_HL>
+/ erase = false
+/ items = ("5")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle72)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle72)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = yellow
+/ txcolor = white
+</text>
+
+<text 6_HL>
+/ erase = false
+/ items = ("6")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle108)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle108)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = yellow
+/ txcolor = white
+</text>
+
+<text 7_HL>
+/ erase = false
+/ items = ("7")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle144)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle144)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = yellow
+/ txcolor = white
+</text>
+
+<text 8_HL>
+/ erase = false
+/ items = ("8")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle180)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle180)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = yellow
+/ txcolor = white
+</text>
+
+<text 9_HL>
+/ erase = false
+/ items = ("9")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle216)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle216)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = yellow
+/ txcolor = white
+</text>
+
+<text zero_HL>
+/ erase = false
+/ items = ("0")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle252)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle252)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = yellow
+/ txcolor = white
+</text>
+
+<text 1_HL>
+/ erase = false
+/ items = ("1")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle288)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle288)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = yellow
+/ txcolor = white
+</text>
+
+<text 2_HL>
+/ erase = false
+/ items = ("2")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle324)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle324)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = yellow
+/ txcolor = white
+</text>
+
+<text 3_HL>
+/ erase = false
+/ items = ("3")
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle0)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle0)
+/ size = (9%, 9%)
+/ vjustify = center
+/ txbgcolor = yellow
+/ txcolor = white
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial selectproblem>
+/ trialduration = 0
+/ ontrialbegin = [
+	values.oldTotalPoints = values.newTotalpoints;
+]
+/ branch = [
+	if (values.newTotalPoints < parameters.startlevel2) {
+		return trial.problem1;
+	} else if (values.newTotalPoints < parameters.startlevel3) {
+		return trial.problem2;
+	} else if (values.newTotalPoints < parameters.startlevel4) {
+		return trial.problem3;
+	} else if (values.newTotalPoints < parameters.startlevel5) {
+		return trial.problem4;
+	} else {
+		return trial.problem5;
+	}
+]
+/ recorddata = false
+</trial>
+
+Note: trial.problem1
+* updates counts
+* selects the problem, completes the problem (adds =?) and calculates solution
+* presents the problem (totalpoints and timer)
+* waits for response within parameters.max_trialduration
+* updates totalpoints according to response
+
+<trial problem1>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.level = 1;
+	values.counttrials += 1; 
+	values.counttrials1 += 1;
+	values.problem = list.level1.nextValue;
+	values.solution = evaluate(values.problem);
+	values.completeproblem = concat(values.problem, " = ?");
+	text.zero.textBgColor = gray;
+	text.1.textBgColor = gray;	
+	text.2.textBgColor = gray;		
+	text.3.textBgColor = gray;		
+	text.4.textBgColor = gray;		
+	text.5.textBgColor = gray;
+	text.6.textBgColor = gray;	
+	text.7.textBgColor = gray;	
+	text.8.textBgColor = gray;	
+	text.9.textBgColor = gray;	
+
+]	
+/ stimulusframes = [1 = problem, totalpoints, timer, solution, 1, 2, 3, 4, 5, 6, 7, 8, 9, zero]
+/ validresponse = (zero, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+/ iscorrectresponse = [
+	values.suggestedsolution = trial.problem1.response;	
+	if (values.suggestedsolution == 0){
+		values.suggestedsolution ="no response";						
+	} else if (values.suggestedsolution == "zero"){
+		values.suggestedsolution = 0;
+	}
+
+	if (values.solution == values.suggestedsolution) {
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+	}
+	return (values.correct == 1);
+]
+/ timeout = parameters.max_trialduration
+/ ontrialend = [
+	if (values.suggestedsolution == values.solution) {
+		values.correct = 1;		
+	} else {
+		values.correct = 0;		
+	}
+	
+	if (values.correct == 1) {
+		values.newTotalPoints += 1; 
+		values.countcorrect += 1; 
+		values.sumrt_correct+= trial.problem1.latency;
+	} else {
+		values.newTotalPoints -= 1;		
+	}
+
+]
+/ posttrialpause = parameters.iti
+/ branch = [return trial.selectproblem]
+/ errormessage = true(errorfeedback, 0)
+/ responsemessage = (zero, text.zero_HL, 0)
+/ responsemessage = (1, text.1_HL, 0)
+/ responsemessage = (2, text.2_HL, 0)
+/ responsemessage = (3, text.3_HL, 0)
+/ responsemessage = (4, text.4_HL, 0)
+/ responsemessage = (5, text.5_HL, 0)
+/ responsemessage = (6, text.6_HL, 0)
+/ responsemessage = (7, text.7_HL, 0)
+/ responsemessage = (8, text.8_HL, 0)
+/ responsemessage = (9, text.9_HL, 0)
+</trial>
+
+<trial problem2>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.level = 2;
+	values.counttrials += 1; 
+	values.counttrials2 += 1;
+	values.problem = list.level2.nextValue;
+	values.solution = evaluate(values.problem);
+	values.completeproblem = concat(values.problem, " = ?");
+	text.zero.textBgColor = gray;
+	text.1.textBgColor = gray;	
+	text.2.textBgColor = gray;		
+	text.3.textBgColor = gray;		
+	text.4.textBgColor = gray;		
+	text.5.textBgColor = gray;
+	text.6.textBgColor = gray;	
+	text.7.textBgColor = gray;	
+	text.8.textBgColor = gray;	
+	text.9.textBgColor = gray;		
+]
+/ stimulusframes = [1 = problem, totalpoints, timer, solution, 1, 2, 3, 4, 5, 6, 7, 8, 9, zero]
+/ validresponse = (zero, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+/ iscorrectresponse = [
+	values.suggestedsolution = trial.problem2.response;	
+	if (values.suggestedsolution == 0){
+		values.suggestedsolution ="no response";						
+	} else if (values.suggestedsolution == "zero"){
+		values.suggestedsolution = 0;
+	}
+
+	if (values.solution == values.suggestedsolution) {
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+	}
+	return (values.correct == 1);
+]
+/ timeout = parameters.max_trialduration
+/ ontrialend = [
+	if (values.suggestedsolution == values.solution) {
+		values.correct = 1;		
+	} else {
+		values.correct = 0;		
+	}
+	
+	if (values.correct == 1) {
+		values.newTotalPoints += 1; 
+		values.countcorrect += 1; 
+		values.sumrt_correct+= trial.problem2.latency;
+	} else {
+		values.newTotalPoints -= 1;		
+	}
+		
+]
+/ posttrialpause = parameters.iti
+/ branch = [return trial.selectproblem;]
+/ errormessage = true(errorfeedback, 0)
+/ responsemessage = (zero, text.zero_HL, 0)
+/ responsemessage = (1, text.1_HL, 0)
+/ responsemessage = (2, text.2_HL, 0)
+/ responsemessage = (3, text.3_HL, 0)
+/ responsemessage = (4, text.4_HL, 0)
+/ responsemessage = (5, text.5_HL, 0)
+/ responsemessage = (6, text.6_HL, 0)
+/ responsemessage = (7, text.7_HL, 0)
+/ responsemessage = (8, text.8_HL, 0)
+/ responsemessage = (9, text.9_HL, 0)
+</trial>
+
+<trial problem3>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.level = 3;
+	values.counttrials += 1; 
+	values.counttrials3 += 1;
+	values.problem = list.level3.nextValue;
+	values.solution = evaluate(values.problem);
+	values.completeproblem = concat(values.problem, " = ?");
+	text.zero.textBgColor = gray;
+	text.1.textBgColor = gray;	
+	text.2.textBgColor = gray;		
+	text.3.textBgColor = gray;		
+	text.4.textBgColor = gray;		
+	text.5.textBgColor = gray;
+	text.6.textBgColor = gray;	
+	text.7.textBgColor = gray;	
+	text.8.textBgColor = gray;	
+	text.9.textBgColor = gray;		
+]
+/ stimulusframes = [1 = problem, totalpoints, timer, solution, 1, 2, 3, 4, 5, 6, 7, 8, 9, zero]
+/ validresponse = (zero, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+/ iscorrectresponse = [
+	values.suggestedsolution = trial.problem3.response;	
+	if (values.suggestedsolution == 0){
+		values.suggestedsolution ="no response";						
+	} else if (values.suggestedsolution == "zero"){
+		values.suggestedsolution = 0;
+	}
+
+	if (values.solution == values.suggestedsolution) {
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+	}
+	return (values.correct == 1);
+]
+/ timeout = parameters.max_trialduration
+/ ontrialend = [
+	if (values.suggestedsolution == values.solution) {
+		values.correct = 1;		
+	} else {
+		values.correct = 0;		
+	}
+	
+	if (values.correct == 1) {
+		values.newTotalPoints += 1; 
+		values.countcorrect += 1; 
+		values.sumrt_correct+= trial.problem3.latency;
+	} else {
+		values.newTotalPoints -= 1;		
+	}
+		
+]
+/ posttrialpause = parameters.iti
+/ branch = [return trial.selectproblem;]
+/ errormessage = true(errorfeedback, 0)
+/ responsemessage = (zero, text.zero_HL, 0)
+/ responsemessage = (1, text.1_HL, 0)
+/ responsemessage = (2, text.2_HL, 0)
+/ responsemessage = (3, text.3_HL, 0)
+/ responsemessage = (4, text.4_HL, 0)
+/ responsemessage = (5, text.5_HL, 0)
+/ responsemessage = (6, text.6_HL, 0)
+/ responsemessage = (7, text.7_HL, 0)
+/ responsemessage = (8, text.8_HL, 0)
+/ responsemessage = (9, text.9_HL, 0)
+</trial>
+
+<trial problem4>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.level = 4;
+	values.counttrials += 1; 
+	values.counttrials4 += 1;
+	values.problem = list.level4.nextValue;
+	values.solution = evaluate(values.problem);
+	values.completeproblem = concat(values.problem, " = ?");
+	text.zero.textBgColor = gray;
+	text.1.textBgColor = gray;	
+	text.2.textBgColor = gray;		
+	text.3.textBgColor = gray;		
+	text.4.textBgColor = gray;		
+	text.5.textBgColor = gray;
+	text.6.textBgColor = gray;	
+	text.7.textBgColor = gray;	
+	text.8.textBgColor = gray;	
+	text.9.textBgColor = gray;		
+]
+/ stimulusframes = [1 = problem, totalpoints, timer, solution, 1, 2, 3, 4, 5, 6, 7, 8, 9, zero]
+/ validresponse = (zero, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+/ iscorrectresponse = [
+	values.suggestedsolution = trial.problem4.response;	
+	if (values.suggestedsolution == 0){
+		values.suggestedsolution ="no response";						
+	} else if (values.suggestedsolution == "zero"){
+		values.suggestedsolution = 0;
+	}
+
+	if (values.solution == values.suggestedsolution) {
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+	}
+	return (values.correct == 1);
+]
+/ timeout = parameters.max_trialduration
+/ ontrialend = [
+	if (values.suggestedsolution == values.solution) {
+		values.correct = 1;		
+	} else {
+		values.correct = 0;		
+	}
+	
+	if (values.correct == 1) {
+		values.newTotalPoints += 1; 
+		values.countcorrect += 1; 
+		values.sumrt_correct+= trial.problem4.latency;
+	} else {
+		values.newTotalPoints -= 1;		
+	}
+			
+]
+
+/ posttrialpause = parameters.iti
+/ branch = [return trial.selectproblem;]
+/ errormessage = true(errorfeedback, 0)
+/ responsemessage = (zero, text.zero_HL, 0)
+/ responsemessage = (1, text.1_HL, 0)
+/ responsemessage = (2, text.2_HL, 0)
+/ responsemessage = (3, text.3_HL, 0)
+/ responsemessage = (4, text.4_HL, 0)
+/ responsemessage = (5, text.5_HL, 0)
+/ responsemessage = (6, text.6_HL, 0)
+/ responsemessage = (7, text.7_HL, 0)
+/ responsemessage = (8, text.8_HL, 0)
+/ responsemessage = (9, text.9_HL, 0)
+</trial>
+
+<trial problem5>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.level = 5;
+	values.counttrials += 1; 
+	values.counttrials5 += 1;
+	values.problem = list.level5.nextValue;
+	values.solution = evaluate(values.problem);
+	values.completeproblem = concat(values.problem, " = ?");
+	text.zero.textBgColor = gray;
+	text.1.textBgColor = gray;	
+	text.2.textBgColor = gray;		
+	text.3.textBgColor = gray;		
+	text.4.textBgColor = gray;		
+	text.5.textBgColor = gray;
+	text.6.textBgColor = gray;	
+	text.7.textBgColor = gray;	
+	text.8.textBgColor = gray;	
+	text.9.textBgColor = gray;		
+]
+/ stimulusframes = [1 = problem, totalpoints, timer, solution, 1, 2, 3, 4, 5, 6, 7, 8, 9, zero]
+/ validresponse = (zero, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+/ iscorrectresponse = [
+	values.suggestedsolution = trial.problem5.response;	
+	if (values.suggestedsolution == 0){
+		values.suggestedsolution ="no response";						
+	} else if (values.suggestedsolution == "zero"){
+		values.suggestedsolution = 0;
+	}
+
+	if (values.solution == values.suggestedsolution) {
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+	}
+	return (values.correct == 1);
+]
+/ timeout = parameters.max_trialduration
+/ ontrialend = [
+	if (values.suggestedsolution == values.solution) {
+		values.correct = 1;		
+	} else {
+		values.correct = 0;		
+	}
+	
+	if (values.correct == 1) {
+		values.newTotalPoints += 1; 
+		values.countcorrect += 1; 
+		values.sumrt_correct+= trial.problem5.latency;
+	} else {
+		values.newTotalPoints -= 1;		
+	}
+		
+]
+/ posttrialpause = parameters.iti
+/ branch = [return trial.selectproblem;]
+/ errormessage = true(errorfeedback, 0)
+/ responsemessage = (zero, text.zero_HL, 0)
+/ responsemessage = (1, text.1_HL, 0)
+/ responsemessage = (2, text.2_HL, 0)
+/ responsemessage = (3, text.3_HL, 0)
+/ responsemessage = (4, text.4_HL, 0)
+/ responsemessage = (5, text.5_HL, 0)
+/ responsemessage = (6, text.6_HL, 0)
+/ responsemessage = (7, text.7_HL, 0)
+/ responsemessage = (8, text.8_HL, 0)
+/ responsemessage = (9, text.9_HL, 0)
+</trial>
+
+<trial blockfeedback>
+/ ontrialbegin = [
+	button.continueButton.skip = false;
+]
+/ stimulusframes = [1=feedback, continueButton]
+/ validresponse = (continueButton)
+/ recorddata = true
+</trial>
+
+<trial roundinfo>
+/ inputdevice = mouse
+/ stimulusframes = [1 = RoundInfo, button.startbutton]
+/ validresponse = (startbutton)
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block instructions>
+/ onblockbegin = [
+	button.startButton.skip = true;
+]
+/ trials = [
+	1 = instructions; 
+	2 = demo; 
+	3 = instructions;
+]
+</block>
+
+<block Challengestart>
+/ onblockbegin = [
+	values.blockcount +=1; 
+	values.problem="NA"; 
+	values.solution="NA"; 
+	values.suggestedsolution="NA"; 
+	values.correct="NA";
+]
+/ trials = [1 = roundinfo]
+/ branch = [
+	return block.challenge;
+]
+</block>
+
+<block challenge>
+/ onblockbegin = [
+	if (parameters.resetvalues == true) {
+		values.newTotalPoints = parameters.startpoints; 
+		values.countcorrect = 0; 
+		values.sumrt_correct = 0;
+		values.counttrials = 0;
+		values.counttrials1 = 0;
+		values.counttrials2 = 0;
+		values.counttrials3 = 0;
+		values.counttrials4 = 0;
+		values.counttrials5 = 0;
+	}
+]
+
+/ trials = [1 = selectproblem]
+/ timeout = parameters.blockduration
+/ onblockend = [
+	values.totalpoints_perblock = concat(values.totalpoints_perblock, values.newTotalPoints);
+	values.totalpoints_perblock = concat(values.totalpoints_perblock, ", ");
+	values.percentcorrect_perblock = concat(values.percentcorrect_perblock, expressions.percentcorrect);
+	values.percentcorrect_perblock = concat(values.percentcorrect_perblock, ", ");
+	values.meanrt_perblock = concat(values.meanrt_perblock, expressions.meancorrectrt);
+	values.meanrt_perblock = concat(values.meanrt_perblock, ", ");
+	values.trialcount_perblock = concat(values.trialcount_perblock, values.counttrials);
+	values.trialcount_perblock = concat(values.trialcount_perblock, ", ");
+]
+/ branch = [return block.blockfeedback;]
+</block>
+
+<block blockfeedback>
+/ onblockbegin = [
+	values.problem="NA"; 
+	values.solution="NA"; 
+	values.suggestedsolution="NA"; 
+	values.correct="NA";
+]
+/ trials = [1 = blockfeedback]
+/ branch = [
+	if (values.blockcount < parameters.numberOfBlocks){
+		return block.Challengestart;
+	}
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt trierMentalChallenge>
+
+/ onexptbegin = [
+	if (monkey.monkeyMode){
+		parameters.startpoints = 60;
+	}
+	values.newTotalPoints = parameters.startpoints;
+]
+/ blocks = [
+	1 = instructions; 
+	2 = Challengestart;
+]
+
+</expt>
+
+**************************************************************************
+Debug Code
+**************************************************************************
+
+this code can be used to check that the problem solutions 
+are all 0<=solution<=9
+
+<trial debug>
+/ ontrialbegin = [
+	if (list.level1.unselectedCount > 0){
+		values.level = 1;
+		values.problem = list.level1.nextValue;
+	} else if (list.level2.unselectedCount > 0){
+		values.level = 2;
+		values.problem = list.level2.nextValue;
+	} else if (list.level3.unselectedCount > 0){
+		values.level = 3;
+		values.problem = list.level3.nextValue;
+	} else if (list.level4.unselectedCount > 0){
+		values.level = 4;
+		values.problem = list.level4.nextValue;
+	} else if (list.level5.unselectedCount > 0){
+		values.level = 5;
+		values.problem = list.level5.nextValue;
+	}
+	
+	values.solution = evaluate(values.problem);
+]
+/ trialduration = 0
+/ branch = [
+	if (list.level5.unselectedCount > 0){
+		return trial.debug;
+	}
+]
+</trial>
+
+<block debug>
+/ trials = [1 = debug]
+</block>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

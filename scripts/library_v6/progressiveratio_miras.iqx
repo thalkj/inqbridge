@@ -1,0 +1,387 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*Progressive Ratio Button Press Task*
+								(Miras Procedure)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (seandr@millisecond.com) for Millisecond Software, LLC
+Date: 06-14-2023
+last updated: 06-14-2023 by K. Borchert (seandr@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-25-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a 'Progressive Ratio Button Press Task' to determine the "breakpoint" at 
+which the reward (food) is no longer worth the effort of clicking a mouse button. The implemented template 
+is based on the procedure described by Miras et (2012).
+
+Reference:
+Miras AD, Jackson RN, Jackson SN, Goldstone AP, Olbers T, Hackenberg T, Spector AC, le Roux CW. Gastric bypass 
+surgery for obesity decreases the reward value of a sweet-fat stimulus as assessed in a progressive ratio task. 
+Am J Clin Nutr. 2012 Sep;96(3):467-73. doi: 10.3945/ajcn.112.036921. Epub 2012 Jul 25. PMID: 22836034.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+
+Participants are instructed to repeatedly click the left mouse button for rewards. When they no longer 
+wish to click the mouse button, they can press a spacebard to end the task. The number of clicks 
+required to receive a reward is increased by a multiple (2 by default) with each round. 
+
+The task continues until the participant opts out by pressing the space bar. The number of clicks 
+in the last completed round is considered the "breakpoint" after which the reward is no longer worth the 
+effort.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+The duration of the script varies depending on the particpant's perserverance.
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'progressiveratio_miras_raw*.iqdat'*
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file. 
+response:						the response given
+latency:						response time in milliseconds.
+										
+roundCount:						Total number of rounds excluding the practice round
+clickCount:						Total number of mouse clicks excluding the practice round
+										
+currentRatio:					Number of clicks required to complete the current round
+
+
+(2) Summary data file: 'progressiveratio_miras_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+startingRatio: 					The total clicks for the first round
+geometricIncrement:				The factor by which the number of clicks per round is multiplied
+breakPoint:						The total clicks for the last completed round
+roundsCount:					The total number of completed rounds excluding practice rounds
+clickCount:						The total number of clicks excluding practice rounds
+							
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET UP
+___________________________________________________________________________________________________________________	
+
+Trial Sequence:
+
+- A practice round is run at the beginning with parameters.startingRatio as the required number of clicks.
+- The practice round is followed by test rounds until the participant presses SHIFT+SPACE to quit.
+- As participants complete each test round, they are shown a screen indicating they will receive a reward. The 
+number of clicks required to complete the next round is multiplied by parameters.geometricIncrement.
+- The task continues with progressively longer rounds until the participant opts out by pressing the SHIFT+SPACE
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+
+The task presents instructions but does not otherwise present any stimuli.
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ startingRatio = 10
+/ geometricIncrement = 2
+</parameters>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+********************************************************************
+
+<item instructions>
+/1 = "You can earn food by clicking on the mouse button.~n~nClick as much or as little as you like.~n~nWhen you no longer want to continue, press~nSHIFT+[Space Bar]~nto stop the session."
+/1 = "Click as little or as much as you like.~n~nThere are no right or wrong answers in the task. When you no longer want to continue, press SHIFT+[Space Bar].~n~nThis is not a competition."
+</item>
+
+<item reminder>
+/1 = "You can earn food by clicking on the mouse button.~n~nClick as much or as little as you like.~n~nWhen you no longer want to continue, press~nSHIFT+[Space Bar]~nto stop the session."
+</item>
+
+<item clickReminder>
+/1 = "Click the mouse to continue"
+</item>
+
+<item reward>
+/1 = "You have earned food.~n~nEnjoy your reward and after you have swallowed it completely you may click on OK to continue with the programme."
+</item>
+
+<item practiceReward>
+/1 = "You have completed a practice round.~n~nYou will earn food at the end of each of the next rounds. You may click on OK to continue with the programme."
+</item>
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+/ inputdevice = mousekey
+/ skipCommand = (shift+" ")
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, response, latency, values.clickCount, values.roundsCount, values.currentRatio)
+</data>
+
+***********************
+summary data file
+***********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+parameters.startingRatio, parameters.geometricIncrement, values.breakPoint, values.roundsCount, values.clickCount)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/ currentRatio = 0
+/ roundsCount = 0
+/ clickCount = 0
+/ meanClickTime = 0
+/ breakPoint = 0
+/ sumLatencies = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial instructions>
+/ stimulusTimes = [1=instructions; 1000=clickReminder]
+/ inputDevice = mousekey
+/ validResponse = (lbuttonup)
+</trial>
+
+
+<trial rewardTrial>
+/ stimulusTimes = [1=reward; 2000=okButton]
+/ inputDevice = mouse
+/ validResponse = (okButton)
+</trial>
+
+
+<trial practiceRewardTrial>
+/ stimulusTimes = [1=practiceReward; 2000=okButton]
+/ inputDevice = mouse
+/ validResponse = (okButton)
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text clickReminder>
+/ items = clickReminder
+/ fontStyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 70%)
+/ size = (70%, 30%)
+</text>
+
+<text reminder>
+/ items = reminder
+/ fontStyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 30%)
+/ size = (70%, 30%)
+/ erase = false
+</text>
+
+<text instructions>
+/ items = instructions
+/ fontStyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 30%)
+/ size = (70%, 30%)
+</text>
+
+<text reward>
+/ items = reward
+/ fontStyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 30%)
+/ size = (70%, 30%)
+</text>
+
+
+<text practiceReward>
+/ items = practiceReward
+/ fontStyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 30%)
+/ size = (70%, 30%)
+</text>
+
+<button okButton>
+/ caption = "OK"
+/ size = (5%, 5%)
+/ position = (50%, 70%)
+/ fontStyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</button>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial practiceClickTrial>
+/ stimulusTimes = [1=reminder]
+/ inputDevice = mousekey
+/ validResponse = (lbuttonup)
+/ branch = [
+	if(trial.practiceClickTrial.trialCount < values.currentRatio) {
+		return trial.practiceClickTrial;
+	} else {
+		return trial.practiceRewardTrial;
+	}
+]
+</trial>
+
+<trial clickTrial>
+/ stimulusTimes = [1=reminder]
+/ inputDevice = mousekey
+/ validResponse = (lbuttonup)
+/ branch = [
+	values.clickCount += 1;
+	if(trial.clickTrial.trialCount < values.currentRatio) {
+		values.sumLatencies += trial.clickTrial.latency;
+		return trial.clickTrial;
+	} else {
+		values.sumLatencies += trial.clickTrial.latency;
+		values.breakPoint = values.currentRatio;
+		values.roundsCount += 1;
+		values.meanClickTime = values.sumLatencies / values.currentRatio;
+		return trial.rewardTrial;
+	}
+]
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block practice>
+/ trials = [1-2=instructions; 3=practiceClickTrial]
+</block>
+
+
+<block test>
+/ trials = [1=clickTrial]
+/ onBlockEnd = [
+	values.currentRatio *= parameters.geometricIncrement;
+	if(monkey.monkeyMode && values.currentRatio > 200) {
+		script.abort(false);
+	}
+]
+/ branch = [
+	return block.test;
+]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt myExpt>
+/ onExptBegin = [
+	values.currentRatio = parameters.startingRatio;
+]
+/ blocks = [1=practice; 2=test]
+</expt>
+
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

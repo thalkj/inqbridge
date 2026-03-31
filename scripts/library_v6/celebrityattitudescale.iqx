@@ -1,0 +1,623 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									CELEBRITY ATTITUDE SCALE
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-06-2015
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Celebrity Attitude Scale as described in:
+
+Maltby, J., Day, L., McCutcheon, L.E., Houran, J. & Ashe, D. (2006). Extreme celebrity worship,
+fantasy proneness and dissociation: Developing the measurement and understanding of celebrity worship within a
+clinical personality context. Personality and Individual Differences, 40, 273-283
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+Participants answer 34 questions (+2 additional questions) about their attitude towards a self-selected celebrity.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4 minutes to complete
+
+________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'celebrityattitudescale.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								strongly agree = 5
+								strongly disagree = 1
+
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'celebrityattitudescale_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+
+///SubscaleScores: 
+
+Norms based on means and standard deviations published by Maltby et al, 2006, p. 278 (no gender differences found).
+
+IntensePersonal
+z_score_IP:			based on Mean = 17.86, std = 6.5
+p_IP:		
+
+EntertainmentSocial
+z_score_ES			based on Mean = 24.48, std = 9.5
+p_score_ES
+
+BorderlinePathological
+z_score_BP			based on Mean = 11.34, std = 3.4
+p_score_BP
+
+and individual scores for all 36 questions
+
+___________________________________________________________________________________________________________________
+SCORING
+___________________________________________________________________________________________________________________	
+Intense personal 1+ 8 + 11 + 2 + 33 + 18 + 24 + 12 + 14 + 16 + 28 +6 + 3
+Entertainment Social 17+ 31 + 23 + 13 + 19+ 29 +5
+Borderline Pathological 4 + 22 + 25 + 15 + 20 + 7
+The rest of the items can be considered as filler items
+
+</usermanual>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+/ quitcommand = (Alt+18)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+raw data: CAS.iqdat
+********************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.IntensePersonal, expressions.z_score_IP, expressions.p_IP,
+expressions.EntertainmentSocial, expressions.z_score_ES, expressions.p_ES,
+expressions.BorderlinePathological, expressions.z_score_BP, expressions.p_BP,
+textbox.favoritecelebrity.response, checkboxes.celebritytype.response,
+radiobuttons.q1.response, radiobuttons.q2.response, radiobuttons.q3.response, radiobuttons.q4.response, radiobuttons.q5.response, 
+radiobuttons.q6.response, radiobuttons.q7.response, radiobuttons.q8.response, radiobuttons.q9.response, radiobuttons.q10.response, 
+radiobuttons.q11.response, radiobuttons.q12.response, radiobuttons.q13.response, radiobuttons.q14.response, radiobuttons.q15.response, 
+radiobuttons.q16.response, radiobuttons.q17.response, radiobuttons.q18.response, radiobuttons.q19.response, radiobuttons.q20.response, 
+radiobuttons.q21.response, radiobuttons.q22.response, radiobuttons.q23.response, radiobuttons.q24.response, radiobuttons.q25.response, 
+radiobuttons.q26.response, radiobuttons.q27.response, radiobuttons.q28.response, radiobuttons.q29.response, radiobuttons.q30.response, 
+radiobuttons.q31.response, radiobuttons.q32.response, radiobuttons.q33.response, radiobuttons.q34.response)
+</summarydata>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Intense personal 1+ 8 + 11 + 2 + 33 + 18 + 24 + 12 + 14 + 16 + 28 +6 + 3
+(Max = 13*5 = 65; Min = 13*1 = 13)
+Entertainment Social 17+ 31 + 23 + 13 + 19+ 29 +5
+(Max = 7 * 5 = 35; Min = 7)
+Borderline Pathological 4 + 22 + 25 + 15 + 20 + 7
+(Max = 6 * 5 = 30; Min = 6)
+The rest of the items can be considered as filler items
+
+<expressions>
+/IntensePersonal = radiobuttons.q1.response + radiobuttons.q8.response + radiobuttons.q11.response + 
+radiobuttons.q2.response + radiobuttons.q33.response + radiobuttons.q18.response + radiobuttons.q24.response +
+radiobuttons.q12.response + radiobuttons.q14.response + radiobuttons.q16.response + radiobuttons.q28.response +
+radiobuttons.q6.response + radiobuttons.q3.response
+
+/EntertainmentSocial = radiobuttons.q17.response + radiobuttons.q31.response + radiobuttons.q23.response +
+radiobuttons.q13.response + radiobuttons.q19.response + radiobuttons.q29.response + radiobuttons.q5.response
+
+/BorderlinePathological = radiobuttons.q4.response + radiobuttons.q22.response + radiobuttons.q25.response + 
+radiobuttons.q15.response + radiobuttons.q20.response + radiobuttons.q7.response
+</expressions>
+
+Norms (based on means and standard deviations published by Maltby et al, 2006, p. 278.
+No gender differences found by Maltby et al)
+<expressions>
+/z_score_IP = (expressions.IntensePersonal - 17.86)/6.5
+/z_score_ES = (expressions.EntertainmentSocial - 24.48)/9.5
+/z_score_BP = (expressions.BorderlinePathological - 11.34)/3.4
+
+/p_IP = pofz(expressions.z_score_IP)
+/p_ES = pofz(expressions.z_score_ES)
+/p_BP = pofz(expressions.z_score_BP)
+</expressions>
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<textbox favoritecelebrity>
+/caption = "Who is your favorite celebrity? (Please choose one famous person, as defined above)" 
+/required = true
+/ textboxsize = (40%, 5%)
+</textbox>
+
+<checkboxes celebritytype>
+/caption = "Just in case your favorite celebrity is unknown to us, please select one or more of the following to describe why your favorite celebrity is famous:"
+/options = ("Acting", "Author", "Artist", "Medicine", "Modeling", "Music", "News", "Politics", "Religion",
+"Royalty", "Radio or TV Talk Show", "Science", "Sports")
+/other =  "Other (please describe)"
+/orientation = vertical
+/required = true
+</checkboxes>
+
+<radiobuttons q1>
+/caption = "1. If I were to meet <%textbox.favoritecelebrity.response%> in person, he/she would already somehow know that I am his/her biggest fan"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. One of the main reasons I maintain an interest in <%textbox.favoritecelebrity.response%> is that doing so gives me a temporary escape from life’s problems."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. <%textbox.favoritecelebrity.response%> is practically perfect in every way."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. I share with <%textbox.favoritecelebrity.response%> a special bond that cannot be described in words."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. To know <%textbox.favoritecelebrity.response%> is to love him/her"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. When something bad happens to <%textbox.favoritecelebrity.response%> I feel like it happened to me"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. When <%textbox.favoritecelebrity.response%> fails or loses at something I feel like a failure myself."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. The successes of <%textbox.favoritecelebrity.response%> are my successes too."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. I consider <%textbox.favoritecelebrity.response%> to be my soul mate."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. When <%textbox.favoritecelebrity.response%> dies (or died) I will feel (or I felt) like dying too."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. If someone gave me several thousand dollars to do with as I please, I would consider spending it on a personal possession (like a napkin or paper plate) once used by <%textbox.favoritecelebrity.response%>."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. When something good happens to <%textbox.favoritecelebrity.response%> I feel like it happened to me."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. I am obsessed by details of <%textbox.favoritecelebrity.response%>’s life."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "14. I have pictures and/or souvenirs of <%textbox.favoritecelebrity.response%> which I always keep in exactly the same place."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. I love to talk with others who admire <%textbox.favoritecelebrity.response%>"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "16. Keeping up with news about <%textbox.favoritecelebrity.response%> is an entertaining pastime."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. It is enjoyable just to be with others who like <%textbox.favoritecelebrity.response%>"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "18. I enjoy watching, reading, or listening to <%textbox.favoritecelebrity.response%> because it means a good time"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. Learning the life story of <%textbox.favoritecelebrity.response%> is a lot of fun"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q20>
+/caption = "20. I like watching and hearing about <%textbox.favoritecelebrity.response%> when I am with a large group of people"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q21>
+/caption = "21. My friends and I like to discuss what <%textbox.favoritecelebrity.response%> has done"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "22. I would gladly die in order to save the life of <%textbox.favoritecelebrity.response%>"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q23>
+/caption = "23. If I were lucky enough to meet <%textbox.favoritecelebrity.response%>, and he/she asked me to do something illegal as a favor, I would probably do it."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q24>
+/caption = "24. If I walked through the door of <%textbox.favoritecelebrity.response%>’s home without an invitation she or he would be happy to see me."
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q25>
+/caption = "25. I have frequent thoughts about <%textbox.favoritecelebrity.response%>, even when I don’t want to"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q26>
+/caption = "26. I often feel compelled to learn the personal habits of <%textbox.favoritecelebrity.response%>"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q27>
+/caption = "27. <%textbox.favoritecelebrity.response%> would immediately come to my rescue if I needed help"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q28>
+/caption = "28. <%textbox.favoritecelebrity.response%> and I have our own code so we can communicate with each other secretly (such as over the TV or special words on the radio)"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q29>
+/caption = "29. If <%textbox.favoritecelebrity.response%> was accused of committing a crime that accusation would have to be false"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q30>
+/caption = "30. If <%textbox.favoritecelebrity.response%> endorsed a legal but possibly unsafe drug designed to make someone feel good, I would try it"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q31>
+/caption = "31. News about <%textbox.favoritecelebrity.response%> is a pleasant break from a harsh world"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q32>
+/caption = "32. If <%textbox.favoritecelebrity.response%> found me sitting in his/her car, he or she would be upset"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q33>
+/caption = "33. It would be great if <%textbox.favoritecelebrity.response%> and I were locked in a room for a few days"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q34>
+/caption = "34. If <%textbox.favoritecelebrity.response%> saw me in a restaurant he/she would ask me to sit down and talk"
+/options = ("Strongly Agree"; "Agree"; "Uncertain or ~nneutral"; "Disagree"; "Strongly Disagree")
+/optionvalues = ("5"; "4"; "3"; "2"; "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+<surveypage CAS1>
+/caption ="THE CELEBRITY ATTITUDE SCALE"
+/subcaption = "The purpose of this survey is to identify your views about famous persons. The responses you give are confidential. There are no right or wrong answers, so please answer as openly and thoughtfully as you can. 
+
+For purposes of the survey we are defining the term “celebrity” as a famous living person (or one who died during your lifetime) that you greatly admire.
+
+"
+/questions = [1 = favoritecelebrity]
+</surveypage>
+
+<surveypage CAS2>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = celebritytype]
+</surveypage>
+
+
+<surveypage CAS3>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage CAS4>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage CAS5>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage CAS6>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage CAS7>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage CAS8>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = q16, q17, q18]
+</surveypage>
+
+<surveypage CAS9>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = q19, q20, q21]
+</surveypage>
+
+<surveypage CAS10>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = q22, q23, q24]
+</surveypage>
+
+
+<surveypage CAS11>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = q25, q26, q27]
+</surveypage>
+
+<surveypage CAS12>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = q28, q29, q30]
+</surveypage>
+
+<surveypage CAS13>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = q31, q32, q33]
+</surveypage>
+
+<surveypage CAS14>
+/caption ="THE CELEBRITY ATTITUDE SCALE
+"
+/questions = [1 = q34]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+
+<survey CelebrityAttitudeScale>
+/pages = [
+	1 = CAS1; 
+	2 = CAS2; 
+	3 = CAS3; 
+	4 = CAS4; 
+	5 = CAS5; 
+	6 = CAS6; 
+	7 = CAS7; 
+	8 = CAS8;
+	9 = CAS9;
+	10 = CAS10;
+	11 = CAS11;
+	12 = CAS12;
+	13 = CAS13;
+	14 = CAS14;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

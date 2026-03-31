@@ -1,0 +1,634 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							FIVE FACET MINDFULNESS QUESTIONNAIRE (long/original version)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 11-06-2015
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized adaptation of the Five Facet Mindfulness Questionnaire (original) as described in:
+
+Baer, R. A., Smith, G. T., Hopkins, J., Krietemeyer, J., & Toney, L. (2006). Using self-report assessment methods to explore 
+facets of mindfulness. Assessment, 13, 27-45.
+
+Baer, R. A., et all. (2008). Construct Validity of the Five Facet Mindfulness Questionnaire in Meditating 
+and Nonmeditating Samples. Assessment, 15, 329
+
+Paper and Pencil Form and Scoring instructions can be downloaded from: 
+http://www.ruthbaer.com/academics/index.html
+
+Note: while the paper and pencil FFMQ uses fill in the boxes questions (write a number of 1-5 into the box next to each 
+question), this computerized version uses likert-type questions with radiobuttons.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+Participants are asked to answer 39 5-point Likert-type questions with the following anchors:
+"Never or very rarely true", "rarely true", "sometimes true", "often true", "very often or always true".
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'fivefacetmindfulnessquestionnaire_raw*.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 1 (never true) - 5 (always true)
+									R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+								
+
+(2) Summary data file: 'fivefacetmindfulnessquestionnaire_summary*.iqdat'
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+calculate scores for the 5 subscales (see descriptions under section 'Scoring'):
+Observing
+Describing
+ActingWithAwareness
+NonJudgingofInnerExperience
+NonReactivitytoInnerExperience
+
+combinedscore: calculates the combined score
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________
+39 5-point Likert-type questions on 5 facets/subscales scored on a scale from 1-5:
+1) Observing (8 questions, Max: 40 points): 
+"includes noticing or attending to internal and external experiences, such as sensations, cognitions,
+emotions, sights, sounds, and smells." (Baer et al, 2008, p.330)
+2) Describing (8 questions, Max: 40 points): 
+"refers to labeling internal experiences with words." (Baer et al, 2008, p.330)
+3) ActingWithAwareness (8 questions, Max: 40 points): 
+"includes attending to one’s activities of the moment and can be contrasted with behaving mechanically while 
+attention is focused elsewhere (often called automatic pilot)." (Baer et al, 2008, p.330)
+4) NonjudgingOfInnerExperience (8 questions, Max: 40 points): 
+"refers to taking a nonevaluative stance toward thoughts and feelings." (Baer et al, 2008, p.330)
+5) NonreactivityToInnerExperience (7 questions, Max: 35 points): 
+"is the tendency to allow thoughts and feelings to come and go,
+without getting caught up in or carried away by them." (Baer et al, 2008, p.330)
+
+Scoring: higher scores represent higher levels of mindfulness
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+can be edited under section Editable Parameters.
+The original wording is: 
+"Please rate each of the following statements using the scale provided. Write the number in the blank that best describes your own opinion 
+of what is generally true for you"
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please rate each of the following statements using the scales provided. Select the option that best describes YOUR OWN OPINION of what is GENERALLY TRUE FOR YOU"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.Observing, expressions.Describing, expressions.ActingWithAwareness, 
+expressions.NonjudgingOfInnerExperience, expressions.NonreactivityToInnerExperience, expressions.combinedscore)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+calculate scores for the 5 subscales:
+/Observing
+/Describing
+/ActingWithAwareness
+/NonjudgingOfInnerExperience
+/NonreactivityToInnerExperience
+
+/combinedscore: calculates the combined score
+
+
+<expressions>
+/Observing = {
+	radiobuttons.q1.response + radiobuttons.q6.response + radiobuttons.q11.response + radiobuttons.q15.response + 
+	radiobuttons.q20.response + radiobuttons.q26.response + radiobuttons.q31.response + radiobuttons.q36.response
+}
+/Describing= {
+	radiobuttons.q2.response + radiobuttons.q7.response + radiobuttons.q12R.response + radiobuttons.q16R.response +
+	radiobuttons.q22R.response + radiobuttons.q27.response + radiobuttons.q32.response + radiobuttons.q37.response
+}
+/ActingWithAwareness = {
+	radiobuttons.q5R.response + radiobuttons.q8R.response + radiobuttons.q13R.response + radiobuttons.q18R.response +
+	radiobuttons.q23R.response + radiobuttons.q28R.response + radiobuttons.q34R.response + radiobuttons.q38R.response
+}
+/NonjudgingOfInnerExperience = {
+	radiobuttons.q3R.response + radiobuttons.q10R.response + radiobuttons.q14R.response + radiobuttons.q17R.response +
+	radiobuttons.q25R.response + radiobuttons.q30R.response + radiobuttons.q35R.response + radiobuttons.q39R.response
+}
+/NonreactivityToInnerExperience = {
+	radiobuttons.q4.response + radiobuttons.q9.response + radiobuttons.q19.response + radiobuttons.q21.response +
+	radiobuttons.q24.response + radiobuttons.q29.response + radiobuttons.q33.response
+}
+/combinedscore = expressions.Observing + expressions.Describing+ expressions.ActingWithAwareness + expressions.NonjudgingOfInnerExperience +
+expressions.NonreactivityToInnerExperience
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. When I’m walking, I deliberately notice the sensations of my body moving"
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. I’m good at finding words to describe my feelings."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q3R>
+/caption = "3. I criticize myself for having irrational or inappropriate emotions."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. I perceive my feelings and emotions without having to react to them."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q5R>
+/caption = "5. When I do things, my mind wanders off and I’m easily distracted."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. When I take a shower or bath, I stay alert to the sensations of water on my body."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. I can easily put my beliefs, opinions, and expectations into words."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q8R>
+/caption = "8. I don’t pay attention to what I’m doing because I’m daydreaming, worrying, or otherwise distracted."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. I watch my feelings without getting lost in them."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q10R>
+/caption = "10. I tell myself I shouldn’t be feeling the way I’m feeling."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. I notice how foods and drinks affect my thoughts, bodily sensations, and emotions."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q12R>
+/caption = "12. It’s hard for me to find the words to describe what I’m thinking."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q13R>
+/caption = "13. I am easily distracted."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q14R>
+/caption = "14. I believe some of my thoughts are abnormal or bad and I shouldn’t think that way."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. I pay attention to sensations, such as the wind in my hair or sun on my face."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q16R>
+/caption = "16. I have trouble thinking of the right words to express how I feel about things"
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q17R>
+/caption = "17. I make judgments about whether my thoughts are good or bad."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q18R>
+/caption = "18. I find it difficult to stay focused on what’s happening in the present."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. When I have distressing thoughts or images, I “step back” and am aware of the thought or image without getting taken over by it."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q20>
+/caption = "20. I pay attention to sounds, such as clocks ticking, birds chirping, or cars passing."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q21>
+/caption = "21. In difficult situations, I can pause without immediately reacting."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q22R>
+/caption = "22. When I have a sensation in my body, it’s difficult for me to describe it because I can’t find the right words."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q23R>
+/caption = "23. It seems I am “running on automatic” without much awareness of what I’m doing."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q24>
+/caption = "24. When I have distressing thoughts or images, I feel calm soon after."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q25R>
+/caption = "25. I tell myself that I shouldn’t be thinking the way I’m thinking."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q26>
+/caption = "26. I notice the smells and aromas of things."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q27>
+/caption = "27. Even when I’m feeling terribly upset, I can find a way to put it into words."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q28R>
+/caption = "28. I rush through activities without being really attentive to them."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q29>
+/caption = "29. When I have distressing thoughts or images I am able just to notice them without reacting."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q30R>
+/caption = "30. I think some of my emotions are bad or inappropriate and I shouldn’t feel them."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q31>
+/caption = "31. I notice visual elements in art or nature, such as colors, shapes, textures, or patterns of light and shadow."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q32>
+/caption = "32. My natural tendency is to put my experiences into words."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q33>
+/caption = "33. When I have distressing thoughts or images, I just notice them and let them go."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q34R>
+/caption = "34. I do jobs or tasks automatically without being aware of what I’m doing."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q35R>
+/caption = "35. When I have distressing thoughts or images, I judge myself as good or bad, depending what the thought/image is about."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q36>
+/caption = "36. I pay attention to how my emotions affect my thoughts and behavior."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q37>
+/caption = "37. I can usually describe how I feel at the moment in considerable detail."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("1", "2", "3", "4", "5")
+</radiobuttons>
+
+<radiobuttons q38R>
+/caption = "38. I find myself doing things without paying attention."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q39R>
+/caption = "39. I disapprove of myself when I have irrational ideas."
+/ options = ("Never or~nvery rarely true", "rarely true", "sometimes true", "often true", "very often ~nor always true")
+/required = true
+/ orientation = horizontalequal
+/ optionvalues = ("5", "4", "3", "2", "1")
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+<surveypage FFMFQ1>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = " "
+/questions = [1 = q1, q2, q3R]
+</surveypage>
+
+<surveypage FFMFQ2>
+/questions = [1 = q4, q5R, q6]
+</surveypage>
+
+<surveypage FFMFQ3>
+/questions = [1 = q7, q8R, q9]
+</surveypage>
+
+<surveypage FFMFQ4>
+/questions = [1 = q10R, q11, q12R]
+</surveypage>
+
+<surveypage FFMFQ5>
+/questions = [1 = q13R, q14R, q15]
+</surveypage>
+
+<surveypage FFMFQ6>
+/questions = [1 = q16R, q17R, q18R]
+</surveypage>
+
+
+<surveypage FFMFQ7>
+/questions = [1 = q19, q20, q21]
+</surveypage>
+
+<surveypage FFMFQ8>
+/questions = [1 = q22R, q23R, q24]
+</surveypage>
+
+<surveypage FFMFQ9>
+/questions = [1 = q25R, q26, q27]
+</surveypage>
+
+<surveypage FFMFQ10>
+/questions = [1 = q28R, q29, q30R]
+</surveypage>
+
+<surveypage FFMFQ11>
+/questions = [1 = q31, q32, q33]
+</surveypage>
+
+<surveypage FFMFQ12>
+/questions = [1 = q34R, q35R, q36]
+</surveypage>
+
+<surveypage FFMFQ13>
+/questions = [1 = q37, q38R, q39R]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to retain a digital copy of the filled in questionnaire pages, set /screencapture = true
+(only works for Inquisit Lab)
+
+<survey FiveFacetMindfulnessQuestionnaire>
+/pages = [
+	1 = FFMFQ1;
+	2 = FFMFQ2;
+	3 = FFMFQ3;
+	4 = FFMFQ4;
+	5 = FFMFQ5;
+	6 = FFMFQ6;
+	7 = FFMFQ7;
+	8 = FFMFQ8;
+	9 = FFMFQ9;
+	10 = FFMFQ10;
+	11 = FFMFQ11;
+	12 = FFMFQ12;
+	13 = FFMFQ13;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

@@ -1,0 +1,649 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									EYSENCK PERSONALITY QUESTIONNAIRE BRIEF VERSION (EPQ-BV)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 08-09-2016
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements an electronic version of the Eysenck Personality Questionnaire Brief Version (EPQ-BV)
+originally published in:
+
+Satu, P. (2005). The Eysenck Personality Questionnaire Brief Version: Factor Structure and
+Reliability. The Journal of Psychology, 139(6), 545–552.
+
+based on:
+Eysenck, S. B. G., Eysenck, H. J., & Barrett, P. (1985). A revised version of the psychoticism scale.
+Personality and Individual Differences. 6, 21-29.
+
+Notes: Norms provided in this script are reported by Eysenck et al (1985) for the EPQR-S which contains an additional lie scale
+as well as as the Psychoticism scale. The questions for the Extraversion/Neuroticism scale are almost identical.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+24 yes/no questions: 12 questions on each of 2 scales (Extraversion, Neuroticism)											  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'epq_bv.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 1 (yes) - 0 (no)
+									R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+								
+								
+(2) Summary data file: 'epq_bv_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+radiobuttons.gender.response:		response to gender question
+dropdown.age.response:				response to age question
+age:								the assigned age category
+
+Notes: Norms use data reported for the EPQR_S by Eysenck et al (1985, p.24, table 6); no separate norms reported by Satu (2005)
+* Norms for ages < 16 AND ages > 70 use the overall mean and standard deviation by default (no separate data provided for these age groups)
+* Norms for gender = other: the female norms are used by default
+* percentiles and z-score are only calculated if parameters.calculatePercentiles == true
+
+Extraversion: 			score on the subscale "Extraversion"
+z_E:					calculated z-score of the Extraversion score (based on data provided by Eysenck et al, 1985)
+E_percentile:			z-score percentile of the Extraversion score (based on data provided by Eysenck et al, 1985)
+Neuroticism: 			score on the subscale "Neuroticism"
+z_N:					calculated z-score of the Neuroticism score (based on data provided by Eysenck et al, 1985)
+N_percentile:			z-score percentile of the Neuroticism score (based on data provided by Eysenck et al, 1985)
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP/SCORING/NORMS
+___________________________________________________________________________________________________________________
+24 yes/no questions: 12 questions on each of 2 scales (Extraversion, Neuroticism)	
+
+Scoring:
+yes = 1 point, No = 0 point (Reversed where indicated, Satu, 2005)
+
+NORMS
+z-scores and percentiles of the 4 subscores are calculated based on data provided by Eysenck et al (1985), p.24 (table 6)
+for the EPQR-S (no separate norms reported by Satu, 2005)
+Notes: 
+* Norms for ages < 16 AND ages > 70 use the overall mean and standard deviation by default (no separate data provided for these age groups)
+* Norms for gender = other: the female norms are used by default
+* percentiles and z-score are only calculated if parameters.calculatePercentiles == true
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+slightly altered from Eysenck et al (1985) - edit under section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+/calculatePercentiles:		true (default)= script automatically calculates the z-score and corresponding percentile based on Eysenck et al (1985), p.24 (table 6)
+							(setting this parameter to true runs the demographic 'age' and 'gender' questions)
+							false = script does not automatically calculate z-score and corresponding percentile
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please answer each question by selecting ‘YES or ‘NO’ following the question. There are no right or wrong answers, and no trick questions. Work quickly and do not think too long about the exact meaning of the questions.
+"
+/calculatePercentiles = true
+</parameters>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ txcolor = (black)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	NORMING DATA: means and standard deviations (Eysenck et al, 1985, p.24, table 6)
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*********************************************
+NEUROTICISM: Mean and Standard Deviations
+*********************************************
+
+Note:
+contains the mean Neuroticism scores for males by age category (last item is the mean across ages)
+<list N_males_mean>
+/items = (5.03, 5.17, 5.75, 5.24, 4.49, 4.14, 4.95)
+/ selectionmode = values.age
+</list>
+
+Note:
+contains the corresponding standard deviations 
+<list N_males_SD>
+/items = (3.41, 3.35, 3.46, 3.41, 3.70, 3.04, 3.44)
+/ selectionmode = list.N_males_mean.currentIndex
+</list>
+
+Note:
+contains the mean Neuroticism scores for females by age category (last item is the mean across ages)
+<list N_females_mean>
+/items = (6.66, 5.93, 5.50, 5.06, 5.35, 4.78, 5.90)
+/ selectionmode = values.age
+</list>
+
+Note:
+contains the corresponding standard deviations 
+<list N_females_SD>
+/items = (3.05, 2.89, 2.92, 3.37, 3.44, 3.28, 3.14)
+/ selectionmode = list.N_females_mean.currentIndex
+</list>
+
+*********************************************
+EXTRAVERSION: Mean and Standard Deviations
+*********************************************
+
+Note:
+contains the mean Extraversion scores for males by age category (last item is the mean across ages)
+<list E_males_mean>
+/items = (8.16, 7.42, 6.40, 6.18, 4.48, 4.24, 6.36)
+/ selectionmode = values.age
+</list>
+
+Note:
+contains the corresponding standard deviations 
+<list E_males_SD>
+/items = (3.30, 3.44, 3.85, 3.34, 3.69, 3.40, 3.80)
+/ selectionmode = list.E_males_mean.currentIndex
+</list>
+
+Note:
+contains the mean Extraversion scores for females by age category (last item is the mean across ages)
+<list E_females_mean>
+/items = (8.40, 7.60, 7.37, 6.48, 7.22, 6.46, 7.60)
+/ selectionmode = values.age
+</list>
+
+Note:
+contains the corresponding standard deviations 
+<list E_females_SD>
+/items = (3.23, 3.02, 3.18, 3.20, 3.64, 3.24, 3.27)
+/ selectionmode = list.E_females_mean.currentIndex
+</list>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+radiobuttons.gender.response, dropdown.age.response, values.age,
+expressions.Extraversion, values.z_E, values.E_percentile,
+expressions.Neuroticism, values.z_N, values.N_percentile)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/age:					stores the age category
+/z_E:					calculated z-score of the Extraversion score (based on data provided by Eysenck et al, 1985)
+/z_N:					calculated z-score of the Neuroticism score (based on data provided by Eysenck et al, 1985)
+/E_percentile:			z-score percentile of the Extraversion score (based on data provided by Eysenck et al, 1985)
+/N_percentile:			z-score percentile of the Neuroticism score (based on data provided by Eysenck et al, 1985)
+
+<values>
+/age = ""
+/z_E = ""
+/z_N = ""
+/E_percentile = ""
+/N_percentile = ""
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/Extraversion: 	score on the subscale "Extraversion"
+/Neuroticism: 	score on the subscale "Neuroticism"
+
+/determineAgeGroups:	helper function to find the age category (age category is used to retrieve the correct mean/SD from the respective lists)
+
+Percentile Calculations:
+/calculateP_percentile:		calculates the percentile of the Psychoticism score based on data published by Eysenck et al (1985)
+
+<expressions>
+/Extraversion = 
+radiobuttons.q1_E.response + radiobuttons.q3_E.response + radiobuttons.q5_E.response + radiobuttons.q7_E.response +
+radiobuttons.q9_E.response + radiobuttons.q11_E.response + radiobuttons.q13R_E.response + radiobuttons.q15_E.response +
+radiobuttons.q17_E.response + radiobuttons.q19R_E.response + radiobuttons.q21_E.response + radiobuttons.q23_E.response
+
+/Neuroticism = 
+radiobuttons.q2_N.response + radiobuttons.q4_N.response + radiobuttons.q6_N.response + radiobuttons.q8_N.response +
+radiobuttons.q10_N.response + radiobuttons.q12_N.response + radiobuttons.q14_N.response + radiobuttons.q16_N.response +
+radiobuttons.q18_N.response + radiobuttons.q20_N.response + radiobuttons.q22_N.response + radiobuttons.q24_N.response
+
+
+/determineAgeGroup = {
+if (parameters.calculatePercentiles == true){
+	if (dropdown.age.response == "16-20 years old"){
+		values.age = 1;
+	} else if (dropdown.age.response == "21-30 years old"){
+		values.age = 2;
+	} else if (dropdown.age.response == "31-40 years old"){
+		values.age = 3;
+	} else if (dropdown.age.response == "41-50 years old"){
+		values.age = 4;
+	} else if (dropdown.age.response == "51-60 years old"){
+		values.age = 5;
+	} else if (dropdown.age.response == "61-70 years old"){
+		values.age = 6;
+	} else {
+		values.age = 7;	
+	}	
+}}
+
+
+/calculateN_percentile = {	
+if (parameters.calculatePercentiles == true){
+	if (radiobuttons.gender.response == "Males"){
+		values.z_N = (expressions.Neuroticism - list.N_males_mean.nextValue)/list.N_males_SD.nextValue;
+
+	} else {
+		values.z_N = (expressions.Neuroticism - list.N_females_mean.nextValue)/list.N_females_SD.nextValue;
+	}
+	
+	values.N_percentile = pofz(values.z_N);	
+}}
+/calculateE_percentile = {	
+if (parameters.calculatePercentiles == true){
+	if (radiobuttons.gender.response == "Males"){
+		values.z_E = (expressions.Extraversion - list.E_males_mean.nextValue)/list.E_males_SD.nextValue;
+	} else {
+		values.z_E = (expressions.Extraversion - list.E_females_mean.nextValue)/list.E_females_SD.nextValue;
+	}
+	
+	values.E_percentile = pofz(values.z_E);	
+}}
+
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_E>
+/caption = "1. Are you a talkative person?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q3_E>
+/caption = "3. Are you rather lively?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q5_E>
+/caption = "5. Do you enjoy meeting new people?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q7_E>
+/caption = "7. Can you usually let yourself go and enjoy yourself at a lively party?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q9_E>
+/caption = "9. Do you usually take the initiative in making new friends?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q11_E>
+/caption = "11. Can you easily get some life into a rather dull party?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q13R_E>
+/caption = "13. Do you tend to keep in the background on social occasions?"
+/ options = ("Yes", "No")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q15_E>
+/caption = "15. Do you like mixing with people?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q17_E>
+/caption = "17. Do you like plenty of bustle and excitement around you?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q19R_E>
+/caption = "19. Are you mostly quiet when you are with other people?"
+/ options = ("Yes", "No")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q21_E>
+/caption = "21. Do other people think of you as being very lively?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q23_E>
+/caption = "48. Can you get a party going?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+
+<radiobuttons q2_N>
+/caption = "2. Does your mood often go up and down?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q4_N>
+/caption = "4. Do you ever feel miserable for no reason?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q6_N>
+/caption = "6. Are you an irritable person"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q8_N>
+/caption = "8. Are your feelings easily hurt?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q10_N>
+/caption = "10. Do you often feel 'fed-up'?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q12_N>
+/caption = "12. Would you call yourself a nervous person?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q14_N>
+/caption = "14. Are you a worrier?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q16_N>
+/caption = "16. Would you call yourself tense or 'highly strung'?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q18_N>
+/caption = "18. Do you worry too long after an embarrassing experience?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q20_N>
+/caption = "20. Do you suffer from 'nerves'?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q22_N>
+/caption = "22. Do you often feel lonely?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+<radiobuttons q24_N>
+/caption = "24. Are you often troubled about feelings of guilt?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontal
+</radiobuttons>
+
+
+
+<radiobuttons gender>
+/caption = "What is your gender?"
+/ options = ("Female", 
+"Male", 
+"Other")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<dropdown age>
+/caption = "What is your age?"
+/options = (
+"15 years old or younger",
+"16-20 years old",
+"21-30 years old",
+"31-40 years old",
+"41-50 years old",
+"51-60 years old",
+"61-70 years old",
+"71 years old or older")
+/required = true
+</dropdown>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage EPQ_BV1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1_E, q2_N, q3_E, q4_N]
+</surveypage>
+
+<surveypage EPQ_BV2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q5_E, q6_N, q7_E, q8_N]
+</surveypage>
+
+<surveypage EPQ_BV2b>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q9_E, q10_N, q11_E, q12_N]
+</surveypage>
+
+<surveypage EPQ_BV3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13R_E, q14_N, q15_E, q16_N]
+</surveypage>
+
+<surveypage EPQ_BV4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q17_E, q18_N, q19R_E, q20_N]
+</surveypage>
+
+<surveypage EPQ_BV4b>
+/caption ="<%parameters.pageinstructions%>"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/questions = [1 = q21_E, q22_N, q23_E, q24_N]
+</surveypage>
+
+<surveypage EPQ_BV_demographics>
+/ skip = [
+	parameters.calculatePercentiles == false
+]
+/caption ="Please, answer the following questions:
+"
+/questions = [1 = gender, age]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey EPQ_BV>
+/pages = [1 = EPQ_BV1; 2 = EPQ_BV2; 3 = EPQ_BV3; 4 = EPQ_BV4; 5 = EPQ_BV_demographics]
+/screencapture = false
+/ onblockend = [
+	expressions.determineAgeGroup;
+	expressions.calculateE_percentile;
+	expressions.calculateN_percentile;
+]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ txcolor = (0, 0, 0)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

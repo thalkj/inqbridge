@@ -1,0 +1,442 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								 Palatable Eating Motives Scale (PEMS)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 09-25-2023
+last updated:  11-27-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 11-27-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements Millisecond's computerized version of the Palatable Eating Motives Scale (PEMS)
+by Burgress et al (2014).
+
+Reference:
+
+
+  Burgess, E. E., Turan, B., Lokken, K. L., Morse, A., & Boggiano, M. M. (2014). Profiling motives behind hedonic eating. 
+  Preliminary validation of the Palatable Eating Motives Scale. Appetite, 72, 66–72. 
+  https://doi.org/10.1016/j.appet.2013.09.016
+
+
+  And, A., Sylvester, M. D., Turan, B., Uysal Irak, D., Ray, M. K., & Boggiano, M. M. (2018). The Turkish Palatable Eating Motives Scale (T-PEMS): 
+  utility in predicting binge-eating eating and obesity risk in university students. Eating and Weight Disorders, 23(4), 527–531. 
+  https://doi.org/10.1007/s40519-017-0383-z
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+self-report measure consisting of 20* 5-point Likert Scale questions on four subscales.
+
+*Note: originally the survey consisted of 20 items but original question 15 is not used for analyses as it does not significantly load
+onto any of the four subscales.
+A revised version of the survey replaces q15 with an alternative. Check radiobuttons.q15 below for a possible alternative.
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minute to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'pems.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (almost never) - 5 (almost always)
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'pems_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+							
+
+PEMS_total: 					the sum of all subscore values (Range: 25-95)
+							
+PEMS_social:  				calculated based on: q3,q5,q11,q14,q16 (Range: 5-25)
+
+PEMS_coping:  				calculated based on: q1,q4,q6,q17 (Range: 5-20)*
+										if revised q15 is run: add radiobuttons.q15.response to subscale PEMS_coping
+
+PEMS_enhancement:  	calculated based on: q7,q9,q10,q13,q18  (Range: 5-25)
+
+PEMS_conformity:  		calculated based on: q2,q8,q12,q19,q20  (Range: 5-25)
+
+
++ all individual responses
+
+
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/ canvasaspectratio =   (4,3)
+/ minimumversion =   "6.6.1.0"
+/ fontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor =   white
+/ txcolor =   (0, 0, 0)
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns =   (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+expressions.PEMS_total, expressions.PEMS_social, expressions.PEMS_coping, expressions.PEMS_enhancement, expressions.PEMS_conformity,
+
+//raw responses
+radiobuttons.q1.response,
+radiobuttons.q2.response,
+radiobuttons.q3.response,
+radiobuttons.q4.response,
+radiobuttons.q5.response,
+radiobuttons.q6.response,
+radiobuttons.q7.response,
+radiobuttons.q8.response,
+radiobuttons.q9.response,
+radiobuttons.q10.response,
+radiobuttons.q11.response,
+radiobuttons.q12.response,
+radiobuttons.q13.response,
+radiobuttons.q14.response,
+radiobuttons.q15.response,
+radiobuttons.q16.response,
+radiobuttons.q17.response,
+radiobuttons.q18.response,
+radiobuttons.q19.response,
+radiobuttons.q20.response,
+)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/ PEMS_social =   radiobuttons.q3.response +  radiobuttons.q5.response + radiobuttons.q11.response + radiobuttons.q14.response + radiobuttons.q16.response
+/ PEMS_coping =   radiobuttons.q1.response + radiobuttons.q4.response + radiobuttons.q6.response + radiobuttons.q17.response
+/ PEMS_enhancement =   radiobuttons.q7.response + radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q13.response + radiobuttons.q18.response
+/ PEMS_conformity =   radiobuttons.q2.response + radiobuttons.q8.response + radiobuttons.q12.response + radiobuttons.q19.response + radiobuttons.q20.response
+
+/ PEMS_total = expressions.PEMS_social + expressions.PEMS_coping + expressions.PEMS_enhancement + expressions.PEMS_conformity 
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/ caption =   "1. To forget your worries"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/ caption =   "2. Because your friends want you to eat/drink them"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/ caption =   "3. Because it helps you enjoy a party"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/ caption =   "4. Because it helps you when you feel depressed or nervous"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/ caption =   "5. To be sociable"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/ caption =   "6. To cheer up when you are in a bad mood"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/ caption =   "7. Because you like the feeling"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/ caption =   "8. So that others won’t kid you about not eating or drinking these items"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/ caption =   "9. Because it’s exciting"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/ caption =   "10. To get ‘‘high-like’’ feelings"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/ caption =   "11. Because it makes social gatherings more fun"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/ caption =   "12. To fit in with a group you like"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/ caption =   "13. Because it gives you a pleasant feeling"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q14>
+/ caption =   "14. Because it improves parties and celebrations"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q15>
+/ caption =   "15. Because you feel more self-confident and sure of yourself"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+Question 15 was omitted from the analyses due to poor factor
+loading, consistent with a recent validation study of the DMQ-R
+
+revised: "Because it helps to lower my stress" (Note: this item is run by the T-PEMS by And et al, 2018)
+
+
+
+
+<radiobuttons q16>
+/ caption =   "16. To celebrate a special occasion with friends"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q17>
+/ caption =   "17. To forget about your problems"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q18>
+/ caption =   "18. Because it’s fun"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q19>
+/ caption =   "19. To be liked"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q20>
+/ caption =   "20. So you won’t feel left out"
+/ options =   ("Almost never/<br>Never",  "Some<br>of the time", "Half<br>of the time", "Most<br>of the time", "Almost always/<br>Always")
+/ optionvalues =   ("1", "2", "3", "4", "5")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage PEMS_1>
+/ caption =   "Below is a list of reasons that people sometimes give for eating tasty foods and drinks such as:<br><br>
+&bull; Sweets like chocolate, doughnuts, cookies, cake, candy, ice cream, other desserts.<br>
+&bull; Salty snacks like chips, pretzels, and crackers.<br>
+&bull; Fast foods like hamburgers, cheeseburgers, pizza, fried chicken and French fries.<br>
+&bull; Sugary drinks like soda, sweet tea, milkshakes, and sweet coffee drinks.<br><br>
+Thinking of all the times you ate these kinds of foods/drinks, how often would you say that you ate/drank them for each of
+the following reasons? Select the answer that best describes you.<br>"
+/ subcaption =   ""
+/ questions =   [1 = q1]
+</surveypage>
+
+<surveypage PEMS_2>
+/ caption =   ""
+/ subcaption =   ""
+/ questions =   [1 = q2,q3,q4,q5]
+</surveypage>
+
+<surveypage PEMS_3>
+/ caption =   ""
+/ subcaption =   ""
+/ questions =   [1 = q6,q7,q8,q9]
+</surveypage>
+
+<surveypage PEMS_4>
+/ caption =   ""
+/ subcaption =   ""
+/ questions =   [1 = q10,q11,q12,q13]
+</surveypage>
+
+<surveypage PEMS_5>
+/ caption =   ""
+/ subcaption =   ""
+/ questions =   [1 = q14,q15,q16,q17]
+</surveypage>
+
+<surveypage PEMS_6>
+/ caption =   ""
+/ subcaption =   ""
+/ questions =   [1 = q18,q19,q20]
+</surveypage>
+
+
+
+
+
+
+
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+
+<survey PEMS>
+/ pages =   [
+	1 = PEMS_1;
+	2 = PEMS_2;	
+	3 = PEMS_3;	
+	4 = PEMS_4;
+	5 = PEMS_5;	
+	6 = PEMS_6;	
+]
+/ screencapture =   false
+/ fontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle =   ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle =   ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ showpagenumbers =   false
+/ showquestionnumbers =   false
+/ navigationbuttonfontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize =   (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition =   (70%, 90%)
+/ finishlabel =   "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

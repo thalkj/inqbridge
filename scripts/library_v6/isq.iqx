@@ -1,0 +1,394 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*Immune Status Questionnaire (ISQ)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 10-06-2021
+last updated:  02-23-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-23-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the Immune Status Questionnaire (ISQ)
+
+Reference
+Wilod Versprille LJF, van de Loo AJAE, Mackus M, et al. Development and validation of the  Immune Status Questionnaire (ISQ). 
+Int J Environ Res Public Health.2019;16(23):4743. 
+Licensee MDPI, Basel, Switzerland. Creative Commons Attribution (CC BY) license 
+(http://creativecommons.org/licenses/by/4.0/).
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+7 5-point Likert type questions regarding experienced symptoms over the past 12 months 
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'ISQ.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		 with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale:
+									R = automatically reversed scored questions
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'ISQ_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 					Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+ISQ_rawScore:					0 - 28								
+									
+Interpretation: 0 = very poor, 10 excellent perceived immune status. 
+Cut off for reduced immune functioning: ISQ < 6.	
+
+ISQ_finalScore:					Range 0-10								
+
+Wilod Versprille et al. (2019) recommended also assessing current immune and health status in conjunction with the ISQ. 
+Question A assess percieved immune functioning and Question B assess perceived general health rated on 
+a scale from 0 = very poor, 10 = excellent.
+Question C assess perceived reduced immune fitness at this moment (response options: yes or no). Question D asks 
+participants whether they have a chornic disease (response options: yes or no). If participants answer yes to this 
+question they are asked to specify the chronic disease. 
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________								
+
+Each of the 7 questions is scored on a scale from 0 (never) to 4 (almost always).
+The raw score (0-28) is then converted to a final score (0-10) according to the following guidelines:
+	expressions.ISQ_rawScore >= 15 => Final Score = 0;
+	expressions.ISQ_rawScore = 14 => Final Score = 1;
+	expressions.ISQ_rawScore = 13 => Final Score = 2
+	expressions.ISQ_rawScore = 11 OR 12 => Final Score = 3
+	expressions.ISQ_rawScore = 10 => Final Score = 4
+	expressions.ISQ_rawScore = 8 OR 9) => Final Score = 5
+	expressions.ISQ_rawScore = 7 => Final Score = 6
+	expressions.ISQ_rawScore = 6 => Final Score = 7
+	expressions.ISQ_rawScore = 5 => Final Score = 8
+	expressions.ISQ_rawScore = 3 OR 4 => Final Score = 9
+	anything under 3 => Final Score = 10
+
+Interpretation: 0 = very poor, 10 excellent perceived immune status
+Cut off for reduced immune functioning: ISQ < 6.
+								
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+/quitinstructions:			the instructions to quit the questionnaire
+								Note: the quitcommand can be changed under DEFAULTS
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions1 = "Please indicate how often you have had the following complaints <u><b>in the past 12 months:<u><b>"
+/pageinstructions2 = "How you feel <u><b>at this moment?<u><b>"
+/quitinstructions = "To quit the questionnaire at any time, press Alt+E"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+</instruct>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+/ quitcommand = (Alt+18)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, 
+script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed,
+
+expressions.ISQ_rawScore, expressions.ISQ_finalScore,
+
+//raw data:
+radiobuttons.q1_highfever.response, radiobuttons.q2_Diarrhoea.response, 
+radiobuttons.q3_Headache.response, radiobuttons.q4_SkinProblem.response, radiobuttons.q5_musclepain.response,
+radiobuttons.q6_CommonCold.response, radiobuttons.q7_Coughing.response)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES/EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/ISQ_rawScore = radiobuttons.q1_highfever.response + radiobuttons.q2_Diarrhoea.response + 
+radiobuttons.q3_Headache.response + radiobuttons.q4_SkinProblem.response + radiobuttons.q5_musclepain.response +
+radiobuttons.q6_CommonCold.response + radiobuttons.q7_Coughing.response
+
+/ISQ_finalScore = {
+	if (expressions.ISQ_rawScore >= 15){
+		0;
+	} else if (expressions.ISQ_rawScore == 14){
+		1;
+	} else if (expressions.ISQ_rawScore == 13){
+		2;
+	} else if (expressions.ISQ_rawScore == 11 || expressions.ISQ_rawScore == 12){
+		3;
+	} else if (expressions.ISQ_rawScore == 10){
+		4;
+	} else if (expressions.ISQ_rawScore == 8 || expressions.ISQ_rawScore == 9){
+		5;
+	} else if (expressions.ISQ_rawScore == 7){
+		6;
+	} else if (expressions.ISQ_rawScore == 6){
+		7;
+	} else if (expressions.ISQ_rawScore == 5){
+		8;
+	} else if (expressions.ISQ_rawScore == 3 || expressions.ISQ_rawScore == 4){
+		9;
+	} else {
+		10;
+	}
+}
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_highfever>
+/caption = "Sudden high fever:"
+/ options = ("Never", "Sometimes", "Regularly", "Often", "(Almost) always")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_Diarrhoea>
+/caption = "Diarrhoea:"
+/ options = ("Never", "Sometimes", "Regularly", "Often", "(Almost) always")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_Headache>
+/caption = "Headache:"
+/ options = ("Never", "Sometimes", "Regularly", "Often", "(Almost) always")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_SkinProblem>
+/caption = "Skin problems (e.g. acne and eczema):"
+/ options = ("Never", "Sometimes", "Regularly", "Often", "(Almost) always")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_musclepain>
+/caption = "Muscle and joint pain:"
+/ options = ("Never", "Sometimes", "Regularly", "Often", "(Almost) always")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_CommonCold>
+/caption = "Common cold:"
+/ options = ("Never", "Sometimes", "Regularly", "Often", "(Almost) always")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_Coughing>
+/caption = "Coughing:"
+/ options = ("Never", "Sometimes", "Regularly", "Often", "(Almost) always")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<slider generalhealth>
+/ caption = "I score my general health the following grade (0 = very bad; 10 = very good)"
+/ fontstyle = ("Arial", 3.13%, false, false, false, false, 5, 1)
+/ labels = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ range = (0, 10)
+/ increment = 1
+/ slidersize = (50, 5)
+/ required = true
+</slider>
+
+<slider immunefunctioning>
+/ caption = "I score my immune functioning the following grade (0 = very bad; 10 = very good)"
+/ fontstyle = ("Arial", 3.13%, false, false, false, false, 5, 1)
+/ labels = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ range = (0, 10)
+/ increment = 1
+/ slidersize = (50, 5)
+/ required = true
+</slider>
+
+<radiobuttons reducedimmune>
+/ caption = "Do you have reduced immune functioning at this moment?"
+/ options = ("Yes", "No")
+/ required = true
+</radiobuttons>
+
+<radiobuttons chronicdisease>
+/ caption = "Do you have a chronic disease?"
+/ options = ("No")
+/ other = "If yes, please specify:"
+/ required = true
+</radiobuttons>
+
+<caption end>
+/ caption = "- END OF QUESTIONNAIRE -"
+/ position = (45%, 93%)
+/ fontstyle = ("Arial", 2%, false, true, false, false, 5, 1)
+/ txcolor = gray
+</caption>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage ISQ_1>
+/ caption ="<%parameters.pageinstructions1%>"
+/subcaption = "<%parameters.quitinstructions%>"
+/ questions = [1 = q1_highfever, q2_Diarrhoea, q3_Headache, q4_SkinProblem]
+</surveypage>
+
+<surveypage ISQ_2>
+/ caption ="<%parameters.pageinstructions1%>"
+/subcaption = "<%parameters.quitinstructions%>"
+/ questions = [1 = q5_musclepain, q6_CommonCold, q7_Coughing]
+</surveypage>
+
+<surveypage CurrentImmuneandHealthStatus_1>
+/ caption ="<%parameters.pageinstructions2%>"
+/subcaption = "<%parameters.quitinstructions%>"
+/ questions = [1 = generalhealth, immunefunctioning]
+</surveypage>
+
+<surveypage CurrentImmuneandHealthStatus_2>
+/ caption ="<%parameters.pageinstructions2%>"
+/subcaption = "<%parameters.quitinstructions%>"
+/ questions = [1 = reducedimmune, chronicdisease, end]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey isq>
+/pages = [
+	1 = ISQ_1;
+	2 = ISQ_2;
+	3 = CurrentImmuneandHealthStatus_1;
+	4 = CurrentImmuneandHealthStatus_2
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Submit"
+</survey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

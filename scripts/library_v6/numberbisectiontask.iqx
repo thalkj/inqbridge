@@ -1,0 +1,1818 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+										Number Bisection Task
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 09-06-2018
+last updated:  02-25-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-25-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Number Bisection Task based on:
+
+Nuerk, H., Geppert, B., van Herten, M., & Willmes, K. (2002). On the impact of
+different number representations in the number bisection task. Cortex, 1,
+691–715.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+Participants view a series of triplets of numbers (e.g. 5-7-9), each presented for max.3s, 
+and have to decide whether the center number is the arithmetic mean of the flanking numbers.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+The default set-up runs appr. 45 minutes
+Practice block: 32 trials => appr. 3 minutes
+Test block: 72 trials => appr. 7 minutes 
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'numberbisectiontask_raw*.iqdat'*
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block. 										
+
+blockcount:							block count (for test blocks only)									
+trialcount:							number of test trials run in the current block
+bisectionality:						1 = bisectional; 2 = non-bisectional
+
+multiplicativity:					for bisectional problems only: 
+									1 = multiplication triplets from a number sequence (e.g. 2-4-6, 14-21-28); 
+									2 = otherwise (e.g. 3-8-13)
+									
+bisectionTaskRange:					for bisectional problems only: 
+									1 = difference btw. the target numbers ('outer numbers') is btw. 2-8 (e.g. 4-7-10 => 10-4 = 6)
+									2 = difference btw. the target numbers ('outer' numbers) is btw. 12-18 (e.g. 4-12-20 => 20-4 = 16)
+									
+bisectionPossibility:				for non-bisectional problems only:
+									1 = the actual arithmetic mean of the target numbers (=mean of first and third number) is an integer (e.g. 4-8-10; (4+10)/2 = 7)
+									2 = otherwise (e.g. 4-7-9 => (4+9)/2 = 6.5)
+									
+distance:							for non-bisectional problems only:
+									1 = the absolute difference btw. the actual mean of the target numbers (=mean of first and third number) 
+									and the provided arithmetic mean (= the second number) is 0.5-1.5 (e.g. 3-6-7; (3+7)/2=5; 6-5 = 1)
+									2 = the absolute difference btw. the actual mean of the target numbers (=mean of first and third number) 
+									and the provided arithmetic mean (= the second number) is 2-8	(e.g. 12-18-20; (12+20)/2=16; 18-16 = 2)								
+																		
+stimulusitem:						the presented number triplet
+
+response:							scancode of response button (0 = no response)
+										18 = E => yes
+										23 = I => no
+										
+resp:								"yes" vs. "no" vs " " (empty = no response)
+correct:							accuracy of response: 1 = correct response; 0 = otherwise
+latency: 							the response latency (in ms); measured from: measured from: onset of number triplets
+
+
+(2) Summary data file: 'numberbisectiontask_summary*.iqdat'*
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+Note: mean response times are based on correct responses with latencies >= 200
+
+propCorrect_practice:						proportion correct during practice
+meanRT_practice:							mean response time of correct responses during practice
+
+propCorrect_bisectional_multi_small:		proportion correct responses for bisectional, 'multiplication-triplets' problems with a small task range
+meanRT_bisectional_multi_small:				mean response time (in ms) of correct responses for bisectional, 'multiplication-triplets' problems with a small task range
+propCorrect_bisectional_multi_wide:			proportion correct responses for bisectional, 'multiplication-triplets' problems with a wide task range
+meanRT_bisectional_multi_wide:				mean response time (in ms) of correct responses for bisectional, 'multiplication-triplets' problems with a wide task range
+propCorrect_bisectional_nonmulti_small:		proportion correct responses for bisectional, 'non-multiplication-triplets' problems with a small task range
+meanRT_bisectional_nonmulti_small:			mean response time (in ms) of correct responses for bisectional, 'non-multiplication-triplets' problems with a small task range
+propCorrect_bisectional_nonmulti_wide:		proportion correct responses for bisectional, 'nonmultiplication-triplets' problems with a wide task range
+meanRT_bisectional_nonmulti_wide:			mean response time (in ms) of correct responses for bisectional, 'non-multiplication-triplets' problems with a wide task range
+
+propCorrect_nonbisectional_possible_near:	proportion correct responses for nonbisectional, 'possible mean' problems with a near distance of suggested mean to actual mean
+meanRT_nonbisectional_possible_near:		mean response time (in ms) of correct responses for nonbisectional, 'possible mean' problems with a near distance of suggested mean to actual mean
+propCorrect_nonbisectional_possible_far:	proportion correct responses for nonbisectional, 'possible mean' problems with a far distance of suggested mean to actual mean
+meanRT_nonbisectional_possible_far:			mean response time (in ms) of correct responses for nonbisectional, 'possible mean' problems with a far distance of suggested mean to actual mean
+propCorrect_nonbisectional_impossible_near:	proportion correct responses for nonbisectional, 'impossible mean' problems with a near distance of suggested mean to actual mean
+meanRT_nonbisectional_impossible_near:		mean response time (in ms) of correct responses for nonbisectional, 'impossible mean' problems with a near distance of suggested mean to actual mean
+propCorrect_nonbisectional_impossible_far:	proportion correct responses for nonbisectional, 'impossible mean' problems with a far distance of suggested mean to actual mean
+meanRT_nonbisectional_impossible_far:		mean response time (in ms) of correct responses for nonbisectional, 'impossible mean' problems with a far distance of suggested mean to actual mean
+
+
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+1. Practice: 32 trials
+* 16 bisectional triplets (range: 2-18); 16 non-bisectional triplets (range: 2-18)
+* triplets presented randomly
+* performance feedback provided for 1000s
+
+Trial Sequence:
+* presentation of triplets: max. 3000ms (terminates with response)
+* feedback for 1000ms
+* interstimulus interval of 1.5s in between triplets (presents a fixation cross)
+(Note: the SOA during practice is variable due to the feedback presentation)
+
+
+2. Test:
+* 5 Blocks of 72 trials each = 360 trials total
+* each blocks runs 9 trials of each of the 8 possible trials
+(trial.bisectional_multi_small...trial.nonbisectional_impossible_far)
+* order of trials is selected randomly (as is the selection of the triplets)
+* no feedback
+
+Trial Sequence:
+* A new triplet appears with a stimulus onset asynchrony (SOA) of 4.5s
+* each triplet is presented for max. 3s (= response window)
+* interstimulus interval of min. 1.5s in between triplets (presents a fixation cross)
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+Test Triplets: This script uses the 360 triplets provided by Nuerk et al (2002)
+the size can be fine-tuned under section Editable Parameters
+
+Practice Triplets: the practice triplets are novel triplets generated by Millisecond Software (none of the practice
+triplets are used during the test)
+- half of the practice triplets (16) are bisectional triplets (range: 2, 4, 6, 8, 10, 12, 18; two of each)
+- half of the practice triplets (16) are non-bisectional triplets (range: 2, 4, 6, 8, 10, 12, 18; two of each)
+
+all triplets can be edited under section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+provided by Millisecond Software - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/numberOfPracticeTrials:			the number of practice trials to run (default: 32)
+										Notes: 
+											(1) the number should be divisible by 2
+											(2) for numbers > 32, triplets will be repeated
+											(3) for numbers < 32, the randomly selected ranges of the triplets (range = difference btw. outer numbers)
+											might not be balanced across bisectionable and non-bisectionable triplets
+											To get a balanced number of ranges, consider reducing the appropriate item lists under
+											section Editable Stimuli (item.practice_bisect; item.practice_nonbisect)
+										
+/numberOfTestBlocks:				the number of test blocks to run (default: 5); each testblocks runs 72 trials
+										Notes:
+											(1) for numbers > 5, triplets will be repeated
+											(2) for numbers < 5, randomly chosen triplets will not be the same across participants.
+											To get the same triplets for all participants, consider reducing the appropriate item lists under
+											section Editable Stimuli.
+
+/stimPresentationTime:				maximum stimulus presentation time in ms (default: 3000ms) => response window
+
+/ISI:								minimum interstimulus interval in ms (default: 1500ms)
+										Note: a new triplet appears every 4.5s (SOA= 3000ms + 1500ms)
+									
+/minLatency:						the minimum response time that is considered a valid response time (default: 200ms)
+
+/stimSize:							the proportional size of the triplets (relative to canvas) (default: 7%)
+/fixationSize:						the proportional size of the fixation cross (relative to canvas) (default: 7%)
+
+Responsekeys: see Tools -> Keyboard Scancodes
+/responsekey_yes:					the 'yes' response button (here: "E"); left response key										
+/responsekey_no:					the 'no' response button (here: "I"); right response key
+
+									Note: for this script to operate correctly on touchscreen devices,
+									the 'yes' response key should be located left to the 'no' key.
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/numberOfPracticeTrials = 32
+/numberOfTestBlocks = 5
+
+/stimPresentationTime = 3000
+/ISI = 1500
+/minLatency = 200
+
+/stimSize = 7%
+/fixationSize = 7%
+
+/responsekey_yes = "E"
+/responsekey_no = "I"
+</parameters>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+***************************************************
+practice items: not original to Nuerk et al (2002)
+***************************************************
+
+items 1-2: range 4
+items 3-4: range 6
+items 5-6: range 8
+items 7-8: range 10
+items 9-10: range 12
+items 11-12: range 14
+items 13-14: range 16
+items 15-16: range 18
+<item practice_bisect>
+/1="59_61_63"
+/2="1_3_5"
+/3="79_82_85"
+/4="49_52_55"
+/5="54_58_62"
+/6="55_59_63"
+/7="63_68_73"
+/8="29_34_39"
+/9="5_11_17"
+/10="13_19_25"
+/11="79_86_93"
+/12="15_22_29"
+/13="55_63_71"
+/14="15_23_31"
+/15="39_48_57"
+/16="28_37_46"
+</item>
+
+items 1-2: range 4
+items 3-4: range 6
+items 5-6: range 8
+items 7-8: range 10
+items 9-10: range 12
+items 11-12: range 14
+items 13-14: range 16
+items 15-16: range 18
+<item practice_nonbisect>
+/1="78_81_82"
+/2="59_60_63"
+/3="10_12_16"
+/4="48_50_54"
+/5="53_60_61"
+/6="67_69_75"
+/7="1_4_11"
+/8="38_40_48"
+/9="37_45_49"
+/10="75_83_87"
+/11="14_19_28"
+/12="76_81_90"
+/13="20_35_36"
+/14="8_17_24"
+/15="2_8_20"
+/16="62_67_80"
+</item>
+
+***************************************************
+test items: original to Nuerk et al (2002)
+***************************************************
+
+/bisectionality:				1 = bisectional
+/multiplicativity:				1 = multiplication triplets from a number sequence (e.g. 2-4-6, 14-21-28); 
+/bisectionTaskRange:			1 = difference btw. the target numbers ('outer numbers') is btw. 2-8 (e.g. 4-7-10 => 10-4 = 6)
+<item bisect_multi_small>
+/1="2_4_6"
+/2="3_6_9"
+/3="6_9_12"
+/4="8_10_12"
+/5="9_12_15"
+/6="10_12_14"
+/7="16_18_20"
+/8="18_21_24"
+/9="20_22_24"
+/10="21_24_27"
+/11="22_24_26"
+/12="24_26_28"
+/13="24_27_30"
+/14="27_30_33"
+/15="28_30_32"
+/16="30_33_36"
+/17="33_36_39"
+/18="36_39_42"
+/19="39_42_45"
+/20="44_48_52"
+/21="45_48_51"
+/22="48_52_56"
+/23="51_54_57"
+/24="52_56_60"
+/25="54_57_60"
+/26="56_60_64"
+/27="57_60_63"
+/28="58_60_62"
+/29="63_66_69"
+/30="64_68_72"
+/31="68_72_76"
+/32="69_72_75"
+/33="72_75_78"
+/34="75_78_81"
+/35="78_81_84"
+/36="80_84_88"
+/37="81_84_87"
+/38="84_86_88"
+/39="84_88_92"
+/40="86_88_90"
+/41="87_90_93"
+/42="88_90_92"
+/43="88_92_96"
+/44="90_93_96"
+/45="93_96_99"
+</item>
+
+/bisectionality:				1 = bisectional
+/multiplicativity:				1 = multiplication triplets from a number sequence (e.g. 2-4-6, 14-21-28); 
+/bisectionTaskRange:			2 = difference btw. the target numbers ('outer' numbers) is btw. 12-18 (e.g. 4-12-20 => 20-4 = 16)
+<item bisect_multi_wide>
+/1="6_12_18"
+/2="7_14_21"
+/3="8_16_24"
+/4="9_18_27"
+/5="12_18_24"
+/6="14_21_28"
+/7="16_24_32"
+/8="18_24_30"
+/9="18_27_36"
+/10="21_28_35"
+/11="24_30_36"
+/12="24_32_40"
+/13="27_36_45"
+/14="28_35_42"
+/15="30_36_42"
+/16="32_40_48"
+/17="35_42_49"
+/18="36_42_48"
+/19="36_45_54"
+/20="40_48_56"
+/21="42_48_54"
+/22="42_49_56"
+/23="45_54_63"
+/24="48_54_60"
+/25="48_56_64"
+/26="49_56_63"
+/27="54_60_66"
+/28="54_63_72"
+/29="56_63_70"
+/30="56_64_72"
+/31="60_66_72"
+/32="63_70_77"
+/33="63_72_81"
+/34="64_72_80"
+/35="66_72_78"
+/36="70_77_84"
+/37="72_78_84"
+/38="72_80_88"
+/39="72_81_90"
+/40="77_84_91"
+/41="78_84_90"
+/42="80_88_96"
+/43="81_90_99"
+/44="84_90_96"
+/45="84_91_98"
+</item>
+
+/bisectionality:				1 = bisectional
+/multiplicativity:				2 = multiplication triplets NOT from a number sequence (e.g. 2-4-6, 14-21-28);  (e.g. 3-8-13)
+/bisectionTaskRange:			1 = difference btw. the target numbers ('outer numbers') is btw. 2-8 (e.g. 4-7-10 => 10-4 = 6)
+<item bisect_nonmulti_small>
+/1="7_10_13"
+/2="9_11_13"
+/3="10_13_16"
+/4="10_14_18"
+/5="14_18_22"
+/6="15_17_19"
+/7="20_23_26"
+/8="22_25_28"
+/9="22_26_30"
+/10="26_29_32"
+/11="26_30_34"
+/12="28_31_34"
+/13="29_31_33"
+/14="34_37_40"
+/15="37_39_41"
+/16="38_41_44"
+/17="39_41_43"
+/18="40_43_46"
+/19="42_46_50"
+/20="46_50_54"
+/21="49_51_53"
+/22="50_53_56"
+/23="52_55_58"
+/24="53_55_57"
+/25="56_59_62"
+/26="57_59_61"
+/27="58_61_64"
+/28="58_62_66"
+/29="61_63_65"
+/30="62_65_68"
+/31="62_66_70"
+/32="64_67_70"
+/33="66_70_74"
+/34="70_73_76"
+/35="71_73_75"
+/36="73_76_79"
+/37="74_77_80"
+/38="74_78_82"
+/39="76_79_82"
+/40="77_80_83"
+/41="78_82_86"
+/42="86_89_92"
+/43="86_90_94"
+/44="88_91_94"
+/45="92_95_98"
+</item>
+
+/bisectionality:				1 = bisectional
+/multiplicativity:				2 = multiplication triplets NOT from a number sequence (e.g. 2-4-6, 14-21-28);  (e.g. 3-8-13)
+/bisectionTaskRange:			2 = difference btw. the target numbers ('outer' numbers) is btw. 12-18 (e.g. 4-12-20 => 20-4 = 16)
+<item bisect_nonmulti_wide>
+/1="3_9_15"
+/2="4_10_16"
+/3="6_15_24"
+/4="7_16_25"
+/5="8_14_20"
+/6="8_17_26"
+/7="10_16_22"
+/8="12_21_30"
+/9="15_21_27"
+/10="16_25_34"
+/11="22_30_38"
+/12="34_42_50"
+/13="37_45_53"
+/14="38_46_54"
+/15="39_45_51"
+/16="41_47_53"
+/17="41_49_57"
+/18="42_50_58"
+/19="44_50_56"
+/20="45_51_57"
+/21="46_52_58"
+/22="46_53_60"
+/23="48_55_62"
+/24="50_56_62"
+/25="50_57_64"
+/26="50_58_66"
+/27="51_57_63"
+/28="52_58_64"
+/29="52_60_68"
+/30="54_61_68"
+/31="58_65_72"
+/32="60_67_74"
+/33="62_69_76"
+/34="64_71_78"
+/35="67_76_85"
+/36="68_75_82"
+/37="70_78_86"
+/38="72_79_86"
+/39="74_81_88"
+/40="74_82_90"
+/41="76_83_90"
+/42="79_88_97"
+/43="80_87_94"
+/44="80_89_98"
+/45="82_89_96"
+</item>
+
+/bisectionality:				2 = non-bisectional
+/bisectionPossibility:			1 = the actual arithmetic mean of the target numbers (=mean of first and third number) is an integer (e.g. 4-8-10; (4+10)/2 = 7)
+/distance:						1 = the absolute difference btw. the actual mean of the target numbers (=mean of first and third number) 
+									and the provided arithmetic mean (= the second number) is 0.5-1.5 (e.g. 3-6-7; (3+7)/2=5; 6-5 = 1)
+<item nonbisect_possible_near>
+/1="1_5_11"
+/2="2_10_16"
+/3="4_10_18"
+/4="19_25_29"
+/5="20_23_28"
+/6="25_31_35"
+/7="26_28_32"
+/8="28_32_34"
+/9="30_32_36"
+/10="30_34_36"
+/11="31_35_41"
+/12="31_37_41"
+/13="33_37_43"
+/14="33_39_43"
+/15="43_50_55"
+/16="43_51_57"
+/17="46_47_50"
+/18="46_49_50"
+/19="47_53_61"
+/20="47_55_61"
+/21="48_49_52"
+/22="48_51_52"
+/23="48_53_60"
+/24="48_55_60"
+/25="49_50_53"
+/26="50_56_64"
+/27="50_58_64"
+/28="53_60_65"
+/29="54_55_58"
+/30="55_60_67"
+/31="56_61_68"
+/32="56_63_68"
+/33="58_63_66"
+/34="58_63_70"
+/35="66_69_74"
+/36="68_71_76"
+/37="68_77_84"
+/38="70_75_78"
+/39="71_76_79"
+/40="78_87_94"
+/41="79_86_95"
+/42="81_90_97"
+/43="82_89_98"
+/44="83_90_99"
+/45="91_94_99"
+</item>
+
+/bisectionality:				2 = non-bisectional
+/bisectionPossibility:			1 = the actual arithmetic mean of the target numbers (=mean of first and third number) is an integer (e.g. 4-8-10; (4+10)/2 = 7)
+/distance:						2 = the absolute difference btw. the actual mean of the target numbers (=mean of first and third number) 
+									and the provided arithmetic mean (= the second number) is 2-8	(e.g. 12-18-20; (12+20)/2=16; 18-16 = 2)								
+<item nonbisect_possible_far>
+/1="6_7_12"
+/2="10_11_16"
+/3="13_14_19"
+/4="17_18_23"
+/5="17_20_27"
+/6="19_21_29"
+/7="21_22_27"
+/8="26_27_32"
+/9="30_31_36"
+/10="38_40_54"
+/11="39_40_55"
+/12="39_41_49"
+/13="40_54_56"
+/14="40_57_58"
+/15="41_56_57"
+/16="42_46_58"
+/17="45_56_57"
+/18="46_47_58"
+/19="46_57_58"
+/20="47_48_59"
+/21="47_49_55"
+/22="47_58_59"
+/23="47_60_61"
+/24="48_50_56"
+/25="49_56_57"
+/26="50_51_58"
+/27="50_57_58"
+/28="52_54_60"
+/29="53_58_59"
+/30="53_59_61"
+/31="54_56_66"
+/32="55_56_63"
+/33="55_66_67"
+/34="56_62_64"
+/35="60_74_76"
+/36="62_63_68"
+/37="68_70_86"
+/38="71_84_85"
+/39="72_73_78"
+/40="72_74_86"
+/41="73_90_91"
+/42="74_76_88"
+/43="74_90_92"
+/44="78_80_88"
+/45="81_89_91"
+</item>
+
+/bisectionality:				2 = non-bisectional
+/bisectionPossibility:			2 = the actual arithmetic mean of the target numbers (=mean of first and third number) is NOT an integer (e.g. 4-8-10; (4+10)/2 = 7)
+/distance:						1 = the absolute difference btw. the actual mean of the target numbers (=mean of first and third number) 
+									and the provided arithmetic mean (= the second number) is 0.5-1.5 (e.g. 3-6-7; (3+7)/2=5; 6-5 = 1)
+<item nonbisect_impossible_near>
+/1="3_6_10"
+/2="5_8_10"
+/3="9_15_20"
+/4="10_17_21"
+/5="13_23_30"
+/6="18_22_25"
+/7="18_26_35"
+/8="22_32_39"
+/9="23_26_30"
+/10="23_27_30"
+/11="25_32_42"
+/12="25_34_42"
+/13="28_33_35"
+/14="29_36_46"
+/15="40_42_45"
+/16="40_44_45"
+/17="44_52_57"
+/18="46_53_57"
+/19="48_55_61"
+/20="49_52_58"
+/21="49_53_58"
+/22="49_54_58"
+/23="49_55_58"
+/24="49_55_62"
+/25="49_56_62"
+/26="51_60_68"
+/27="54_62_69"
+/28="57_64_72"
+/29="59_62_68"
+/30="60_61_65"
+/31="62_63_67"
+/32="62_64_67"
+/33="63_68_76"
+/34="64_65_69"
+/35="64_66_69"
+/36="64_66_71"
+/37="64_68_73"
+/38="66_74_79"
+/39="70_72_75"
+/40="79_84_90"
+/41="80_88_95"
+/42="82_90_99"
+/43="83_88_90"
+/44="87_90_94"
+/45="90_94_99"
+</item>
+
+/bisectionality:				2 = non-bisectional
+/bisectionPossibility:			2 = otherwise (e.g. 4-7-9 => (4+9)/2 = 6.5)
+/distance:						2 = the absolute difference btw. the actual mean of the target numbers (=mean of first and third number) 
+									and the provided arithmetic mean (= the second number) is 2-8	(e.g. 12-18-20; (12+20)/2=16; 18-16 = 2)								
+<item nonbisect_impossible_far>
+/1="6_14_15"
+/2="12_20_21"
+/3="14_22_23"
+/4="16_24_25"
+/5="18_26_27"
+/6="20_21_29"
+/7="30_31_39"
+/8="30_38_39"
+/9="33_42_44"
+/10="36_38_47"
+/11="40_41_49"
+/12="40_48_49"
+/13="41_42_54"
+/14="41_49_50"
+/15="41_53_54"
+/16="43_46_58"
+/17="43_54_58"
+/18="44_52_53"
+/19="45_46_54"
+/20="45_46_58"
+/21="45_48_58"
+/22="45_55_58"
+/23="45_56_58"
+/24="46_47_55"
+/25="47_57_58"
+/26="48_49_57"
+/27="48_49_59"
+/28="49_57_58"
+/29="49_62_64"
+/30="50_51_59"
+/31="51_52_62"
+/32="51_52_66"
+/33="51_54_66"
+/34="51_61_62"
+/35="57_58_66"
+/36="59_60_68"
+/37="60_68_69"
+/38="61_62_70"
+/39="64_72_73"
+/40="69_80_82"
+/41="80_81_89"
+/42="80_82_97"
+/43="80_88_89"
+/44="90_91_99"
+/45="90_98_99"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ navigationbuttonfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+</instruct>
+
+<item instructions>
+/1 = "
+<center><hr><h1>Welcome!</h1><hr></center><br>
+In this game you will be presented with a new triplet of numbers (e.g. 42_44_50) every 
+<%(parameters.stimPresentationTime + parameters.ISI)/1000%> seconds.<br><br>
+
+You have <%parameters.stimPresentationTime/1000%> seconds to decide whether the <b>center</b> number (here: <b>44</b>) 
+is the <i>arithmetic mean</i> of the numbers flanking it.<br><br>
+
+If it is the arithmetic mean press the '<%parameters.responsekey_yes%>' <%expressions.buttoninstruct1%> for YES.<br>
+If it is NOT the arithmetic mean press the '<%parameters.responsekey_no%>' <%expressions.buttoninstruct1%> for NO.<br><br>
+
+Press any response <%expressions.buttoninstruct1%> to continue with the instructions."
+/2 = "Consider the following triplet.<br><br>
+<center><div style='background-color:lightGray'><h1>16_19_22</h1></div><br>
+The <b>center</b> number <b>19</b> is the <i>arithmetic mean</i> of 16 and 22:<br>
+(16 + 22) ÷ 2 = 38 ÷ 2 = 19.<br><br>
+<b>Therefore you should press the 'yes' <%expressions.buttoninstruct1%> ('<%parameters.responsekey_yes%>')</b>.<br>
+Press the 'yes' <%expressions.buttoninstruct1%> now to continue.</center>"
+/3 = "Consider the following triplet.<br><br>
+<center><div style='background-color:lightGray'><h1>25_29_37</h1></div><br>
+The <b>center</b> number <b>29</b> is <b>NOT</b> the arithmetic mean of 25 and 37:<br>
+(25 + 37) ÷ 2 = 62 ÷ 2 = 31.<br><br>
+<b>Therefore you should press the 'no' <%expressions.buttoninstruct1%> ('<%parameters.responsekey_no%>')</b>.<br>
+Press the 'no' <%expressions.buttoninstruct1%> now to start a practice session.</center>"
+/4 = "<hr><center><h1>Practice</h1></center><hr><br>
+Let's practice this task.<br><br> 
+Put your fingers on the '<%parameters.responsekey_yes%>' and '<%parameters.responsekey_no%>' <%expressions.buttoninstruct1%>s 
+and press one of these response keys to start practice.<br><br><br>"
+/5 = "<hr><center><h1>Test</h1></center><hr><br>
+Let's begin the actual task. It is just like practice but you will no longer get any feedback 
+and you will get more triplets to work with.<br><br>
+<center><div style='background-color:lightGray'><big><u>Remember:</u></big><br><br>
+A new triplet of numbers (e.g. 42_44_50) will be presented every <%(parameters.stimPresentationTime + parameters.ISI)/1000%> seconds.
+You have <%parameters.stimPresentationTime/1000%> seconds to decide whether the <b>center</b> number is 
+the <b>arithmetic mean</b> of the numbers flanking it.</div></center><br><br>
+Put your fingers on the '<%parameters.responsekey_yes%>' and '<%parameters.responsekey_no%>' <%expressions.buttoninstruct1%>s and press one of these response keys to start the task."
+/6 = "<center>Put your fingers on the '<%parameters.responsekey_yes%>' and '<%parameters.responsekey_no%>' 
+<%expressions.buttoninstruct1%>s and <br> press one of these response keys to continue.</center>"
+</item>
+
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {
+	"button";} else {"key";}
+/buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {
+	"Put your fingers on the ";} else {"key";}
+</expressions>
+
+<text goback>
+/ items = ("press 'B' to go back")
+/ fontstyle = ("Courier New", 2%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (40%, 2.5%)
+/ position = (50%, 95%)
+/ txcolor = gray
+</text>
+
+<text yes>
+/ items = ("yes")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ position = (25%, 90%)
+/ size = (20%, 5%)
+/ vjustify = center
+/ txcolor = gray
+</text>
+
+<text no>
+/ items = ("no")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ position = (75%, 90%)
+/ size = (20%, 5%)
+/ vjustify = center
+/ txcolor = gray
+</text>
+
+<text correctFeedback>
+/ items = ("Correct!")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (20%, 5%)
+/ vjustify = center
+/ txcolor = green
+</text>
+
+<text errorFeedback>
+/ items = ("Incorrect!")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (20%, 5%)
+/ vjustify = center
+/ txcolor = red
+</text>
+
+<text noresponseFeedback>
+/ items = ("Too slow")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (20%, 5%)
+/ vjustify = center
+/ txcolor = orange
+</text>
+
+<text blockinfo>
+/ items = ("Test Block <%values.blockcount%> of <%parameters.numberOfTestBlocks%>")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ position = (50%, 10%)
+/ size = (80%,5%)
+/ vjustify = center
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+values.blockcount, values.trialcount, values.bisectionality, values.multiplicativity, values.bisectionTaskRange, values.bisectionPossibility, values.distance,
+stimulusitem, stimulusnumber, response, values.resp, correct, latency)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.propCorrect_practice,
+expressions.meanRT_practice,							
+
+expressions.propCorrect_bisectional_multi_small,		
+expressions.meanRT_bisectional_multi_small,			
+expressions.propCorrect_bisectional_multi_wide,		
+expressions.meanRT_bisectional_multi_wide,				
+expressions.propCorrect_bisectional_nonmulti_small,	
+expressions.meanRT_bisectional_nonmulti_small,			
+expressions.propCorrect_bisectional_nonmulti_wide,		
+expressions.meanRT_bisectional_nonmulti_wide,			
+
+expressions.propCorrect_nonbisectional_possible_near,	
+expressions.meanRT_nonbisectional_possible_near,		
+expressions.propCorrect_nonbisectional_possible_far,	
+expressions.meanRT_nonbisectional_possible_far,		
+expressions.propCorrect_nonbisectional_impossible_near,	
+expressions.meanRT_nonbisectional_impossible_near,		
+expressions.propCorrect_nonbisectional_impossible_far,	
+expressions.meanRT_nonbisectional_impossible_far,		
+)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/trialcount:			number of test trials run in the current block
+/bisectionality:		1 = bisectional; 2 = non-bisectional
+/multiplicativity:		for bisectional problems only: 
+							1 = part of a multiplication set; 
+							2 = otherwise
+/bisectionTaskRange:	for bisectional problems only: 
+							1 = difference btw. the target numbers ('outer numbers') is btw. 2-8
+							2 = difference btw. the target numbers ('outer' numbers) is btw. 12-18
+/bisectionPossibility:	for non-bisectional problems only:
+							1 = the actual arithmetic mean of the target numbers (=mean of first and third number) is an integer (e.g. 4-8-10; (4+10)/2 = 7)
+							2 = otherwise (e.g. 4-7-9 => (4+9)/2 = 6.5)
+/distance:				for non-bisectional problems only:
+							1 = the difference btw. the actual and the provided arithmetic mean (= the second number) is 0.5-1.5
+							2 = the difference btw. the actual and the provided arithmetic mean (= the second number) is 2-8
+
+
+/resp:					"yes" vs. "no" vs " " (empty = no response)							
+							
+<values>
+/blockcount = 0
+/trialcount = 0
+/bisectionality = ""
+/multiplicativity = ""
+/bisectionTaskRange = ""
+/bisectionPossibility = ""
+/distance = ""
+
+/resp = ""
+/selectInstruct = 0
+/startInstruct = 0
+/endInstruct = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+/propCorrect_practice:						proportion correct responses during the practice trials
+/meanRT_practice:							mean response time (in ms) of correct responses in practice trials
+
+/propCorrect_bisectional_multi_small:		proportion correct responses for bisectional, 'multiplication-triplets' problems with a small task range
+/meanRT_bisectional_multi_small:			mean response time (in ms) of correct responses for bisectional, 'multiplication-triplets' problems with a small task range
+/propCorrect_bisectional_multi_wide:		proportion correct responses for bisectional, 'multiplication-triplets' problems with a wide task range
+/meanRT_bisectional_multi_wide:				mean response time (in ms) of correct responses for bisectional, 'multiplication-triplets' problems with a wide task range
+/propCorrect_bisectional_nonmulti_small:	proportion correct responses for bisectional, 'non-multiplication-triplets' problems with a small task range
+/meanRT_bisectional_nonmulti_small:			mean response time (in ms) of correct responses for bisectional, 'non-multiplication-triplets' problems with a small task range
+/propCorrect_bisectional_nonmulti_wide:		proportion correct responses for bisectional, 'nonmultiplication-triplets' problems with a wide task range
+/meanRT_bisectional_nonmulti_wide:			mean response time (in ms) of correct responses for bisectional, 'non-multiplication-triplets' problems with a wide task range
+
+/propCorrect_nonbisectional_possible_near:	proportion correct responses for nonbisectional, 'possible mean' problems with a near distance of suggested mean to actual mean
+/meanRT_nonbisectional_possible_near:		mean response time (in ms) of correct responses for nonbisectional, 'possible mean' problems with a near distance of suggested mean to actual mean
+/propCorrect_nonbisectional_possible_far:	proportion correct responses for nonbisectional, 'possible mean' problems with a far distance of suggested mean to actual mean
+/meanRT_nonbisectional_possible_far:		mean response time (in ms) of correct responses for nonbisectional, 'possible mean' problems with a far distance of suggested mean to actual mean
+/propCorrect_nonbisectional_impossible_near:	proportion correct responses for nonbisectional, 'impossible mean' problems with a near distance of suggested mean to actual mean
+/meanRT_nonbisectional_impossible_near:		mean response time (in ms) of correct responses for nonbisectional, 'impossible mean' problems with a near distance of suggested mean to actual mean
+/propCorrect_nonbisectional_impossible_far:	proportion correct responses for nonbisectional, 'impossible mean' problems with a far distance of suggested mean to actual mean
+/meanRT_nonbisectional_impossible_far:		mean response time (in ms) of correct responses for nonbisectional, 'impossible mean' problems with a far distance of suggested mean to actual mean
+
+
+<expressions>
+/propCorrect_practice = list.ACC_practice.mean
+/meanRT_practice = list.RT_practice.mean
+
+/propCorrect_bisectional_multi_small = list.ACC_bisect_multi_small.mean
+/meanRT_bisectional_multi_small = list.RT_bisect_multi_small.mean
+/propCorrect_bisectional_multi_wide = list.ACC_bisect_multi_wide.mean
+/meanRT_bisectional_multi_wide = list.RT_bisect_multi_wide.mean
+/propCorrect_bisectional_nonmulti_small = list.ACC_bisect_nonmulti_small.mean
+/meanRT_bisectional_nonmulti_small = list.RT_bisect_nonmulti_small.mean
+/propCorrect_bisectional_nonmulti_wide = list.ACC_bisect_nonmulti_wide.mean
+/meanRT_bisectional_nonmulti_wide = list.RT_bisect_nonmulti_wide.mean
+
+/propCorrect_nonbisectional_possible_near = list.ACC_nonbisect_possible_near.mean
+/meanRT_nonbisectional_possible_near = list.RT_nonbisect_possible_near.mean
+/propCorrect_nonbisectional_possible_far = list.ACC_nonbisect_possible_far.mean
+/meanRT_nonbisectional_possible_far = list.RT_nonbisect_possible_far.mean
+/propCorrect_nonbisectional_impossible_near = list.ACC_nonbisect_impossible_near.mean
+/meanRT_nonbisectional_impossible_near = list.RT_nonbisect_impossible_near.mean
+/propCorrect_nonbisectional_impossible_far = list.ACC_nonbisect_impossible_far.mean
+/meanRT_nonbisectional_impossible_far = list.RT_nonbisect_impossible_far.mean
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text instructions>
+/ items = instructions
+/ select = values.selectInstruct
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+</text>
+
+<trial instructions>
+/ ontrialbegin = [
+	text.goback.skip = false;
+	
+	if (values.selectInstruct == 1){
+		text.goback.skip = true;
+	}
+]
+/ stimulusframes = [1 = instructions, yes, no, goback]
+/ validresponse = ("B", parameters.responsekey_yes, parameters.responsekey_no)
+/ isvalidresponse = [
+	return (
+	(values.selectInstruct == 2 && trial.instructions.responseText == parameters.responsekey_yes) || 
+	(values.selectInstruct == 3 && trial.instructions.responseText == parameters.responsekey_no) ||	
+	((values.selectInstruct == 1 || values.selectInstruct == 4) && 
+	(trial.instructions.responseText ==parameters.responsekey_yes || trial.instructions.responseText == parameters.responsekey_no)) ||
+	(values.selectInstruct > 1 && trial.instructions.responseText == "B"));
+]
+/ branch = [
+	if (trial.instructions.responseText == "B"){
+		if (values.selectInstruct > values.startInstruct){
+			values.selectInstruct -= 1;
+			return trial.instructions;			
+		} else {
+			return trial.instructions;
+		}
+	} else if (values.selectInstruct < values.endInstruct){
+		values.selectInstruct += 1;
+		return trial.instructions;		
+	}
+
+]
+/ recorddata = false
+</trial>
+
+<trial startpractice>
+/ ontrialbegin = [
+	values.selectInstruct = 4;
+]
+/ stimulusframes = [1 = instructions, yes, no]
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ recorddata = false
+</trial>
+
+<trial start>
+/ stimulusframes = [1 = instructions, blockinfo, yes, no]
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ recorddata = false
+/ ontrialend = [
+	values.selectInstruct = 6;
+]
+</trial>
+
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text fixation>
+/ items = ("+")
+/ fontstyle = ("Arial", parameters.fixationSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.fixationSize*1.1)
+/ erase = false
+</text>
+
+<text bisect_multi_small>
+/ items = bisect_multi_small
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.stimSize*1.1)
+</text>
+
+<text bisect_multi_wide>
+/ items = bisect_multi_wide
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.stimSize*1.1)
+</text>
+
+<text bisect_nonmulti_small>
+/ items = bisect_nonmulti_small
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.stimSize*1.1)
+</text>
+
+<text bisect_nonmulti_wide>
+/ items = bisect_nonmulti_wide
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.stimSize*1.1)
+</text>
+
+<text nonbisect_possible_near>
+/ items = nonbisect_possible_near
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.stimSize*1.1)
+</text>
+
+<text nonbisect_possible_far>
+/ items = nonbisect_possible_far
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.stimSize*1.1)
+</text>
+
+<text nonbisect_impossible_near>
+/ items = nonbisect_impossible_near
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.stimSize*1.1)
+</text>
+
+<text nonbisect_impossible_far>
+/ items = nonbisect_impossible_far
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.stimSize*1.1)
+</text>
+
+<text practice_bisect>
+/ items = practice_bisect
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.stimSize*1.1)
+</text>
+
+<text practice_nonbisect>
+/ items = practice_nonbisect
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.stimSize*1.1)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_practice>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_practice>
+</list>
+
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_bisect_multi_small>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_bisect_multi_small>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_bisect_multi_wide>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_bisect_multi_wide>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_bisect_nonmulti_small>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_bisect_nonmulti_small>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_bisect_nonmulti_wide>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_bisect_nonmulti_wide>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_nonbisect_possible_near>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_nonbisect_possible_near>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_nonbisect_possible_far>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_nonbisect_possible_far>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_nonbisect_impossible_near>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_nonbisect_impossible_near>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_nonbisect_impossible_far>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_nonbisect_impossible_far>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	PRACTICE TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list selectPracticeTrial>
+/ items = (1, 2)
+/ replace = false
+/ poolSize = parameters.numberOfPracticeTrials
+</list>
+
+<trial selectPracticeTrial>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.bisectionality = "";
+	values.multiplicativity = "";
+	values.bisectionTaskRange = "";
+	values.bisectionPossibility = "";
+	values.distance = "";	
+]
+/ stimulusframes = [1 = clearScreen, fixation]
+
+//for touchscreens: present the inactive response buttons
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ isvalidresponse = [
+	return false;
+]
+
+/ ontrialend = [
+	values.bisectionality = list.selectPracticeTrial.nextValue;
+]
+/ branch = [
+	if (values.bisectionality == 1){
+		trial.practice_bisect;
+	} else {
+		trial.practice_nonbisect;
+	}
+]
+/ trialduration = parameters.ISI
+/ recorddata = false
+</trial>
+
+<trial practice_bisect>
+/ stimulustimes = [1 = practice_bisect, yes, no]
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ correctresponse = (parameters.responsekey_yes)
+/ timeout = parameters.stimPresentationTime
+/ ontrialend = [
+	list.ACC_practice.appendItem(trial.practice_bisect.correct);
+	if (trial.practice_bisect.correct && trial.practice_bisect.latency >= parameters.minLatency){
+		list.RT_practice.appendItem(trial.practice_bisect.latency);
+	}
+	if (trial.practice_bisect.responseText == parameters.responsekey_yes){
+		values.resp = "yes";
+	} else if (trial.practice_bisect.responseText == parameters.responsekey_no){
+		values.resp = "no";
+	} else {
+		values.resp = "";
+	}
+	
+	if (trial.practice_bisect.response == 0){
+		text.errorFeedback.skip = true;
+		text.correctFeedback.skip = true;
+		text.noresponseFeedback.skip = false;
+	} else if (trial.practice_bisect.correct){
+		text.errorFeedback.skip = true;
+		text.correctFeedback.skip = false;
+		text.noresponseFeedback.skip = true;		
+	} else {
+		text.errorFeedback.skip = false;
+		text.correctFeedback.skip = true;
+		text.noresponseFeedback.skip = true;		
+	}
+]
+/ branch = [
+	trial.practiceFeedback;
+]
+</trial>
+
+<trial practice_nonbisect>
+/ stimulustimes = [1 = practice_nonbisect, yes, no]
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ correctresponse = (parameters.responsekey_no)
+/ timeout = parameters.stimPresentationTime
+/ ontrialend = [
+	list.ACC_practice.appendItem(trial.practice_nonbisect.correct);
+	if (trial.practice_nonbisect.correct && trial.practice_nonbisect.latency >= parameters.minLatency){
+		list.RT_practice.appendItem(trial.practice_nonbisect.latency);
+	}
+
+	if (trial.practice_nonbisect.responseText == parameters.responsekey_yes){
+		values.resp = "yes";
+	} else if (trial.practice_nonbisect.responseText == parameters.responsekey_no){
+		values.resp = "no";
+	} else {
+		values.resp = "";
+	}
+	
+	if (trial.practice_nonbisect.response == 0){
+		text.errorFeedback.skip = true;
+		text.correctFeedback.skip = true;
+		text.noresponseFeedback.skip = false;
+	} else if (trial.practice_nonbisect.correct){
+		text.errorFeedback.skip = true;
+		text.correctFeedback.skip = false;
+		text.noresponseFeedback.skip = true;		
+	} else {
+		text.errorFeedback.skip = false;
+		text.correctFeedback.skip = true;
+		text.noresponseFeedback.skip = true;		
+	}	
+]
+/ branch = [
+	trial.practiceFeedback;
+]
+</trial>
+
+<trial practiceFeedback>
+/ stimulusframes = [1 = errorFeedback, correctFeedback, noresponseFeedback]
+
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)//for touchscreens: present inactive response buttons
+/ isvalidresponse = [
+	return false;
+]
+
+/ trialduration = 1000
+/ recorddata = false
+/ branch = [
+	trial.selectPracticeTrial;
+]
+</trial>
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TEST TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial fixation>
+/ stimulusframes = [1 = fixation]
+
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)//for touchscreens: present inactive response buttons
+/ isvalidresponse = [
+	return false;
+]
+
+/ trialduration = parameters.ISI
+/ recorddata = false
+</trial>
+
+
+<trial bisect_multi_small>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.bisectionality = 1;
+	values.multiplicativity = 1;
+	values.bisectionTaskRange = 1;
+	values.bisectionPossibility = "";
+	values.distance = "";
+]
+/ stimulustimes = [1 = bisect_multi_small, yes, no]
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ correctresponse = (parameters.responsekey_yes)
+/ trialduration = parameters.stimPresentationTime
+/ ontrialend = [
+	list.ACC_bisect_multi_small.appendItem(trial.bisect_multi_small.correct);
+	if (trial.bisect_multi_small.correct && trial.bisect_multi_small.latency >= parameters.minLatency){
+		list.RT_bisect_multi_small.appendItem(trial.bisect_multi_small.latency);
+	}
+	
+	if (trial.bisect_multi_small.responseText == parameters.responsekey_yes){
+		values.resp = "yes";
+	} else if (trial.bisect_multi_small.responseText == parameters.responsekey_no){
+		values.resp = "no";
+	} else {
+		values.resp = "";
+	}
+]
+/ branch = [
+	if (values.trialcount < 72){
+		return trial.fixation;
+	}
+]
+/ responsemessage = (anyresponse, clearScreen, 0)
+/ responsemessage = (anyresponse, text.fixation, 0)
+</trial>
+
+<trial bisect_multi_wide>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.bisectionality = 1;
+	values.multiplicativity = 1;
+	values.bisectionTaskRange = 2;
+	values.bisectionPossibility = "";
+	values.distance = "";
+]
+/ stimulustimes = [1 = bisect_multi_wide, yes, no]
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ correctresponse = (parameters.responsekey_yes)
+/ trialduration = parameters.stimPresentationTime
+/ ontrialend = [
+	list.ACC_bisect_multi_wide.appendItem(trial.bisect_multi_wide.correct);
+	if (trial.bisect_multi_wide.correct && trial.bisect_multi_wide.latency >= parameters.minLatency){
+		list.RT_bisect_multi_wide.appendItem(trial.bisect_multi_wide.latency);
+	}
+	if (trial.bisect_multi_wide.responseText == parameters.responsekey_yes){
+		values.resp = "yes";
+	} else if (trial.bisect_multi_wide.responseText == parameters.responsekey_no){
+		values.resp = "no";
+	} else {
+		values.resp = "";
+	}
+]
+/ branch = [
+	if (values.trialcount < 72){
+		return trial.fixation;
+	}
+]
+/ responsemessage = (anyresponse, clearScreen, 0)
+/ responsemessage = (anyresponse, text.fixation, 0)
+</trial>
+
+<trial bisect_nonmulti_small>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.bisectionality = 1;
+	values.multiplicativity = 2;
+	values.bisectionTaskRange = 1;
+	values.bisectionPossibility = "";
+	values.distance = "";
+]
+/ stimulustimes = [1 = bisect_nonmulti_small, yes, no]
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ correctresponse = (parameters.responsekey_yes)
+/ trialduration = parameters.stimPresentationTime
+/ ontrialend = [
+	list.ACC_bisect_nonmulti_small.appendItem(trial.bisect_nonmulti_small.correct);
+	if (trial.bisect_nonmulti_small.correct && trial.bisect_nonmulti_small.latency >= parameters.minLatency){
+		list.RT_bisect_nonmulti_small.appendItem(trial.bisect_nonmulti_small.latency);
+	}
+	if (trial.bisect_nonmulti_small.responseText == parameters.responsekey_yes){
+		values.resp = "yes";
+	} else if (trial.bisect_nonmulti_small.responseText == parameters.responsekey_no){
+		values.resp = "no";
+	} else {
+		values.resp = "";
+	}
+]
+/ branch = [
+	if (values.trialcount < 72){
+		return trial.fixation;
+	}
+]
+/ responsemessage = (anyresponse, clearScreen, 0)
+/ responsemessage = (anyresponse, text.fixation, 0)
+</trial>
+
+<trial bisect_nonmulti_wide>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.bisectionality = 1;
+	values.multiplicativity = 2;
+	values.bisectionTaskRange = 2;
+	values.bisectionPossibility = "";
+	values.distance = "";
+]
+/ stimulustimes = [1 = bisect_nonmulti_wide, yes, no]
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ correctresponse = (parameters.responsekey_yes)
+/ trialduration = parameters.stimPresentationTime
+/ ontrialend = [
+	list.ACC_bisect_nonmulti_wide.appendItem(trial.bisect_nonmulti_wide.correct);
+	if (trial.bisect_nonmulti_wide.correct && trial.bisect_nonmulti_wide.latency >= parameters.minLatency){
+		list.RT_bisect_nonmulti_wide.appendItem(trial.bisect_nonmulti_wide.latency);
+	}
+	if (trial.bisect_nonmulti_wide.responseText == parameters.responsekey_yes){
+		values.resp = "yes";
+	} else if (trial.bisect_nonmulti_wide.responseText == parameters.responsekey_no){
+		values.resp = "no";
+	} else {
+		values.resp = "";
+	}
+]
+/ branch = [
+	if (values.trialcount < 72){
+		return trial.fixation;
+	}
+]
+/ responsemessage = (anyresponse, clearScreen, 0)
+/ responsemessage = (anyresponse, text.fixation, 0)
+</trial>
+
+<trial nonbisect_possible_near>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.bisectionality = 2;
+	values.multiplicativity = "";
+	values.bisectionTaskRange = "";
+	values.bisectionPossibility = 1;
+	values.distance = 1;
+]
+/ stimulustimes = [1 = nonbisect_possible_near, yes, no]
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ correctresponse = (parameters.responsekey_no)
+/ trialduration = parameters.stimPresentationTime
+/ ontrialend = [
+	list.ACC_nonbisect_possible_near.appendItem(trial.nonbisect_possible_near.correct);
+	if (trial.nonbisect_possible_near.correct && trial.nonbisect_possible_near.latency >= parameters.minLatency){
+		list.RT_nonbisect_possible_near.appendItem(trial.nonbisect_possible_near.latency);
+	}
+	if (trial.nonbisect_possible_near.responseText == parameters.responsekey_yes){
+		values.resp = "yes";
+	} else if (trial.nonbisect_possible_near.responseText == parameters.responsekey_no){
+		values.resp = "no";
+	} else {
+		values.resp = "";
+	}
+]
+/ branch = [
+	if (values.trialcount < 72){
+		return trial.fixation;
+	}
+]
+/ responsemessage = (anyresponse, clearScreen, 0)
+/ responsemessage = (anyresponse, text.fixation, 0)
+</trial>
+
+<trial nonbisect_possible_far>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.bisectionality = 2;
+	values.multiplicativity = "";
+	values.bisectionTaskRange = "";
+	values.bisectionPossibility = 1;
+	values.distance = 2;
+]
+/ stimulustimes = [1 = nonbisect_possible_far, yes, no]
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ correctresponse = (parameters.responsekey_no)
+/ trialduration = parameters.stimPresentationTime
+/ ontrialend = [
+	list.ACC_nonbisect_possible_far.appendItem(trial.nonbisect_possible_far.correct);
+	if (trial.nonbisect_possible_far.correct && trial.nonbisect_possible_far.latency >= parameters.minLatency){
+		list.RT_nonbisect_possible_far.appendItem(trial.nonbisect_possible_far.latency);
+	}
+	if (trial.nonbisect_possible_far.responseText == parameters.responsekey_yes){
+		values.resp = "yes";
+	} else if (trial.nonbisect_possible_far.responseText == parameters.responsekey_no){
+		values.resp = "no";
+	} else {
+		values.resp = "";
+	}
+]
+/ branch = [
+	if (values.trialcount < 72){
+		return trial.fixation;
+	}
+]
+/ responsemessage = (anyresponse, clearScreen, 0)
+/ responsemessage = (anyresponse, text.fixation, 0)
+</trial>
+
+<trial nonbisect_impossible_near>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.bisectionality = 2;
+	values.multiplicativity = "";
+	values.bisectionTaskRange = "";
+	values.bisectionPossibility = 2;
+	values.distance = 1;
+]
+/ stimulustimes = [1 = nonbisect_impossible_near, yes, no]
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ correctresponse = (parameters.responsekey_no)
+/ trialduration = parameters.stimPresentationTime
+/ ontrialend = [
+	list.ACC_nonbisect_impossible_near.appendItem(trial.nonbisect_impossible_near.correct);
+	if (trial.nonbisect_impossible_near.correct && trial.nonbisect_impossible_near.latency >= parameters.minLatency){
+		list.RT_nonbisect_impossible_near.appendItem(trial.nonbisect_impossible_near.latency);
+	}
+	if (trial.nonbisect_impossible_near.responseText == parameters.responsekey_yes){
+		values.resp = "yes";
+	} else if (trial.nonbisect_impossible_near.responseText == parameters.responsekey_no){
+		values.resp = "no";
+	} else {
+		values.resp = "";
+	}
+]
+/ branch = [
+	if (values.trialcount < 72){
+		return trial.fixation;
+	}
+]
+/ responsemessage = (anyresponse, clearScreen, 0)
+/ responsemessage = (anyresponse, text.fixation, 0)
+</trial>
+
+<trial nonbisect_impossible_far>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.bisectionality = 2;
+	values.multiplicativity = "";
+	values.bisectionTaskRange = "";
+	values.bisectionPossibility = 2;
+	values.distance = 2;
+]
+/ stimulustimes = [1 = nonbisect_impossible_far, yes, no]
+/ validresponse = (parameters.responsekey_yes, parameters.responsekey_no)
+/ correctresponse = (parameters.responsekey_no)
+/ trialduration = parameters.stimPresentationTime
+/ ontrialend = [
+	list.ACC_nonbisect_impossible_far.appendItem(trial.nonbisect_impossible_far.correct);
+	if (trial.nonbisect_impossible_far.correct && trial.nonbisect_impossible_far.latency >= parameters.minLatency){
+		list.RT_nonbisect_impossible_far.appendItem(trial.nonbisect_impossible_far.latency);
+	}
+	if (trial.nonbisect_impossible_far.responseText == parameters.responsekey_yes){
+		values.resp = "yes";
+	} else if (trial.nonbisect_impossible_far.responseText == parameters.responsekey_no){
+		values.resp = "no";
+	} else {
+		values.resp = "";
+	}
+]
+/ branch = [
+	if (values.trialcount < 72){
+		return trial.fixation;
+	}
+]
+/ responsemessage = (anyresponse, clearScreen, 0)
+/ responsemessage = (anyresponse, text.fixation, 0)
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block instructions>
+/ onblockbegin = [
+	values.startInstruct = 1;
+	values.selectInstruct = values.startInstruct;
+	values.endInstruct = 3;
+]
+/ trials = [1 = instructions]
+</block>
+
+Note: block.practice runs
+* 16 practice trials (8 bisectional and 8 non-bisectional)
+<block practice>
+/ stop = [
+	values.trialcount > parameters.numberOfPracticeTrials;
+]
+/ onblockbegin = [
+	values.trialcount = 0;	
+]
+/ trials = [
+	1 = startpractice; 
+	2 = fixation; 
+	3 = trial.selectPracticeTrial;
+]
+/ onblockend = [
+	values.selectInstruct = 5;
+]
+</block>
+
+Note: block.NBT runs
+* 9  of each of the 8 test trials = 72 test trials per block
+<block NBT>
+/ onblockbegin = [
+	values.trialcount = 0;
+	values.blockcount += 1;
+]
+/ trials = [
+	1 = start; 
+	2 = fixation; 
+	3-74 = noreplace(trial.bisect_multi_small, trial.bisect_multi_wide, trial.bisect_nonmulti_small, trial.bisect_nonmulti_wide,
+	trial.nonbisect_impossible_far, trial.nonbisect_impossible_near, trial.nonbisect_possible_far, trial.nonbisect_possible_near);
+]
+/ branch = [
+	if (values.blockcount < parameters.numberOfTestBlocks){
+		return block.NBT;
+	}
+]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt numberBisection>
+/ blocks = [
+	1 = instructions;
+	2 = practice;
+	3 = NBT;
+	4 = finish;
+]
+</expt>
+
+<monkey>
+/ latencydistribution = normal(200, 100)
+</monkey>
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

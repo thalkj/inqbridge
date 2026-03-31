@@ -1,0 +1,382 @@
+﻿<usermanual>												
+___________________________________________________________________________________________________________________	
+
+					*THE SCREEN FOR POSTTRAUMATIC STRESS SYMPTOMS (SPTSS)  - Version 1.0*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-25-2014
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Screen for Posttraumatic Stress Symptoms (SPTSS) - Version 1.0 as described in:
+
+Carlson, E.B. (2001).Psychometric Study of a Brief Screen for PTSD:Assessing the Impact of Multiple Traumatic Events. 
+Assessment, 8, 431-441.
+
+A paper version of the SPTSS (version 1.0) was retrieved from:
+Carlson. (2012) . The Screen for Posttraumatic Stress Symptoms (SPTSS) . 
+Measurement Instrument Database for the Social Science. Retrieved from www.midss.ie
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+Participants are asked to answer 17 radiobuttons questions pertaining PTSD symptoms within the last 2 weeks 
+by choosing a number from 0 - 10 for each question.
+
+The questionnaire adapts the layout of the paper and pencil questionnaire to the computer screen.
+The 17 questions are spread out over 4 survey pages. Each page repeats the instructions and
+participants can go back and forth between pages.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	 
+The default data stored in the data files are:
+
+(1) Raw data file: 'sptss_1_0.iqdat' 
+									
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	   	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 0 (never) - 10 (always)
+								no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)									
+																		
+
+(2) Summary data file: 'sptss_1_0_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+TotalScore:						the sum of all individual scores
+SPTSS_Score: 					the average score
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+Instructions can easily be edited under EDITABLE CODE -> Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+/subinstructions:				further instructions
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Select the appropriate number to tell us how much that thing has happened to you IN THE PAST TWO WEEKS.
+"
+/subinstructions = "Use the scale below each question to decide which number to select for each question. Select '0' if you never had the experience during the past two weeks, and select '10' if it was always happening to you or happened every day during the past two weeks. If it happens sometimes, but not every day, select one of the numbers between '0' and '10' to show how much.
+"
+</parameters>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data: SPTSS_1.0.iqx
+********************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.TotalScore, expressions.SPTSS_Score)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/TotalScore:				the sum of all individual scores
+/SPTSS_Score: 				the average score (takes into account only those questions that have been answered)
+
+<expressions>
+/TotalScore = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response + radiobuttons.q5.response +
+radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + radiobuttons.q9.response + radiobuttons.q10.response +
+radiobuttons.q11.response + radiobuttons.q12.response + radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q15.response +
+radiobuttons.q16.response + radiobuttons.q17.response
+/SPTSS_Score = expressions.totalscore/17
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/ caption = "1. I don't feel like doing things that I used to like doing."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q2>
+/ caption = "2. I can't remember much about bad things that have happened to me."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q3>
+/ caption = "3. I feel cut off and isolated from other people."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q4>
+/ caption = "4. I try not to think about things that remind me of something bad that happened to me."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q5>
+/ caption = "5. I feel numb: I don't feel emotions as strongly as I used to."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q6>
+/ caption = "6. I have trouble concentrating on things or paying attention to something for a long time."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q7>
+/ caption = "7. I have a hard time thinking about the future and believing that I'm going to live to old age."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q8>
+/ caption = "8. I feel very irritable and lose my temper."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q9>
+/ caption = "9. I avoid doing things or being in situations that might remind me of something terrible that happened to me in the past."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q10>
+/ caption = "10. I am very aware of my surroundings and nervous about what's going on around me."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q11>
+/ caption = "11. I find myself remembering bad things that happened to me over and over, even when I don't want to think about them."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q12>
+/ caption = "12. I get startled or surprised very easily and 'jump' when I hear a sudden sound."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q13>
+/ caption = "13. I have bad dreams about terrible things that happened to me."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q14>
+/ caption = "14. I get very upset when something reminds me of something bad that happened to me."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q15>
+/ caption = "15. I have trouble getting to sleep or staying asleep."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q16>
+/ caption = "16. When something reminds me of something bad that happened to me, I feel shaky, sweaty, nervous and my heart beats really fast."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q17>
+/ caption = "17. I suddenly feel like I am back in the past, in a bad situation that I was once in, and it's like it was happening all over again."
+/ options = ("0~nnever", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10~nalways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage SPTSS1>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = "<%parameters.subinstructions%>"
+/questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage SPTSS2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage SPTSS3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage SPTSS4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage SPTSS5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage SPTSS6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q16, q17]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey SPTSS_1_0>
+/pages = [
+	1 = SPTSS1; 
+	2 = SPTSS2; 
+	3 = SPTSS3; 
+	4 = SPTSS4;
+	5 = SPTSS5;
+	6 = SPTSS6;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

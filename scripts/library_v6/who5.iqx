@@ -1,0 +1,262 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+					 World Health Organization Well-Being Index (WHO-5)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 03-13-2015
+last updated:  11-01-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 11-01-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized version of the the World Health Organization Well-Being Index (WHO-5), 
+a short self-administered screening tool of 5 positively worded questions to assess current 
+mental well-being (last 2 weeks). 
+
+The screening tool is available in multiple languages and can be downloaded at:
+
+https://www.psykiatri-regionh.dk/who-5/who-5-questionnaires/
+
+The WHO-Five Well-being Index (WHO-5) was developed at the Psychiatric Research Unit, Mental Health 
+Centre North Zealand, Hillerød, Denmark.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+5 questions on a 6-point Likert Scale, self report
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minutes to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'who5.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 5 (all of the time) - 0 (at no time)
+									no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'who5_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+
+
+validtotal:						1 = all questions were answered; 
+								0 = otherwise
+								
+who5_totalscore_raw:			the raw total score (0 <= totalscore <= 25); or "cannot be determined" if not all questions 
+								were answered
+								0 representing worst possible and 25 representing best possible quality of life.
+								"It is recommended to administer the Major Depression (ICD-10) Inventory if the raw score 
+								is below 13 or if the patient has answered 0 to 1 to any of the five items. 
+								A score below 13 indicates poor wellbeing and is an indication for testing
+								for depression under ICD-10."
+								
+who5_totalscore_percent:		the percentage total score (0 <= score <= 100)
+								A percentage score of 0 represents worst possible, whereas a score of 
+								100 represents best possible quality of life.
+
++ individual responses
+
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.validtotal, expressions.who5_totalscore_raw, expressions.who5_totalscore_percent,
+
+//individual responses
+radiobuttons.q1.response, radioButtons.q2.response, radiobuttons.q3.response, radiobuttons.q4.response, radiobuttons.q5.response)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/validtotal:					1 = all questions were answered; 0 = otherwise
+/WHO5_totalscore_raw:			the raw total score (0 <= totalscore <= 25); or "cannot be determined" if not all questions were answered
+								0 representing worst possible and 25 representing best possible quality of life.
+								"It is recommended to administer the Major Depression (ICD-10) Inventory if the raw score is below 13 or if the patient
+								has answered 0 to 1 to any of the five items. A score below 13 indicates poor wellbeing and is an indication for testing
+								for depression under ICD-10."
+/WHO5_totalscore_percent:		the percentage total score (0 <= score <= 100)
+								A percentage score of 0 represents worst possible, whereas a score of 100 represents best possible quality of life.
+
+<expressions>
+/validtotal = if (radiobuttons.q1.response == "" || radiobuttons.q2.response == "" ||
+radiobuttons.q3.response =="" || radiobuttons.q4.response =="" || radiobuttons.q5.response =="") 0 else 1
+/WHO5_totalscore_raw = if (expressions.validtotal == 1)
+radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response +
+radiobuttons.q4.response + radiobuttons.q5.response else "cannot be determined"
+/WHO5_totalscore_percent = if (expressions.validtotal == 1) expressions.who5_totalscore_raw * 4 else "cannot be determined"
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are not required to be answered. To change
+/required = true
+
+
+<radiobuttons q1>
+/caption = "1. I have felt cheerful and in good spirits"
+/ options = ("All~nof the time", "Most~nof the time", "More than half  ~nof the time", "Less than half~nof the time", 
+"Some~nof the time", "At~nno time")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. I have felt calm and relaxed"
+/ options = ("All~nof the time", "Most~nof the time", "More than half  ~nof the time", "Less than half~nof the time", "Some~nof the time", "At~nno time")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. I have felt active and vigorous"
+/ options = ("All~nof the time", "Most~nof the time", "More than half  ~nof the time", "Less than half~nof the time", "Some~nof the time", "At~nno time")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. I woke up feeling fresh and rested"
+/ options = ("All~nof the time", "Most~nof the time", "More than half  ~nof the time", "Less than half~nof the time", "Some~nof the time", "At~nno time")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. My daily life has been filled with things that interest me"
+/ options = ("All~nof the time", "Most~nof the time", "More than half  ~nof the time", "Less than half~nof the time", 
+"Some~nof the time", "At~nno time")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage WHO5_1>
+/caption ="WHO (Five) Well-Being Index (1998 version)
+"
+/subcaption = "Please indicate for each of the five statements which is closest to how you have been feeling over the last two weeks.
+Notice that higher numbers mean better well-being.
+
+Example: If you have felt cheerful and in good spirits More than half of the time during the last two weeks, click the
+the box 'More than half of the time'.
+"
+/questions = [1 = q1, q2]
+</surveypage>
+
+<surveypage WHO5_2>
+/caption ="WHO (Five) Well-Being Index (1998 version)
+"
+/questions = [1 = q3, q4, q5]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+
+<survey WHO5>
+/pages = [
+	1 = WHO5_1;
+	2 = WHO5_2;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

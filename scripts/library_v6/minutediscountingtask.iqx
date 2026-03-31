@@ -1,0 +1,741 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+										Minute Discounting Task
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 03-06-2018
+last updated:  02-21-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-21-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Minute Discounting Task; a quick procedure to estimate delay discount rates of monetary rewards.
+Instead of adjusting the amounts and keeping delay intervals constant, the Minute Discounting Tasks adjusts the 
+delays.
+
+The implemented procedure is described in:
+
+Koffarnus, M.N. & and Warren K. Bickel, W.K (2014). A 5-Trial Adjusting Delay Discounting Task: Accurate Discount Rates in
+Less Than One Minute. Experimental and Clinical Psychopharmacology, 22, 222–228.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants receive 5 questions that ask whether they prefer a smaller amount (default: $5) now
+or a larger amount (default: S10) at variable delays (delays depend on previous choices).
+The task takes about a minute. The discount rate k is calculated.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'minutediscounting_raw*.iqdat'*
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+
+///parameter settings;
+immediateAmount:					the promised immediate amount (default: $5)										
+delayedAmount:						the promised delayed amount (default: $10)
+
+///data:
+trialCount:							a running count of the choice trials run
+choiceNo:							stores the current choice trial number (1-5) attached to the current index (should always be equal to the number of choice trials run = values.trialcount)
+index:								the index of the current choice values (choice trial #1 starts with index = 16)
+indexAdjustment:					the current index adjustment value
+delayChoice:						the variable delay choice assigned to the current index
+ 
+response:							the participant's response: selected response button "now" vs. "delayed"
+latency: 							the response latency (in ms); measured from: onset of response buttons
+
+ED50:								stores the estimated ED50 (in days) ~ the number of days that a delay is tolerated to receive the higher payoff
+									Effective Delay 50% (ED50): can be directly translated into k-values
+								
+k:									Main DV = stores the absolute k-value (discount rate, inverse of ED50) 
+									The higher the discount rate, the less participant is willing to wait for the delayed higher reward
+									and the more the lesser, immediate reward is preferred.
+																
+
+(2) Summary data file: 'minutediscounting_summary*.iqdat'*
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+///parameter settings;
+immediateAmount:					the promised immediate amount (default: $5)										
+delayedAmount:						the promised delayed amount (default: $10)
+
+///data:
+
+ED50:								stores the estimated ED50 (in days) ~ the number of days that a delay is tolerated to receive the higher payoff
+									Effective Delay 50% (ED50): can be directly translated into k-values
+								
+k:									Main DV = stores the absolute k-value (discount rate, inverse of ED50) 
+									The higher the discount rate, the less participant is willing to wait for the delayed higher reward
+									and the more the lesser, immediate reward is preferred.
+								
+meanRT:								the mean choice reaction time (measured from onset of the response buttons)
+
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+1 Test block with 5 choice trials
+* each trial presents a choice between the immediate amount and the delayed amount
+=> based on response the new delay gets selected for the next trial based on 
+adjusting the index of the selected delays (see item.delayChoices under section STIMULUS)
+* delay parameters used in this script to calculate the discount rate k are published in: Koffarnus & Bickel (2014, Table 1, p.224)
+
+Adjustment Rule of the indices:
+* the first delay always uses index = 16 ("3 weeks")
+* the index adjustment value starts at 16/2=8 and is halved for each new trial (8, 4, 2, 1)
+* if the immediate amount is selected: the index is adjusted down by the current adjustment value
+* if the delayed amount is selected: the index is adjusted up by the current adjustment value
+Example: 
+* the index adjust amount in trial 1 = 8:
+	if the immediate amount is selected in trial 1 (index always 16), trial 2 presents the delay for index 8 (16-8) ("1 day")
+	if the delayed amount is selected in trial 1 (index always 16), trial 2 presents the delay for index 24 (16 + 8) ("2 years")
+
+* the index adjust amount in trial 2 = 4:
+	if the immediate amount is selected in trial 2 (e.g. index 8), trial 3 presents the delay for index 4 (8-4)("4 hours")
+	if the delayed amount is selected in trial 2 (e.g. index 8), trial 3 presents the delay for index 12 (8 + 4)("4 days")
+etc.
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/delayedAmount:					the promised delayed amount (default: $10)
+/immediateAmount:				the promised immediate amount (default: $5)
+
+/iti:							the intertrial interval between each choice trial (default: 1000)
+								Note: the options are blacked out during the iti
+								
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/delayedAmount = 10
+/immediateAmount = 5
+/iti = 500
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+</instruct>
+
+<text intro>
+/ items = ("In this game, you will be asked to make choices between getting $<%parameters.immediateAmount%> right NOW, or getting $<%parameters.delayedAmount%> some time in the future. 
+
+Select the option that you would prefer. 
+
+
+This games takes about 1 minute to play. There are no right or wrong answers.
+
+<%expressions.buttoninstruct1%> START to get the first of five question.")
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = left
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ size = (80%, 80%)
+</text>
+
+<text Welcome>
+/ items = ("Welcome!")
+/ position = (50%, 15%)
+/ txbgcolor = blue
+/ txcolor = white
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, 10%)
+</text>
+
+<text start>
+/ items = ("START")
+/ position = (50%, 90%)
+/ txbgcolor = blue
+/ txcolor = white
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (30%, 5%)
+</text>
+
+<text end>
+/ items = ("Thank you for playing!")
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = center
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ size = (80%, 80%)
+</text>
+
+<text finish>
+/ items = ("FINISH")
+/ position = (50%, 90%)
+/ txbgcolor = blue
+/ txcolor = white
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ size = (30%, 5%)
+</text>
+
+<text question>
+/ items = ("Would you rather have?")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ size = (80%, 10%)
+/ vjustify = center
+/ position = (50%, 35%)
+/ erase = false
+</text>
+
+<text instructions>
+/ items = ("<%expressions.buttoninstruct1%> on the answer of your choice")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ size = (80%, 5%)
+/ vjustify = center
+/ position = (50%, 60%)
+/ txcolor = gray
+/ erase = false
+</text>
+
+<text or>
+/ items = ("or")
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ size = (8%, 8%)
+/ erase = false
+</text>
+
+
+<text now>
+/ items = ("$<%parameters.immediateAmount%> now")
+/ position = (25%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txbgcolor = black
+/ txcolor = white
+/ vjustify = center
+/ size = (30%, 8%)
+/ erase = false
+</text>
+
+<text delayed>
+/ items = ("$<%parameters.delayedAmount%> in <%values.delayChoice%>")
+/ position = (75%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txbgcolor = black
+/ txcolor = white
+/ vjustify = center
+/ size = (30%, 8%)
+/ erase = false
+</text>
+
+<text now_erased>
+/ items = ("$<%parameters.immediateAmount%> now")
+/ position = (25%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txbgcolor = black
+/ txcolor = black
+/ vjustify = center
+/ size = (30%, 8%)
+/ erase = false
+</text>
+
+<text delayed_erased>
+/ items = ("$<%parameters.delayedAmount%> in <%values.delayChoice%>")
+/ position = (75%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txbgcolor = black
+/ txcolor = black
+/ vjustify = center
+/ size = (30%, 8%)
+/ erase = false
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"Tap";} else {"Click";}
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+/ inputdevice = mouse
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+parameters.immediateAmount, parameters.delayedAmount,
+values.trialCount, values.choiceNo, values.index, values.indexAdjustment, values.delayChoice, 
+response, latency, values.ED50, values.k)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+parameters.immediateAmount, parameters.delayedAmount, values.ED50, values.k, expressions.meanRT)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/index:					the index of the current trial values (start index = 16)
+/nextIndex:				the index of the following trial values (depends on whether immediate or delayed option is selected)
+/indexAdjustment:		the index adjustment value (starts with 16/2 and is halved for each new trial)
+/delayChoice:			the variable delay choice presented in the current trial
+/choiceNo:				stores the currently assigned trial count (should equal values.trialcount)
+/ED50:					stores the estimated ED50
+/k:						stores the k-value of the estimated ED50
+/trialCount:			trial counter
+
+<values>
+/index = 0
+/nextIndex = 16
+/indexAdjustment = 16
+/delayChoice = ""
+/choiceNo = ""
+/ED50 = "Not yet determined"
+/k = "Not yet determined"
+/trialCount = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/meanRT = list.latencies.mean
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial intro>
+/ stimulusframes = [1 = intro, Welcome, start]
+/ validresponse = (start)
+/ recorddata = false
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, end, finish]
+/ validresponse = (finish)
+/ recorddata = false
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: the following item elements store the data from table 1 in Koffarnus & Bickel (2014, p.224)
+
+stores the delay choices by index 1-31: start index is 16
+<item delayChoices>
+/1="1hr"
+/2="2hr"
+/3="3hr"
+/4="4hr"
+/5="6hr"
+/6="9hr"
+/7="12hr"
+/8="1 day"
+/9="1.5 days"
+/10="2 days"
+/11="3 days"
+/12="4 days"
+/13="1 week"
+/14="1.5 weeks"
+/15="2 weeks"
+/16="3 weeks"
+/17="1 month"
+/18="2 months"
+/19="3 months"
+/20="4 months"
+/21="6 months"
+/22="8 months"
+/23="1 year"
+/24="2 years"
+/25="3 years"
+/26="4 years"
+/27="5 years"
+/28="8 years"
+/29="12 years"
+/30="18 years"
+/31="25 years"
+</item>
+
+stores the trialNumbers by index numbers 
+trial #1 = start trial => index 16
+trial #2 = either 8 or 24 etc.
+trial #5 = last trial run
+<item choiceNo>
+/1="5"
+/2="4"
+/3="5"
+/4="3"
+/5="5"
+/6="4"
+/7="5"
+/8="2"
+/9="5"
+/10="4"
+/11="5"
+/12="3"
+/13="5"
+/14="4"
+/15="5"
+/16="1"
+/17="5"
+/18="4"
+/19="5"
+/20="3"
+/21="5"
+/22="4"
+/23="5"
+/24="2"
+/25="5"
+/26="4"
+/27="5"
+/28="3"
+/29="5"
+/30="4"
+/31="5"
+</item>
+
+the ED50 if the choice of the last trial is immediate...
+(empty cells cannot be last trials)
+<item Ed50_immediate>
+/1="0.04167"
+/2=""
+/3="0.1021"
+/4=""
+/5="0.2041"
+/6=""
+/7="0.433"
+/8=""
+/9="1.225"
+/10=""
+/11="2.45"
+/12=""
+/13="5.292"
+/14=""
+/15="12.12"
+/16=""
+/17="25.28"
+/18=""
+/19="74.56"
+/20=""
+/21="149.1"
+/22=""
+/23="298.2"
+/24=""
+/25="894.7"
+/26=""
+/27="1633"
+/28=""
+/29="3579"
+/30=""
+/31="7748"
+</item>
+
+the ED50 if the choice of the last trial is delayed...
+(empty cells cannot be last trials)
+<item Ed50_delayed>
+/1="0.05893"
+/2=""
+/3="0.1444"
+/4=""
+/5="0.3062"
+/6=""
+/7="0.7071"
+/8=""
+/9="1.732"
+/10=""
+/11="3.464"
+/12=""
+/13="8.573"
+/14=""
+/15="17.15"
+/16=""
+/17="43.05"
+/18=""
+/19="105.4"
+/20=""
+/21="210.9"
+/22=""
+/23="516.5"
+/24=""
+/25="1265"
+/26=""
+/27="2310"
+/28=""
+/29="5368"
+/30=""
+/31="9131"
+</item>
+
+k-values of the the ED50 if the choice of the last trial is immediate...
+(empty cells cannot be last trials)
+<item k_immediate>
+/1="24"
+/2=""
+/3="9.79"
+/4=""
+/5="4.9"
+/6=""
+/7="2.31"
+/8=""
+/9="0.816"
+/10=""
+/11="0.408"
+/12=""
+/13="0.189"
+/14=""
+/15="0.0825"
+/16=""
+/17="0.0396"
+/18=""
+/19="0.0134"
+/20=""
+/21="0.00671"
+/22=""
+/23="0.00335"
+/24=""
+/25="0.00112"
+/26=""
+/27="0.000612"
+/28=""
+/29="0.000279"
+/30=""
+/31="0.000129"
+</item>
+
+k-values of the the ED50 if the choice of the last trial is delayed...
+(empty cells cannot be last trials)
+<item k_delayed>
+/1="17"
+/2=""
+/3="6.93"
+/4=""
+/5="3.27"
+/6=""
+/7="1.41"
+/8=""
+/9="0.577"
+/10=""
+/11="0.289"
+/12=""
+/13="0.117"
+/14=""
+/15="0.0583"
+/16=""
+/17="0.0232"
+/18=""
+/19="0.00949"
+/20=""
+/21="0.004741"
+/22=""
+/23="0.00194"
+/24=""
+/25="0.000791"
+/26=""
+/27="0.000433"
+/28=""
+/29="0.000186"
+/30=""
+/31="0.00011"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies>
+</list>
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial choice>
+/ ontrialbegin = [
+	values.trialCount += 1;
+	values.index = values.nextIndex;
+	values.delayChoice = item.delayChoices.item(values.index);
+	values.choiceNo = item.choiceNo.item(values.index);
+	values.indexAdjustment = values.indexAdjustment/2;
+]
+/ stimulusframes = [1 = question, instructions, or, now, delayed]
+/ validresponse = (now, delayed)
+/ ontrialend = [
+	if (trial.choice.response == "now"){
+		if (values.trialCount == 5){
+			values.ED50 = item.Ed50_immediate.item(values.index);
+			values.k = item.k_immediate.item(values.index);
+		} else {
+			values.nextIndex -= values.indexAdjustment;			
+		}
+	} else {
+		if (values.trialCount == 5){
+			values.ED50 = item.Ed50_delayed.item(values.index);
+			values.k = item.k_delayed.item(values.index);
+		} else {
+			values.nextIndex += values.indexAdjustment;			
+		}		
+	}
+	
+	list.latencies.appendItem(trial.choice.latency);
+]
+/ posttrialpause = parameters.iti
+/ responsemessage = (anyresponse, text.now_erased, 0)
+/ responsemessage = (anyresponse, text.delayed_erased,0)
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+<block minuteDiscounting>
+/ trials = [
+	1 = intro; 
+	2-6 = choice; 
+	7 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt a>
+/ blocks = [
+	1 = minuteDiscounting;
+]
+</expt>
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

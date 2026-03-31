@@ -1,0 +1,1201 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							*Food Stroop Task -- Blocked Version*
+							(with keyboard input)
+___________________________________________________________________________________________________________________	
+
+last updated:  03-01-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+Script Copyright © 03-01-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a blocked Food Stroop by Millisecond Software.
+The classic Stroop paradigm demonstrates the interference of word meaning on naming the color in which the words 
+are written as measured by reaction time/accuracy differences to color-meaning congruent and color-meaning 
+incongruent combinations.  The Food Stroop takes advantage of this basic Stroop interference effect 
+by comparing responses to food related words to color and neutral animal words.
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants get words of 6 different conditions (e.g. unhealthy and healthy foods, animal names, and color words)
+in 4 different colors and are asked to press one of 4 keyboard keys as fast as possible.
+											  
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'foodstroop_keyboardinput_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.
+
+stimword:						contains the current stim word
+stimworditemnumber: 			stores the itemnumber of the current stimword
+
+stimcolor:						contains a numeric representation of the current word's display color: 
+								1=red, 
+								2=green, 
+								3=blue, 
+								4=yellow
+										
+condition: 						contains a numeric representation of the current condition: 
+								1=congruent color/word
+								2=incongruent color/word
+								3=HPF (high calorie food)
+								4=NTF (low calorie food)
+								5=HPFA (animal comps for the high calorie food category), 
+								6=NTFA (animal comps for the low calorie food category)
+
+									
+response:						the participant's key response (scancode of response button)
+								scancode/label for the red response button (default: 32 -> d)
+								scancode/label for the green response button (default: 33 -> f)
+								scancode/label for the blue response button (default: 36 -> j)
+								scancode/label for the yellow response button (default: 37 -> k)
+										
+responseCategory:				the interpreted key response										
+								1=red, 
+								2=green, 
+								3=blue, 
+								4=yellow										
+																				
+correct:						the correctness of the response (1 = correct; 0 = incorrect)
+latency: 						the response latency (in ms); measured from onset of word
+
+
+(2) Summary data file: 'foodstroop_keyboardinput_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+propcorrect:					overall proportion correct of test trials
+meanRT:							overall mean correct latencies of test trials (in ms)
++ separate measures for each of the 6 experimental conditions
+
+CC=congruent color/word
+IC=incongruent color/word
+HPF (high calorie food)
+NTF (low calorie food)
+HPFA (animal comps for the high calorie food category), 
+NTFA (animal comps for the low calorie food category)
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+1 Practice Block: 4 trials with "GREEN", "RED", "CAT", "BANANA"
+
+6 Test Blocks: 6 x 12 trials tested in blocked* design by default
+1) Congruent Color Words: presents 12 color words (red, blue, green, yellow) in the congruent color (3 repetitions of each color word with constraint that the same color cannot presented consecutively)
+2) Incongruent Color Words: presents 12 color words (red, blue, green, yellow) in incongruent colors (3 repetitions of each color word; each time it is presented in a different incongruent color with constraint that the same color cannot presented consecutively)
+3) unhealthy food choices: presents 12 unhealthy food choices in 4 colors (colors randomly selected with constraint that the same color cannot presented consecutively )
+4) healthy food choices: presents 12 healthy food choices in 4 colors (colors randomly selected with constraint that the same color cannot presented consecutively )
+5) animals (control for unhealthy food choices): presents 12 animals in 4 colors (colors randomly selected with constraint that the same color cannot presented consecutively)
+6) animals (control for healthy food choices): presents 12 animals in 4 colors (colors randomly selected with constraint that the same color cannot presented consecutively)
+- order of blocks is randomly selected
+
+*blocked: the set-up of this script also allows to run the condition in a mixed design (without the constraint of repeated color selections)
+
+Trial Sequence:
+Fixation Cross for 200ms -> Stim word until verbal response (recorded but not evaluated)
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+see section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+Responsekeys/Labels:
+/keyred:							the red response button (default: 32 -> d)
+/keygreen:							the green response button (default: 33 -> f)
+/keyblue:							the blue response button (default: 36 -> j)
+/keyyellow:							the yellow response button (default: 37 -> k)
+
+/getReadyDuration:					the duration (in ms) of the get-ready-trial (default: 5000ms)
+</usermanual>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ keyred = "d"
+/ keygreen = "f"
+/ keyblue = "j"
+/ keyyellow = "k"
+
+/ getReadyDuration = 5000
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+*****************************************************************************************************************
+	Items: Color Words
+*****************************************************************************************************************
+
+<item colorwords>
+/ 1 = "RED"
+/ 2 = "GREEN"
+/ 3 = "BLUE"
+/ 4 = "YELLOW"
+</item>
+
+*****************************************************************************************************************
+	Items: HPF
+*****************************************************************************************************************
+
+<item HPF>
+/ 1 = "BACON"
+/ 2 = "BROWNIE"
+/ 3 = "BUTTER"
+/ 4 = "CAKE"
+/ 5 = "CANDIES"
+/ 6 = "CHIPS"
+/ 7 = "CHOCOLATE"
+/ 8 = "COOKIE"
+/ 9 = "CUPCAKES"
+/ 10 = "DONUT"
+/ 11 = "FRENCH FRIES"
+/ 12 = "FROSTING"
+</item>
+
+*****************************************************************************************************************
+	Items: NTF
+*****************************************************************************************************************
+
+<item NTF>
+/ 1 = "APPLE"
+/ 2 = "ASPARAGUS"
+/ 3 = "BEANS"
+/ 4 = "BERRIES"
+/ 5 = "BROCCOLI"
+/ 6 = "CANTALOUPE"
+/ 7 = "CARROTS"
+/ 8 = "CELERY"
+/ 9 = "CHERRY"
+/ 10 = "EGG"
+/ 11 = "MELON"
+/ 12 = "MUSHROOM"
+</item>
+
+*****************************************************************************************************************
+	Items: HPFA
+*****************************************************************************************************************
+
+<item HPFA>
+/ 1 = "ANTELOPE"
+/ 2 = "BEARS"
+/ 3 = "COYOTE"
+/ 4 = "DEER"
+/ 5 = "ELEPHANTS"
+/ 6 = "GAZELLE"
+/ 7 = "GEESE"
+/ 8 = "HEDGEHOG"
+/ 9 = "HEN"
+/ 10 = "LLAMA"
+/ 11 = "MOUSE"
+/ 12 = "MULES"
+</item>
+
+*****************************************************************************************************************
+	Items: NTFA
+*****************************************************************************************************************
+
+<item NTFA>
+/ 1 = "ANTEATER"
+/ 2 = "ARMADILLO"
+/ 3 = "BIRD"
+/ 4 = "BUFFALO"
+/ 5 = "BUTTERFLY"
+/ 6 = "CAT"
+/ 7 = "CHICKS"
+/ 8 = "COWS"
+/ 9 = "CRICKET"
+/ 10 = "DOLPHINS"
+/ 11 = "DONKEY"
+/ 12 = "FALCON"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item instructions>
+/ 1 = "~nYou will see a series of words displayed in different colors.
+Indicate the color of the word by pressing either of the following <%expressions.buttoninstruct1%>s:
+
+<%parameters.keyred%>   for red words
+<%parameters.keygreen%>  for green words
+<%parameters.keyblue%>  for blue words
+<%parameters.keyyellow%>  for yellow words
+
+as quickly and as accurately as possible.  
+If you make a mistake, keep going."
+/ 2 = "~nYou will see a series of words displayed in different colors.
+Indicate the color of the word by pressing either of the following <%expressions.buttoninstruct1%>s:
+
+<%parameters.keyred%>   for red words
+<%parameters.keygreen%>  for green words
+<%parameters.keyblue%>  for blue words
+<%parameters.keyyellow%>  for yellow words
+
+as quickly and as accurately as possible.  
+If you make a mistake, keep going.~n
+For example, when this word appears,~n~n~n
+you would press the <%parameters.keyred%>-<%expressions.buttoninstruct1%> for ''red'' as quickly as possible."
+/ 3 = "~nYou will see a series of words displayed in different colors.
+Indicate the color of the word by pressing either of the following <%expressions.buttoninstruct1%>s:
+
+<%parameters.keyred%>   for red words
+<%parameters.keygreen%>  for green words
+<%parameters.keyblue%>  for blue words
+<%parameters.keyyellow%>  for yellow words
+
+as quickly and as accurately as possible.  
+If you make a mistake, keep going.~n
+For example, when this word appears,~n~n~n
+you would press the <%parameters.keyred%>-<%expressions.buttoninstruct1%> for ''red'' as quickly as possible.
+~nFor example, when this word appears,~n~n~n
+you would press the <%parameters.keyblue%>-<%expressions.buttoninstruct1%> for ''blue'' as quickly as possible.
+~nLet's practice a few words before we begin."
+/ 4 = "~n~n~n~n~n~n~n
+When you are ready to begin the task, press the SPACE BAR."
+</item>
+
+<item example01>
+/ 1 = " "
+/ 2 = "YELLOW"
+/ 3 = "YELLOW"
+/ 4 = " "
+/ 5 = " "
+</item>
+
+<item example02>
+/ 1 = " "
+/ 2 = " "
+/ 3 = "DOG"
+/ 4 = " "
+/ 5 = " "
+</item>
+
+<item navigation>
+/ 1 = "Press the SPACEBAR to continue."
+/ 2 = "Press the SPACEBAR to continue."
+/ 3 = "Press the SPACE BAR when you are ready to begin."
+/ 4 = " "
+/ 5 = " "
+</item>
+
+<text getReady>
+/ items = ("Get Ready:
+~n<%expressions.buttoninstruct2%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"button";} else {"key";}
+/buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {
+						"Place your index and middle fingers over the '<%parameters.keyred%>, '<%parameters.keygreen%>', '<%parameters.keyblue%>', and '<%parameters.keyyellow%>' response buttons.";} 
+				   else {
+						"Put your index and middle fingers over the '<%parameters.keyred%>, '<%parameters.keygreen%>', '<%parameters.keyblue%>', and '<%parameters.keyyellow%>' keys.";}
+</expressions>
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults >
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 6.00%, true)
+/ screencolor = grey
+/ txbgcolor = grey
+/ inputdevice = keyboard
+/ posttrialpause = 500
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+values.stimword,values.stimworditemnumber,values.stimcolor,values.condition,
+response, values.responseCategory, correct, latency)
+</data>
+
+**********
+summary data
+**********
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.propcorrect, expressions.meanRT,
+expressions.propcorrect_CC, expressions.meanRT_CC,
+expressions.propcorrect_IC, expressions.meanRT_IC,
+expressions.propcorrect_HPF, expressions.meanRT_HPF,
+expressions.propcorrect_NTF, expressions.meanRT_NTF,
+expressions.propcorrect_HPFA, expressions.meanRT_HPFA,
+expressions.propcorrect_NTFA, expressions.meanRT_NTFA)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+	Notes:
+	'values.stimcolor': 		contains a numeric representation of the current word's display color:
+								1=red, 2=green, 3=blue, 4=yellow
+	values.stimword:			stores the currently presented word		
+	values.stimworditemnumber: 	stores the itemnumber of the current stimword
+	'values.condition':			contains a numeric representation of the current condition:
+								1=congruent, 2=incongruent, 3=HPF, 4=NTF, 5=HPFA, 6=NTFA
+								
+								
+	values.responseCategory:			custom variable that stores the interpreted key response:
+								1=red, 2=green, 3=blue, 4=yellow
+<values>
+/ stimcolor = 0
+/ stimword = ""
+/ stimworditemnumber = 0
+/ condition = 0
+/ responseCategory = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/propcorrect:			overall proportion correct of test trials
+/meanRT:				overall mean correct latencies of test trials (in ms)
++ separate for each of the 6 experimental conditions
+
+<expressions >
+/ propcorrect = list.accuracy.mean
+/ meanRT = list.latencies.mean
+/ propcorrect_CC = list.accuracy_CC.mean
+/ meanRT_CC = list.latencies_CC.mean
+/ propcorrect_IC = list.accuracy_IC.mean
+/ meanRT_IC = list.latencies_IC.mean
+/ propcorrect_HPF = list.accuracy_HPF.mean
+/ meanRT_HPF = list.latencies_HPF.mean
+/ propcorrect_NTF = list.accuracy_NTF.mean
+/ meanRT_NTF = list.latencies_NTF.mean
+/ propcorrect_HPFA = list.accuracy_HPFA.mean
+/ meanRT_HPFA = list.latencies_HPFA.mean
+/ propcorrect_NTFA = list.accuracy_NTFA.mean
+/ meanRT_NTFA = list.latencies_NTFA.mean
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text instructions>
+/ items = instructions
+/ select = sequence
+/ size = (85%, 85%)
+/ txbgcolor = transparent
+/ fontstyle = ("Arial", 2.50%, true)
+/ erase = false
+/ resetinterval = 0
+</text>
+
+<text example01>
+/ items = example01
+/ select = sequence
+/ resetinterval = 0
+/ txcolor = red
+/ txbgcolor = transparent
+/ position = (50%, 51%)
+/ erase = false
+</text>
+
+<text example02>
+/ items = example02
+/ select = sequence
+/ resetinterval = 0
+/ position = (50%, 70%)
+/ txcolor = blue
+/ txbgcolor = transparent
+/ erase = false
+</text>
+
+<text navigation>
+/ items = navigation
+/ select = sequence
+/ resetinterval = 0
+/ fontstyle = ("Arial", 3.00%, true)
+/ txbgcolor = white
+/ size = (87.5%, 5%)
+/ position = (50%, 90%)
+/ erase = false
+</text>
+
+<trial instructiontrial>
+/ stimulustimes = [0=instructions, navigation;500=example01,example02 ]
+/ inputdevice = keyboard
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+*************************************
+General Helper Instruction Trials
+*************************************
+
+This trial is used when participants are asked to place their fingers on specific response
+buttons. On the touchscreen, this trial presents the (inactive) response buttons to the participants.
+<trial getReady>
+/ stimulusframes = [1 = getReady]
+/ trialduration = parameters.getReadyDuration
+/ validresponse = (parameters.keyred, parameters.keygreen, parameters.keyblue, parameters.keyyellow)
+/ beginresponsetime = parameters.getReadyDuration
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text stimword>
+/ items = ("<%values.stimword%>")
+/ txcolor = white
+</text>
+
+<text fixation>
+/ items = ("+")
+/ txcolor = black
+</text>
+
+<shape whitebg>
+/ shape = rectangle
+/ color = white
+/ erase = false
+/ size = (87.5%, 87.5%)
+</shape>
+
+
+***********************************
+Other Stimuli 
+***********************************
+
+<text x>
+/ items = ("X")
+/ position = (50, 60)
+/ fontstyle = ("Arial", 7%, true, false, false, false, 5, 0)
+/ txcolor = red 
+</text>
+
+<text redreminder>
+/ items = ("<%parameters.keyred%> = red")
+/ position = (20%, 20%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 0)
+/ erase = false
+/ txcolor = darkgray
+</text>
+
+<text greenreminder>
+/ items = ("<%parameters.keygreen%> = green")
+/ position = (40%, 20%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 0)
+/ erase = false
+/ txcolor = darkgray
+</text>
+
+<text bluereminder>
+/ items = ("<%parameters.keyblue%> = blue")
+/ position = (60%, 20%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 0)
+/ erase = false
+/ txcolor = darkgray
+</text>
+
+<text yellowreminder>
+/ items = ("<%parameters.keyyellow%> = yellow")
+/ position = (80%, 20%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 0)
+/ erase = false
+/ txcolor = darkgray
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list practicewords>
+/ items = ("GREEN", "RED", "CAT", "BANANA")
+/ selectionmode = list.practicecolors.currentIndex
+</list>
+
+<list practicecolors>
+/ items = (2,4,3,1)
+/ selectionmode = sequence
+</list>
+
+*****************************************************************************************************************
+	List Elements / Selection Logic for Test Block
+*****************************************************************************************************************
+
+<list stimcolor>
+/ items = (red, green, blue, yellow)
+/ selectionmode = values.stimcolor
+</list>
+
+*****************************************************************************************************************
+	Display
+*****************************************************************************************************************
+
+used in trial.CCtrial to select the next stimcolor
+<list cdcc>
+/ items = (1,1,1,2,2,2,3,3,3,4,4,4)
+/ replace = false
+/ maxrunsize = 1
+/ selectionrate = trial
+</list>
+
+*****************************************************************************************************************
+	Word
+*****************************************************************************************************************
+
+used in trial.CCtrial to select the next stimword itemnumber
+<list cwcc>
+/ items = (1,1,1,2,2,2,3,3,3,4,4,4)
+/ selectionmode = list.cdcc.currentIndex
+/ selectionrate = trial
+</list>
+
+*****************************************************************************************************************
+	Incongruent Color (IC)
+*****************************************************************************************************************
+	Display
+*****************************************************************************************************************
+
+used in trial.ICtrial to select the next stimcolor
+<list cdic>
+/ items = (2,3,4,1,3,4,1,2,4,1,2,3)
+/ replace = false
+/ maxrunsize = 1
+/ selectionrate = trial
+</list>
+
+*****************************************************************************************************************
+	Word
+*****************************************************************************************************************
+
+used in trial.ICtrial to select the next stimword itemnumber
+<list cwic>
+/ items = (1,1,1,2,2,2,3,3,3,4,4,4)
+/ selectionmode = list.cdic.currentIndex
+/ selectionrate = trial
+</list>
+
+*****************************************************************************************************************
+	Other Trials (HPFA, NTFA, HPF, NTF)
+*****************************************************************************************************************
+	Display
+*****************************************************************************************************************
+
+<list cdother>
+/ items = (1,2,3,4,1,2,3,4,1,2,3,4)
+/ replace = false
+/ maxrunsize = 1
+/ selectionrate = trial
+</list>
+
+*****************************************************************************************************************
+	Word
+*****************************************************************************************************************
+
+<list cwother>
+/ items = (1,2,3,4,5,6,7,8,9,10,11,12)
+/ replace = false
+/ selectionrate = trial
+</list>
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+<list accuracy>
+</list>
+
+<list latencies>
+</list>
+
+<list accuracy_CC>
+</list>
+
+<list latencies_CC>
+</list>
+
+<list accuracy_IC>
+</list>
+
+<list latencies_IC>
+</list>
+
+<list accuracy_HPF>
+</list>
+
+<list latencies_HPF>
+</list>
+
+<list accuracy_NTF>
+</list>
+
+<list latencies_NTF>
+</list>
+
+<list accuracy_HPFA>
+</list>
+
+<list latencies_HPFA>
+</list>
+
+<list accuracy_NTFA>
+</list>
+
+<list latencies_NTFA>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Practice Trial
+**************************************************************************************************************
+
+<trial practicetrial>
+/ ontrialbegin = [
+	values.stimcolor=list.practicecolors.nextValue;
+	text.stimword.textColor=list.stimcolor.item(values.stimcolor);
+	values.stimword=list.practicewords.nextValue;
+]
+/ stimulustimes = [0=fixation;200=stimword]
+/ validresponse = (parameters.keyred, parameters.keygreen, parameters.keyblue, parameters.keyyellow)
+/ iscorrectresponse = [
+	return (
+	(trial.practicetrial.responseText == parameters.keyred && values.stimcolor == 1) || 
+	(trial.practicetrial.responseText == parameters.keygreen && values.stimcolor == 2) || 
+	(trial.practicetrial.responseText == parameters.keyblue && values.stimcolor == 3) || 	
+	(trial.practicetrial.responseText == parameters.keyyellow && values.stimcolor == 4));
+]
+/ ontrialend = [
+	if (trial.practicetrial.responseText == parameters.keyred) {
+		values.responseCategory = 1;
+	} else if (trial.practicetrial.responseText == parameters.keygreen) {
+		values.responseCategory = 2;
+	} else if (trial.practicetrial.responseText == parameters.keyblue) {
+		values.responseCategory = 3;
+	} else if (trial.practicetrial.responseText == parameters.keyyellow) {
+		values.responseCategory = 4;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+	Congruent Color Trial (CC)
+**************************************************************************************************************
+
+<trial CCtrial>
+/ ontrialbegin = [
+	values.condition = 1;
+	values.stimcolor=list.cdcc.nextValue;
+	text.stimword.textColor=list.stimcolor.item(values.stimcolor);
+	values.stimworditemnumber =  list.cwcc.nextValue;
+	values.stimword=item.colorwords.item(values.stimworditemnumber);
+]
+/ stimulustimes = [0=fixation;200=stimword]
+/ validresponse = (parameters.keyred, parameters.keygreen, parameters.keyblue, parameters.keyyellow)
+/ iscorrectresponse = [
+	return(
+	(trial.CCtrial.responseText == parameters.keyred && values.stimcolor == 1) || 
+	(trial.CCtrial.responseText == parameters.keygreen && values.stimcolor == 2) || 
+	(trial.CCtrial.responseText == parameters.keyblue && values.stimcolor == 3) || 	
+	(trial.CCtrial.responseText == parameters.keyyellow && values.stimcolor == 4));
+]
+/ ontrialend = [
+	if (trial.CCtrial.responseText == parameters.keyred) {
+		values.responseCategory = 1;
+	} else if (trial.CCtrial.responseText == parameters.keygreen) {
+		values.responseCategory = 2;
+	} else if (trial.CCtrial.responseText == parameters.keyblue) {
+		values.responseCategory = 3;
+	} else if (trial.CCtrial.responseText == parameters.keyyellow) {
+		values.responseCategory = 4;
+	}
+	//summary data:
+	list.accuracy.appendItem(trial.CCtrial.correct);
+	list.accuracy_CC.appendItem(trial.CCtrial.correct);
+	if (trial.CCtrial.correct) {
+		list.latencies.appendItem(trial.CCtrial.latency);
+		list.latencies_CC.appendItem(trial.CCtrial.latency);
+	}
+]
+</trial>
+
+**************************************************************************************************************
+	Inongruent Color Trial (IC)
+**************************************************************************************************************
+
+<trial ICtrial>
+/ ontrialbegin = [
+	values.condition = 2;
+	values.stimcolor=list.cdic.nextValue;
+	text.stimword.textColor=list.stimcolor.item(values.stimcolor);
+	values.stimworditemnumber = list.cwic.nextValue;
+	values.stimword=item.colorwords.item(values.stimworditemnumber);
+]
+/ stimulustimes = [0=fixation;200=stimword]
+/ validresponse = (parameters.keyred, parameters.keygreen, parameters.keyblue, parameters.keyyellow)
+/ iscorrectresponse = [
+	return(
+	(trial.ICtrial.responseText == parameters.keyred && values.stimcolor == 1) || 
+	(trial.ICtrial.responseText == parameters.keygreen && values.stimcolor == 2) || 
+	(trial.ICtrial.responseText == parameters.keyblue && values.stimcolor == 3) || 	
+	(trial.ICtrial.responseText == parameters.keyyellow && values.stimcolor == 4));
+]
+/ ontrialend = [
+	if (trial.ICtrial.responseText == parameters.keyred) {
+		values.responseCategory = 1;
+	} else if (trial.ICtrial.responseText == parameters.keygreen) {
+		values.responseCategory = 2;
+	} else if (trial.ICtrial.responseText == parameters.keyblue) {
+		values.responseCategory = 3;
+	} else if (trial.ICtrial.responseText == parameters.keyyellow) {
+		values.responseCategory = 4;
+	}
+	//summary data:
+	list.accuracy.appendItem(trial.ICtrial.correct);
+	list.accuracy_IC.appendItem(trial.ICtrial.correct);
+	if (trial.ICtrial.correct) {
+		list.latencies.appendItem(trial.ICtrial.latency);
+		list.latencies_IC.appendItem(trial.ICtrial.latency);
+	}
+]
+</trial>
+
+**************************************************************************************************************
+	HPF Trial (HPF)
+**************************************************************************************************************
+
+<trial HPFtrial>
+/ ontrialbegin = [
+	values.condition = 3;
+	values.stimcolor=list.cdother.nextValue;
+	text.stimword.textColor=list.stimcolor.item(values.stimcolor);
+	values.stimworditemnumber =list.cwother.nextValue;
+	values.stimword=item.HPF.item(values.stimworditemnumber);
+]
+/ stimulustimes = [0=fixation;200=stimword]
+/ validresponse = (parameters.keyred, parameters.keygreen, parameters.keyblue, parameters.keyyellow)
+/ iscorrectresponse = [
+	return(
+	(trial.HPFtrial.responseText == parameters.keyred && values.stimcolor == 1) || 
+	(trial.HPFtrial.responseText == parameters.keygreen && values.stimcolor == 2) || 
+	(trial.HPFtrial.responseText == parameters.keyblue && values.stimcolor == 3) || 	
+	(trial.HPFtrial.responseText == parameters.keyyellow && values.stimcolor == 4));
+]
+/ ontrialend = [
+	if (trial.HPFtrial.responseText == parameters.keyred) {
+		values.responseCategory = 1;
+	} else if (trial.HPFtrial.responseText == parameters.keygreen) {
+		values.responseCategory = 2;
+	} else if (trial.HPFtrial.responseText == parameters.keyblue) {
+		values.responseCategory = 3;
+	} else if (trial.HPFtrial.responseText == parameters.keyyellow) {
+		values.responseCategory = 4;
+	}
+	//summary data:
+	list.accuracy.appendItem(trial.HPFtrial.correct);
+	list.accuracy_HPF.appendItem(trial.HPFtrial.correct);
+	if (trial.HPFtrial.correct) {
+		list.latencies.appendItem(trial.HPFtrial.latency);
+		list.latencies_HPF.appendItem(trial.HPFtrial.latency);
+	}
+]
+</trial>
+
+**************************************************************************************************************
+	NTF Trial (NTF)
+**************************************************************************************************************
+
+<trial NTFtrial>
+/ ontrialbegin = [
+	values.condition = 4;
+	values.stimcolor=list.cdother.nextValue;
+	text.stimword.textColor=list.stimcolor.item(values.stimcolor);
+	values.stimworditemnumber = list.cwother.nextValue;
+	values.stimword=item.NTF.item(values.stimworditemnumber);
+]
+/ stimulustimes = [0=fixation;200=stimword]
+/ validresponse = (parameters.keyred, parameters.keygreen, parameters.keyblue, parameters.keyyellow)
+/ iscorrectresponse = [
+	return(
+	(trial.NTFtrial.responseText == parameters.keyred && values.stimcolor == 1) || 
+	(trial.NTFtrial.responseText == parameters.keygreen && values.stimcolor == 2) || 
+	(trial.NTFtrial.responseText == parameters.keyblue && values.stimcolor == 3) || 	
+	(trial.NTFtrial.responseText == parameters.keyyellow && values.stimcolor == 4));
+]
+/ ontrialend = [
+	if (trial.NTFtrial.responseText == parameters.keyred) {
+		values.responseCategory = 1;
+	} else if (trial.NTFtrial.responseText == parameters.keygreen) {
+		values.responseCategory = 2;
+	} else if (trial.NTFtrial.responseText == parameters.keyblue) {
+		values.responseCategory = 3;
+	} else if (trial.NTFtrial.responseText == parameters.keyyellow) {
+		values.responseCategory = 4;
+	}
+	//summary data:
+	list.accuracy.appendItem(trial.NTFtrial.correct);
+	list.accuracy_NTF.appendItem(trial.NTFtrial.correct);
+	if (trial.NTFtrial.correct) {
+		list.latencies.appendItem(trial.NTFtrial.latency);
+		list.latencies_NTF.appendItem(trial.NTFtrial.latency);
+	}
+]
+</trial>
+
+**************************************************************************************************************
+	HPF Animal Trial (HPFA)
+**************************************************************************************************************
+
+<trial HPFAtrial>
+/ ontrialbegin = [
+	values.condition = 5;
+	values.stimcolor=list.cdother.nextValue;
+	text.stimword.textColor=list.stimcolor.item(values.stimcolor);
+	values.stimworditemnumber = list.cwother.nextValue;
+	values.stimword=item.HPFA.item(values.stimworditemnumber);
+]
+/ stimulustimes = [0=fixation;200=stimword]
+/ validresponse = (parameters.keyred, parameters.keygreen, parameters.keyblue, parameters.keyyellow)
+/ iscorrectresponse = [
+	return(
+	(trial.HPFAtrial.responseText == parameters.keyred && values.stimcolor == 1) || 
+	(trial.HPFAtrial.responseText == parameters.keygreen && values.stimcolor == 2) || 
+	(trial.HPFAtrial.responseText == parameters.keyblue && values.stimcolor == 3) || 	
+	(trial.HPFAtrial.responseText == parameters.keyyellow && values.stimcolor == 4));
+]
+/ ontrialend = [
+	if (trial.HPFAtrial.responseText == parameters.keyred) {
+		values.responseCategory = 1;
+	} else if (trial.HPFAtrial.responseText == parameters.keygreen) {
+		values.responseCategory = 2;
+	} else if (trial.HPFAtrial.responseText == parameters.keyblue) {
+		values.responseCategory = 3;
+	} else if (trial.HPFAtrial.responseText == parameters.keyyellow) {
+		values.responseCategory = 4;
+	}
+	//summary data:
+	list.accuracy.appendItem(trial.HPFAtrial.correct);
+	list.accuracy_HPFA.appendItem(trial.HPFAtrial.correct);
+	if (trial.HPFAtrial.correct) {
+		list.latencies.appendItem(trial.HPFAtrial.latency);
+		list.latencies_HPFA.appendItem(trial.HPFAtrial.latency);
+	}
+]
+</trial>
+
+**************************************************************************************************************
+	NTF Animal Trial (NTFA)
+**************************************************************************************************************
+
+<trial NTFAtrial>
+/ ontrialbegin = [
+	values.condition = 6;
+	values.stimcolor=list.cdother.nextValue;
+	text.stimword.textColor=list.stimcolor.item(values.stimcolor);
+	values.stimworditemnumber = list.cwother.nextValue;
+	values.stimword=item.NTFA.item(values.stimworditemnumber);
+]
+/ stimulustimes = [0=fixation;200=stimword]
+/ validresponse = (parameters.keyred, parameters.keygreen, parameters.keyblue, parameters.keyyellow)
+/ iscorrectresponse = [
+	return(
+	(trial.NTFAtrial.responseText == parameters.keyred && values.stimcolor == 1) || 
+	(trial.NTFAtrial.responseText == parameters.keygreen && values.stimcolor == 2) || 
+	(trial.NTFAtrial.responseText == parameters.keyblue && values.stimcolor == 3) || 	
+	(trial.NTFAtrial.responseText == parameters.keyyellow && values.stimcolor == 4));
+]
+/ ontrialend = [
+	if (trial.NTFAtrial.responseText == parameters.keyred) {
+		values.responseCategory = 1;
+	} else if (trial.NTFAtrial.responseText == parameters.keygreen) {
+		values.responseCategory = 2;
+	} else if (trial.NTFAtrial.responseText == parameters.keyblue) {
+		values.responseCategory = 3;
+	} else if (trial.NTFAtrial.responseText == parameters.keyyellow) {
+		values.responseCategory = 4;
+	}
+	//summary data:
+
+	list.accuracy.appendItem(trial.NTFAtrial.correct);
+	list.accuracy_NTFA.appendItem(trial.NTFAtrial.correct);
+	if (trial.NTFAtrial.correct) {
+		list.latencies.appendItem(trial.NTFAtrial.latency);
+		list.latencies_NTFA.appendItem(trial.NTFAtrial.latency);
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block instructions01>
+/ bgstim = (whitebg)
+/ trials = [1-3=instructiontrial]
+/ recorddata = false
+</block>
+
+<block instructions02>
+/ bgstim = (whitebg)
+/ trials = [
+	1=instructiontrial;
+]
+/ recorddata = false
+</block>
+
+<block testStart>
+/ bgstim = (redreminder, greenreminder, bluereminder, yellowreminder)
+/ trials = [1 = getReady]
+</block>
+
+
+**************************************************************************************************************
+	Practice Block
+**************************************************************************************************************
+
+<block practiceblock>
+/ bgstim = (redreminder, greenreminder, bluereminder, yellowreminder)
+/ trials = [
+	1 = getReady; 
+	2-5=practicetrial;
+]
+/ errormessage = true(text.x, 1)
+</block>
+
+**************************************************************************************************************
+	Test Blocks
+**************************************************************************************************************
+	Congruent Color (CC) Block
+**************************************************************************************************************
+
+<block CC>
+/ bgstim = (redreminder, greenreminder, bluereminder, yellowreminder)
+/ trials = [
+	1-12=CCtrial;
+]
+</block>
+
+**************************************************************************************************************
+	Incongruent Color (IC) Block
+**************************************************************************************************************
+
+<block IC>
+/ bgstim = (redreminder, greenreminder, bluereminder, yellowreminder)
+/ trials = [
+	1-12=ICtrial;
+]
+</block>
+
+**************************************************************************************************************
+	HPF (HPF) Block
+**************************************************************************************************************
+
+<block HPF>
+/ bgstim = (redreminder, greenreminder, bluereminder, yellowreminder)
+/ trials = [
+	1-12=HPFtrial;
+]
+</block>
+
+**************************************************************************************************************
+	NTF (NTF) Block
+**************************************************************************************************************
+
+<block NTF>
+/ bgstim = (redreminder, greenreminder, bluereminder, yellowreminder)
+/ trials = [
+	1-12=NTFtrial;
+]
+</block>
+
+**************************************************************************************************************
+	HPF Animal (HPFA) Block
+**************************************************************************************************************
+
+<block HPFA>
+/ bgstim = (redreminder, greenreminder, bluereminder, yellowreminder)
+/ trials = [
+	1-12=HPFAtrial;
+]
+</block>
+
+**************************************************************************************************************
+	NTF Animal (NTFA) Block
+**************************************************************************************************************
+
+<block NTFA>
+/ bgstim = (redreminder, greenreminder, bluereminder, yellowreminder)
+/ trials = [
+	1-12=NTFAtrial;
+]
+</block>
+
+
+**************************************************************************************************************
+	optional Mixed Design Block
+**************************************************************************************************************
+
+Note: to run the study with a mixed design:
+<block FoodStroop>
+/ bgstim = (redreminder, greenreminder, bluereminder, yellowreminder)
+/ trials = [
+	1-72 = noreplace(CCtrial,ICtrial,HPFtrial,NTFtrial,HPFAtrial,NTFAtrial);
+]
+</block>
+
+Note: repeated color selections are possible in the Mixed Design
+
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt FoodStroop>
+/ blocks = [
+	1=instructions01; 
+	2=practiceblock; 
+	3=instructions02;
+	4 = testStart;
+	5-10=noreplace(CC,IC,HPF,NTF,HPFA,NTFA);
+	11 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

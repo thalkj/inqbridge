@@ -1,0 +1,380 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									Distress Tolerance Scale (DTS)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-21-2018
+last updated:  06-07-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 06-07-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of the Distress Tolerance Scale (DTS) as described in:
+
+Simons, J.S. & Gaher, R.M. (2005). The Distress Tolerance Scale: Development
+and Validation of a Self-Report Measure. Motivation and Emotion, 29, 83-102.
+
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+15 5-point Likert Scale, self-report
+
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________ 
+The default data stored in the data files are:
+
+(1) Raw data file: 'dts_survey.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 1 (strongly agree) - 5 (strongly disagree)
+									R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'distresstolerancescale_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+High scores represent high distress tolerance (Range: 1-5)
+DTS_G: 'the higher-order scale formed from the means of the first-order subscales' (see Simons & Gaher, 2005, table IV, p.94)
+		= mean of (expressions.Tolerance, expressions.Absorption, expressions.Appraisal, expressions.Regulation)
+
+Subscale Scores: Subscale scores are the mean of the items (see Simons & Gaher, 2005, p.100)
+Tolerance: mean of sum(q1, q3, q5)
+Absorption: mean of sum(q2, q4, q15)
+Appraisal = mean of sum(q6R, q7, q9, q10, q11, q12) R=reversed scored
+Regulation = mean of sum(q13, q14, q8)
+
++ individual responses
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+as provided by Simons & Gaher (2005), see Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Think of times that you feel distressed or upset. Select the item from the menu that best describes your beliefs about feeling distressed or upset.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.DTS_G, 
+expressions.Tolerance, 
+expressions.Absorption, 
+expressions.Appraisal, 
+expressions.Regulation,
+
+//individual responses
+radiobuttons.q1_Tolerance.response,
+radiobuttons.q2_Absorption.response,
+radiobuttons.q3_Tolerance.response,
+radiobuttons.q4_Absorption.response,
+radiobuttons.q5_Tolerance.response,
+radiobuttons.q6R_Appraisal.response,
+radiobuttons.q7_Appraisal.response,
+radiobuttons.q8_Regulation.response,
+radiobuttons.q9_Appraisal.response,
+radiobuttons.q10_Appraisal.response,
+radiobuttons.q11_Appraisal.response,
+radiobuttons.q12_Appraisal.response,
+radiobuttons.q13_Regulation.response,
+radiobuttons.q14_Regulation.response,
+radiobuttons.q15_Absorption.response,
+)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/Tolerance = (radiobuttons.q1_Tolerance.response + radiobuttons.q3_Tolerance.response + radiobuttons.q5_Tolerance.response)/3
+/Absorption = (radiobuttons.q2_Absorption.response + radiobuttons.q4_Absorption.response + radiobuttons.q15_Absorption.response)/3
+/Appraisal = (radiobuttons.q6R_Appraisal.response + radiobuttons.q7_Appraisal.response + radiobuttons.q9_Appraisal.response +
+radiobuttons.q10_Appraisal.response + radiobuttons.q11_Appraisal.response + radiobuttons.q12_Appraisal.response)/6
+/Regulation = (radiobuttons.q13_Regulation.response + radiobuttons.q14_Regulation.response + radiobuttons.q8_Regulation.response)/3
+
+/DTS_G = (expressions.Tolerance + expressions.Absorption + expressions.Appraisal + expressions.Regulation)/4
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_Tolerance>
+/caption = "1. Feeling distressed or upset is unbearable to me."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_Absorption>
+/caption = "2. When I feel distressed or upset, all I can think about is how bad I feel."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_Tolerance>
+/caption = "3. I can’t handle feeling distressed or upset."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_Absorption>
+/caption = "4. My feelings of distress are so intense that they completely take over."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_Tolerance>
+/caption = "5. There’s nothing worse than feeling distressed or upset."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6R_Appraisal>
+/caption = "6. I can tolerate being distressed or upset as well as most people."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_Appraisal>
+/caption = "7. My feelings of distress or being upset are not acceptable."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_Regulation>
+/caption = "8. I’ll do anything to avoid feeling distressed or upset."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+ 
+<radiobuttons q9_Appraisal>
+/caption = "9. Other people seem to be able to tolerate feeling distressed or upset better than I can."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10_Appraisal>
+/caption = "10. Being distressed or upset is always a major ordeal for me."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11_Appraisal>
+/caption = "11. I am ashamed of myself when I feel distressed or upset."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12_Appraisal>
+/caption = "12. My feelings of distress or being upset scare me."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+ 
+<radiobuttons q13_Regulation>
+/caption = "13. I’ll do anything to stop feeling distressed or upset."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+ 
+<radiobuttons q14_Regulation>
+/caption = "14. When I feel distressed or upset, I must do something about it immediately."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15_Absorption>
+/caption = "15. When I feel distressed or upset, I cannot help but concentrate on how bad the distress actually feels."
+/ options = ("Strongly disagree", "Mildly disagree", "Agree and disagree~nequally", "Mildly agree", "Strongly agree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage DTS1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1_Tolerance, q2_Absorption, q3_Tolerance]
+</surveypage>
+
+<surveypage DTS2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4_Absorption, q5_Tolerance, q6R_Appraisal]
+</surveypage>
+
+<surveypage DTS3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7_Appraisal, q8_Regulation, q9_Appraisal]
+</surveypage>
+
+<surveypage DTS4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10_Appraisal, q11_Appraisal, q12_Appraisal]
+</surveypage>
+
+<surveypage DTS5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13_Regulation, q14_Regulation, q15_Absorption]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey DTS>
+/pages = [
+	1 = DTS1;
+	2 = DTS2;
+	3 = DTS3;
+	4 = DTS4;
+	5 = DTS5;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

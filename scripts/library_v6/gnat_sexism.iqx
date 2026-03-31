@@ -1,0 +1,1859 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+									Ambivalent Sexism GNAT 
+___________________________________________________________________________________________________________________	
+
+last updated:  10-07-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+This script was made available to the Millisecond Task Library by Dr. Britzman.
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Go-Nogo Association Task (GNAT) to investigate implicit ambivalent sexism 
+by Britzman & Mehić-Parker (in press).
+
+
+Literature Reference:
+
+Britzman, K.J & Mehić-Parker, J. (2023). Understanding Electability: The Effects of Implicit and 
+Explicit Sexism on Candidate Perceptions.
+Journal of Women, Politics & Policy. (in press)
+
+Nosek, B. A., & Banaji, M. R. (2001). The go/no-go association task.  Social Cognition, 19(6), 625-666. 
+
+Adjustments to z-scores as described by:
+Gregg, A. & Sedikides, C. (2010). Narcissistic Fragility:
+Rethinking Its Links to Explicit and Implicit Self-esteem, Self and Identity, 9:2, 142-161 (p.148)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 10 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'implicitsexism_raw*.iqdat'
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time, 						date and time script was run 
+subject, group, 					with the current subject/groupnumber
+script.sessionId:					with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+
+phase:								"training" (single category categorization) vs. "test" (2 categories categorization)
+
+item.targetAlabel.items.1				the category used for target A
+item.targetBlabel.items.1:				the category used for target B
+item.attributeAlabel.items.1:				the category used for attribute A
+item.attributeBlabel.items.1:				the category used for attribute B
+
+responsetimeout_target:				time in ms that is allowed for response in a signal trial
+responsetimeout_noise:				time in ms that is allowed for response in a noise trial
+
+signal:								1 = signal trial (spacebar response is correct); 
+									0 = noisetrial (no response is correct)
+
+targettype:							"A" vs. "B" 
+
+pairing:							"AA" -> targetA-attributeA 
+									"AB" -> targetA-attributeB 
+									"BA" -> targetB-attributeA 
+									"BB" -> targetB-attributeB 
+									
+trialtype:							Training phase:"training"
+									Test phase: "practice" vs. "test"
+
+stimulusitem:						the presented stimulusitems in order of presentation in stimulusframes (see trials)
+response:							response made (either 57 = Spacebar or 0 for no response)
+correct:							the accuracy of response (1 = correct; 0 = error)
+latency:							the latency of the response in ms (or if no response: response timeout duration)
+
+
+(2) Summary data file: 
+
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+script.startDate:					date script was run
+script.startTime:					time script was started
+script.subjectId:					assigned subject id number
+script.groupId:						assigned group id number
+script.sessionId:					assigned session id number
+script.elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+script.completed:					0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+parameters.responsetimeout1_signal:			stores the response timeouts in ms used for signals in the testblocks in this script
+parameters.responsetimeout1_noise:			stores the response timeouts in ms used for noise in in the testblocks in this script
+
+parameters.responsetimeout2_signal:			stores the response timeouts in ms used for signals in the testblocks in this script
+parameters.responsetimeout2_noise:			stores the response timeouts in ms used for noise in in the testblocks in this script
+
+parameters.responsetimeout3_signal:			stores the response timeouts in ms used for signals in the testblocks in this script
+parameters.responsetimeout3_noise:			stores the response timeouts in ms used for noise in in the testblocks in this script
+
+item.targetAlabel.items.1				the category used for target A
+item.targetBlabel.items.1:				the category used for target B
+item.attributeAlabel.items.1:			the category used for attribute A
+item.attributeBlabel.items.1:			the category used for attribute B
+
+propCorrect_AA:					overall proportion correct for pairing targetA-attributeA; test trials only
+propCorrect_AB:					overall proportion correct for pairing targetA-attributeB; test trials only
+propCorrect_BA:					overall proportion correct for pairing targetB-attributeA; test trials only
+propCorrect_BB:					overall proportion correct for pairing targetB-attributeB; test trials only
+
+/////////////////////////////////////////////////////////////////////
+TARGET A Conditions
+signals = women
+/////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////
+AA Condition:
+signals = women OR occupation
+noise = anything else (men OR qualities)
+////////////////////////////////////////////////////
+
+rHit_AA:			hit rate for pairing targetA-attributeA across all responsetimeouts; test trials only
+						hit: pressing spacebar for signals (women OR occupation) in AA condition
+						
+rMiss_AA:			miss rate for pairing targetA-attributeA across all responsetimeouts; test trials only
+						miss: not pressing spacebar for signals (women OR occupation) in AA condition
+						
+rFa_AA:				false alarm (FA) rate for pairing targetA-attributeA across all responsetimeouts; test trials only
+						false alarm: pressing spacebar for noise stims (men OR qualities) in AA condition
+
+rCr_AA:				correct rejection (CR) for pairing targetA-attributeA across all responsetimeouts; test trials only
+						cr: not pressing spacebar for noise stims (men OR qualities) in AA condition
+
+zHit_AA:			z-score of hit rate for pairings targetA-attributeA (here: women-occupation)
+zFa_AA:				z-score of FA rate for pairings targetA-attributeA (here: women-occupation)
+										
+Note: *Adjustments to z-scores as recommended by:
+Gregg, A. & Sedikides, C. (2010). Narcissistic Fragility:
+Rethinking Its Links to Explicit and Implicit Self-esteem, Self and Identity, 9:2, 142-161 (p.148)										
+=> Adjustments are made if the  FArate (hitRate) = 0 (increased to 0.005) or 1 (decreased to 0.995)*
+
+dPrime_AA:	Computes d' (parametric measure of discriminability btw. signals and noise) for 'women-occupation' Pairings
+			=> Range (in this script): 
+			-5.1516586840152740479 <= dprime <= 5.1516586840152740479 (=perfect performance)
+			=> The higher the value, the better signals (go stims) were  distinguished from noise (nogo stims)
+			(d' = 0: chance performance; negative d-primes: participant treated nontargets as targets and targets as nontargets)
+													
+c_AA: 		c-criterion in signal detection:The absolute value of c provides an indication of the strength of
+			the response bias/response style
+			negative: participant more likely to report that signal (go stims) is present (liberal response style);
+			may favor faster responding in speed-accuracy trade-off response paradigms
+			positive: favoring caution (conservative response style)
+			
+////////////////////////////////////////////////////
+AB Condition:
+signals = women OR qualities 
+noise = anything else (men OR occupation)
+////////////////////////////////////////////////////
+
+rHit_AB:			hit rate for pairing targetA-attributeB across all responsetimeouts; test trials only
+						hit: pressing spacebar for signals (women OR qualities) in AB condition
+						
+rMiss_AB:			miss rate for pairing targetA-attributeB across all responsetimeouts; test trials only
+						miss: not pressing spacebar for signals (women OR qualities) in AB condition
+						
+rFa_AB:				false alarm (FA) rate for pairing targetA-attributeB across all responsetimeouts; test trials only
+						false alarm: pressing spacebar for noise stims (men OR occupation) in AB condition
+
+rCr_AB:				correct rejection (CR) for pairing targetA-attributeB across all responsetimeouts; test trials only
+						cr: not pressing spacebar for noise stims (men OR occupation) in AB condition
+
+zHit_AB:			z-score of hit rate for pairings targetA-attributeB (here: women-qualities)
+zFa_AB:				z-score of FA rate for pairings targetA-attributeB (here: women-qualities)
+										
+dPrime_AB:	Computes d' (parametric measure of discriminability btw. signals and noise) for 'women-qualities' Pairings													
+c_AB: 		c-criterion in AB condition			
+			
+										
+/////////////////////////////////////////////////////////////////////
+TARGET B Conditions
+signals = men
+/////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////
+BA Condition:
+signals = men OR occupation
+noise = anything else (women OR qualities)
+////////////////////////////////////////////////////
+
+rHit_BA:			hit rate for pairing targetB-attributeA across all responsetimeouts; test trials only
+						hit: pressing spacebar for signals (men OR occupation) in BA condition
+						
+rMiss_BA:			miss rate for pairing targetB-attributeA across all responsetimeouts; test trials only
+						miss: not pressing spacebar for signals (men OR occupation) in BA condition
+						
+rFa_BA:				false alarm (FA) rate for pairing targetB-attributeA across all responsetimeouts; test trials only
+						false alarm: pressing spacebar for noise stims (women OR qualities) in BA condition
+
+rCr_BA:				correct rejection (CR) for pairing targetB-attributeA across all responsetimeouts; test trials only
+						cr: not pressing spacebar for noise stims (women OR qualities) in BA condition
+
+zHit_BA:			z-score of hit rate for pairings targetB-attributeA (here: men-occupation)
+zFa_BA:				z-score of FA rate for pairings targetB-attributeA (here: men-occupation)
+
+dPrime_BA:	Computes d' (parametric measure of discriminability btw. signals and noise) for 'men-occupation' Pairings													
+c_BA: 		c-criterion in BA condition
+			
+////////////////////////////////////////////////////
+AB Condition:
+signals = men OR qualities 
+noise = anything else (women OR occupation)
+////////////////////////////////////////////////////
+
+rHit_BB:			hit rate for pairing targetB-attributeB across all responsetimeouts; test trials only
+						hit: pressing spacebar for signals (men OR qualities) in BB condition
+						
+rMiss_BB:			miss rate for pairing targetB-attributeB across all responsetimeouts; test trials only
+						miss: not pressing spacebar for signals (men OR qualities) in BB condition
+						
+rFa_BB:				false alarm (FA) rate for pairing targetB-attributeB across all responsetimeouts; test trials only
+						false alarm: pressing spacebar for noise stims (women OR occupation) in BB condition
+
+rCr_BB:				correct rejection (CR) for pairing targetB-attributeB across all responsetimeouts; test trials only
+						cr: not pressing spacebar for noise stims (women OR occupation) in BB condition
+
+zHit_BB:			z-score of hit rate for pairings targetB-attributeB (here: men-qualities)
+zFa_BB:				z-score of FA rate for pairings targetB-attributeB (here: men-qualities)
+										
+dPrime_BB:			Computes d' (parametric measure of discriminability btw. signals and noise) for 'men-qualities' Pairings													
+c_BB: 				c-criterion in BB condition	
+
+
+////////////////
+overall
+////////////////
+
+	
+GNATPart1:			(a) subtracting d' for the (BA) block from d' for the (AA) => AA-BA
+						=> if positive: participant is better at discriminating btw. signal and noise
+						when both 'woman' and 'occupations' are signals than when 'man' and 'occupations' are signals
+						This supports closer association of 'woman' and 'occupations' than 'man' and 'occupations'
+										
+GNATPart2:			(b) subtracting d' for the (AB) block from d' for the  (BB)=> BB-AB
+						=> if positive: participant is better at discriminating btw. signal and noise
+						when both 'men' and 'qualities' are signals than when 'woman' and 'qualities' are signals
+						This supports closer association of 'men' and 'qualities' than 'women' and 'qualities'
+										
+GNATALL:			#A composite index of sexism
+					=> sum of GNATpart1 and GNATpart2
+					=> the higher the composite score, the closer a participant
+					associates women-occupation and men-qualities
+																		
+																
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+Default GNAT Set-Up in this script:
+(1) 4 training blocks: one training block each for targetA (here: women), targetB (here: men), attributeA (here: occupations), 
+attributeB (here: qualities)
+with response timeout of 600ms
+-> block order is determined randomly
+-> run 20 trials each (10 target:10 noise)
+
+(2) 4 test blocks that combine targets and attributes with a response timeout (default: 600ms)
+-> block order is determined randomly
+-> each block runs 16 'practice trials' followed by 48 test trials (summary variables based on test trial performance only)
+-> signal : noise = 1 : 1 (samenumber of attributeA, attributeB, signal and noise trials)
+-> each attribute (12) is selected once during the test trials
+-> each target is repeated 4x during the test trials
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+see section Editable Stimuli (stimuli from Gregg & Sedikides, 2010)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+We (Britzman and Mehic-Parker, 2022) relied on Gregg & Sedikides, 2010 implicit self-esteem code to build the template for ambivalent sexism. 
+
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/responsetimeout1_signal:		stores the longest response timeouts in ms used in this study for targets
+								Note: by default, the longest response timeout in this script is used for blocks
+								that test attributes and targets separately (default: 1000ms)
+								
+/responsetimeout2_signal
+
+
+/responsetimeout3_signal
+													
+(samefor noise trials: by default they are the same in this script)
+
+/isi:							stores the interstimulus interval (time between offset of one stimulus and onset of next)
+											
+
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/responsetimeout1_signal = 1000
+/responsetimeout2_signal = 750
+/responsetimeout3_signal = 600
+
+/responsetimeout1_noise = 1000
+/responsetimeout2_noise = 750
+/responsetimeout3_noise = 600
+
+/isi = 500
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item targetAlabel>
+/ 1 = "Woman"
+</item>
+
+<item TargetA>
+/ 1 = "Female"
+/ 2 = "Girl"
+</item>
+
+<item NoiseA>
+/1 = "Male"
+/2 = "Boy"
+</item>
+
+<item targetBlabel>
+/1 = "Man"
+</item>
+
+<item TargetB>
+/1 = "Male"
+/2 = "Boy"
+</item>
+
+<item NoiseB>
+/1 = "Woman"
+/2 = "Girl"
+</item>
+
+<item attributeAlabel>
+/1 = "Occupations"
+</item>
+
+<item attributeA>
+/1 = "Doctor" 
+/2 = "Nurse"
+/3 = "Lawyer"
+/4 = "Teacher"
+/5 = "Scientist"
+/6 = "Social worker"
+/7 = "Police officer"
+/8 = "Engineer"
+/9 = "Administrative assistant" 
+/10 = "Secretary"
+/11 = "Manager"
+/12 = "Cashier" 
+/13 = "Retail salesperson"
+</item>
+
+
+<item attributeBlabel>
+/ 1 = "Attributes"
+</item>
+
+<item attributeB>
+/ 1 = "Seek special favors" 
+/ 2 = "Overreact"
+/ 3 = "More cultured" 
+/ 4 = "More honorable" 
+/ 5 = "Overly emotional" 
+/ 6 = "Too sensitive" 
+/ 7 = "Make partner complete"
+/ 8 = "More moral"
+/ 9 = "Easily offended"
+/ 10 = "Exaggerate problems"
+/ 11 = "Make demands"
+/ 12 = "Pure"
+/ 13 = "Worth sacrifices" 
+/ 14 = "Idolized"
+/ 15 = "Want power"
+/ 16 = "Worth cherishing" 
+/ 17 = "Worth protecting" 
+/ 18 = "Unreasonable"
+</item>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ wait = 1000 
+/ fontstyle = ("Arial", 3.0%, false, false, false, false, 5, 1)
+</instruct>
+
+
+<surveypage intro1>
+/ caption = "
+
+Please read the instructions carefully before proceeding with the task.
+~n~nThis research investigates cognitive processes that are used in decisions that involve memory. We are seeking to develop and test theories of the cognitive processes that occur outside of awareness in the routine use of memory. Stimuli for the category task will be presented on this display screen, and your responses will be entered <%expressions.buttoninstruct2%>. 
+~n~nYou will have an opportunity to practice before your responses are recorded."
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = white
+/ showpagenumbers = false
+/ showquestionnumbers = false
+</surveypage>
+
+<surveypage intro2>
+/ caption = "
+This task assumes that you can read English fluently, and that your vision is normal or corrected to normal.
+~nThe tasks that you will be doing in this experiment involve category judgment. For instance, in one condition your task may be to search for all the words that represent the categories 'attributes' (e.g., pure) or the category 'woman' (e.g., female).
+~n~nAll categorizations will be made with the space bar <%expressions.buttoninstruct1%>.  When you see a word that belongs to one of the categories (e.g., 'woman' or 'attributes') hit the space bar <%expressions.buttoninstruct1%> as fast as possible. 
+~n~nIgnore words that do not belong to either category."
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = white
+/ showpagenumbers = false
+/ showquestionnumbers = false
+</surveypage>
+
+<surveypage intro3>
+/ caption = "
+The words you will be looking for will be from the 4 groups listed below.
+~nWomen (white letters): female, girl
+~nMen (white letters): male, boy
+~nOccupations (blue letters) that people have. These occupations are any jobs or careers that people might have throughout their lives. Examples include: Doctor, nurse, lawyer, or retail salesperson
+~nAttributes (blue letters) that people possess. These attributes are any qualities or traits that may describe a person or people or behaviors that they might exhibit. Examples include: Unreasonable, pure, easily offended, worth sacrifices
+~nFor example, any occupation included in the list or any attribute that a person has could be in those categories. The color coding of the words will help distinguish between the categories."
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = white
+/ showpagenumbers = false
+/ showquestionnumbers = false
+</surveypage>
+
+**^Changed qualities to attributes and added definitions for both attributes and occupations**
+
+
+<surveypage intro4>
+/ caption = "
+The task is fast-paced and hard. In fact, you may at times find it very difficult to  correctly classify ANY of the trials.  
+~nThis task is designed to be difficult and no one is expected to perform it perfectly. Please persevere and just try to catch as many words as possible.
+~nYou will have an opportunity to practice before the task begins.
+~n~nWe will start now with a training procedure to get you familiarized with the four categories and stimuli used in this task.
+There will be a training block for each of the four categories. The computer will alert you when the categories change.
+~nHit START when you are ready to start the training."
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = white
+/ showpagenumbers = false
+/ showquestionnumbers = false
+</surveypage>
+
+
+<page end>
+You have reached the end of the task. You will now be returned to Qualtrics to complete the survey.
+^^Thank you!
+</page>
+
+**^ Added language stating that participants will be routed back to the survey**
+
+<item reminders>
+/ 1 = "Let's start the categorization task
+~n~nWords will appear in the center of the screen, one by one, at high speed. These words may or may not belong to the category you see printed at the top.
+~nPress the space bar as fast as you can if the word belongs to the category you see at the top. If they do not belong to the category, don't do anything. Just wait for the next word.
+~nIf you made an error, a red X appears below the word. Otherwise, you will see a green 'O'.
+~n~n~nPress the space bar to start practice trials."
+/ 2 = "New category - Press the space bar for practice trials"
+/ 3 = "The set-up has changed. Instead of only one category, you now see TWO categories printed at the top.
+~nPress the space bar as fast as you can if the word appearing in the center belongs to EITHER one of the two categories you see at the top. Don't do anything if the word does not belong to either one of the categories.
+~n~n~nPress the space bar for practice trials."
+/ 4 = "New categories - Press the space bar for practice trials"
+</item>
+
+<text trainingEnd>
+/ items = ("The training session has ended.
+~n~nPress the space bar to continue.")
+/ position = (50%, 65%) 
+/ size = (60%, 50%)
+/ txcolor = white 
+/ fontstyle = ("Arial", 2.67%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+
+<text testTrialReminder1>
+/ items = ("You are now starting main trial 1 of 4
+~nPress the space bar as fast as you can if the word appearing in the center belongs to EITHER or BOTH of the 2 categories you see at the top.
+~n~n~nPress the space bar to start.")
+/ position = (50%, 65%) 
+/ size = (60%, 50%)
+/ txcolor = white 
+/ fontstyle = ("Arial", 2.67%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+**^ Changed text from "a main trial" to "main trial 1 of 4" The three blocks below were added to allow for different instructions for each trial**
+
+<text testTrialReminder2>
+/ items = ("You are now starting main trial 2 of 4
+~nPress the space bar as fast as you can if the word appearing in the center belongs to EITHER or BOTH of the 2 categories you see at the top.
+~n~n~nPress the space bar to start.")
+/ position = (50%, 65%) 
+/ size = (60%, 50%)
+/ txcolor = white 
+/ fontstyle = ("Arial", 2.67%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+<text testTrialReminder3>
+/ items = ("You are now starting main trial 3 of 4.
+~nPress the space bar as fast as you can if the word appearing in the center belongs to EITHER or BOTH of the 2 categories you see at the top.
+~n~n~nPress the space bar to start.")
+/ position = (50%, 65%) 
+/ size = (60%, 50%)
+/ txcolor = white 
+/ fontstyle = ("Arial", 2.67%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+<text testTrialReminder4>
+/ items = ("You are now starting main trial 4 of 4.
+~nPress the space bar as fast as you can if the word appearing in the center belongs to EITHER or BOTH of the 2 categories you see at the top.
+~n~n~nPress the space bar to start.")
+/ position = (50%, 65%) 
+/ size = (60%, 50%)
+/ txcolor = white 
+/ fontstyle = ("Arial", 2.67%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+
+<text speedup>
+/ items = ("The next set of blocks is faster than the last.  Get ready!")
+/ position = (50, 75) 
+/ txcolor = white 
+/ fontstyle = ("Arial", 2.67%, false, false, false, false, 5, 1)
+</text>
+
+<expressions>
+/ buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"button";} else {"key";}
+/ buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"using response buttons on your screen"} else {"on the keyboard";}
+</expressions>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.0.0.0 or higher
+
+<defaults>
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txbgcolor = black 
+/ screencolor = black
+/ validresponse = (" ") 
+/ pretrialpause = 0 
+/ minimumversion = "6.0.0.0"
+/ canvasaspectratio = (4,3)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+******************************
+raw data
+******************************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, script.sessionId, blockcode, blocknum, 
+trialcode, trialnum, 
+values.phase,
+item.targetAlabel.items.1, item.targetBlabel.items.1, item.attributeAlabel.items.1, item.attributeBlabel.items.1, 
+values.responsetimeout_target, values.responsetimeout_noise, values.signal, 
+values.targettype, values.pairing, values.trialtype,
+stimulusitem, response, correct, latency)
+</data>
+
+******************************
+summary data
+******************************
+
+<summarydata>
+/ columns = (computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+parameters.responsetimeout1_signal, parameters.responsetimeout1_noise, parameters.responsetimeout2_signal, parameters.responsetimeout2_noise, parameters.responsetimeout3_signal, parameters.responsetimeout3_noise,
+item.targetAlabel.items.1, item.targetBlabel.items.1, item.attributeAlabel.items.1, item.attributeBlabel.items.1, 
+expressions.propcorrect_AA, expressions.propcorrect_AB, expressions.propcorrect_BA, expressions.propcorrect_BB,
+expressions.rHit_AA, expressions.rMiss_AA, expressions.rFa_AA, expressions.rCr_AA, 
+expressions.zHit_AA, expressions.zFa_AA, expressions.dPrime_AA, expressions.c_AA,
+expressions.rHit_AB, expressions.rMiss_AB, expressions.rFa_AB, expressions.rCr_AB, 
+expressions.zHit_AB, expressions.zFa_AB, expressions.dPrime_AB, expressions.c_AB,
+expressions.rHit_BA, expressions.rMiss_BA, expressions.rFa_BA, expressions.rCr_BA, 
+expressions.zHit_BA, expressions.zFa_BA, expressions.dPrime_BA, expressions.c_BA,
+expressions.rHit_BB, expressions.rMiss_BB, expressions.rFa_BB, expressions.rCr_BB, 
+expressions.zHit_BB, expressions.zFa_BB, expressions.dPrime_BB, expressions.c_BB,
+expressions.GNATpart1, expressions.GNATpart2, expressions.GNATALL)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+/completed:						0 = script was not completed; 1 = script was completed (all condisions run)
+/phase:							"training" vs. "test"
+/responsetimeout_target:		time in ms that is allowed for response in the current target trial
+/responsetimeout_noise:			time in ms that is allowed for response in the current noise trial
+/signal:						1 = signal trial (spacebar response is correct); 0 = noisetrial (no response is correct)
+
+/targettype:					"A" vs. "B" (here: A-women; B-men)
+/pairing:						"AA" -> targetA-attributeA 
+								"AB" -> targetA-attributeB 
+								"BA" -> targetB-attributeA 
+								"BB" -> targetB-attributeB 
+/trialtype:						"practice" vs. "test"
+
+<values>
+/ completed = 0
+/ phase = "training"
+/ responsetimeout_target = 0
+/ responsetimeout_noise = 0
+/ signal = 0
+/ targettype = ""
+/ pairing = ""
+/ trialtype = "training"
+/ selectReminders = 1
+</values>
+
+******************************
+Summary values
+******************************
+
+/count_signalAA:			counts signal trials for pairing targetA-attributeA (here: women-occupations) - across all responsetimeouts
+/count_NoiseAA:				counts noise trials for pairing targetA-attributeA - across all responsetimeouts
+(and separately for responsetimeouts)
+
+/count_signalAB:			counts signal trials for pairing targetA-attributeB (here: women-qualities) - across all responsetimeouts
+/count_NoiseAB:				counts noise trials for pairing targetA-attributeB - across all responsetimeouts
+(and separately for responsetimeouts)
+
+/count_signalBA:			counts signal trials for pairing targetB-attributeA (here: men-occupations) - across all responsetimeouts
+/count_NoiseBA:				counts noise trials for pairing targetB-attributeA - across all responsetimeouts
+(and separately for responsetimeouts)
+
+/count_signalBB:			counts signal trials for pairing targetB-attributeB (here: not men-qualities) - across all responsetimeouts
+/count_NoiseBB:				counts noise trials for pairing targetB-attributeB - across all responsetimeouts
+(and separately for responsetimeouts)
+
+/hits_AA:					counts hits for pairing targetA-attributeA (here: women-occupations) - across all responsetimeouts
+/FA_AA:						counts false alarms for pairing targetA-attributeA (here: women-occupations) - across all responsetimeouts
+(and separately for responsetimeouts)
+
+/hits_AB:					counts hits for pairing targetA-attributeB (here: women-qualities) - across all responsetimeouts
+/FA_AB:						counts false alarms for pairing targetA-attributeA (here: women-qualities) - across all responsetimeouts
+(and separately for responsetimeouts)
+
+/hits_BA:					counts hits for pairing targetB-attributeA (here: men-occupations) - across all responsetimeouts
+/FA_BA:						counts false alarms for pairing targetA-attributeA (here: men-occupations) - across all responsetimeouts
+(and separately for responsetimeouts)
+
+/hits_BB:					counts hits for pairing targetB-attributeB (here: men-qualities) - across all responsetimeouts
+/FA_BB:						counts false alarms for pairing targetA-attributeB (here: men-qualities) - across all responsetimeouts
+(and separately for responsetimeouts)
+
+
+<values>
+/ count_signalAA = 0
+/ count_NoiseAA = 0
+/ count_signalAA1 = 0
+/ count_NoiseAA1 = 0
+/ count_signalAA2 = 0
+/ count_NoiseAA2 = 0
+/ count_signalAA3 = 0
+/ count_NoiseAA3 = 0
+/ count_signalAA4 = 0
+/ count_NoiseAA4 = 0
+
+/ count_signalAB = 0
+/ count_NoiseAB = 0
+/ count_signalAB1 = 0
+/ count_NoiseAB1 = 0
+/ count_signalAB2 = 0
+/ count_NoiseAB2 = 0
+/ count_signalAB3 = 0
+/ count_NoiseAB3 = 0
+/ count_signalAB4 = 0
+/ count_NoiseAB4 = 0
+
+/ count_signalBA = 0
+/ count_NoiseBA = 0
+/ count_signalBA1 = 0
+/ count_NoiseBA1 = 0
+/ count_signalBA2 = 0
+/ count_NoiseBA2 = 0
+/ count_signalBA3 = 0
+/ count_NoiseBA3 = 0
+/ count_signalBA4 = 0
+/ count_NoiseBA4 = 0
+
+/ count_signalBB = 0
+/ count_NoiseBB = 0
+/ count_signalBB1 = 0
+/ count_NoiseBB1 = 0
+/ count_signalBB2 = 0
+/ count_NoiseBB2 = 0
+/ count_signalBB3 = 0
+/ count_NoiseBB3 = 0
+/ count_signalBB4 = 0
+/ count_NoiseBB4 = 0
+
+/ hits_AA = 0
+/ FA_AA = 0
+/ hits_AA1 = 0
+/ FA_AA1 = 0
+/ hits_AA2 = 0
+/ FA_AA2 = 0
+/ hits_AA3 = 0
+/ FA_AA3 = 0
+/ hits_AA4 = 0
+/ FA_AA4 = 0
+
+/ hits_AB = 0
+/ FA_AB = 0
+/ hits_AB1 = 0
+/ FA_AB1 = 0
+/ hits_AB2 = 0
+/ FA_AB2 = 0
+/ hits_AB3 = 0
+/ FA_AB3 = 0
+/ hits_AB4 = 0
+/ FA_AB4 = 0
+
+/ hits_BA = 0
+/ FA_BA = 0
+/ hits_BA1 = 0
+/ FA_BA1 = 0
+/ hits_BA2 = 0
+/ FA_BA2 = 0
+/ hits_BA3 = 0
+/ FA_BA3 = 0
+/ hits_BA4 = 0
+/ FA_BA4 = 0
+
+/ hits_BB = 0
+/ FA_BB = 0
+/ hits_BB1 = 0
+/ FA_BB1 = 0
+/ hits_BB2 = 0
+/ FA_BB2 = 0
+/ hits_BB3 = 0
+/ FA_BB3 = 0
+/ hits_BB4 = 0
+/ FA_BB4 = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/rHit_AA:					hit rate for pairing targetA-attributeA (here: women-occupations) across all responsetimeouts
+/rHit_AB:					hit rate for pairing targetA-attributeB (here: women-qualities) across all responsetimeouts
+/rHit_BA:					hit rate for pairing targetB-attributeA (here: men-occupations) across all responsetimeouts
+/rHit_BB:					hit rate for pairing targetB-attributeB (here: men-qualities) across all responsetimeouts
+
+/rFA_AA:					false alarm (FA) rate for pairing targetA-attributeA (here: women-occupations) across all responsetimeouts
+/rFA_AB:					false alarm (FA) rate for pairing targetA-attributeB (here: women-qualities) across all responsetimeouts
+/rFA_BA:					false alarm (FA) rate for pairing targetB-attributeA (here: men-occupations) across all responsetimeouts
+/rFA_BB:					false alarm (FA) rate for pairing targetB-attributeB (here: men-qualities across all responsetimeouts
+
+
+Note: the following expressions calculate z-scores based on hit and FA rate.(see Gregg & Sedikides, 2010, p.148)
+If the hit rate / FA rate is 0 => 0.005 is used instead
+IF the hit rate / FA rate is 1.0 => 0.995 is used instead
+()
+
+/zhit_AA:					z-score of hit rate for pairings targetA-attributeA (here: women-occupations)
+/zhit_AB:					z-score of hit rate for pairings targetA-attributeB (here: women-qualities)
+/zhit_BA:					z-score of hit rate for pairings targetB-attributeA (here: men-occupations)
+/zhit_BB:					z-score of hit rate for pairings targetB-attributeB (here: men-qualities)
+
+/zFA_AA:					z-score of FA rate for pairings targetA-attributeA (here: women-occupations)
+/zFA_AB:					z-score of FA rate for pairings targetA-attributeB (here: women-qualities)
+/zFA_BA:					z-score of FA rate for pairings targetB-attributeA (here: men-occuopations)
+/zFA_BB:					z-score of FA rate for pairings targetB-attributeB (here: men-qualities)
+
+/AA_dprime:					Computes d' (parametric measure of discriminability) for women-occupations Pairings
+/AB_dprime:					Computes d' (parametric measure of discriminability) for women-qualities Pairings
+/BA_dprime:					Computes d' (parametric measure of discriminability) for men-occupations Pairings
+/BB_dprime:					Computes d' (parametric measure of discriminability) for men-qualities Pairings
+
+/ AA_beta:					Computes ß (beta) (parametric measure of bias) for women-occupations Pairings
+/ AB_beta:					Computes ß (beta) (parametric measure of bias) for women-qualities Pairings
+/ BA_beta:					Computes ß (beta) (parametric measure of bias) for men-occupations Pairings
+/ BB_beta :					Computes ß (beta) (parametric measure of bias) for men-qualities Pairings
+
+/propcorrect_AA:			overall proportion correct for pairing targetA-attributeA (here: women-occupations)
+/propcorrect_AB:			overall proportion correct for pairing targetA-attributeB (here: women-qualities)
+/propcorrect_BA:			overall proportion correct for pairing targetB-attributeA (here: men-occupations)
+/propcorrect_BB:			overall proportion correct for pairing targetB-attributeB (here: men-qualiities)
+
+GNATpart1:					(a) subtracting d' for the Men & Occupations block from d' for the Women & Occupations block;
+GNATpart2:					(b) subtracting d' for the Women & Qualities block from d' for the Men & Qualities block;
+GNATALL:					=> sum of GNATpart1 and GNATpart2
+
+
+<expressions>
+/propcorrect_AA = (values.hits_AA + (values.count_noiseAA - values.FA_AA)) / (values.count_signalAA + values.count_noiseAA)
+/propcorrect_AB = (values.hits_AB + (values.count_noiseAB - values.FA_AB)) / (values.count_signalAB + values.count_noiseAB)
+/propcorrect_BA = (values.hits_BA + (values.count_noiseBA - values.FA_BA)) / (values.count_signalBA + values.count_noiseBA)
+/propcorrect_BB = (values.hits_BB + (values.count_noiseBB - values.FA_BB)) / (values.count_signalBB + values.count_noiseBB)
+
+/ rHit_AA = return (values.hits_AA/values.count_signalAA)
+/ rMiss_AA = return (1-expressions.rHit_AA)
+/ rFa_AA = return (values.fa_AA/values.count_noiseAA)
+/ rCr_AA = return (1-expressions.rFa_AA)
+
+/ zHit_AA = {
+	if (expressions.rHit_AA == 0){
+		return zOfP(expressions.rHit_AA + 0.005)		
+	} else if (expressions.rHit_AA == 1){
+		return zOfP(expressions.rHit_AA - 0.005)
+	} else {
+		return zOfP(expressions.rHit_AA)	
+	}
+}
+
+/ zFa_AA = {
+	if (expressions.rFa_AA == 0){
+		return zOfP(expressions.rFa_AA + 0.005)		
+	} else if (expressions.rFa_AA == 1){
+		return zOfP(expressions.rFa_AA - 0.005)
+	} else {
+		return zOfP(expressions.rFa_AA)	
+	}
+}
+/ dPrime_AA = return (expressions.zHit_AA-expressions.zFa_AA)
+/ c_AA = return (-1*((expressions.zHit_AA + expressions.zFa_AA)/2))
+
+/ rHit_AB = return (values.hits_AB/values.count_signalAB)
+/ rMiss_AB = return (1-expressions.rHit_AB)
+/ rFa_AB = return (values.fa_AB/values.count_noiseAB)
+/ rCr_AB = return (1-expressions.rFa_AB)
+
+/ zHit_AB = {
+	if (expressions.rHit_AB == 0){
+		return zOfP(expressions.rHit_AB + 0.005)		
+	} else if (expressions.rHit_AB == 1){
+		return zOfP(expressions.rHit_AB - 0.005)
+	} else {
+		return zOfP(expressions.rHit_AB)	
+	}
+}
+
+/ zFa_AB = {
+	if (expressions.rFa_AB == 0){
+		return zOfP(expressions.rFa_AB + 0.005)		
+	} else if (expressions.rFa_AB == 1){
+		return zOfP(expressions.rFa_AB - 0.005)
+	} else {
+		return zOfP(expressions.rFa_AB)	
+	}
+}
+/ dPrime_AB = return (expressions.zHit_AB-expressions.zFa_AB)
+/ c_AB = return (-1*((expressions.zHit_AB + expressions.zFa_AB)/2))
+
+/ rHit_BA = return (values.hits_BA/values.count_signalBA)
+/ rMiss_BA = return (1-expressions.rHit_BA)
+/ rFa_BA = return (values.fa_BA/values.count_noiseBA)
+/ rCr_BA = return (1-expressions.rFa_BA)
+
+/ zHit_BA = {
+	if (expressions.rHit_BA == 0){
+		return zOfP(expressions.rHit_BA + 0.005)		
+	} else if (expressions.rHit_BA == 1){
+		return zOfP(expressions.rHit_BA - 0.005)
+	} else {
+		return zOfP(expressions.rHit_BA)	
+	}
+}
+
+/ zFa_BA = {
+	if (expressions.rFa_BA == 0){
+		return zOfP(expressions.rFa_BA + 0.005)		
+	} else if (expressions.rFa_BA == 1){
+		return zOfP(expressions.rFa_BA - 0.005)
+	} else {
+		return zOfP(expressions.rFa_BA)	
+	}
+}
+/ dPrime_BA = return (expressions.zHit_BA-expressions.zFa_BA)
+/ c_BA = return (-1*((expressions.zHit_BA + expressions.zFa_BA)/2))
+
+/ rHit_BB = return (values.hits_BB/values.count_signalBB)
+/ rMiss_BB = return (1-expressions.rHit_BB)
+/ rFa_BB = return (values.fa_BB/values.count_noiseBB)
+/ rCr_BB = return (1-expressions.rFa_BB)
+
+/ zHit_BB = {
+	if (expressions.rHit_BB == 0){
+		return zOfP(expressions.rHit_BB + 0.005)		
+	} else if (expressions.rHit_BB == 1){
+		return zOfP(expressions.rHit_BB - 0.005)
+	} else {
+		return zOfP(expressions.rHit_BB)	
+	}
+}
+
+/ zFa_BB = {
+	if (expressions.rFa_BB == 0){
+		return zOfP(expressions.rFa_BB + 0.005)		
+	} else if (expressions.rFa_BB == 1){
+		return zOfP(expressions.rFa_BB - 0.005)
+	} else {
+		return zOfP(expressions.rFa_BB)	
+	}
+}
+/ dPrime_BB = return (expressions.zHit_BB-expressions.zFa_BB)
+/ c_BB = return (-1*((expressions.zHit_BB + expressions.zFa_BB)/2))
+
+/ GNATpart1 = expressions.dPrime_AA- expressions.dPrime_BA
+/ GNATpart2 = expressions.dPrime_BB- expressions.dPrime_AB
+/ GNATALL = expressions.GNATpart1 + expressions.GNATpart2
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text NoiseA>
+/ items = NoiseA 
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = white 
+/ select = noreplace
+</text>
+
+<text NoiseB>
+/ items = NoiseB 
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = white 
+/ select = noreplace
+</text>
+
+
+<text TargetA>
+/ items = TargetA 
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = white 
+/ select = noreplace
+</text>
+
+<text TargetB>
+/ items = TargetB 
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = white 
+/ select = noreplace
+</text>
+
+<text attributeA>
+/ items = attributeA 
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 255, 255) 
+/ select = noreplace
+</text>
+
+<text attributeB>
+/ items = attributeB 
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 255, 255) 
+/ select = noreplace
+</text>
+
+********************* Reminder Stimuli *********************
+
+<text TargetAremind>
+
+/ items = ("<%item.targetAlabel.item(1)%>") 
+/ color = white 
+/ position = (30,15) 
+</text>
+
+<text TargetBremind>
+
+/ items = ("<%item.targetBlabel.item(1)%>") 
+/ color = white 
+/ position = (30,15) 
+</text>
+
+<text attributeAremind>
+
+/ items = ("<%item.attributealabel.item(1)%>") 
+/ color = (0, 255, 255) 
+/ position = (70,15) 
+</text>
+
+<text attributeBremind>
+
+/ items = ("<%item.attributeBlabel.item(1)%>") 
+/ color = (0, 255, 255) 
+/ position = (70, 15) 
+</text>
+
+<text error>
+
+/ items = ("X") 
+/ position = (50,65) 
+/ color = red 
+</text>
+
+<text correctresp>
+
+/ items = ("O") 
+/ position = (50,65) 
+/ color = green 
+</text>
+
+<text remind>
+/ items = reminders
+/ select = values.selectReminders
+/ position = (50%, 65%) 
+/ size = (80%, 50%)
+/ txcolor = white 
+/ fontstyle = ("Arial", 2.67%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial TargetA_true>
+/ ontrialbegin = [values.signal = 1]
+/ timeout = values.responsetimeout_target 
+/ validresponse = (0, 57)
+/ correctresponse = (57) 
+/ errormessage = true(error, 100) 
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=TargetA] 
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial TargetB_true>
+/ ontrialbegin = [values.signal = 1]
+/ timeout = values.responsetimeout_target 
+/ validresponse = (0, 57)
+/ correctresponse = (57) 
+/ errormessage = true(error, 100)
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=TargetB] 
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial attributeA_true>
+/ ontrialbegin = [values.signal = 1]
+/ timeout = values.responsetimeout_target 
+/ validresponse = (0, 57)
+/ correctresponse = (57) 
+/ errormessage = true(error, 100)
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=attributeA] 
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial attributeB_true>
+/ ontrialbegin = [values.signal = 1]
+/ timeout = values.responsetimeout_target 
+/ validresponse = (0, 57)
+/ correctresponse = (57) 
+/ errormessage = true(error, 100)
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=attributeB] 
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial NoiseA_false>
+/ ontrialbegin = [values.signal = 0]
+/ timeout = values.responsetimeout_noise 
+/ validresponse = (0, 57)
+/ correctresponse = (0) 
+/ errormessage = true(error, 100)
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=NoiseA] 
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial NoiseB_false>
+/ ontrialbegin = [values.signal = 0]
+/ timeout = values.responsetimeout_noise 
+/ validresponse = (0, 57)
+/ correctresponse = (0) 
+/ errormessage = true(error, 100)
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=NoiseB]
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial attributeB_false>
+/ ontrialbegin = [values.signal = 0]
+/ timeout = values.responsetimeout_noise
+/ validresponse = (0, 57)
+/ correctresponse = (0) 
+/ errormessage = true(error, 100)
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=attributeB] 
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial attributeA_false>
+/ ontrialbegin = [values.signal = 0]
+/ timeout = values.responsetimeout_noise 
+/ validresponse = (0, 57)
+/ correctresponse = (0) 
+/ errormessage = true(error, 100)
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=attributeA]
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial reminder>
+/ validresponse = (57)
+/ correctresponse = (57) 
+/ stimulusFrames = [1=remind] 
+/ response = correct 
+/ recorddata = false
+/ posttrialpause = 1000
+</trial> 
+
+<trial testTrialReminder1>
+/ correctresponse = (57) 
+/ stimulusFrames = [1=testTrialReminder1] 
+/ response = correct 
+/ recorddata = false
+/ ontrialend = [
+	text.TargetA.resetSelection();
+	text.TargetB.resetSelection();
+	text.NoiseA.resetSelection();
+	text.NoiseB.resetSelection();
+	text.attributeA.resetSelection();
+	text.attributeB.resetSelection();
+]
+/ posttrialpause = 1000
+</trial> 
+
+<trial testTrialReminder2>
+/ correctresponse = (57) 
+/ stimulusFrames = [1=testTrialReminder2] 
+/ response = correct 
+/ recorddata = false
+/ ontrialend = [
+	text.TargetA.resetSelection();
+	text.TargetB.resetSelection();
+	text.NoiseA.resetSelection();
+	text.NoiseB.resetSelection();
+	text.attributeA.resetSelection();
+	text.attributeB.resetSelection();
+]
+/ posttrialpause = 1000
+</trial> 
+
+<trial testTrialReminder3>
+/ correctresponse = (57) 
+/ stimulusFrames = [1=testTrialReminder3] 
+/ response = correct 
+/ recorddata = false
+/ ontrialend = [
+	text.TargetA.resetSelection();
+	text.TargetB.resetSelection();
+	text.NoiseA.resetSelection();
+	text.NoiseB.resetSelection();
+	text.attributeA.resetSelection();
+	text.attributeB.resetSelection();
+]
+/ posttrialpause = 1000
+</trial> 
+
+<trial testTrialReminder4>
+/ correctresponse = (57) 
+/ stimulusFrames = [1=testTrialReminder4] 
+/ response = correct 
+/ recorddata = false
+/ ontrialend = [
+	text.TargetA.resetSelection();
+	text.TargetB.resetSelection();
+	text.NoiseA.resetSelection();
+	text.NoiseB.resetSelection();
+	text.attributeA.resetSelection();
+	text.attributeB.resetSelection();
+]
+/ posttrialpause = 1000
+</trial> 
+
+<trial speedup>
+/ correctresponse = (57) 
+/ stimulusFrames = [1=speedup] 
+/ response = correct 
+/ recorddata = false
+</trial> 
+
+<trial trainingStart>
+/ ontrialbegin = [
+	values.phase = "training";
+	values.selectReminders = 1
+]
+/ trialduration = 0
+/ recorddata = false
+</trial>
+
+<trial testStart>
+/ ontrialbegin = [
+	values.phase = "test";
+	values.selectReminders = 3;
+]
+/ stimulusframes = [1 = trainingEnd]
+/ validresponse = (57)
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<survey instructions>
+/ pages = [
+	1 = intro1; 
+	2 = intro2;
+	3 = intro3;
+	4 = intro4;
+]
+/ finishlabel = "START"
+</survey>
+
+<block trainingStart>
+/ trials = [1 = trainingStart]
+</block>
+
+<block testStart>
+/ trials = [1 = testStart]
+</block>
+
+<block speedup>
+/ trials = [1 = speedup] 
+</block>
+
+*********************************************************************
+Training Blocks: separate presentation of attributes and targets
+*********************************************************************
+
+Note: this block presents Attribute trials for which attribute A (occupations) is the correct response 
+with responsetimeout1
+<block attributeA_responsetimeout1>
+/ bgstim = (attributeAremind)
+/ onblockbegin = [
+	values.targettype = "training";
+	values.responsetimeout_target = parameters.responsetimeout1_signal;
+	values.responsetimeout_noise = parameters.responsetimeout1_noise;
+]
+/ trials = [2-21 = random(attributeA_true, attributeB_false); 1 = reminder] 
+/ onblockend = [
+	values.selectReminders = 2;
+]
+</block>
+
+Note: this block presents Attribute trials for which attribute B (qualities) is the correct response 
+with responsetimeout1
+<block attributeB_responsetimeout1>
+/ bgstim = (attributeBremind)
+/ onblockbegin = [
+	values.targettype = "training";
+	values.responsetimeout_target = parameters.responsetimeout1_signal;
+	values.responsetimeout_noise = parameters.responsetimeout1_noise;
+]
+/ trials = [2-21 = random(attributeB_true, attributeA_false); 1 = reminder] 
+/ onblockend = [
+	values.selectReminders = 2;
+]
+</block>
+
+Note: this block presents TargetA (Women) and NoiseA (Men) trials
+with responsetimeout1
+<block TargetA_responsetimeout1>
+/ bgstim = (TargetAremind)
+/ onblockbegin = [
+	values.targettype = "training";
+	values.responsetimeout_target = parameters.responsetimeout1_signal;
+	values.responsetimeout_noise = parameters.responsetimeout1_noise;
+]
+/ trials = [2-21 = random(TargetA_true, NoiseA_false); 1 = reminder] 
+/ onblockend = [
+	values.selectReminders = 2;
+]
+</block>
+
+Note: this block presents TargetB (Men) and NoiseB (Women) trials
+with responsetimeout1
+<block TargetB_responsetimeout1>
+/ bgstim = (TargetBremind)
+/ onblockbegin = [
+	values.targettype = "training";
+	values.responsetimeout_target = parameters.responsetimeout1_signal;
+	values.responsetimeout_noise = parameters.responsetimeout1_noise;
+]
+/ trials = [2-21 = random(TargetB_true, NoiseB_false); 1 = reminder] 
+/ onblockend = [
+	values.selectReminders = 2;
+]
+</block>
+
+
+****************************************************************************
+responsetimeout1:
+****************************************************************************
+
+<block TargetBattributeA_responsetimeout1>
+/ bgstim = (TargetBremind, attributeAremind)
+/ onblockbegin = [
+	values.targettype = "B";
+	values.pairing = "BA";
+	values.responsetimeout_target = parameters.responsetimeout1_signal;
+	values.responsetimeout_noise = parameters.responsetimeout1_noise;
+]
+/ trials = [
+	1 = reminder;
+	2-17 = random(TargetB_true, NoiseB_false, attributeA_true, attributeB_false);
+    18 = testTrialReminder1;
+	19-66 = random(TargetB_true, NoiseB_false, attributeA_true, attributeB_false);
+] 
+
+/ ontrialend = [
+	if (block.TargetBattributeA_responsetimeout1.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1) {
+			values.hits_BA += block.TargetBattributeA_responsetimeout1.correct;
+			values.hits_BA1 += block.TargetBattributeA_responsetimeout1.correct;
+			values.count_signalBA += 1;
+			values.count_signalBA1 += 1;
+		} else if (values.signal == 0) {
+			values.FA_BA += block.TargetBattributeA_responsetimeout1.error;
+			values.FA_BA1 += block.TargetBattributeA_responsetimeout1.error;
+			values.count_noiseBA += 1;
+			values.count_noiseBA1 += 1;
+		}		
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]					
+
+</block>
+
+Note: this block pairs targetB (Men) with attributeB (Qualities) with responsetimeout1
+<block TargetBattributeB_responsetimeout1>
+/ bgstim = (TargetBremind, attributeBremind)
+/ onblockbegin = [
+	values.targettype = "B";
+	values.pairing = "BB";
+	values.responsetimeout_target = parameters.responsetimeout1_signal;
+	values.responsetimeout_noise = parameters.responsetimeout1_noise;
+]
+/ trials = [
+	1 = reminder;
+	2-17 = random(TargetB_true, NoiseB_false, attributeA_false, attributeB_true);
+    18 = testTrialReminder2;
+    19-66 = random(TargetB_true, NoiseB_false, attributeA_false, attributeB_true);
+] 
+
+/ ontrialend = [
+	if (block.TargetBattributeB_responsetimeout1.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1) {
+			values.hits_BB += block.TargetBattributeB_responsetimeout1.correct;
+			values.hits_BB1 += block.TargetBattributeB_responsetimeout1.correct;
+			values.count_signalBB += 1;
+			values.count_signalBB1 += 1;
+		} else if (values.signal == 0) {
+			values.FA_BB += block.TargetBattributeB_responsetimeout1.error;
+			values.FA_BB1 += block.TargetBattributeB_responsetimeout1.error;
+			values.count_noiseBB += 1;
+			values.count_noiseBB1 += 1;
+		}		
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+Note: this block pairs targetA (Women) with attributeA (Occupations) with responsetimeout1
+<block TargetAattributeA_responsetimeout1>
+/ bgstim = (TargetAremind, attributeAremind)
+/ onblockbegin = [
+	values.targettype = "A";
+	values.pairing = "AA";
+	values.responsetimeout_target = parameters.responsetimeout1_signal;
+	values.responsetimeout_noise = parameters.responsetimeout1_noise;
+]
+/ trials = [
+	1 = reminder;
+	2-17 = random(TargetA_true, NoiseA_false, attributeA_true, attributeB_false);
+    18 = testTrialReminder3;
+    19-66 = random(TargetA_true, NoiseA_false, attributeA_true, attributeB_false);
+] 
+
+/ ontrialend = [
+	if (block.TargetAattributeA_responsetimeout1.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1) {
+			values.hits_AA += block.TargetAattributeA_responsetimeout1.correct;
+			values.hits_AA1 += block.TargetAattributeA_responsetimeout1.correct;
+			values.count_signalAA += 1;
+			values.count_signalAA1 += 1;
+		} else if (values.signal == 0) {
+			values.FA_AA += block.TargetAattributeA_responsetimeout1.error;
+			values.FA_AA1 += block.TargetAattributeA_responsetimeout1.error;
+			values.count_noiseAA += 1;
+			values.count_noiseAA1 += 1;
+		}		
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+Note: this block pairs targetA (Women) with attributeB (Qualities) with responsetimeout1
+<block TargetAattributeB_responsetimeout1>
+/ bgstim = (TargetAremind, attributeBremind)
+/ onblockbegin = [
+	values.targettype = "A";
+	values.pairing = "AB";
+	values.responsetimeout_target = parameters.responsetimeout1_signal;
+	values.responsetimeout_noise = parameters.responsetimeout1_noise;
+]
+/ trials = [
+	1 = reminder;
+	2-17 = random(TargetA_true, NoiseA_false, attributeA_false, attributeB_true);
+	18 = testTrialReminder4;
+	19-66 = random(TargetA_true, NoiseA_false, attributeA_false, attributeB_true);
+] 
+
+/ ontrialend = [
+	if (block.TargetAattributeB_responsetimeout1.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1) {
+			values.hits_AB += block.TargetAattributeB_responsetimeout1.correct;
+			values.hits_AB1 += block.TargetAattributeB_responsetimeout1.correct;
+			values.count_signalAB += 1;
+			values.count_signalAB1 += 1;
+		} else if (values.signal == 0) {
+			values.FA_AB += block.TargetAattributeB_responsetimeout1.error;
+			values.FA_AB1 += block.TargetAattributeB_responsetimeout1.error;
+			values.count_noiseAB += 1;
+			values.count_noiseAB1 += 1;
+		}		
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+****************************************************************************
+responsetimeout2:
+****************************************************************************
+
+<block TargetBattributeA_responsetimeout2>
+/ bgstim = (TargetBremind, attributeAremind)
+/ onblockbegin = [
+	values.targettype = "B";
+	values.pairing = "BA";
+	values.responsetimeout_target = parameters.responsetimeout2_signal;
+	values.responsetimeout_noise = parameters.responsetimeout2_noise;
+]
+/ trials = [
+	1 = reminder;
+	2-17 = random(TargetB_true, NoiseB_false, attributeA_true, attributeB_false);
+    18 = testTrialReminder1;
+	19-66 = random(TargetB_true, NoiseB_false, attributeA_true, attributeB_false);
+] 
+
+/ ontrialend = [
+	if (block.TargetBattributeA_responsetimeout2.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1) {
+			values.hits_BA += block.TargetBattributeA_responsetimeout2.correct;
+			values.hits_BA1 += block.TargetBattributeA_responsetimeout2.correct;
+			values.count_signalBA += 1;
+			values.count_signalBA1 += 1;
+		} else if (values.signal == 0) {
+			values.FA_BA += block.TargetBattributeA_responsetimeout2.error;
+			values.FA_BA1 += block.TargetBattributeA_responsetimeout2.error;
+			values.count_noiseBA += 1;
+			values.count_noiseBA1 += 1;
+		}		
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]					
+
+</block>
+
+Note: this block pairs targetB (Women) with attributeB (Qualities) with responsetimeout1
+<block TargetBattributeB_responsetimeout2>
+/ bgstim = (TargetBremind, attributeBremind)
+/ onblockbegin = [
+	values.targettype = "B";
+	values.pairing = "BB";
+	values.responsetimeout_target = parameters.responsetimeout2_signal;
+	values.responsetimeout_noise = parameters.responsetimeout2_noise;
+]
+/ trials = [
+	1 = reminder;
+	2-17 = random(TargetB_true, NoiseB_false, attributeA_false, attributeB_true);
+    18 = testTrialReminder2;
+    19-66 = random(TargetB_true, NoiseB_false, attributeA_false, attributeB_true);
+] 
+
+/ ontrialend = [
+	if (block.TargetBattributeB_responsetimeout2.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1) {
+			values.hits_BB += block.TargetBattributeB_responsetimeout2.correct;
+			values.hits_BB1 += block.TargetBattributeB_responsetimeout2.correct;
+			values.count_signalBB += 1;
+			values.count_signalBB1 += 1;
+		} else if (values.signal == 0) {
+			values.FA_BB += block.TargetBattributeB_responsetimeout2.error;
+			values.FA_BB1 += block.TargetBattributeB_responsetimeout2.error;
+			values.count_noiseBB += 1;
+			values.count_noiseBB1 += 1;
+		}		
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+Note: this block pairs targetA (Women) with attributeA (Occupations) with responsetimeout1
+<block TargetAattributeA_responsetimeout2>
+/ bgstim = (TargetAremind, attributeAremind)
+/ onblockbegin = [
+	values.targettype = "A";
+	values.pairing = "AA";
+	values.responsetimeout_target = parameters.responsetimeout2_signal;
+	values.responsetimeout_noise = parameters.responsetimeout2_noise;
+]
+/ trials = [
+	1 = reminder;
+	2-17 = random(TargetA_true, NoiseA_false, attributeA_true, attributeB_false);
+    18 = testTrialReminder3;
+    19-66 = random(TargetA_true, NoiseA_false, attributeA_true, attributeB_false);
+] 
+
+/ ontrialend = [
+	if (block.TargetAattributeA_responsetimeout2.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1) {
+			values.hits_AA += block.TargetAattributeA_responsetimeout2.correct;
+			values.hits_AA1 += block.TargetAattributeA_responsetimeout2.correct;
+			values.count_signalAA += 1;
+			values.count_signalAA1 += 1;
+		} else if (values.signal == 0) {
+			values.FA_AA += block.TargetAattributeA_responsetimeout2.error;
+			values.FA_AA1 += block.TargetAattributeA_responsetimeout2.error;
+			values.count_noiseAA += 1;
+			values.count_noiseAA1 += 1;
+		}		
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+Note: this block pairs targetA (Women) with attributeB (Qualities) with responsetimeout1
+<block TargetAattributeB_responsetimeout2>
+/ bgstim = (TargetAremind, attributeBremind)
+/ onblockbegin = [
+	values.targettype = "A";
+	values.pairing = "AB";
+	values.responsetimeout_target = parameters.responsetimeout2_signal;
+	values.responsetimeout_noise = parameters.responsetimeout2_noise;
+]
+/ trials = [
+	1 = reminder;
+	2-17 = random(TargetA_true, NoiseA_false, attributeA_false, attributeB_true);
+	18 = testTrialReminder4;
+	19-66 = random(TargetA_true, NoiseA_false, attributeA_false, attributeB_true);
+] 
+
+/ ontrialend = [
+	if (block.TargetAattributeB_responsetimeout2.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1) {
+			values.hits_AB += block.TargetAattributeB_responsetimeout2.correct;
+			values.hits_AB1 += block.TargetAattributeB_responsetimeout2.correct;
+			values.count_signalAB += 1;
+			values.count_signalAB1 += 1;
+		} else if (values.signal == 0) {
+			values.FA_AB += block.TargetAattributeB_responsetimeout2.error;
+			values.FA_AB1 += block.TargetAattributeB_responsetimeout2.error;
+			values.count_noiseAB += 1;
+			values.count_noiseAB1 += 1;
+		}		
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+****************************************************************************
+responsetimeout3:
+****************************************************************************
+
+<block TargetBattributeA_responsetimeout3>
+/ bgstim = (TargetBremind, attributeAremind)
+/ onblockbegin = [
+	values.targettype = "B";
+	values.pairing = "BA";
+	values.responsetimeout_target = parameters.responsetimeout3_signal;
+	values.responsetimeout_noise = parameters.responsetimeout3_noise;
+]
+/ trials = [
+	1 = reminder;
+	2-17 = random(TargetB_true, NoiseB_false, attributeA_true, attributeB_false);
+    18 = testTrialReminder1;
+	19-66 = random(TargetB_true, NoiseB_false, attributeA_true, attributeB_false);
+] 
+
+/ ontrialend = [
+	if (block.TargetBattributeA_responsetimeout3.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1) {
+			values.hits_BA += block.TargetBattributeA_responsetimeout3.correct;
+			values.hits_BA1 += block.TargetBattributeA_responsetimeout3.correct;
+			values.count_signalBA += 1;
+			values.count_signalBA1 += 1;
+		} else if (values.signal == 0) {
+			values.FA_BA += block.TargetBattributeA_responsetimeout3.error;
+			values.FA_BA1 += block.TargetBattributeA_responsetimeout3.error;
+			values.count_noiseBA += 1;
+			values.count_noiseBA1 += 1;
+		}		
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]					
+
+</block>
+
+Note: this block pairs targetB (Men) with attributeB (Qualities) with responsetimeout1
+<block TargetBattributeB_responsetimeout3>
+/ bgstim = (TargetBremind, attributeBremind)
+/ onblockbegin = [
+	values.targettype = "B";
+	values.pairing = "BB";
+	values.responsetimeout_target = parameters.responsetimeout3_signal;
+	values.responsetimeout_noise = parameters.responsetimeout3_noise;
+]
+/ trials = [
+	1 = reminder;
+	2-17 = random(TargetB_true, NoiseB_false, attributeA_false, attributeB_true);
+    18 = testTrialReminder2;
+    19-66 = random(TargetB_true, NoiseB_false, attributeA_false, attributeB_true);
+] 
+
+/ ontrialend = [
+	if (block.TargetBattributeB_responsetimeout3.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1) {
+			values.hits_BB += block.TargetBattributeB_responsetimeout3.correct;
+			values.hits_BB1 += block.TargetBattributeB_responsetimeout3.correct;
+			values.count_signalBB += 1;
+			values.count_signalBB1 += 1;
+		} else if (values.signal == 0) {
+			values.FA_BB += block.TargetBattributeB_responsetimeout3.error;
+			values.FA_BB1 += block.TargetBattributeB_responsetimeout3.error;
+			values.count_noiseBB += 1;
+			values.count_noiseBB1 += 1;
+		}		
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+Note: this block pairs targetA (Women) with attributeA (Occupations) with responsetimeout1
+<block TargetAattributeA_responsetimeout3>
+/ bgstim = (TargetAremind, attributeAremind)
+/ onblockbegin = [
+	values.targettype = "A";
+	values.pairing = "AA";
+	values.responsetimeout_target = parameters.responsetimeout3_signal;
+	values.responsetimeout_noise = parameters.responsetimeout3_noise;
+]
+/ trials = [
+	1 = reminder;
+	2-17 = random(TargetA_true, NoiseA_false, attributeA_true, attributeB_false);
+    18 = testTrialReminder3;
+    19-66 = random(TargetA_true, NoiseA_false, attributeA_true, attributeB_false);
+] 
+
+/ ontrialend = [
+	if (block.TargetAattributeA_responsetimeout3.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1) {
+			values.hits_AA += block.TargetAattributeA_responsetimeout3.correct;
+			values.hits_AA1 += block.TargetAattributeA_responsetimeout3.correct;
+			values.count_signalAA += 1;
+			values.count_signalAA1 += 1;
+		} else if (values.signal == 0) {
+			values.FA_AA += block.TargetAattributeA_responsetimeout3.error;
+			values.FA_AA1 += block.TargetAattributeA_responsetimeout3.error;
+			values.count_noiseAA += 1;
+			values.count_noiseAA1 += 1;
+		}		
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+Note: this block pairs targetA (Women) with attributeB (Qualities) with responsetimeout1
+<block TargetAattributeB_responsetimeout3>
+/ bgstim = (TargetAremind, attributeBremind)
+/ onblockbegin = [
+	values.targettype = "A";
+	values.pairing = "AB";
+	values.responsetimeout_target = parameters.responsetimeout3_signal;
+	values.responsetimeout_noise = parameters.responsetimeout3_noise;
+]
+/ trials = [
+	1 = reminder;
+	2-17 = random(TargetA_true, NoiseA_false, attributeA_false, attributeB_true);
+	18 = testTrialReminder4;
+	19-66 = random(TargetA_true, NoiseA_false, attributeA_false, attributeB_true);
+] 
+
+/ ontrialend = [
+	if (block.TargetAattributeB_responsetimeout3.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1) {
+			values.hits_AB += block.TargetAattributeB_responsetimeout3.correct;
+			values.hits_AB1 += block.TargetAattributeB_responsetimeout3.correct;
+			values.count_signalAB += 1;
+			values.count_signalAB1 += 1;
+		} else if (values.signal == 0) {
+			values.FA_AB += block.TargetAattributeB_responsetimeout3.error;
+			values.FA_AB1 += block.TargetAattributeB_responsetimeout3.error;
+			values.count_noiseAB += 1;
+			values.count_noiseAB1 += 1;
+		}		
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt gnat_sexism>
+/ blocks = [
+	1 = instructions;
+	2 = trainingStart;
+	3-6   = random (attributeA_responsetimeout1, attributeB_responsetimeout1, TargetA_responsetimeout1, TargetB_responsetimeout1);
+    7 = testStart;			
+	8-11   = random(TargetBattributeA_responsetimeout2, TargetBattributeB_responsetimeout2, TargetAattributeA_responsetimeout2, TargetAattributeB_responsetimeout2);	
+    12 = speedup;
+    13-16  = random(TargetBattributeA_responsetimeout3, TargetBattributeB_responsetimeout3, TargetAattributeA_responsetimeout3, TargetAattributeB_responsetimeout3);	
+]
+
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

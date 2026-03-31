@@ -1,0 +1,439 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+						The Stages of Change Readiness and Treatment Eagerness Scale (SOCRATES)
+						(Version 8)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 09-26-2023
+last updated:  09-26-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 09-26-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements Millisecond's computerized version of the 
+The Stages of Change Readiness and Treatment Eagerness Scale (SOCRATES, Version 8).
+
+Reference:
+
+Miller, W. R., & Tonigan, J. S. (1996). Assessing drinkers’ motivation for change: The Stages of Change Readiness and 
+Treatment Eagerness Scale (SOCRATES). Psychology of Addictive Behaviors 10, 81-89.
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+SOCRATES (version 8) is a self-report measure consisting of 19 5-point Likert Scale questions designed 
+to assess readiness for change in alcohol abusers. 
+The instrument provides three subscale scale scores: Recognition (Re), Ambivalence (Am), and Taking Steps (Ts). 
+SOCRATES is a public domain instrument.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minute to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'socrates_v8.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (almost never) - 4 (almost always)
+								R: reversed coded questions (if any)
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'socrates_v8_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+							
+socrates_RE:					Recognition subscale: q1_Re,q3_Re,q7_Re,q10_Re,q12_Re,q15_Re,q17_Re (Range:7-35)
+								The higher the score, the higher Recognition that there is a problem with alcohol
+								
+socrates_AM:					Ambivalence subscale:q2_Am,q6_Am,q11_Am,q16_Am (Range: 4-20)
+								The higher the score, the higher Ambivalence/Uncertainty towards drinking.
+								High scores show some openess to recognition
+								(Note: should be interpreted in light of recognition score)
+								
+socrates_TS:					Taking Steps subscale: q4_Ts,q5_Ts,q8_Ts,q9_Ts,q13_Ts,q14_Ts,q18_Ts,q19_Ts (Range: 8-40)
+								The higher the score, the more steps participant reports to have taken to 
+								to deal with drinking problems.
+								
+															
+socrates_total:					sum of all subscores (Range: 19-95)							
+
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.6.1.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.socrates_RE, expressions.socrates_AM, expressions.socrates_TS, expressions.socrates_total
+
+//raw responses:
+radiobuttons.q1_Re.response,
+radiobuttons.q2_Am.response,
+radiobuttons.q3_Re.response,
+radiobuttons.q4_Ts.response,
+radiobuttons.q5_Ts.response,
+radiobuttons.q6_Am.response,
+radiobuttons.q7_Re.response,
+radiobuttons.q8_Ts.response,
+radiobuttons.q9_Ts.response,
+radiobuttons.q10_Re.response,
+radiobuttons.q11_Am.response,
+radiobuttons.q12_Re.response,
+radiobuttons.q13_Ts.response,
+radiobuttons.q14_Ts.response,
+radiobuttons.q15_Re.response,
+radiobuttons.q16_Am.response,
+radiobuttons.q17_Re.response,
+radiobuttons.q18_Ts.response,
+radiobuttons.q19_Ts.response)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/ socrates_RE = return (radiobuttons.q1_Re.response + radiobuttons.q3_Re.response + radiobuttons.q7_Re.response +
+radiobuttons.q10_Re.response + radiobuttons.q12_Re.response + radiobuttons.q15_Re.response + radiobuttons.q17_Re.response)
+
+/ socrates_AM = return (radiobuttons.q2_Am.response + radiobuttons.q6_Am.response + radiobuttons.q11_Am.response + 
+radiobuttons.q16_Am.response)
+
+/ socrates_TS = return (radiobuttons.q4_Ts.response + radiobuttons.q5_Ts.response + radiobuttons.q8_Ts.response + 
+radiobuttons.q9_Ts.response + radiobuttons.q13_Ts.response + radiobuttons.q14_Ts.response + radiobuttons.q18_Ts.response +
+radiobuttons.q19_Ts.response)
+
+/ socrates_total = return (expressions.socrates_RE + expressions.socrates_AM + expressions.socrates_TS)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_Re>
+/ caption = "1. I really want to make changes in my drinking."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_Am>
+/ caption = "2. Sometimes I wonder if I am an alcoholic."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_Re>
+/ caption = "3. If I don’t change my drinking soon, my problems are going to get worse."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_Ts>
+/ caption = "4. I have already started making some changes in my drinking."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_Ts>
+/ caption = "5. I was drinking too much at one time, but I’ve managed to change my drinking."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_Am>
+/ caption = "6. Sometimes I wonder if my drinking is hurting other people."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_Re>
+/ caption = "7. I am a problem drinker."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_Ts>
+/ caption = "8. I’m not just thinking about changing my drinking, I’m already doing something about it."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_Ts>
+/ caption = "9. I have already changed my drinking, and I am looking for ways to keep from slipping back to my old pattern."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10_Re>
+/ caption = "10. I have serious problems with drinking."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11_Am>
+/ caption = "11. Sometimes I wonder if I am in control of my drinking."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12_Re>
+/ caption = "12. My drinking is causing a lot of harm."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13_Ts>
+/ caption = "13. I am actively doing things now to cut down or stop drinking."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14_Ts>
+/ caption = "14. I want help to keep from going back to the drinking problems that I had before."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15_Re>
+/ caption = "15. I know that I have a drinking problem."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16_Am>
+/ caption = "16. There are times when I wonder if I drink too much."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17_Re>
+/ caption = "17. I am an alcoholic."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18_Ts>
+/ caption = "18. I am working hard to change my drinking."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19_Ts>
+/ caption = "19. I have made some changes in my drinking, and I want some help to keep from going back to the way I used to drink."
+/ options = ("<b>NO!</b><br>Strongly<br>Disagree", "<b>No</b><br><br>Disagree", 
+"<b>?</b><br>Undecided or<br>Unsure", "<b>Yes</b><br><br>Agree", "<b>YES!</b><br>Strongly<br>Agree")
+/ optionValues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage socrates_1>
+/ caption = "Please read the following statements carefully. Each one describes a way that
+you might (or might not) feel about your drinking. For each statement, select how much you agree or disagree with it right now."
+/ subcaption = ""
+/ questions = [1 = q1_Re, q2_Am, q3_Re]
+</surveypage>
+
+<surveypage socrates_2>
+/ caption = "Please read the following statements carefully. Each one describes a way that
+you might (or might not) feel about your drinking. For each statement, select how much you agree or disagree with it right now."
+/ subcaption = ""
+/ questions = [1 = q4_Ts, q5_Ts, q6_Am]
+</surveypage>
+
+<surveypage socrates_3>
+/ caption = "Please read the following statements carefully. Each one describes a way that
+you might (or might not) feel about your drinking. For each statement, select how much you agree or disagree with it right now."
+/ subcaption = ""
+/ questions = [1 = q7_Re, q8_Ts, q9_Ts]
+</surveypage>
+
+<surveypage socrates_4>
+/ caption = "Please read the following statements carefully. Each one describes a way that
+you might (or might not) feel about your drinking. For each statement, select how much you agree or disagree with it right now."
+/ subcaption = ""
+/ questions = [1 = q10_Re, q11_Am, q12_Re]
+</surveypage>
+
+<surveypage socrates_5>
+/ caption = "Please read the following statements carefully. Each one describes a way that
+you might (or might not) feel about your drinking. For each statement, select how much you agree or disagree with it right now."
+/ subcaption = ""
+/ questions = [1 = q13_Ts, q14_Ts, q15_Re]
+</surveypage>
+
+<surveypage socrates_6>
+/ caption = "Please read the following statements carefully. Each one describes a way that
+you might (or might not) feel about your drinking. For each statement, select how much you agree or disagree with it right now."
+/ subcaption = ""
+/ questions = [1 = q16_Am, q17_Re, q18_Ts]
+</surveypage>
+
+<surveypage socrates_7>
+/ caption = "Please read the following statements carefully. Each one describes a way that
+you might (or might not) feel about your drinking. For each statement, select how much you agree or disagree with it right now."
+/ subcaption = ""
+/ questions = [1 = q19_Ts]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+
+<survey socrates_v8>
+/ pages = [
+	1 = socrates_1;
+	2 = socrates_2;
+	3 = socrates_3;
+	4 = socrates_4;
+	5 = socrates_5;
+	6 = socrates_6;
+	7 = socrates_7;
+	
+]
+/ screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 2.75%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.25%, false, false, false, false, 5, 1)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

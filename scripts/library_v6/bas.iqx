@@ -1,0 +1,857 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									BEHAVIOURAL ASSESSMENT SCALE (BAS)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 06-30-2014
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Behavioural Assessment Scale as described in:
+
+Ritchie, K. & Ledesert, B. (1991). The Measurement of Incapacity in the Severly Demented Elderly: The
+Validation of a Behavioural Assessment Scale. International Journal of Geriatric Psychiatry, 6, 217-226.
+
+The Behavioural Assessment Scale assesses the intellectual functioning and adaptive behaviors in 
+patients suffering from severe dementia.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+the script presents 11 surveypages that cover the 5 subcategories 
+(Language - 5 questions, 
+Social Integration - 5 questions, 
+Occupation & Orientation - 3 questions, 
+Physical Independence - 16 questions, 
+Mobility - 3 questions) described by Ritchie & Ledesert (1991)
+
+A total score (expressions.BAS_score) is calculated at the end.
+
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'bas.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								- see individual questions under section QUESTIONS for assigned values (/optionvalues = )
+q*_latency:						how much time in ms the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'bas_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+								
+checkboxscore:				stores the scoresum of all items presented as checkboxes
+radiobuttonscore:			calculates subtotal scoresum from all radiobutton items
+BAS_score:					calculates the totalscore based on all items
+
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please select the answers that apply best."
+</parameters>
+
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+values.checkboxscore, expressions.radiobuttonscore, expressions.BAS_score)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES/EXPRESSIONS: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+/checkboxscore:					stores the scoresum of all items presented as checkboxes
+
+<values>
+/checkboxscore = 0
+</values>
+
+/radiobuttonscore:				calculates subtotal scoresum from radiobutton items
+/calculatecheckboxscore:		calculates the scoresum of all items presented as checkboxes
+/BAS_total:						calculates the totalscore based on all items
+
+<expressions>
+/radiobuttonscore = radiobuttons.activities.response + radiobuttons.bathing.response + radiobuttons.contactwithothers.response +
+radiobuttons.cooperativeness.response + radiobuttons.dentalhygiene.response + radiobuttons.dressing.response + radiobuttons.drinking.response + 
+radiobuttons.fecalcontinence.response + radiobuttons.goingtobed.response + radiobuttons.oralcomprehension.response + 
+radiobuttons.oralexpression.response + radiobuttons.orientation.response + radiobuttons.puttingonshoes.response + radiobuttons.recogwrittenlanguage.response + 
+radiobuttons.shaving.response + radiobuttons.sleep.response + radiobuttons.takingoffshoes.response + radiobuttons.telephone.response +
+radiobuttons.undressing.response + radiobuttons.urinarycontinence.response + radiobuttons.utensils.response + radiobuttons.walking.response + 
+radiobuttons.writingability.response
+
+/calculatecheckboxscore =
+if (checkboxes.fampersonawareness.selected.1) values.checkboxscore += 1;
+if (checkboxes.fampersonawareness.selected.2) values.checkboxscore += 1;
+if (checkboxes.fampersonawareness.selected.3) values.checkboxscore += 1;
+
+if (checkboxes.handcontrol.selected.1) values.checkboxscore += 1;
+if (checkboxes.handcontrol.selected.2) values.checkboxscore += 1;
+if (checkboxes.handcontrol.selected.3) values.checkboxscore += 1;
+if (checkboxes.handcontrol.selected.4) values.checkboxscore += 1;
+if (checkboxes.handcontrol.selected.5) values.checkboxscore += 1;
+if (checkboxes.handcontrol.selected.6) values.checkboxscore += 1;
+if (checkboxes.handcontrol.selected.7) values.checkboxscore += 1;
+
+if (checkboxes.nonverbalexpression.selected.1) values.checkboxscore += 1;
+if (checkboxes.nonverbalexpression.selected.2) values.checkboxscore += 1;
+if (checkboxes.nonverbalexpression.selected.3) values.checkboxscore += 1;
+if (checkboxes.nonverbalexpression.selected.4) values.checkboxscore += 1;
+if (checkboxes.nonverbalexpression.selected.5) values.checkboxscore += 1;
+
+if (!checkboxes.postureandgait.selected.1) values.checkboxscore += 1;
+if (!checkboxes.postureandgait.selected.2) values.checkboxscore += 1;
+if (!checkboxes.postureandgait.selected.3) values.checkboxscore += 1;
+if (!checkboxes.postureandgait.selected.4) values.checkboxscore += 1;
+
+if (!checkboxes.problem_daytime_behavior.selected.1) values.checkboxscore += 1;
+if (!checkboxes.problem_daytime_behavior.selected.2) values.checkboxscore += 1;
+if (!checkboxes.problem_daytime_behavior.selected.3) values.checkboxscore += 1;
+if (!checkboxes.problem_daytime_behavior.selected.4) values.checkboxscore += 1;
+if (!checkboxes.problem_daytime_behavior.selected.5) values.checkboxscore += 1;
+if (!checkboxes.problem_daytime_behavior.selected.6) values.checkboxscore += 1;
+if (!checkboxes.problem_daytime_behavior.selected.7) values.checkboxscore += 1;
+if (!checkboxes.problem_daytime_behavior.selected.8) values.checkboxscore += 1;
+if (!checkboxes.problem_daytime_behavior.selected.9) values.checkboxscore += 1;
+if (!checkboxes.problem_daytime_behavior.selected.10) values.checkboxscore += 1;
+
+if (!checkboxes.problem_nighttime_behavior.selected.1) values.checkboxscore += 1;
+if (!checkboxes.problem_nighttime_behavior.selected.2) values.checkboxscore += 1;
+if (!checkboxes.problem_nighttime_behavior.selected.3) values.checkboxscore += 1;
+if (!checkboxes.problem_nighttime_behavior.selected.4) values.checkboxscore += 1;
+if (!checkboxes.problem_nighttime_behavior.selected.5) values.checkboxscore += 1;
+if (!checkboxes.problem_nighttime_behavior.selected.6) values.checkboxscore += 1;
+
+if (checkboxes.tasks.selected.1) values.checkboxscore += 1;
+if (checkboxes.tasks.selected.2) values.checkboxscore += 1;
+if (checkboxes.tasks.selected.3) values.checkboxscore += 1;
+if (checkboxes.tasks.selected.4) values.checkboxscore += 1;
+if (checkboxes.tasks.selected.5) values.checkboxscore += 1;
+if (checkboxes.tasks.selected.6) values.checkboxscore += 1;
+if (checkboxes.tasks.selected.7) values.checkboxscore += 1;
+if (checkboxes.tasks.selected.8) values.checkboxscore += 1;
+if (checkboxes.tasks.selected.9) values.checkboxscore += 1;
+if (checkboxes.tasks.selected.10) values.checkboxscore += 1;
+if (checkboxes.tasks.selected.11) values.checkboxscore += 1;
+
+if (checkboxes.useoftoilet.selected.1) values.checkboxscore += 1;
+if (checkboxes.useoftoilet.selected.2) values.checkboxscore += 1;
+if (checkboxes.useoftoilet.selected.3) values.checkboxscore += 1;
+if (checkboxes.useoftoilet.selected.4) values.checkboxscore += 1;
+if (checkboxes.useoftoilet.selected.5) values.checkboxscore += 1;
+if (checkboxes.useoftoilet.selected.6) values.checkboxscore += 1;
+if (checkboxes.useoftoilet.selected.7) values.checkboxscore += 1;
+
+if (checkboxes.washinghandsandface.selected.1) values.checkboxscore += 1;
+if (checkboxes.washinghandsandface.selected.2) values.checkboxscore += 1;
+if (checkboxes.washinghandsandface.selected.3) values.checkboxscore += 1;
+if (checkboxes.washinghandsandface.selected.4) values.checkboxscore += 1;
+if (checkboxes.washinghandsandface.selected.5) values.checkboxscore += 1;
+if (checkboxes.washinghandsandface.selected.6) values.checkboxscore += 1
+
+/BAS_score = expressions.radiobuttonscore + values.checkboxscore
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false (editing the setting can throw off the calcuation of the the BAS score)
+
+<radiobuttons oralcomprehension>
+/caption = "1. Oral Comprehension"
+/ options = ("5 = Understands complex orders (e.g. do this then that)", 
+"4 = Mostly replies appropriately to questions",
+"3 = Understands simple orders (e.g. sit down)", 
+"2 = Reacts when spoken to but often doesn't follow simple orders", 
+"1 = Reacts only when spoken to repeatedly",
+"0 = No reaction when spoken to")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons oralexpression>
+/caption = "2. Oral Expression"
+/ options = ("5 = Asks questions", 
+"4 = Able to use an appropriate whole sentence",
+"3 = Speaks with appropriate words but not sentences", 
+"2 = Speaks using words or phrases out of context", 
+"1 = Incomprehensible",
+"0 = Doesn't speak")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<checkboxes nonverbalexpression>
+/ caption="3. Non-verbal expression (score 1 if present)"
+/ required = false
+/ options=("Nods or smiles to communicate satisfaction", 
+"Indicates needs with hands or noises", 
+"Laughs",
+"Shows anger or happiness without words",
+"Communicates an idea with a particular look")
+</checkboxes>
+
+<radiobuttons RecogWrittenLanguage>
+/caption = "4. Recognition of written language"
+/ options = ("6 = Able to read parts of a book or magazine",
+"5 = Able to read signs", 
+"4 = Recognizes a few words",
+"3 = Recognizes own name when written", 
+"2 = Looks at pictures in magazine", 
+"1 = Looks at pictures in magazines if shown",
+"0 = Shows no interest or recognition of pictures")
+/ optionvalues = ("6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons WritingAbility>
+/caption = "5. Writing Ability"
+/ options = (
+"4 = Writes short notes or letters",
+"3 = Writes several sentences", 
+"2 = Writes a single sentence", 
+"1 = Writes own name",
+"0 = Unable to write at all")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons Cooperativeness>
+/caption = "1. Cooperativeness"
+/ options = (
+"2 = Offers help", 
+"1 = Helps only when asked",
+"0 = Never helps")
+/ optionvalues = ("2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons ContactwithOthers>
+/caption = "2. Contact with Others"
+/ options = (
+"3 = Occasionally initiates contact with others",
+"2 = Never initiates contact but replies to others", 
+"1 = Watches without becoming involved in others' activities",
+"0 = Doesn't seem aware of what others are doing")
+/ optionvalues = ("3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<checkboxes FamPersonAwareness>
+/ caption="3. Awareness of familiar persons (score 1 if present)"
+/ required = false
+/ options=(
+"Recognizes at least one member of the family", 
+"Knows the name of someone close",
+"Knows the name of a nurse, doctor or aid")
+</checkboxes>
+
+<checkboxes Problem_Daytime_Behavior>
+/ caption="4. Problem daytime behavior (score 1 if absent)"
+/ required = false
+/ options=(
+"Demands attention", 
+"Swears",
+"Vulgar with visitors",
+"Obsence behavior",
+"Aggressive behavior",
+"Disrupts the social life of others",
+"Angry outburts",
+"Cries out, makes lots of noise",
+"Deliberately creates problems between other persons",
+"Continually asks questions")
+</checkboxes>
+
+<checkboxes Problem_nighttime_Behavior>
+/ caption="5. Problem behavior at night (score 1 if absent)"
+/ required = false
+/ options=(
+"Walks around at night", 
+"Speaks or mutters at night",
+"Cries out for no reason at night",
+"Gets dressed at night",
+"Spreads feces during the night",
+"Sees or hears things that aren't there",
+)
+</checkboxes>
+
+<radiobuttons Activities>
+/caption = "1. Activities"
+/ options = (
+"4 = Maintains a favorite pastime (e.g. collects coins, paints)",
+"3 = Participates in activities if offered",
+"2 = Offers help", 
+"1 = Helps only when asked",
+"0 = Never helps")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<checkboxes Tasks>
+/ caption="2. Tasks (score 1 if present)"
+/ required = false
+/ options=(
+"Makes small purchases", 
+"Cleans room with help",
+"Makes bed with or without help",
+"Washes clothes",
+"Makes table",
+"Clears table",
+"Makes tea or coffee",
+"Helps with cooking",
+"Serves at table",
+"Washes up",
+"Goes for a walk without getting lost"
+)
+</checkboxes>
+
+<radiobuttons Orientation>
+/caption = "3. Orientation"
+/ options = (
+"2 = Seeks objects within own room", 
+"1 = Visual search of familiar objects",
+"0 = Does not seek objects")
+/ optionvalues = ("2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons Dressing>
+/caption = "1. Dressing"
+/ options = (
+"5 = Dresses correctly unaided"
+"4 = Dresses alone but not correctly",
+"3 = Dresses if requested",
+"2 = Dresses if requested but needs help", 
+"1 = Cooperates when being dressed",
+"0 = Uncooperative when being dressed")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons Undressing>
+/caption = "2. Undressing"
+/ options = (
+"4 = Undresses completely without reminder",
+"3 = Undresses completely if reminded",
+"2 = Undresses with help if reminded", 
+"1 = Cooperates ehne being undressed",
+"0 = Uncooperative when being undressed")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons PuttingOnShoes>
+/caption = "3. Putting on shoes"
+/ options = (
+"3 = Puts on shoes without help",
+"2 = Puts on slippers without help", 
+"1 = Puts shoes on but on the wrong foot",
+"0 = Has to have shoes put on")
+/ optionvalues = ("3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons TakingOffShoes>
+/caption = "4. Taking off shoes"
+/ options = (
+"2 = Takes off shoes", 
+"1 = Takes off slippers",
+"0 = Needs to have shoes taken off")
+/ optionvalues = ("2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons GoingToBed>
+/caption = "5. Going to bed"
+/ options = (
+"2 = Puts self to bed", 
+"1 = Put self to bed with some assistance",
+"0 = Needs to be put to bed")
+/ optionvalues = ("2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons Sleep>
+/caption = "6. Sleep"
+/ options = (
+"3 = Sleeps or rests quietly for at least 6 hours per night",
+"2 = Sleeps or rests calmly for 2-6 hours", 
+"1 = Reless agitated sleep",
+"0 = Sleeps less than two hours per night")
+/ optionvalues = ("3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons Telephone>
+/caption = "7. Use of telephone"
+/ options = (
+"3 = Able to telephone alone if given number",
+"2 = Able to telephone with help if given number", 
+"1 = Picks up reciever and speaks when telephone rings",
+"0 = Unable to use telephone")
+/ optionvalues = ("3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+
+<radiobuttons Utensils>
+/caption = "8. Use of eating utensils"
+/ options = (
+"8 = Able to use knife and fork correctly without spilling food",
+"7 = Can eat with spoon and fork correctly without spilling food",
+"6 = Eats with spoon and fork but spills a lot",
+"5 = Eats only with spoon",
+"4 = Eats with spoon but spills a lot",
+"3 = Eats with fingers",
+"2 = Cooperates when being fed", 
+"1 = Takes food in mouth but won't swallow",
+"0 = Doesn't open mouth when fed")
+/ optionvalues = ("8", "7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons Drinking>
+/caption = "9. Drinking"
+/ options = (
+"5 = Drinks from a full cup alone",
+"4 = Drinks alone from a half-full cup",
+"3 = Drinks from a half-full cup but spills a great deal",
+"2 = Cooperates when helped to drink", 
+"1 = Takes liquid into mouth without swallowing",
+"0 = Doesn't open mouth")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons UrinaryContinence>
+/caption = "10. Urinary continence"
+/ options = (
+"8 = Independent, has no accidents",
+"7 = Independent, never has accidents during the day",
+"6 = Independent but has occasional accidents during the day",
+"5 = No accidents but indicates need to be taken to toilet",
+"4 = No accidents but needs to be taken regularly to toilet",
+"3 = Occasional daytime accidents - lets caretaker know",
+"2 = Occasional daytime accidents - doesn't let caretaker know", 
+"1 = Frequent daytime accidents",
+"0 = Completely incontinent")
+/ optionvalues = ("8", "7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons fecalContinence>
+/caption = "11. fecal continence"
+/ options = (
+"7 = Independent, no accidents",
+"6 = Independent, has no daytime accidents",
+"5 = Independent but occasional accidents",
+"4 = Indicates need to caretaker, no daytime accidents",
+"3 = At least a weekly accident in the daytime, tell caretaker",
+"2 = At least a weekly accident, doesn't tell caretaker", 
+"1 = Accidents more than once a week",
+"0 = Completely incontinent")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<checkboxes UseofToilet>
+/ caption="12. Independent use of toilet (score 1 if able)"
+/ required = false
+/ options=(
+"Able to use a gesture or word to indicate need", 
+"Doesn't use other inappropriate containers",
+"Lowers clothing without help",
+"Sits on seat without help",
+"Uses toilet paper without being told",
+"Pulls up clothes without being told",
+"Washes hands without being told"
+)
+</checkboxes>
+
+<radiobuttons Bathing>
+/caption = "13. Bathing"
+/ options = (
+"6 = Washes and dries self without prompting",
+"5 = Washes and dries self if asked",
+"4 = Washes and dries self partially if asked",
+"3 = Washes and dries self partially if helped",
+"2 = Tries unsuccessfully to wash self", 
+"1 = Cooperates when being bathed",
+"0 = Doesn't cooperate when being bathed")
+/ optionvalues = ("6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<checkboxes WashingHandsandFace>
+/ caption="14. Washing hands and face (score 1 if able)"
+/ required = false
+/ options=(
+"Turns on tap", 
+"Washes hands with soap unaided",
+"Rinses hands alone",
+"Washes face with soap and face-washer",
+"Dries hands",
+"Dries face"
+)
+</checkboxes>
+
+<radiobuttons DentalHygiene>
+/caption = "15. Dental hygiene"
+/ options = (
+"4 = No teeth or dentures",
+"4 = Brushes teeth or dentures alone",
+"3 = Brushes teeth alone without toothpaste",
+"2 = Brushes teeth with help", 
+"1 = Cooperates when teeth brushed by caretaker",
+"0 = Does not cooperate when teeth being brushed")
+/ optionvalues = ("4", "4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons Shaving>
+/caption = "16. Shaving"
+/ options = (
+"5 = Does not need to shave",
+"5 = Shaves alone without help",
+"4 = Shves alone if told to",
+"3 = Shaves alone if told how to",
+"2 = Shaves with help", 
+"1 = Cooperates when being shaved",
+"0 = Doesn't cooperate when being shaved")
+/ optionvalues = ("5", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons Walking>
+/caption = "1. Walking"
+/ options = (
+"7 = Goes up and down stairs alone placing only one foot per step",
+"6 = Goes up and down stairs with both feet on each step",
+"5 = Walks alone but can't manage stairs",
+"4 = Walks alone with aid of a wall or rail",
+"3 = Walks with a stick",
+"2 = Walks unaided with a walking-frame", 
+"1 = Can walk with frame only if helped to feet",
+"0 = Unable to walk alone")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<checkboxes PostureAndGait>
+/ caption="2. Posture and gait (score 1 if absent)"
+/ required = false
+/ options=(
+"Drags feet", 
+"Lowered head",
+"Stomach protruding because of posture",
+"Shoulders forward and back curved"
+)
+</checkboxes>
+
+<checkboxes Handcontrol>
+/ caption="3. Hand control (score 1 if able)"
+/ required = false
+/ options=(
+"Able to gather up objects", 
+"Can pull the lid off tins",
+"Able to turn pages",
+"Pours liquids into containers",
+"Turns taps on and off",
+"Uses light switches",
+"Uses a key for opening and closing a lock"
+)
+</checkboxes>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage bas1>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Language
+"
+/questions = [1 = oralcomprehension, oralexpression]
+</surveypage>
+
+<surveypage bas2>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Language
+"
+/questions = [1 = nonverbalexpression, recogwrittenlanguage]
+</surveypage>
+
+<surveypage bas3>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Language
+"
+/questions = [1 = writingability]
+</surveypage>
+
+<surveypage bas4>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Social Integration
+"
+/questions = [1 = cooperativeness, contactwithothers, fampersonawareness]
+</surveypage>
+
+<surveypage bas5>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Social Integration
+"
+/questions = [1 = problem_daytime_behavior]
+</surveypage>
+
+<surveypage bas6>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Social Integration
+"
+/questions = [1 = problem_nighttime_behavior]
+</surveypage>
+
+<surveypage bas7>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Occupation and Orientation
+"
+/questions = [1 = activities]
+</surveypage>
+
+<surveypage bas8>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Occupation and Orientation
+"
+/questions = [1 = tasks, orientation]
+</surveypage>
+
+
+<surveypage bas9>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Physical Independence
+"
+/questions = [1 = dressing, undressing]
+</surveypage>
+
+<surveypage bas10>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Physical Independence
+"
+/questions = [1 = puttingonshoes, takingoffshoes]
+</surveypage>
+
+<surveypage bas11>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Physical Independence
+"
+/questions = [1 = goingtobed, sleep]
+</surveypage>
+
+<surveypage bas12>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Physical Independence
+"
+/questions = [1 = telephone, utensils]
+</surveypage>
+
+<surveypage bas13>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Physical Independence
+"
+/questions = [1 = drinking, UrinaryContinence]
+</surveypage>
+
+<surveypage bas14>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Physical Independence
+"
+/questions = [1 = fecalcontinence, UseofToilet]
+</surveypage>
+
+
+<surveypage bas15>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Physical Independence
+"
+/questions = [1 = bathing, washinghandsandface]
+</surveypage>
+
+<surveypage bas16>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Physical Independence
+"
+/questions = [1 = dentalhygiene, Shaving]
+</surveypage>
+
+
+<surveypage bas17>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Mobility
+"
+/questions = [1 = walking, postureandgait]
+</surveypage>
+
+<surveypage bas18>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Mobility
+"
+/questions = [1 = handcontrol]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages in order
+- to take pictures of each screen set /screencapture = true
+(only works on Desktops; does not work on the web)
+
+<survey BAS>
+/pages = [
+	1 = bas1;
+	2 = bas2;
+	3 = bas3;
+	4 = bas4;
+	5 = bas5;
+	6 = bas6;
+	7 = bas7;
+	8 = bas8;
+	9 = bas9;
+	10 = bas10;
+	11 = bas11;
+	12 = bas12;
+	13 = bas13;
+	14 = bas14;
+	15 = bas15;
+	16 = bas16;
+	17 = bas17;
+	18 = bas18;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+/ onblockend = [
+	expressions.calculatecheckboxscore;
+]
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

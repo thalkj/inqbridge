@@ -1,0 +1,227 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									CAGE QUESTIONNAIRE
+			(Cutting down, Annoyance by criticism, Guilty feelings, end Eyeopeners)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 12-08-2016
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the CAGE questionnaire (identifying possible alcoholism) as described in:
+
+Ewing JA. Detecting alcoholism. The CAGE questionnaire.
+J Am Med Assoc 1984;252:1905–1907.
+
+MAYFIELD, D., MCCLEOD, G. & HALL, P. (1974)
+The CAGE questionnaire: validation of a new
+alcoholism screening instrument, American Journal
+of Psychiatry, 131, pp. 1121-1123.
+
+Ewing JA, Rouse SA: Identifying the hidden
+alcohollc. Presented at the 29th International
+Congress on Alcohol and Drug Dependence,
+Sydney, Australia, Feb 3, 1970.
+
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+4 yes/no questions											  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes less than 1 minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'cage.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 0 = no, 1 = yes
+								no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'cage_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+cageScore:						total score (yes = 1; No = 0) => Range 0-4
+								Ewing (1984) suggests a physician use the CAGE survey to "determine his index of suspicion that 
+								alcoholism may exist. Thus, even one positive reply calls for further inquiry."
+
++ responses to individual questions q1-q4 with 0 = no; 1 = yes						
+	
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+can be changed under section SURVEYPAGES
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+
+<page end>
+Thank you!
+</page>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.cageScore, radiobuttons.q1.response, radiobuttons.q2.response, radiobuttons.q3.response, radiobuttons.q4.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/cageScore = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. Have you ever felt you ought to cut down on your drinking?"
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Have people annoyed you by criticizing your drinking?"
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Have you ever felt bad or guilty about your drinking?"
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. Have you ever had a drink first thing in the morning to steady your nerves or get rid of a hangover (Eye-opener)?"
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage cage1>
+/caption ="CAGE Questionnaire"
+/ subcaption = "Please answer the following questions:
+"
+/questions = [1 = q1, q2, q3, q4]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey cage>
+/pages = [1 = cage1]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

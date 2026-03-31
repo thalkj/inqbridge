@@ -1,0 +1,1262 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									ATTITUDES TOWARDS CHOCOLATE QUESTIONNAIRE
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 08-02-2016
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Attitudes towards Chocolate Questionnaire published by:
+
+Benton, D., Greenfield, K. & Morgan, M. (1998). The development of the attitudes to chocolate questionnaire, 
+Personality and Individual Differences, 24, 513-520.
+(http://www.sciencedirect.com/science/article/pii/S0191886997002158)
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+24 slider questions (0-100 points each)
+* 10 Guilt questions
+* 10 Craving questions
+* 4 Functional questions
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'attitudestowardschocolatequestionnaire.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 0 (not at all like me) - 100 (very much like me)
+								no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'attitudestowardschocolatequestionnaire_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)
+								
+dropdown.gender.response:		the response to the gender question 
+								Note: if response is 'other', the data are treated as "female" in this script for percentile rank determinations
+
+Craving:						Craving Score = mean score of all 10 craving (C) questions (0-100)
+Craving_percentile:				the percentile of the Craving Score based on normative data published in Table 3, p. 516, in Benton et al (1998)
+								and linear interpolation for the gender indicated (!default is female in this script!)
+								Note: for Males: the upper score reported is 81.4 (100%) - in this script: anything above 81.4 receives a rank of 100%
+
+Guilt:							Guilt Score = mean score of all 10 guilt (G) questions (0-100)
+Guilt_percentile:				the percentile of the Guilt Score based on normative data published in Table 3, p. 516, in Benton et al (1998)
+								and linear interpolation for the gender indicated (!default is female in this script!)
+								Note: for Males: the upper score reported is 70.6 (100%) and for Females it is 79.5 (100%)- in this script: anything above these scores receives a rank of 100%
+																
+Functional:						Functional Score = mean score of all 4 functional (F) questions (0-100)
+Functional_percentile:			the percentile of the Functional Score based on normative data published in Table 3, p. 516, in Benton et al (1998)
+								and linear interpolation for the gender indicated (!default is female in this script!)
+								Note: for Males: the upper score reported is 97.0 (100%) and for Females it is 99.7 (100%)- in this script: anything over these scores receives a rank of 100%
+									
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________
+24 slider questions (0-100 points):
+* 10 Guilt questions => the mean score is the Guilt Score
+* 10 Craving questions => the mean score is the Craving Score
+* 4 Functional questions => the mean score is the Functional Score
+
+NORMS
+normative data published in Benton et al (1998), p.516 (table 3);
+based on N = 330 (Females: N=226; Males: N=104), 
+with 
+Craving: 
+Female: Mean = 46.8 (SD = 21.8); Male: Mean = 29.5 (SD = 19.4)
+Guilt: 
+Female: Mean = 44.6 (SD = 21.8); Male: Mean = 21.2 (SD = 15.5)
+Functional:
+Female: Mean = 16.1 (SD = 7.3); Male: Mean = 15.6 (SD = 7.9)
+
+percentiles reported in this script are based on the reported percentile categories and the process of linear interpolation 
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+can be edited under section EDITABLE PARAMETERS
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:		the instructions presented on each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "Please answer the following questions by moving the arrow to the appropriate position on each slider.
+
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ txcolor = (black)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+dropdown.gender.response,
+expressions.Craving, values.Craving_percentile,
+expressions.Guilt, values.Guilt_percentile,
+expressions.Functional, values.Functional_percentile)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+helper variables to determine percentile rank of scores:
+/bottom:				stores the bottom border score of the current percentile interval 
+/top:					stores the top border score of the current percentile interval 
+/bottom_percentile:		stores the bottom percentile of the current percentile category 
+/top_percentiles:		stores the top percentile of the current percentile category
+
+/Craving_percentile:	the percentile of the Craving Score based on normative data published in Table 3, p. 516, 
+						and linear interpolation in Benton et al (1998)	for the gender indicated (!default is female in this script!)
+/Guilt_percentile:		the percentile of the Guilt Score based on normative data published in Table 3, p. 516, 
+						and linear interpolation in Benton et al (1998)	for the gender indicated (!default is female in this script!)
+/Functional_percentile:	the percentile of the Functional Score based on normative data published in Table 3, p. 516, 
+						and linear interpolation in Benton et al (1998)	for the gender indicated (!default is female in this script!)
+
+<values>
+/bottom = 0
+/top = 0
+/bottom_percentile = 0
+/top_percentile = 0
+
+/Craving_percentile = ""
+/Guilt_percentile = ""
+/Functional_percentile = ""
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/Craving:		Craving Score = mean score of all 10 craving (C) questions
+/Guilt:			Guilt Score = mean score of all 10 guilt (G) questions
+/Functional:	Functional Score = mean score of all 4 functional (F) questions
+
+/calculateStep:		helper function to determine the ratio of difference of top-bottom percentiles to difference in top-bottom scores
+
+/Craving_percentile_F: F=Females => the percentile of the Craving Score based on normative data published in Table 3, p. 516, and linear interpolation in Benton et al (1998)
+/Guilt_percentile_F: F=Females =>  the percentile of the Guilt Score based on normative data published in Table 3, p. 516, and linear interpolation in Benton et al (1998)
+					Note: the upper limit reported by Benton et a (1998) is a score of 79.5 (percentile rank: 100%)- this script assigns any possible score > 79.9 percentile rank 100%
+/Functional_percentile_F: F=Females => the percentile of the Functional Score based on normative data published in Table 3, p. 516 in Benton et al (1998)
+					Note: the upper limit reported by Benton et a (1998) is a score of 99.7 (percentile rank: 100%)- this script assigns any possible score > 99.7 percentile rank 100%
+
+(same for M = Males)
+
+/determinePercentiles:	assigns percentile ranks according to gender (default is 'Female' in this script)
+					
+<expressions>
+/Craving = (slider.q1_C.response + slider.q2_C.response + slider.q7_C.response + slider.q8_C.response + slider.q13_C.response + 
+slider.q17_C.response + slider.q18_C.response + slider.q21_C.response + slider.q23_C.response + slider.q24_C.response)/10
+
+/Guilt = (slider.q3_G.response + slider.q4_G.response + slider.q6_G.response + slider.q9_G.response + slider.q10_G.response + 
+slider.q11_G.response + slider.q14_G.response + slider.q15_G.response + slider.q16_G.response + slider.q22_G.response)/10
+
+/Functional = (slider.q5_F.response + slider.q12_F.response + slider.q19_F.response + slider.q20_F.response)/4
+
+/calculateStep = {
+	if (values.top_percentile > values.bottom_percentile) {
+		(values.top_percentile-values.bottom_percentile)/(values.top-values.bottom);
+	} else {
+		0;
+	}
+}	
+
+/Craving_percentile_F = {
+	if (expressions.Craving <= 6.3) {
+		values.bottom = 0;
+		values.top = 6.3;
+		values.bottom_percentile = 0;
+		values.top_percentile = 5;
+	} else if (expressions.Craving <= 15){
+		values.bottom = 6.3;
+		values.top = 15;
+		values.bottom_percentile = 5;
+		values.top_percentile = 10;		
+	} else if (expressions.Craving <= 21.3){
+		values.bottom = 15;
+		values.top = 21.3;
+		values.bottom_percentile = 10;
+		values.top_percentile = 15;		
+	} else if (expressions.Craving <= 26.7) {
+		values.bottom = 21.3;
+		values.top = 26.7;
+		values.bottom_percentile = 15;
+		values.top_percentile = 20;		
+	} else if (expressions.Craving <= 30.9) {
+		values.bottom = 26.7;
+		values.top = 30.9;	
+		values.bottom_percentile = 20;
+		values.top_percentile = 25;		
+	} else if (expressions.Craving <= 33.6) {
+		values.bottom = 30.9;
+		values.top = 33.6;	
+		values.bottom_percentile = 25;
+		values.top_percentile = 30;		
+	} else if (expressions.Craving <= 37.5) {
+		values.bottom = 33.6;
+		values.top = 37.5;
+		values.bottom_percentile = 30;
+		values.top_percentile = 35;		
+	} else if (expressions.Craving <= 39.2) {
+		values.bottom = 37.5;
+		values.top = 39.2;
+		values.bottom_percentile = 35;
+		values.top_percentile = 49;		
+	} else if (expressions.Craving <= 42.6) {
+		values.bottom = 39.2;
+		values.top = 42.6;
+		values.bottom_percentile = 40;
+		values.top_percentile = 45;		
+	} else if (expressions.Craving <= 45.5) {
+		values.bottom = 42.6;
+		values.top = 45.5;	
+		values.bottom_percentile = 45;
+		values.top_percentile = 50;		
+	} else if (expressions.Craving <= 49.4) {
+		values.bottom = 45.5;
+		values.top = 49.4;	
+		values.bottom_percentile = 50;
+		values.top_percentile = 55;		
+	} else if (expressions.Craving <= 53.6) {
+		values.bottom = 49.4;
+		values.top = 53.6;	
+		values.bottom_percentile = 55;
+		values.top_percentile = 60;		
+	} else if (expressions.Craving <= 56.0) {
+		values.bottom = 53.6;
+		values.top = 56.0;
+		values.bottom_percentile = 60;
+		values.top_percentile = 65;			
+	} else if (expressions.Craving <= 58.9) {
+		values.bottom = 56.0;
+		values.top = 58.9;
+		values.bottom_percentile = 65;
+		values.top_percentile = 70;		
+	} else if (expressions.Craving <= 65.5) {
+		values.bottom = 58.9;
+		values.top = 65.5;
+		values.bottom_percentile = 70;
+		values.top_percentile = 75;		
+	} else if (expressions.Craving <= 67.9) {
+		values.bottom = 65.5;
+		values.top = 67.9;
+		values.bottom_percentile = 75;
+		values.top_percentile = 80;			
+	} else if (expressions.Craving <= 71.1) {
+		values.bottom = 67.9;
+		values.top = 71.1;	
+		values.bottom_percentile = 80;
+		values.top_percentile = 85;	
+	} else if (expressions.Craving <= 77.3) {
+		values.bottom = 71.1;
+		values.top = 77.3;
+		values.bottom_percentile = 85;
+		values.top_percentile = 90;		
+	} else if (expressions.Craving <= 83.8) {
+		values.bottom = 77.3;
+		values.top = 83.8;
+		values.bottom_percentile = 90;
+		values.top_percentile = 95;			
+	} else {
+		values.bottom = 83.8;
+		values.top = 100;	
+		values.bottom_percentile = 95;
+		values.top_percentile = 100;			
+	}
+	
+	values.bottom_percentile + (expressions.Craving - values.bottom)*expressions.calculateStep;
+}
+
+/Craving_percentile_M = {
+	if (expressions.Craving <= 2.5) {
+		values.bottom = 0;
+		values.top = 2.5;
+		values.bottom_percentile = 0;
+		values.top_percentile = 5;
+	} else if (expressions.Craving <= 4.2){
+		values.bottom = 2.5;
+		values.top = 4.2;
+		values.bottom_percentile = 5;
+		values.top_percentile = 10;		
+	} else if (expressions.Craving <= 7.1){
+		values.bottom = 4.2;
+		values.top = 7.1;
+		values.bottom_percentile = 10;
+		values.top_percentile = 4.2;		
+	} else if (expressions.Craving <= 11.0) {
+		values.bottom = 7.1;
+		values.top = 11.0;
+		values.bottom_percentile = 4.2;
+		values.top_percentile = 20;		
+	} else if (expressions.Craving <= 13.0) {
+		values.bottom = 11.0;
+		values.top = 13.0;	
+		values.bottom_percentile = 20;
+		values.top_percentile = 25;		
+	} else if (expressions.Craving <= 16.5) {
+		values.bottom = 13.0;
+		values.top = 16.5;	
+		values.bottom_percentile = 25;
+		values.top_percentile = 30;		
+	} else if (expressions.Craving <= 18.9) {
+		values.bottom = 16.5;
+		values.top = 18.9;
+		values.bottom_percentile = 30;
+		values.top_percentile = 35;		
+	} else if (expressions.Craving <= 22.4) {
+		values.bottom = 18.9;
+		values.top = 22.4;
+		values.bottom_percentile = 35;
+		values.top_percentile = 49;		
+	} else if (expressions.Craving <= 25.7) {
+		values.bottom = 22.4;
+		values.top = 25.7;
+		values.bottom_percentile = 40;
+		values.top_percentile = 45;		
+	} else if (expressions.Craving <= 27.1) {
+		values.bottom = 25.7;
+		values.top = 27.1;	
+		values.bottom_percentile = 45;
+		values.top_percentile = 50;		
+	} else if (expressions.Craving <= 28.4) {
+		values.bottom = 27.1;
+		values.top = 28.4;	
+		values.bottom_percentile = 50;
+		values.top_percentile = 55;		
+	} else if (expressions.Craving <= 33.6) {
+		values.bottom = 28.4;
+		values.top = 33.6;	
+		values.bottom_percentile = 55;
+		values.top_percentile = 60;		
+	} else if (expressions.Craving <= 36.3) {
+		values.bottom = 33.6;
+		values.top = 36.3;
+		values.bottom_percentile = 60;
+		values.top_percentile = 65;			
+	} else if (expressions.Craving <= 38.6) {
+		values.bottom = 36.3;
+		values.top = 38.6;
+		values.bottom_percentile = 65;
+		values.top_percentile = 70;		
+	} else if (expressions.Craving <= 43.0) {
+		values.bottom = 38.6;
+		values.top = 43.0;
+		values.bottom_percentile = 70;
+		values.top_percentile = 75;		
+	} else if (expressions.Craving <= 46.7) {
+		values.bottom = 43.0;
+		values.top = 46.7;
+		values.bottom_percentile = 75;
+		values.top_percentile = 80;			
+	} else if (expressions.Craving <= 50.4) {
+		values.bottom = 46.7;
+		values.top = 50.4;	
+		values.bottom_percentile = 80;
+		values.top_percentile = 85;	
+	} else if (expressions.Craving <= 56.0) {
+		values.bottom = 50.4;
+		values.top = 56.0;
+		values.bottom_percentile = 85;
+		values.top_percentile = 90;		
+	} else if (expressions.Craving <= 65.3) {
+		values.bottom = 56.0;
+		values.top = 65.3;
+		values.bottom_percentile = 90;
+		values.top_percentile = 95;			
+	} else if (expressions.Craving <= 81.4) {
+		values.bottom = 65.3;
+		values.top = 100;	
+		values.bottom_percentile = 95;
+		values.top_percentile = 100;			
+	} else {
+		values.bottom = 81.4;
+		values.top = 100;	
+		values.bottom_percentile = 100;
+		values.top_percentile = 100;	
+	}
+	
+	values.bottom_percentile + (expressions.Craving - values.bottom)*expressions.calculateStep;
+}
+
+/Guilt_percentile_F = {
+	if (expressions.Guilt <= 6.0) {
+		values.bottom = 0;
+		values.top = 6.0;
+		values.bottom_percentile = 0;
+		values.top_percentile = 5;
+	} else if (expressions.Guilt <= 9.6){
+		values.bottom = 6.0;
+		values.top = 9.6;
+		values.bottom_percentile = 5;
+		values.top_percentile = 10;		
+	} else if (expressions.Guilt <= 11.4){
+		values.bottom = 9.6;
+		values.top = 11.4;
+		values.bottom_percentile = 10;
+		values.top_percentile = 15;		
+	} else if (expressions.Guilt <= 14.8) {
+		values.bottom = 11.4;
+		values.top = 14.8;
+		values.bottom_percentile = 15;
+		values.top_percentile = 20;		
+	} else if (expressions.Guilt <= 18.5) {
+		values.bottom = 14.8;
+		values.top = 18.5;	
+		values.bottom_percentile = 20;
+		values.top_percentile = 25;		
+	} else if (expressions.Guilt <= 20.4) {
+		values.bottom = 18.5;
+		values.top = 20.4;	
+		values.bottom_percentile = 25;
+		values.top_percentile = 30;		
+	} else if (expressions.Guilt <= 23.2) {
+		values.bottom = 20.4;
+		values.top = 23.2;
+		values.bottom_percentile = 30;
+		values.top_percentile = 35;		
+	} else if (expressions.Guilt <= 25.2) {
+		values.bottom = 23.2;
+		values.top = 25.2;
+		values.bottom_percentile = 35;
+		values.top_percentile = 49;		
+	} else if (expressions.Guilt <= 27.1) {
+		values.bottom = 25.2;
+		values.top = 27.1;
+		values.bottom_percentile = 40;
+		values.top_percentile = 45;		
+	} else if (expressions.Guilt <= 34.4) {
+		values.bottom = 27.1;
+		values.top = 34.4;	
+		values.bottom_percentile = 45;
+		values.top_percentile = 50;		
+	} else if (expressions.Guilt <= 38.0) {
+		values.bottom = 34.4;
+		values.top = 38.0;	
+		values.bottom_percentile = 50;
+		values.top_percentile = 55;		
+	} else if (expressions.Guilt <= 42.3) {
+		values.bottom = 38.0;
+		values.top = 42.3;	
+		values.bottom_percentile = 55;
+		values.top_percentile = 60;		
+	} else if (expressions.Guilt <= 45.9) {
+		values.bottom = 42.3;
+		values.top = 45.9;
+		values.bottom_percentile = 60;
+		values.top_percentile = 65;			
+	} else if (expressions.Guilt <= 50.6) {
+		values.bottom = 45.9;
+		values.top = 50.6;
+		values.bottom_percentile = 65;
+		values.top_percentile = 70;		
+	} else if (expressions.Guilt <= 54.1) {
+		values.bottom = 50.6;
+		values.top = 54.1;
+		values.bottom_percentile = 70;
+		values.top_percentile = 75;		
+	} else if (expressions.Guilt <= 58.7) {
+		values.bottom = 54.1;
+		values.top = 58.7;
+		values.bottom_percentile = 75;
+		values.top_percentile = 80;			
+	} else if (expressions.Guilt <= 64.1) {
+		values.bottom = 58.7;
+		values.top = 64.1;	
+		values.bottom_percentile = 80;
+		values.top_percentile = 85;	
+	} else if (expressions.Guilt <= 70.4) {
+		values.bottom = 64.1;
+		values.top = 70.4;
+		values.bottom_percentile = 85;
+		values.top_percentile = 90;		
+	} else if (expressions.Guilt <= 77.9) {
+		values.bottom = 70.4;
+		values.top = 77.9;
+		values.bottom_percentile = 90;
+		values.top_percentile = 95;			
+	} else if (expressions.Guilt <= 79.9){
+		values.bottom = 77.9;
+		values.top = 79.9;	
+		values.bottom_percentile = 95;
+		values.top_percentile = 100;			
+	} else {
+		values.bottom = 79.9;
+		values.top = 100;	
+		values.bottom_percentile = 100;
+		values.top_percentile = 100;		
+	}
+	
+	values.bottom_percentile + (expressions.Guilt - values.bottom)*expressions.calculateStep;
+}
+
+/Guilt_percentile_M = {
+	if (expressions.Guilt <= 2.9) {
+		values.bottom = 0;
+		values.top = 2.9;
+		values.bottom_percentile = 0;
+		values.top_percentile = 5;
+	} else if (expressions.Guilt <= 6.4){
+		values.bottom = 2.9;
+		values.top = 6.4;
+		values.bottom_percentile = 5;
+		values.top_percentile = 10;		
+	} else if (expressions.Guilt <= 7.7){
+		values.bottom = 6.4;
+		values.top = 7.7;
+		values.bottom_percentile = 10;
+		values.top_percentile = 15;		
+	} else if (expressions.Guilt <= 9.9) {
+		values.bottom = 7.7;
+		values.top = 9.9;
+		values.bottom_percentile = 15;
+		values.top_percentile = 20;		
+	} else if (expressions.Guilt <= 10.1) {
+		values.bottom = 9.9;
+		values.top = 10.1;	
+		values.bottom_percentile = 20;
+		values.top_percentile = 25;		
+	} else if (expressions.Guilt <= 10.9) {
+		values.bottom = 10.1;
+		values.top = 10.9;	
+		values.bottom_percentile = 25;
+		values.top_percentile = 30;		
+	} else if (expressions.Guilt <= 11.9) {
+		values.bottom = 10.9;
+		values.top = 11.9;
+		values.bottom_percentile = 30;
+		values.top_percentile = 35;		
+	} else if (expressions.Guilt <= 13.0) {
+		values.bottom = 11.9;
+		values.top = 13.0;
+		values.bottom_percentile = 35;
+		values.top_percentile = 49;		
+	} else if (expressions.Guilt <= 16.6) {
+		values.bottom = 13.0;
+		values.top = 16.6;
+		values.bottom_percentile = 40;
+		values.top_percentile = 45;		
+	} else if (expressions.Guilt <= 18.3) {
+		values.bottom = 16.6;
+		values.top = 18.3;	
+		values.bottom_percentile = 45;
+		values.top_percentile = 50;		
+	} else if (expressions.Guilt <= 19.7) {
+		values.bottom = 18.3;
+		values.top = 19.7;	
+		values.bottom_percentile = 50;
+		values.top_percentile = 55;		
+	} else if (expressions.Guilt <= 20.7) {
+		values.bottom = 19.7;
+		values.top = 20.7;	
+		values.bottom_percentile = 55;
+		values.top_percentile = 60;		
+	} else if (expressions.Guilt <= 22.1) {
+		values.bottom = 20.7;
+		values.top = 22.1;
+		values.bottom_percentile = 60;
+		values.top_percentile = 65;			
+	} else if (expressions.Guilt <= 24.0) {
+		values.bottom = 22.1;
+		values.top = 24.0;
+		values.bottom_percentile = 65;
+		values.top_percentile = 70;		
+	} else if (expressions.Guilt <= 24.9) {
+		values.bottom = 24.0;
+		values.top = 24.9;
+		values.bottom_percentile = 70;
+		values.top_percentile = 75;		
+	} else if (expressions.Guilt <= 30.6) {
+		values.bottom = 24.9;
+		values.top = 30.6;
+		values.bottom_percentile = 75;
+		values.top_percentile = 80;			
+	} else if (expressions.Guilt <= 34.4) {
+		values.bottom = 30.6;
+		values.top = 34.4;	
+		values.bottom_percentile = 80;
+		values.top_percentile = 85;	
+	} else if (expressions.Guilt <= 45.9) {
+		values.bottom = 34.4;
+		values.top = 45.9;
+		values.bottom_percentile = 85;
+		values.top_percentile = 90;		
+	} else if (expressions.Guilt <= 55.9) {
+		values.bottom = 45.9;
+		values.top = 55.9;
+		values.bottom_percentile = 90;
+		values.top_percentile = 95;			
+	} else if (expressions.Guilt <= 70.6){
+		values.bottom = 55.9;
+		values.top = 70.6;	
+		values.bottom_percentile = 95;
+		values.top_percentile = 100;			
+	} else {
+		values.bottom = 70.6;
+		values.top = 100;	
+		values.bottom_percentile = 100;
+		values.top_percentile = 100;		
+	}
+	
+	values.bottom_percentile + (expressions.Guilt - values.bottom)*expressions.calculateStep;
+}
+
+
+/Functional_percentile_F = {
+	if (expressions.Functional <= 10.2) {
+		values.bottom = 0;
+		values.top = 10.2;
+		values.bottom_percentile = 0;
+		values.top_percentile = 5;
+	} else if (expressions.Functional <= 16.7){
+		values.bottom = 10.2;
+		values.top = 16.7;
+		values.bottom_percentile = 5;
+		values.top_percentile = 10;		
+	} else if (expressions.Functional <= 22.0){
+		values.bottom = 16.7;
+		values.top = 22.0;
+		values.bottom_percentile = 10;
+		values.top_percentile = 15;		
+	} else if (expressions.Functional <= 25.2) {
+		values.bottom = 22.0;
+		values.top = 25.2;
+		values.bottom_percentile = 15;
+		values.top_percentile = 20;		
+	} else if (expressions.Functional <= 26.7) {
+		values.bottom = 25.2;
+		values.top = 26.7;	
+		values.bottom_percentile = 20;
+		values.top_percentile = 25;		
+	} else if (expressions.Functional <= 29.2) {
+		values.bottom = 26.7;
+		values.top = 29.2;	
+		values.bottom_percentile = 25;
+		values.top_percentile = 30;		
+	} else if (expressions.Functional <= 32.5) {
+		values.bottom = 29.2;
+		values.top = 32.5;
+		values.bottom_percentile = 30;
+		values.top_percentile = 35;		
+	} else if (expressions.Functional <= 35.0) {
+		values.bottom = 32.5;
+		values.top = 35.0;
+		values.bottom_percentile = 35;
+		values.top_percentile = 49;		
+	} else if (expressions.Functional <= 38.0) {
+		values.bottom = 35.0;
+		values.top = 38.0;
+		values.bottom_percentile = 40;
+		values.top_percentile = 45;		
+	} else if (expressions.Functional <= 39.7) {
+		values.bottom = 38.0;
+		values.top = 39.7;	
+		values.bottom_percentile = 45;
+		values.top_percentile = 50;		
+	} else if (expressions.Functional <= 41.7) {
+		values.bottom = 39.7;
+		values.top = 41.7;	
+		values.bottom_percentile = 50;
+		values.top_percentile = 55;		
+	} else if (expressions.Functional <= 44.7) {
+		values.bottom = 41.7;
+		values.top = 44.7;	
+		values.bottom_percentile = 55;
+		values.top_percentile = 60;		
+	} else if (expressions.Functional <= 46.7) {
+		values.bottom = 44.7;
+		values.top = 46.7;
+		values.bottom_percentile = 60;
+		values.top_percentile = 65;			
+	} else if (expressions.Functional <= 49.7) {
+		values.bottom = 46.7;
+		values.top = 49.7;
+		values.bottom_percentile = 65;
+		values.top_percentile = 70;		
+	} else if (expressions.Functional <= 52.5) {
+		values.bottom = 49.7;
+		values.top = 52.5;
+		values.bottom_percentile = 70;
+		values.top_percentile = 75;		
+	} else if (expressions.Functional <= 57.0) {
+		values.bottom = 52.5;
+		values.top = 57.0;
+		values.bottom_percentile = 75;
+		values.top_percentile = 80;			
+	} else if (expressions.Functional <= 59.5) {
+		values.bottom = 57.0;
+		values.top = 59.5;	
+		values.bottom_percentile = 80;
+		values.top_percentile = 85;	
+	} else if (expressions.Functional <= 63.5) {
+		values.bottom = 59.5;
+		values.top = 63.5;
+		values.bottom_percentile = 85;
+		values.top_percentile = 90;		
+	} else if (expressions.Functional <= 67.5) {
+		values.bottom = 63.5;
+		values.top = 67.5;
+		values.bottom_percentile = 90;
+		values.top_percentile = 95;			
+	} else if (expressions.Functional <= 99.7) {
+		values.bottom = 67.5;
+		values.top = 99.7;	
+		values.bottom_percentile = 95;
+		values.top_percentile = 100;			
+	} else {
+		values.bottom = 99.7;
+		values.top = 100;	
+		values.bottom_percentile = 100;
+		values.top_percentile = 100;		
+	}
+	
+	values.bottom_percentile + (expressions.Functional - values.bottom)*expressions.calculateStep;
+}
+
+/Functional_percentile_M = {
+	if (expressions.Functional <= 3.0) {
+		values.bottom = 0;
+		values.top = 3.0;
+		values.bottom_percentile = 0;
+		values.top_percentile = 5;
+	} else if (expressions.Functional <= 10.2){
+		values.bottom = 3.0;
+		values.top = 10.2;
+		values.bottom_percentile = 5;
+		values.top_percentile = 10;		
+	} else if (expressions.Functional <= 16.5){
+		values.bottom = 10.2;
+		values.top = 16.5;
+		values.bottom_percentile = 10;
+		values.top_percentile = 15;		
+	} else if (expressions.Functional <= 23.0) {
+		values.bottom = 16.5;
+		values.top = 23.0;
+		values.bottom_percentile = 15;
+		values.top_percentile = 20;		
+	} else if (expressions.Functional <= 26.7) {
+		values.bottom = 23.0;
+		values.top = 26.7;	
+		values.bottom_percentile = 20;
+		values.top_percentile = 25;		
+	} else if (expressions.Functional <= 28.2) {
+		values.bottom = 26.7;
+		values.top = 28.2;	
+		values.bottom_percentile = 25;
+		values.top_percentile = 30;		
+	} else if (expressions.Functional <= 30.0) {
+		values.bottom = 28.2;
+		values.top = 30.0;
+		values.bottom_percentile = 30;
+		values.top_percentile = 35;		
+	} else if (expressions.Functional <= 33.7) {
+		values.bottom = 30.0;
+		values.top = 33.7;
+		values.bottom_percentile = 35;
+		values.top_percentile = 49;		
+	} else if (expressions.Functional <= 36.2) {
+		values.bottom = 33.7;
+		values.top = 36.2;
+		values.bottom_percentile = 40;
+		values.top_percentile = 45;		
+	} else if (expressions.Functional <= 39.0) {
+		values.bottom = 36.2;
+		values.top = 39.0;	
+		values.bottom_percentile = 45;
+		values.top_percentile = 50;		
+	} else if (expressions.Functional <= 41.5) {
+		values.bottom = 39.0;
+		values.top = 41.5;	
+		values.bottom_percentile = 50;
+		values.top_percentile = 55;		
+	} else if (expressions.Functional <= 43.8) {
+		values.bottom = 41.5;
+		values.top = 43.8;	
+		values.bottom_percentile = 55;
+		values.top_percentile = 60;		
+	} else if (expressions.Functional <= 46.2) {
+		values.bottom = 43.8;
+		values.top = 46.2;
+		values.bottom_percentile = 60;
+		values.top_percentile = 65;			
+	} else if (expressions.Functional <= 48.2) {
+		values.bottom = 46.2;
+		values.top = 48.2;
+		values.bottom_percentile = 65;
+		values.top_percentile = 70;		
+	} else if (expressions.Functional <= 52.5) {
+		values.bottom = 48.2;
+		values.top = 52.5;
+		values.bottom_percentile = 70;
+		values.top_percentile = 75;		
+	} else if (expressions.Functional <= 53.3) {
+		values.bottom = 52.5;
+		values.top = 53.3;
+		values.bottom_percentile = 75;
+		values.top_percentile = 80;			
+	} else if (expressions.Functional <= 57.5) {
+		values.bottom = 53.3;
+		values.top = 57.5;	
+		values.bottom_percentile = 80;
+		values.top_percentile = 85;	
+	} else if (expressions.Functional <= 63.0) {
+		values.bottom = 57.5;
+		values.top = 63.0;
+		values.bottom_percentile = 85;
+		values.top_percentile = 90;		
+	} else if (expressions.Functional <= 70.5) {
+		values.bottom = 63.0;
+		values.top = 70.5;
+		values.bottom_percentile = 90;
+		values.top_percentile = 95;			
+	} else if (expressions.Functional <= 97.5) {
+		values.bottom = 70.5;
+		values.top = 97.5;	
+		values.bottom_percentile = 95;
+		values.top_percentile = 100;			
+	} else {
+		values.bottom = 97.5;
+		values.top = 100;	
+		values.bottom_percentile = 100;
+		values.top_percentile = 100;		
+	}
+	
+	values.bottom_percentile + (expressions.Functional - values.bottom)*expressions.calculateStep;
+}
+
+/determinePercentiles = {
+	if (dropdown.gender.response == "Male"){
+		values.Craving_percentile = expressions.Craving_percentile_M;
+		values.Guilt_percentile = expressions.Guilt_percentile_M;
+		values.Functional_percentile = expressions.Functional_percentile_M;
+	} else {
+		values.Craving_percentile = expressions.Craving_percentile_F;
+		values.Guilt_percentile = expressions.Guilt_percentile_F;
+		values.Functional_percentile = expressions.Functional_percentile_F;		
+	}
+}
+
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<dropdown gender>
+/ caption = "Your gender:"
+/ options = ("Female", "Male", "Other")
+/ required = true
+</dropdown>
+
+
+<slider q1_C>
+/ caption="
+1. I eat chocolate to cheer me up when I am down."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q2_C>
+/ caption="2. My desire for chocolate often seems overpowering."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q3_G>
+/ caption="3. I feel unattractive after I have eaten chocolate."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q4_G>
+/ caption="4. I often feel sick after eating chocolate."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q5_F>
+/ caption="5. I eat chocolate as a reward when everything is going really well for me."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q6_G>
+/ caption="6. I am often on one kind of diet or another."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q7_C>
+/ caption="7. The thought of chocolate often distracts me from what I am doing (e.g. watching TV)."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q8_C>
+/ caption="8. I usually find myself wanting chocolate during the afternoon."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q9_G>
+/ caption="9. I consider chocolate to be high in fat and to be of poor nutritional value."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q10_G>
+/ caption="10. After eating chocolate I often wish I hadn‘t."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q11_G>
+/ caption="11. I feel guilty after eating chocolate."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q12_F>
+/ caption="12. I eat chocolate only when I am hungry."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q13_C>
+/ caption="13. Chocolate often preys on my mind."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q14_G>
+/ caption="14. I feel unhealthy after I have eaten chocolate."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q15_G>
+/ caption="15. I always look at the calorific value of a chocolate snack before I eat it."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q16_G>
+/ caption="16. If I resist the temptation to eat chocolate I feel more in control of my life."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q17_C>
+/ caption="17. Nothing else but chocolate will satisfy my chocolate cravings."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q18_C>
+/ caption="18. Even when I do not really want any more chocolate I will often carry on eating it."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q19_F>
+/ caption="19. I eat chocolate to keep my energy levels up when I am doing physical exercise."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q20_F>
+/ caption="20. I eat more chocolate in the winter when it is colder."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q21_C>
+/ caption="21. I often go into a shop for something else and end up buying chocolate."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q22_G>
+/ caption="22. I feel depressed and dissatisfied with life after eating chocolate."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q23_C>
+/ caption="23. I often eat chocolate when I am bored."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+<slider q24_C>
+/ caption="24. I like to indulge in chocolate."
+/ labels=("Not at all like me", "Very much like me")
+/ range = (0, 100)
+/ slidersize = (60%, 10%)
+/ increment = 1
+/ required = true
+</slider>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage ATCQ1>
+/caption ="Attitudes Towards Chocolate Questionnaire"
+/ subcaption = "<%parameters.pageinstructions%>"
+/questions = [1 = q1_C, q2_C, q3_G]
+</surveypage>
+
+<surveypage ATCQ2>
+/caption ="Attitudes Towards Chocolate Questionnaire"
+/ subcaption = "<%parameters.pageinstructions%>"
+/questions = [1 = q4_G, q5_F, q6_G]
+</surveypage>
+
+<surveypage ATCQ3>
+/caption ="Attitudes Towards Chocolate Questionnaire"
+/ subcaption = "<%parameters.pageinstructions%>"
+/questions = [1 = q7_C, q8_C, q9_G]
+</surveypage>
+
+<surveypage ATCQ4>
+/caption ="Attitudes Towards Chocolate Questionnaire"
+/ subcaption = "<%parameters.pageinstructions%>"
+/questions = [1 = q10_G, q11_G, q12_F]
+</surveypage>
+
+<surveypage ATCQ5>
+/caption ="Attitudes Towards Chocolate Questionnaire"
+/ subcaption = "<%parameters.pageinstructions%>"
+/questions = [1 = q13_C, q14_G, q15_G]
+</surveypage>
+
+<surveypage ATCQ6>
+/caption ="Attitudes Towards Chocolate Questionnaire"
+/ subcaption = "<%parameters.pageinstructions%>"
+/questions = [1 = q16_G, q17_C, q18_C]
+</surveypage>
+
+<surveypage ATCQ7>
+/caption ="Attitudes Towards Chocolate Questionnaire"
+/ subcaption = "<%parameters.pageinstructions%>"
+/questions = [1 = q19_F, q20_F, q21_C]
+</surveypage>
+
+<surveypage ATCQ8>
+/caption ="Attitudes Towards Chocolate Questionnaire"
+/ subcaption = "<%parameters.pageinstructions%>"
+/questions = [1 = q22_G, q23_C, q24_C]
+</surveypage>
+
+<surveypage ATCQ9>
+/caption ="Attitudes Towards Chocolate Questionnaire
+
+"
+/questions = [1 = gender]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey attitudestowardschocolatequestionnaire>
+/pages = [
+	1 = ATCQ1; 
+	2 = ATCQ2; 
+	3 = ATCQ3; 
+	4 = ATCQ4; 
+	5 = ATCQ5; 
+	6 = ATCQ6;
+	7 = ATCQ7;
+	8 = ATCQ8;
+	9 = ATCQ9;
+]
+/screencapture = false
+/ onblockend = [
+	expressions.determinePercentiles;
+]
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ itemspacing = 6%
+/ finishlabel = "Finish"
+/ nextbuttonposition = (65%, 90%)
+/ backbuttonposition = (20%, 90%)
+/ navigationbuttonfontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

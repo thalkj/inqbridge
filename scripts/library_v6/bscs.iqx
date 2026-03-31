@@ -1,0 +1,386 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									Brief Substance Craving Scale
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-27-2018
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized version of the Brief Substance Craving Scale (BSCS).
+
+Reference:
+Somoza, E., Dyrenforth, S., Goldsmith, J., Mezinskis, J., & Cohen, M., 1995. In search of a universal drug craving
+scale. Paper presented at the Annual Meeting of the American Psychiatric Association, Miami Florida.
+
+http://adai.washington.edu/instruments/pdf/Brief_Substance_Craving_Scale_50.pdf
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+4 self-report questions regarding 2 potentially craved drugs								  
+(intensity, frequency, length and number of times for cravings)											  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes less than a minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________ 
+The default data stored in the data files are:
+
+(1) Raw data file: 'bscs.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale:
+								R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'bscs_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+
+primarySubstance:				None = 0
+								Downers or Sedatives (Barbiturates, etc.) = 1
+								Benzos (Valium, Xanax, etc.) = 2
+								Hallucinogens (including ecstasy) = 3
+								Alcohol=4
+								Heroin or other Opiates (Morphine, etc.) =5
+								Marijuana =6
+								Stimulants (cocaine, amphetamine) =7
+								Other (specify): = 8 (other response is stored in raw data file only)
+
+
+q1_intensity_1:					None at all= 0
+								Slight= 1
+								Moderate = 2
+								Considerable = 3
+								Extreme =4
+
+q2_frequency_1:					Never = 0
+								Almost never =1
+								Several times =2
+								Regularly =3
+								Almost constantly =4
+
+q3_length_1:						None at all =0
+								Very short =1
+								Short =2
+								Somewhat long =3
+								Very long =4
+
+q4_number_1: 					textbox response
+
+same for second substance:
+secondarySubstance,
+q5_intensity_2,
+q6_frequency_2,
+q7_length_2,
+q8_number_2 (textbox response) 
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP
+___________________________________________________________________________________________________________________
+intensity, frequency, length and number of times for cravings for 2 potential substances
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+radiobuttons.primarySubstance.response,textbox.primarySubstance_other.response,
+radiobuttons.q1_intensity_1.response,
+radiobuttons.q2_frequency_1.response,
+radiobuttons.q3_length_1.response,
+textbox.q4_number_1.response,
+radiobuttons.secondarySubstance.response,textbox.secondarySubstance_other.response,
+radiobuttons.q5_intensity_2.response,
+radiobuttons.q6_frequency_2.response,
+radiobuttons.q7_length_2.response,
+textbox.q8_number_2.response )
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+/completed:				0 = script was not completed (script prematurely aborted); 1 = script was completed (all conditions run)
+
+<values>
+/completed = 0
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons primarySubstance>
+/caption = "Identify the primary substance that you have been craving for within the last 24 hours:"
+/ options = ("None"
+"Downers or Sedatives (Barbiturates, etc.)", 
+"Benzos (Valium, Xanax, etc.)", 
+"Hallucinogens (including ecstasy)", 
+"Alcohol", 
+"Heroin or other Opiates (Morphine, etc.)",
+"Marijuana",
+"Stimulants (cocaine, amphetamine)")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8")
+/required = true
+/orientation = vertical
+/ other = textbox.primarySubstance_other
+</radiobuttons>
+
+<textbox primarySubstance_other>
+/ caption = "other (specify): "
+/ required = true
+</textbox>
+
+<radiobuttons q1_intensity_1>
+/caption = "1. The INTENSITY of my craving, that is, how much I desired this drug in the past 24 hours was:"
+/ options = ("None at all", 
+"Slight", 
+"Moderate", 
+"Considerable", 
+"Extreme")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_frequency_1>
+/caption = "2. The FREQUENCY of my craving, that is, how often I desired this drug in the past 24 hours was:"
+/ options = ("Never", 
+"Almost never", 
+"Several times", 
+"Regularly", 
+"Almost constantly")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_length_1>
+/caption = "3. The LENGTH of time I spent in craving this drug during the past 24 hours was:"
+/ options = (" None at all", 
+"Very short", 
+"Short", 
+"Somewhat long", 
+"Very long")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<textbox q4_number_1>
+/ caption = "4. Write in the NUMBER of times you think you had craving for this drug during the past 24 hours."
+/ mask = integer
+/ textboxsize = (8%, 3%)
+</textbox>
+
+<radiobuttons secondarySubstance>
+/caption = "A second craved substance during the past 24 hours was:"
+/ options = ("None",
+"Downers or Sedatives (Barbiturates, etc.)", 
+"Benzos (Valium, Xanax, etc.)", 
+"Hallucinogens (including ecstasy)", 
+"Alcohol", 
+"Heroin or other Opiates (Morphine, etc.)",
+"Marijuana",
+"Stimulants (cocaine, amphetamine)")
+/ optionvalues = ("0","1", "2", "3", "4", "5", "6", "7", "8")
+/required = true
+/orientation = vertical
+/ other = textbox.secondarySubstance_other
+</radiobuttons>
+
+<textbox secondarySubstance_other>
+/ caption = "other (specify): "
+/ required = true
+</textbox>
+
+
+<radiobuttons q5_intensity_2>
+/caption = "5. The INTENSITY of my craving, that is, how much I desired this drug in the past 24 hours was:"
+/ options = ("None at all", 
+"Slight", 
+"Moderate", 
+"Considerable", 
+"Extreme")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_frequency_2>
+/caption = "6. The FREQUENCY of my craving, that is, how often I desired this drug in the past 24 hours was:"
+/ options = ("Never", 
+"Almost never", 
+"Several times", 
+"Regularly", 
+"Almost constantly")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_length_2>
+/caption = "7. The LENGTH of time I spent in craving this drug during the past 24 hours was:"
+/ options = (" None at all", 
+"Very short", 
+"Short", 
+"Somewhat long", 
+"Very long")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<textbox q8_number_2>
+/ caption = "8. Write in the NUMBER of times you think you had craving for this drug during the past 24 hours."
+/ mask = integer
+/ textboxsize = (8%, 3%)
+</textbox>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage bscs1>
+/caption =""
+/questions = [1 = primarySubstance]
+</surveypage>
+
+
+<surveypage bscs2>
+/ skip = [
+	radiobuttons.primarySubstance.response == 0;
+]
+/caption ="Please answer the following questions with regard to your craving for the PRIMARY drug.
+"
+/questions = [1 = q1_intensity_1, q2_frequency_1, q3_length_1, q4_number_1]
+</surveypage>
+
+<surveypage bscs3>
+/ skip = [
+	radiobuttons.primarySubstance.response == 0
+]
+/caption =""
+/questions = [1 = secondarySubstance]
+</surveypage>
+
+<surveypage bscs4>
+/ skip = [
+	radiobuttons.primarySubstance.response == 0 || radiobuttons.secondarySubstance.response == 0;
+]
+/caption ="Please answer the following questions with regard to a SECOND CRAVED drug.
+"
+/questions = [1 = q5_intensity_2, q6_frequency_2, q7_length_2, q8_number_2]
+</surveypage>
+
+<surveypage bscs5>
+/ caption = "<center><h1>Thank you!</h1><br>
+You have reached the end of this survey.</center>"
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey bscs>
+/pages = [
+	1 = bscs1;
+	2 = bscs2;
+	3 = bscs3;
+	4 = bscs4;
+	5 = bscs5;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ finishlabel = "Finish"
+/ nextbuttonposition = (65%, 90%)
+/ backbuttonposition = (20%, 90%)
+/ navigationbuttonfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (12%, 3%)
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

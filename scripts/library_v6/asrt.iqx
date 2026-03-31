@@ -1,0 +1,1246 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+						   *ALTERNATING SERIAL REACTION TIME TASK (ASRT)*
+						   with keyboard input
+___________________________________________________________________________________________________________________
+	
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-03-2017
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements an Alternating Serial Reaction Task (with 4 different response buttons) based on 
+
+Howard, D.V. & Howard, J.H. (2004). Implicit Sequence Learning: Effects of Level of Structure,
+Adult Age, and Extended Practice. Psychology and Aging, 19, 79–92.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION
+___________________________________________________________________________________________________________________	
+Participants are presented 4 gray boxes in 4 possible screen positions (1, 2, 3, 4 with 1 being the left most box)
+and have to press  a spatially corresponding response button as fast as possible once one of the boxes turns red.
+The boxes turn red in semi-random fashion:
+a basic repeating pattern sequence (Example: 1, 3, 2, 4) is interweaved with
+a random sequence.
+
+Sequence: 1(Pattern), Random, 3 (Pattern), Random, 2 (Pattern), Random, 4 (Pattern), Random, 1 (Pattern), Random....etc
+The number of random trials in between pattern trials is determined by parameters.lag:
+lag = 2 => each pattern trial is followed by 1 random trial (every other trial is a pattern trial)
+lag = 3 => each pattern trial is followed by 2 random trials etc. (every third trial is a pattern trial)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 45 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'asrt_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.
+									
+sequence:						pattern sequence run
+
+(parameter) Lag:				sets the lag between patter trials (default: 2)
+								lag1 = every trial is a pattern trial (p1, p2, p3, p4, p1....)
+								lag2 = every other trial is a pattern trial (p1, r, p2, r, p3, r, p4, r, p1....)
+								lag3 = every third trial is a pattern trial (p1, r, r, p2, r, r, p3, r, r, p4, r, r, p1....)
+									
+countTestBlocks:				counts the number of test blocks run
+countPatternTrials:				counts the pattern trials in a block (resets for each test block)
+countRandomTrials:				counts the random trials in a block (resets for each test block; excludes the start trials before the pattern is started)
+countSequenceReps:				counts the number of pattern sequence reps in a block (does not count starter trials)
+index:							helper variable to determine the next stim position 
+position:						1, 2, 3, or 4 => screen position of the red stim (red box) from left to right
+(parameter) RSI:				Response Stimulus Interval in ms (interval between correct response and presentation of next stimulus) (default: 120ms)
+
+response:						the FINAL trial response (scancodes of the -default- keys pressed)
+								32: D
+								33: F
+								36: J
+								37: K
+								Note: script saves the final and -by design- correct response
+									
+correct:						the correctness of the INITIAL response (1 = correct; 0 = incorrect)
+								Note: only correct responses advance to the next trial
+									
+latency: 						the response latency/reaction time (in ms); measured from onset of red box stimulus
+								until the correct response was entered (error penalty included)
+
+P = pattern trial
+R = random trial
+
+FeedbackACC:			overall proportion correct (pattern and random trials)
+FeedbackRT:				overall (pattern and random trials) median response time of correct responses
+
+list.accuracyP.mean:			proportion correct pattern trials in the current block (including currently run trial)
+list.latenciesP.median:			median latency (in ms) of responding to pattern trials in the current block (including currently run trial)
+list.accuracyR.mean:			proportion correct random trials in the current block (including currently run trial) 
+list.latenciesR.median:			median latency (in ms) of responding to random trials in the current block (including currently run trial)
+
+								
+(2) Summary data file: 'asrt_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+sequence:						pattern sequence run
+
+(parameter) lag:				sets the lag between patter trials (default: 2)
+								lag1 = every trial is a pattern trial (p1, p2, p3, p4, p1....)
+								lag2 = every other trial is a pattern trial (p1, r, p2, r, p3, r, p4, r, p1....)
+								lag3 = every third trial is a pattern trial (p1, r, r, p2, r, r, p3, r, r, p4, r, r, p1....)
+										
+countTestBlocks:				Test Block Counter										
+										
+Performance Data:
+proportion correct measures the accuracy of the INITIAL response;
+'latency correct' measures the response time until the correct response was made
+
+P = pattern trial
+R = random trial
+
+ACC_P:					the mean of all block proportion corrects for pattern trials
+RT_P:					the mean of all block median correct latencies (in ms) for pattern trials						
+
+ACC_R:					the mean of all block proportion corrects for random trials (start trials excluded)
+RT_R:					the mean of all block median correct latencies (in ms) for random trials (start trials excluded)	
+
+and separately for each testblocks:
+ACC1_P - ACC21_P:		proportion correct for Pattern trials (block1-21)
+RT1_P - RT21_P:			median correct latency (in ms) for Pattern trials (block1-21)
+ACC1_P - ACC21_R:		proportion correct for Random trials (block1-21)
+RT1_P - RT21_R:			median correct latency (in ms) for Random trials (block1-21)
+								
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+*21 ASRT blocks that run
+- 10 random position start trials (excluded from analysis)
+- number of pattern repetitions (default: 10) x length of pattern sequence (default: 4) = 40 pattern trials
+- number of random patterns = (parameters.lag - 1) * number of pattern trials (by default, with lag= 2: 40 random trials)
+	
+Each block starts with the presentation of 4 gray boxes for 120ms before the first box turns red.
+Incorrect responses are recorded but response needs to be corrected for trial to terminate.
+After a correct response, the next target is presented after a response-stimulus interval (default RSI is 120 ms; 
+this can be edited under Editable Parameters). 
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+4 gray boxes - size and screen location can be edited under Editable Parameters.
+Position of targets (box turning red) can be edited under section Editable Lists
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+are not original; edit under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to 
+further customize your experiment.
+
+The parameters you can change are:
+
+/lag:							sets the lag between patter trials (default: 2)
+									lag1 = every trial is a pattern trial (p1, p2, p3, p4, p1....)
+									lag2 = every other trial is a pattern trial (p1, r, p2, r, p3, r, p4, r, p1....)
+									lag3 = every third trial is a pattern trial (p1, r, r, p2, r, r, p3, r, r, p4, r, r, p1....)	
+									
+/nrBlocks:						number of blocks run (default: 21)
+								Note: default script provides summary variables for 21 blocks; if more should be run 
+								add necessary values to VALUES and update block.ASRT under section BLOCK accordingly
+								
+/maxPatternRepetitions:			the maximum number of pattern repetitions per block (default: 10)
+																
+Interface:
+/pos1_x:						the first horizonal box position from the left in canvas width percentages (0% at the far left of canvas - 100% far right of canvas)
+/pos2_x:						the second horizonal box position from the left in canvas width percentages
+/pos3_x:						the third horizonal box position from the left in canvas width percentages
+/pos4_x:						the fourth horizonal box position from the left in canvas width percentages
+/stimHeight:					height of the boxes in canvas height percentages (default: 5%)
+
+Response Keys (from left to right):
+/responsekey1:					the first response button ("D")
+/responsekey2:					the second response button ("F")
+/responsekey3:					the third response button ("J")
+/responsekey4:					the fourth response button ("K")
+
+Duration Paramters (in ms):
+/RSI:							Response Stimulus Interval in ms (interval between correct response and presentation of next stimulus) (default: 120ms)
+/breakDuration:					the duration of the breaks (in ms) in between test blocks (default: 30000)
+/readyDuration:					duration (in ms) of getting ready trial (default: 5000ms)
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/lag = 2
+/nrBlocks = 21
+/maxPatternRepetitions = 10
+
+/ pos1_x = 35.5%
+/ pos2_x = 45.0%
+/ pos3_x = 55.0%
+/ pos4_x = 65.0%
+/ stimHeight = 7%
+
+/ responsekey1 = "D"
+/ responsekey2 = "F"
+/ responsekey3 = "J"
+/ responsekey4 = "K"
+
+/ RSI = 120
+/ breakDuration = 30000
+/readyDuration = 5000
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+<item instructions>
+/1 = "There are 4 gray boxes arranged in a horizontal line on your screen. 
+Any of the 4 gray boxes can turn red.
+~n~n~n~n~n~n~n~n~n~n~n
+As soon as a box turns red, press the corresponding response button (here highlighted in red) <%expressions.buttoninstruct1%>.
+
+When you are ready press <Space> to start."
+</item>
+
+<item miscellaneousInstructions>
+/ 1 = "Lets take a break."
+/ 2 = "Your average performance on the last two blocks: 
+<%expressions.FeedbackACC * 100%> % correct
+<%expressions.FeedbackRT%>ms"
+/3 = "<%expressions.warning%>"
+</item>
+
+<text blockInfo>
+/ items = ("<%values.countTestBlocks%> blocks out of <%parameters.nrBlocks%> blocks completed")
+/ position = (50%, 85%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ fontstyle = ("Courier New", 2%, false, false, false, false, 5, 1)
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/ items = ("Get Ready:
+~n<%expressions.buttoninstruct2%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+
+<expressions>
+/ buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {
+"shown at the bottom";} 
+else {
+"on your keyboard";}
+/ buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"place your left middle and index finger on the two left buttons and your right index and middle finger on the two right buttons";} else {"place your left middle and index finger on the '<%parameters.responsekey1%>' and '<%parameters.responsekey2%>' 
+place your right index and middle finger on the '<%parameters.responsekey3%>' and '<%parameters.responsekey4%>'";}
+
+/warning = if (expressions.FeedbackACC < 0.91){
+	"Focus more on accuracy"
+} else {
+	"Focus more on speed"
+}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************************************
+Sequences
+Note: the selectionmode of the lists can be 
+altered to reflect different sequences,
+random selection or probabilistic selections
+
+***********************************************
+
+Note: samples the current position according to the pattern sequence
+1 = A; 2 = B; 3 = C; D = 4 (from left to right)
+pattern is selected in sequence. To change the pattern, simply change the
+itemlist
+<list patternPosition> 
+/ items = (1, 2, 3, 4)
+/ selectionmode = values.index
+</list>
+
+Note: randomly (with replacement) selects one of the 4 screen positions
+<list randomPosition> 
+/ items = (1, 2, 3, 4)
+/ replace = true
+/ selectionrate = always
+</list>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = black
+/ txcolor = white
+/ screencolor = black
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum,
+values.sequence, parameters.lag, values.countTestBlocks, values.countPatternTrials, values.countRandomTrials, values.countSequenceReps,
+values.index, values.position, parameters.RSI, 
+response, correct, latency,
+
+expressions.FeedbackACC, expressions.FeedbackRT, list.accuracyP.mean, list.latenciesP.median, list.accuracyR.mean, list.latenciesR.median)
+</data>
+
+***********************
+summary data file
+***********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+values.sequence, parameters.lag, 
+values.countTestBlocks, expressions.ACC_P, expressions.RT_P, expressions.ACC_R, expressions.RT_R,
+
+values.ACC1_P,values.ACC2_P,values.ACC3_P,values.ACC4_P,values.ACC5_P,values.ACC6_P,values.ACC7_P,values.ACC8_P,values.ACC9_P,values.ACC10_P,
+values.ACC11_P,values.ACC12_P,values.ACC13_P,values.ACC14_P,values.ACC15_P,values.ACC16_P,values.ACC17_P,values.ACC18_P,values.ACC19_P,values.ACC20_P,values.ACC21_P,
+values.RT1_P,values.RT2_P,values.RT3_P,values.RT4_P,values.RT5_P,values.RT6_P,values.RT7_P,values.RT8_P,values.RT9_P,values.RT10_P,
+values.RT11_P,values.RT12_P,values.RT13_P,values.RT14_P,values.RT15_P,values.RT16_P,values.RT17_P,values.RT18_P,values.RT19_P,values.RT20_P,values.RT21_P,
+values.ACC1_R,values.ACC2_R,values.ACC3_R,values.ACC4_R,values.ACC5_R,values.ACC6_R,values.ACC7_R,values.ACC8_R,values.ACC9_R,values.ACC10_R,
+values.ACC11_R,values.ACC12_R,values.ACC13_R,values.ACC14_R,values.ACC15_R,values.ACC16_R,values.ACC17_R,values.ACC18_R,values.ACC19_R,values.ACC20_R,values.ACC21_R,
+values.RT1_R,values.RT2_R,values.RT3_R,values.RT4_R,values.RT5_R,values.RT6_R,values.RT7_R,values.RT8_R,values.RT9_R,values.RT10_R,
+values.RT11_R,values.RT12_R,values.RT13_R,values.RT14_R,values.RT15_R,values.RT16_R,values.RT17_R,values.RT18_R,values.RT19_R,values.RT20_R,
+values.RT21_R)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/position:						1, 2, 3, or 4 => screen position of the stim from left to right
+/index:							helper variable to determine the next stim position 
+/countTestBlocks:				counts the number of test blocks run
+/countPatternTrials:			counts the pattern trials in a block (resets for each test block)
+/countRandomTrials:				counts the random trials in a block (resets for each test block; excludes the start trials before the pattern is started)
+/countSequenceReps:				counts the number of sequence reps in a block
+/skipbreak:						1 = the next break should be skipped; 0 = otherwise
+/stop:							1 = stop the task; 0 = otherwise
+/sequence:						pattern sequence run
+
+/ACC1_P - ACC21_P:				proportion correct for Pattern trials (block1-21)
+/RT1_P - RT21_P:				median correct latency (in ms) for Pattern trials (block1-21)
+/ACC1_P - ACC21_R:				proportion correct for Random trials (block1-21)
+/RT1_P - RT21_R:				median correct latency (in ms) for Random trials (block1-21)
+	
+<values>
+/ position = 0
+/ index = 0
+/ countTestBlocks = 0
+/ countPatternTrials = 0
+/ countRandomTrials = 0
+/ countRandom = 0
+/countSequenceReps = 0
+/skipbreak = 0
+/stop = 0
+/sequence = ""
+
+/ACC1_P = 0
+/ACC2_P = 0
+/ACC3_P = 0
+/ACC4_P = 0
+/ACC5_P = 0
+/ACC6_P = 0
+/ACC7_P = 0
+/ACC8_P = 0
+/ACC9_P = 0
+/ACC10_P = 0
+/ACC11_P = 0
+/ACC12_P = 0
+/ACC13_P = 0
+/ACC14_P = 0
+/ACC15_P = 0
+/ACC16_P = 0
+/ACC17_P = 0
+/ACC18_P = 0
+/ACC19_P = 0
+/ACC20_P = 0
+/ACC21_P = 0
+/RT1_P = 0
+/RT2_P = 0
+/RT3_P = 0
+/RT4_P = 0
+/RT5_P = 0
+/RT6_P = 0
+/RT7_P = 0
+/RT8_P = 0
+/RT9_P = 0
+/RT10_P = 0
+/RT11_P = 0
+/RT12_P = 0
+/RT13_P = 0
+/RT14_P = 0
+/RT15_P = 0
+/RT16_P = 0
+/RT17_P = 0
+/RT18_P = 0
+/RT19_P = 0
+/RT20_P = 0
+/RT21_P = 0
+/ACC1_R = 0
+/ACC2_R = 0
+/ACC3_R = 0
+/ACC4_R = 0
+/ACC5_R = 0
+/ACC6_R = 0
+/ACC7_R = 0
+/ACC8_R = 0
+/ACC9_R = 0
+/ACC10_R = 0
+/ACC11_R = 0
+/ACC12_R = 0
+/ACC13_R = 0
+/ACC14_R = 0
+/ACC15_R = 0
+/ACC16_R = 0
+/ACC17_R = 0
+/ACC18_R = 0
+/ACC19_R = 0
+/ACC20_R = 0
+/ACC21_R = 0
+/RT1_R = 0
+/RT2_R = 0
+/RT3_R = 0
+/RT4_R = 0
+/RT5_R = 0
+/RT6_R = 0
+/RT7_R = 0
+/RT8_R = 0
+/RT9_R = 0
+/RT10_R = 0
+/RT11_R = 0
+/RT12_R = 0
+/RT13_R = 0
+/RT14_R = 0
+/RT15_R = 0
+/RT16_R = 0
+/RT17_R = 0
+/RT18_R = 0
+/RT19_R = 0
+/RT20_R = 0
+/RT21_R = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/FeedbackACC:				overall proportion correct (pattern and random trials)
+/FeedbackRT:				overall (pattern and random trials) median response time of correct responses
+Note: start trials are not considered; the lists are reset every other block
+and the values are simply used for feedback
+
+/ACC_P:							the mean of all block proportion corrects for pattern trials
+/RT_P:							the mean of all block median correct latencies (in ms) for pattern trials						
+
+/ACC_R:							the mean of all block proportion corrects for random trials (start trials excluded)
+/RT_R:							the mean of all block median correct latencies (in ms) for random trials (start trials excluded)
+
+		 
+<expressions>
+/FeedbackACC = list.accuracy.mean
+/FeedbackRT = list.latencies.median
+
+/ACC_P = list.propCorrect_P.mean
+/RT_P = list.medianRTs_P.mean
+
+/ACC_R = list.propCorrect_R.mean
+/RT_R = list.medianRTs_R.mean
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text box1_key>
+/ items = ("<%parameters.responsekey1%>")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos1_x
+/ vposition = 60%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+<text box2_key>
+/ items = ("<%parameters.responsekey2%>")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos2_x
+/ vposition = 60%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+<text box3_key>
+/ items = ("<%parameters.responsekey3%>")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos3_x
+/ vposition = 60%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = black
+/ txcolor = red
+</text>
+
+<text box4_key>
+/ items = ("<%parameters.responsekey4%>")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos4_x
+/ vposition = 60%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+
+<text instructions>
+/ items = instructions
+/ select = 1
+/ position = (10%, 25%)
+/ halign = left
+/ valign = top
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+
+<trial instructions>
+/ stimulusframes = [1 = instructions, box1, box2, box3, box4, box1_key, box2_key, box3_key, box4_key]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+
+<clock timer>
+/ mode = timer
+/ resetrate = block
+/ erase = false
+/ txcolor = yellow
+/ txbgcolor = black
+/ timeout = parameters.breakDuration
+/ position = (50%, 30%)
+/ format = "mm:ss"
+</clock> 
+
+<text breakInstructions>
+/ items = miscellaneousInstructions
+/ select = 1
+/ position = (50%, 20%)
+/ size = (60%, 10%)
+/ vjustify = center
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</text>
+
+<text Feedback>
+/ items = miscellaneousInstructions
+/ select = 2
+/ position = (50%, 50%)
+/ size = (80%, 40%)
+/ vjustify = center
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+</text>
+
+<text Feedback2>
+/ items = miscellaneousInstructions
+/ select = 3
+/ position = (50%, 65%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = red
+</text>
+
+<trial break>
+/ skip = [
+	values.skipBreak == true;
+]
+/ stimulusframes = [1 = breakInstructions, timer, Feedback, blockInfo, Feedback2]
+/ timeout = parameters.breakDuration
+/ recorddata = false
+</trial>
+
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+*************************************
+General Helper Instruction Trials
+*************************************
+
+This trial is used when participants are asked to place their fingers on specific response
+buttons. On the touchscreen, this trial presents the (inactive) response buttons to the participants.
+<trial getReady>
+/ stimulusframes = [1 = getReady]
+/ trialduration = parameters.readyDuration
+/ validresponse = (parameters.responsekey1, parameters.responsekey2, parameters.responsekey3, parameters.responsekey4)
+/ beginresponsetime = parameters.readyDuration
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text box1>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos1_x
+/ vposition = 50%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = gray
+/ erase = false
+</text>
+
+<text box2>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos2_x
+/ vposition = 50%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = gray
+/ erase = false
+</text>
+
+<text box3>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos3_x
+/ vposition = 50%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = red
+/ erase = false
+</text>
+
+<text box4>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos4_x
+/ vposition = 50%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = gray
+/ erase = false
+</text>
+
+
+<text box1_Feedback>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos1_x
+/ vposition = 50%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = gray
+/ erase = false
+</text>
+
+<text box2_Feedback>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos2_x
+/ vposition = 50%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = gray
+/ erase = false
+</text>
+
+<text box3_Feedback>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos3_x
+/ vposition = 50%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = gray
+/ erase = false
+</text>
+
+<text box4_Feedback>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos4_x
+/ vposition = 50%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = gray
+/ erase = false
+</text>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+<list accuracy>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant pattern trial
+<list accuracyP>
+</list>
+
+Note: list stores the latency of correct responses for each relevant pattern trial
+<list latenciesP>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant random trial
+<list accuracyR>
+</list>
+
+Note: list stores the latency of correct responses for each relevant random trial
+<list latenciesR>
+</list>
+
+Note: stores the median correct latencies in pattern trials from each block
+<list medianRTs_P>
+</list>
+
+Note: stores the median correct latencies in random trials from each block
+<list medianRTs_R>
+</list>
+
+Note: stores the proportion corrects of pattern trials from each block
+<list propCorrect_P>
+</list>
+
+Note: stores the proportion corrects of random trials from each block
+<list propCorrect_R>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial start>
+/ ontrialbegin = [
+	text.box1.textBgColor = gray;
+	text.box2.textBgColor = gray;		
+	text.box3.textBgColor = gray;		
+	text.box4.textBgColor = gray;	
+]
+/ stimulusframes = [1 = box1, box2, box3, box4]
+
+//for touchscreens: present the inactive response buttons
+/ validresponse = (parameters.responsekey1, parameters.responsekey2, parameters.responsekey3, parameters.responsekey4)
+/ isvalidresponse = [
+	return false;
+]
+
+/ trialduration = parameters.RSI
+/ recorddata = false
+</trial>
+
+Note: runs a single random Trial
+- resets boxcolor of all boxes to gray before randomly selecting one to present in red
+- presents all 4 boxes and waits for response
+- terminates with a correct response only
+<trial startTrial>
+/ ontrialbegin = [
+	text.box1.textBgColor = gray;
+	text.box2.textBgColor = gray;		
+	text.box3.textBgColor = gray;		
+	text.box4.textBgColor = gray;	
+	values.position = list.randomPosition.nextValue;
+	if (values.position == 1) {
+		text.box1.textBgColor = red;
+	} else if (values.position == 2) {
+		text.box2.textBgColor = red;
+	} else if (values.position == 3) {
+		text.box3.textBgColor = red;
+	} else if (values.position == 4) {
+		text.box4.textBgColor = red;
+	} ;
+	
+	values.index = 0;
+]
+/ stimulusframes = [1 = box1, box2, box3, box4]
+/ beginresponsetime = 0
+/ validresponse = (parameters.responsekey1, parameters.responsekey2, parameters.responsekey3, parameters.responsekey4)
+/ iscorrectresponse = [
+	return (
+	(values.position == 1 && trial.startTrial.responseText == parameters.responsekey1) ||
+	(values.position == 2 && trial.startTrial.responseText == parameters.responsekey2) ||
+	(values.position == 3 && trial.startTrial.responseText == parameters.responsekey3) ||	
+	(values.position == 4 && trial.startTrial.responseText == parameters.responsekey4));
+]
+/ response = correct
+/ posttrialpause = parameters.RSI
+/ responsemessage = (parameters.responsekey1, text.box1_Feedback, 0)
+/ responsemessage = (parameters.responsekey2, text.box2_Feedback, 0)
+/ responsemessage = (parameters.responsekey3, text.box3_Feedback, 0)
+/ responsemessage = (parameters.responsekey4, text.box4_Feedback, 0)
+</trial>
+
+
+
+Note: trial.patternTrial
+- resets boxcolor of all boxes to gray 
+* selects the next values.position from sequence list based on values.index (values.index increases by 1 for sequential calling)
+* presents 3 gray boxes and one red box (at values.position)
+* waits for keyboard input
+* determines correctness of response (latency measured from onset of red box until correct response is given
+* terminates with correct response
+* updates summary lists
+* calls trial.randomTrial
+
+<trial patternTrial>
+/ ontrialbegin = [
+	values.countRandomTrials = 0;
+	values.countPatternTrials += 1;
+	if (values.index == 4){
+		values.index = 0;
+	}
+	values.index += 1;
+	if (values.index == 1) {
+		values.countSequenceReps += 1;
+	}
+	
+	text.box1.textBgColor = gray;
+	text.box2.textBgColor = gray;		
+	text.box3.textBgColor = gray;		
+	text.box4.textBgColor = gray;
+	values.position = list.patternPosition.nextValue;
+	if (values.position == 1) {
+		text.box1.textBgColor = red;
+	} else if (values.position == 2) {
+		text.box2.textBgColor = red;
+	} else if (values.position == 3) {
+		text.box3.textBgColor = red;
+	} else if (values.position == 4) {
+		text.box4.textBgColor = red;
+	}
+]
+/ stimulusframes = [1 = box1, box2, box3, box4]
+/ beginresponsetime = 0
+/ validresponse = (parameters.responsekey1, parameters.responsekey2, parameters.responsekey3, parameters.responsekey4)
+/ iscorrectresponse = [
+	return (
+	(values.position == 1 && trial.patternTrial.responseText == parameters.responsekey1) ||
+	(values.position == 2 && trial.patternTrial.responseText == parameters.responsekey2) ||
+	(values.position == 3 && trial.patternTrial.responseText == parameters.responsekey3) ||	
+	(values.position == 4 && trial.patternTrial.responseText == parameters.responsekey4));	
+]
+/ response = correct
+/ ontrialend = [
+	
+	list.accuracy.insertItem(trial.patternTrial.correct, 1);
+	list.accuracyP.insertItem(trial.patternTrial.correct, 1);
+	list.latencies.insertItem(trial.patternTrial.latency, 1);
+	list.latenciesP.insertItem(trial.patternTrial.latency, 1);
+
+]
+/ posttrialpause = parameters.RSI
+/ branch = [
+	if (parameters.lag > 1){
+		return trial.randomTrial;		
+	} else {
+		if (values.countSequenceReps == parameters.maxPatternRepetitions){
+			values.stop == 1;
+		}
+		return trial.patternTrial;
+	}
+
+]
+/ responsemessage = (parameters.responsekey1, text.box1_Feedback, 0)
+/ responsemessage = (parameters.responsekey2, text.box2_Feedback, 0)
+/ responsemessage = (parameters.responsekey3, text.box3_Feedback, 0)
+/ responsemessage = (parameters.responsekey4, text.box4_Feedback, 0)
+</trial>
+
+Note: trial.randomTrial
+* resets boxcolor of all boxes to gray before randomly selecting one to present in red
+* presents 3 gray boxes and one red box (at values.position)
+* waits for keyboard input
+* determines correctness of response (latency measured from onset of red box until correct response is given
+* terminates with correct response
+* updates summary lists
+* depending on number of random trials presented AND parameters.lag set, calls another
+trial.randomTrial
+<trial randomTrial>
+/ ontrialbegin = [
+
+	values.countRandomTrials += 1;
+	text.box1.textBgColor = gray;
+	text.box2.textBgColor = gray;		
+	text.box3.textBgColor = gray;		
+	text.box4.textBgColor = gray;	
+	values.position = list.randomPosition.nextValue;
+	if (values.position == 1) {
+		text.box1.textBgColor = red;
+	} else if (values.position == 2) {
+		text.box2.textBgColor = red;
+	} else if (values.position == 3) {
+		text.box3.textBgColor = red;
+	} else if (values.position == 4) {
+		text.box4.textBgColor = red;
+	} ;
+]
+/ stimulusframes = [1 = box1, box2, box3, box4]
+/ beginresponsetime = 0
+/ validresponse = (parameters.responsekey1, parameters.responsekey2, parameters.responsekey3, parameters.responsekey4)
+/ iscorrectresponse = [
+	return (
+	(values.position == 1 && trial.randomTrial.responseText == parameters.responsekey1) ||
+	(values.position == 2 && trial.randomTrial.responseText == parameters.responsekey2) ||
+	(values.position == 3 && trial.randomTrial.responseText == parameters.responsekey3) ||	
+	(values.position == 4 && trial.randomTrial.responseText == parameters.responsekey4));
+]
+/ ontrialend = [
+	list.accuracy.insertItem(trial.randomTrial.correct, 1);
+	list.accuracyR.insertItem(trial.randomTrial.correct, 1);
+	list.latencies.insertItem(trial.randomTrial.latency, 1);
+	list.latenciesR.insertItem(trial.randomTrial.latency, 1);
+]
+/ response = correct
+/ branch = [
+	if (values.countRandomTrials < parameters.lag-1){
+		return trial.randomTrial;
+	} else {
+		if (values.countSequenceReps == parameters.maxPatternRepetitions && values.index == 4){
+			values.stop = 1;			
+		}
+		return trial.patternTrial;
+	}
+]
+/ posttrialpause = parameters.RSI
+/ responsemessage = (parameters.responsekey1, text.box1_Feedback, 0)
+/ responsemessage = (parameters.responsekey2, text.box2_Feedback, 0)
+/ responsemessage = (parameters.responsekey3, text.box3_Feedback, 0)
+/ responsemessage = (parameters.responsekey4, text.box4_Feedback, 0)
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block intro>
+/ trials = [1 = instructions]
+</block>
+
+
+Note: block.ASRT
+* runs 40 pattern trials and as many random Trials in between as dictated by parameters.lag
+* presents a break trial at the end (unless it's the last block run)
+* calls another block.ASRT unless the specified number of ASRT has been run
+<block ASRT>
+/ stop = [
+	values.stop == 1;
+]
+/ onblockbegin = [
+	values.countTestBlocks += 1;
+	values.countPatternTrials = 0;
+	values.countRandomTrials = 0;
+	values.countSequenceReps = 0;
+	values.stop = 0;
+	
+	list.accuracyP.reset();
+	list.accuracyR.reset();
+	list.latenciesP.reset();
+	list.latenciesR.reset();
+	
+	if (mod(values.countTestBlocks, 2) != 0){
+		list.accuracy.reset();
+		list.latencies.reset();
+	}
+	
+	if (values.countTestBlocks == parameters.nrBlocks){
+		values.skipbreak == 1;
+	}
+]
+/trials = [
+	1 = getReady;
+	2 = start;
+	3-12 = startTrial;
+	13 = patternTrial;
+]
+/ onblockend = [
+	list.propCorrect_P.insertItem(list.accuracyP.mean, 1);
+	list.medianRTs_P.insertItem(list.latenciesP.median, 1);
+	list.propCorrect_R.insertItem(list.accuracyR.mean, 1);
+	list.medianRTs_R.insertItem(list.latenciesR.median, 1);
+
+	if (values.countTestBlocks == 1){
+		values.ACC1_P = list.accuracyP.mean;
+		values.RT1_P = list.latenciesP.median;
+		values.ACC1_R = list.accuracyR.mean;
+		values.RT1_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 2){
+		values.ACC2_P = list.accuracyP.mean;
+		values.RT2_P = list.latenciesP.median;
+		values.ACC2_R = list.accuracyR.mean;
+		values.RT2_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 3){
+		values.ACC3_P = list.accuracyP.mean;
+		values.RT3_P = list.latenciesP.median;
+		values.ACC3_R = list.accuracyR.mean;
+		values.RT3_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 4){
+		values.ACC4_P = list.accuracyP.mean;
+		values.RT4_P = list.latenciesP.median;
+		values.ACC4_R = list.accuracyR.mean;
+		values.RT4_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 5){
+		values.ACC5_P = list.accuracyP.mean;
+		values.RT5_P = list.latenciesP.median;
+		values.ACC5_R = list.accuracyR.mean;
+		values.RT5_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 6){
+		values.ACC6_P = list.accuracyP.mean;
+		values.RT6_P = list.latenciesP.median;
+		values.ACC6_R = list.accuracyR.mean;
+		values.RT6_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 7){
+		values.ACC7_P = list.accuracyP.mean;
+		values.RT7_P = list.latenciesP.median;
+		values.ACC7_R = list.accuracyR.mean;
+		values.RT7_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 8){
+		values.ACC8_P = list.accuracyP.mean;
+		values.RT8_P = list.latenciesP.median;
+		values.ACC8_R = list.accuracyR.mean;
+		values.RT8_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 9){
+		values.ACC9_P = list.accuracyP.mean;
+		values.RT9_P = list.latenciesP.median;
+		values.ACC9_R = list.accuracyR.mean;
+		values.RT9_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 10){
+		values.ACC10_P = list.accuracyP.mean;
+		values.RT10_P = list.latenciesP.median;
+		values.ACC10_R = list.accuracyR.mean;
+		values.RT10_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 11){
+		values.ACC11_P = list.accuracyP.mean;
+		values.RT11_P = list.latenciesP.median;
+		values.ACC11_R = list.accuracyR.mean;
+		values.RT11_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 12){
+		values.ACC12_P = list.accuracyP.mean;
+		values.RT12_P = list.latenciesP.median;
+		values.ACC12_R = list.accuracyR.mean;
+		values.RT12_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 13){
+		values.ACC13_P = list.accuracyP.mean;
+		values.RT13_P = list.latenciesP.median;
+		values.ACC13_R = list.accuracyR.mean;
+		values.RT13_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 14){
+		values.ACC14_P = list.accuracyP.mean;
+		values.RT14_P = list.latenciesP.median;
+		values.ACC14_R = list.accuracyR.mean;
+		values.RT14_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 15){
+		values.ACC15_P = list.accuracyP.mean;
+		values.RT15_P = list.latenciesP.median;
+		values.ACC15_R = list.accuracyR.mean;
+		values.RT15_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 16){
+		values.ACC16_P = list.accuracyP.mean;
+		values.RT16_P = list.latenciesP.median;
+		values.ACC16_R = list.accuracyR.mean;
+		values.RT16_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 17){
+		values.ACC17_P = list.accuracyP.mean;
+		values.RT17_P = list.latenciesP.median;
+		values.ACC17_R = list.accuracyR.mean;
+		values.RT17_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 18){
+		values.ACC18_P = list.accuracyP.mean;
+		values.RT18_P = list.latenciesP.median;
+		values.ACC18_R = list.accuracyR.mean;
+		values.RT18_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 19){
+		values.ACC19_P = list.accuracyP.mean;
+		values.RT19_P = list.latenciesP.median;
+		values.ACC19_R = list.accuracyR.mean;
+		values.RT19_R = list.latenciesR.median;		
+	} else if (values.countTestBlocks == 20){
+		values.ACC20_P = list.accuracyP.mean;
+		values.RT20_P = list.latenciesP.median;
+		values.ACC20_R = list.accuracyR.mean;
+		values.RT20_R = list.latenciesR.median;		
+	}  else if (values.countTestBlocks == 21){
+		values.ACC21_P = list.accuracyP.mean;
+		values.RT21_P = list.latenciesP.median;
+		values.ACC21_R = list.accuracyR.mean;
+		values.RT21_R = list.latenciesR.median;		
+	}
+]
+/ branch = [
+	return block.break;
+]
+</block>
+
+
+<block break>
+/ trials = [1 = break]
+/ branch = [
+	if (values.countTestBlocks  < parameters.nrBlocks){
+		return block.ASRT;		
+	}
+]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt asrt>
+/ onexptbegin = [
+	values.sequence = concat(values.sequence, list.patternPosition.item(1));
+	values.sequence = concat(values.sequence, list.patternPosition.item(2));
+	values.sequence = concat(values.sequence, list.patternPosition.item(3));
+	values.sequence = concat(values.sequence, list.patternPosition.item(4));	
+]
+/ blocks = [
+	1 = intro;
+	2 = ASRT;
+	3 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

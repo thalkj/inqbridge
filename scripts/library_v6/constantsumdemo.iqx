@@ -1,0 +1,551 @@
+<usermanual>
+										CONSTANT SUM DEMO
+
+SCRIPT INFO
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 06-18-2014
+
+last updated: 09-16-2014 by K.Borchert for Millisecond Software LLC
+
+Copyright © 09-16-2014 Millisecond Software
+
+BACKGROUND INFO
+
+										*SCRIPT PURPOSE*
+This script runs code to run a Constant Sum Demo
+
+											*TASK*
+Participants are asked to allocate 100 points to 3 attributes for product X.
+Participant can click on each of the provided boxes with the mouse and then use the keyboard to type in the
+numbers. If one box is filled, the ENTER key needs to be pressed to be able to move to the next box.
+A running total shows how many points are still available to allocate. If all points are 
+allocated, participant can choose "done".
+
+
+DATA: this section contains data file information
+1) Raw data file
+
+date, time, subject:				date and time script was run with the current subjectnumber 
+blockcode, blocknum:				the name and number of the current block
+trialcode, trialnum: 				the name and number of the currently recorded trial
+										(Note: not all trials that are run might record data) 
+response:							the participant's response
+latency: 							the response latency
+/productX:							sets the label for productX (default: "ProductX")
+/attribute1:						set the label for attribute1 (default: "Attribute1")
+/number_attribute1:					stores the number allocated to attribute1
+/attribute2:						set the label for attribute2 (default: "Attribute2")
+/number_attribute2:					stores the number allocated to attribute2
+/attribute3:						set the label for attribute3 (default: "Attribute3")
+/number_attribute3:					stores the number allocated to attribute3
+/remainder:							stores the current remainder sum
+
+2) Summary data file
+script.startDate:					date script was run
+script.startTime:					time script was started
+script.subjectId:					subject id number
+script.groupId:						group id number
+script.elapsedTime:					time it took to run script (in ms)
+/completed:							0 = script was not completed; 1 = script was completed (all conditions run)
+
+/productX:							sets the label for productX (default: "ProductX")
+/attribute1:						set the label for attribute1 (default: "Attribute1")
+/number_attribute1:					stores the number allocated to attribute1
+/attribute2:						set the label for attribute2 (default: "Attribute2")
+/number_attribute2:					stores the number allocated to attribute2
+/attribute3:						set the label for attribute3 (default: "Attribute3")
+/number_attribute3:					stores the number allocated to attribute3
+/remainder:							stores the current remainder sum
+
+
+EDITABLE CODE:
+
+/productX:					sets the label for productX (default: "ProductX")
+/attribute1:				sets the label for attribute1 (default: "Attribute1")
+/attribute2:				sets the label for attribute2 (default: "Attribute2")
+/attribute3:				sets the label for attribute3 (default: "Attribute3")
+</usermanual>
+
+<parameters>
+/productX = "ProductX"
+/attribute1 = "Attribute1"
+/attribute2 = "Attribute2"
+/attribute3 = "Attribute3"
+</parameters>
+
+***************************************************************************************
+*********************************************
+Editable Instructions
+*********************************************
+***************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+<page constantsumdemo>
+^This is a demonstration of a 'Constant Sum Scale' with a built-in check that exactly 100 points
+have been allocated.
+^^- Click on one of the boxes which then highlights with a blue frame.
+^- Use keyboard keys to input the desired number (Backspace key can be used to make corrections)
+^- No number that is greater than 100 is accepted 
+^- If done with one box, press ENTER and click on the next box
+^- The computer will tell you how many points there are left to allocate
+^- If all 100 points are allocated, click the Done button
+</page>
+
+
+<page end>
+You have reached the end of the task.
+^^Thank you!
+</page>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+********************
+raw data
+********************
+
+<data>
+/columns = (date, time, subject, group, blockcode, blocknum, trialcode, trialnum, response, latency, 
+parameters.productx,
+parameters.attribute1, values.number_attribute1, 
+parameters.attribute2, values.number_attribute2, 
+parameters.attribute3, values.number_attribute3, expressions.remainder)
+</data>
+
+
+********************
+summary data
+********************
+
+<summarydata>
+/columns = (script.startDate, script.startTime, script.subjectId, script.groupId, script.elapsedTime, computer.platform, values.completed,
+parameters.productx, values.number_attribute1, values.number_attribute2, values.number_attribute3, expressions.remainder)
+</summarydata>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 4.0.5.0
+
+<defaults>
+/minimumversion = "4.0.5.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+/completed:							0 = script was not completed; 1 = script was completed (all conditions run)
+
+/number_attribute1:					stores the number allocated to attribute1
+/number_attribute2:					stores the number allocated to attribute2
+/number_attribute3:					stores the number allocated to attribute3
+/response:							stores the current response
+
+helper variables
+/digit:								converts number response in corresponding digit
+/length-
+/length2:							store the length of the numbers
+
+
+
+<values>
+/completed = 0
+
+/number_attribute1 = ""
+/number_attribute2 = ""
+/number_attribute3 = ""
+/response = ""
+/digit = ""
+/length = 0
+/length2 = 0
+</values>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/sum:						adds the numbers of the 3 attributes
+/remainder:					calculates how many points are left to allocate
+/responsedigitconversion:	converts the reponse scancode into the corresponding digit
+
+<expressions>
+/sum = values.number_attribute1 + values.number_attribute2 + values.number_attribute3
+/remainder = 100 - expressions.sum
+/responsedigitconversion = if (values.response == 11) values.digit = 0 else
+								values.digit = values.response - 1
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+<text instructions>
+/items = ("Allocate 100 points to the importance of these 3 attributes of product <%parameters.productx%>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (0%, 15%)
+/halign = left
+/valign = top
+/erase = false
+</text>
+
+<text attribute1>
+/items = ("Attribute1:")
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (0%, 25%)
+/halign = left
+/valign = top
+/erase = false
+</text>
+
+<shape attribute1_border>
+/shape = rectangle
+/size = (6%, 5%)
+/vposition = text.attribute1.vposition
+/hposition = text.attribute1.hposition + text.attribute1.width + 10%
+/halign = left
+/valign = top
+/color = black
+/erase = false
+</shape>
+
+<text attribute1_box>
+/items = ("<%values.number_attribute1%>")
+/txbgcolor = white
+/size = (5%, 4%)
+/vposition = shape.attribute1_border.vposition + 0.5%
+/hposition = shape.attribute1_border.hposition + 0.5%
+/halign = left
+/valign = top
+/erase = false
+/hjustify = center
+/vjustify = center
+</text>
+
+<text attribute2>
+/items = ("Attribute2:")
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (0%, 35%)
+/halign = left
+/valign = top
+/erase = false
+</text>
+
+<shape attribute2_border>
+/shape = rectangle
+/size = (6%, 5%)
+/vposition = text.attribute2.vposition
+/hposition = text.attribute2.hposition + text.attribute2.width + 10%
+/halign = left
+/valign = top
+/color = black
+/erase = false
+</shape>
+
+<text attribute2_box>
+/items = ("<%values.number_attribute2%>")
+/txbgcolor = white
+/size = (5%, 4%)
+/vposition = shape.attribute2_border.vposition + 0.5%
+/hposition = shape.attribute2_border.hposition + 0.5%
+/halign = left
+/valign = top
+/erase = false
+/hjustify = center
+/vjustify = center
+</text>
+
+<text attribute3>
+/items = ("Attribute3:")
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (0%, 45%)
+/halign = left
+/valign = top
+/erase = false
+</text>
+
+<shape attribute3_border>
+/shape = rectangle
+/size = (6%, 5%)
+/vposition = text.attribute3.vposition
+/hposition = text.attribute3.hposition + text.attribute3.width + 10%
+/halign = left
+/valign = top
+/color = black
+/erase = false
+</shape>
+
+<text attribute3_box>
+/items = ("<%values.number_attribute3%>")
+/txbgcolor = white
+/size = (5%, 4%)
+/vposition = shape.attribute3_border.vposition + 0.5%
+/hposition = shape.attribute3_border.hposition + 0.5%
+/halign = left
+/valign = top
+/erase = false
+/hjustify = center
+/vjustify = center
+</text>
+
+<text instructions2>
+/items = ("___________________________________________________________
+100 possible points to allocate")
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (0%, 55%)
+/halign = left
+/valign = top
+/erase = false
+</text>
+
+<text remainder>
+/items = ("Left:    <%expressions.remainder%>")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = black
+/position = (0%, 65%)
+/halign = left
+/valign = top
+/erase = false
+</text>
+
+<text remainder_warning>
+/items = ("THE NUMBERS DON'T ADD UP TO 100")
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = red
+/position = (20%, 65%)
+/halign = left
+/valign = top
+/erase = false
+</text>
+
+<text Done>
+/items = ("DONE")
+/size = (10%, 5%)
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = white
+/txbgcolor = black
+/position = (50%, 85%)
+/erase = false
+/hjustify = center
+/vjustify = center
+</text>
+
+<text Enter1>
+/items = ("Use keyboard numbers and then Press ENTER before moving to the next Attribute")
+/ fontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ txcolor = blue
+/position = (50%, 85%)
+/erase = false
+/hjustify = center
+/vjustify = center
+/vposition = text.attribute1.vposition + 2.5%
+/hposition = shape.attribute1_border.hposition + 30%
+</text>
+
+<text Enter2>
+/items = ("Use keyboard numbers and then Press ENTER before moving to the next Attribute")
+/ fontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ txcolor = blue
+/position = (50%, 85%)
+/erase = false
+/hjustify = center
+/vjustify = center
+/vposition = text.attribute2.vposition + 2.5%
+/hposition = shape.attribute2_border.hposition + 30%
+</text>
+
+<text Enter3>
+/items = ("Use keyboard numbers and then Press ENTER before moving to the next Attribute")
+/ fontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ txcolor = blue
+/position = (50%, 85%)
+/erase = false
+/hjustify = center
+/vjustify = center
+/vposition = text.attribute3.vposition + 2.5%
+/hposition = shape.attribute3_border.hposition + 30%
+</text>
+
+<shape eraser>
+/shape = rectangle
+/size = (100%, 100%)
+/position = (50%, 50%)
+/erase = false
+/color = white
+</shape>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: trial.select presents the inital use interface
+Participants can click on any of the boxes as well as the Done button.
+*If participant clicks on Attribute1 box, the box lights up in blue and participant can start 
+press the numbers on the keyboard (see trial.attribute1)
+*If participant clicks on Attribute2 box, the box lights up in blue and participant can start 
+press the numbers on the keyboard (see trial.attribute2)
+*If participant clicks on Attribute3 box, the box lights up in blue and participant can start 
+press the numbers on the keyboard (see trial.attribute3)
+*If participant clicks on the Done button BUT the numbers of the 3 attributes do not add up to 100,
+a warning is flashed onto the screen.
+*If participant clicks on the Done button AND the numbers of the 3 attributes add up to 100, the trial is
+over and the data is saved into the data file.
+*Participant can go back and forth between attribute boxes and change responses
+
+<trial select>
+/inputdevice = mouse
+/ontrialbegin = [shape.attribute1_border.color = black; shape.attribute2_border.color = black; shape.attribute3_border.color = black]
+/ontrialbegin = [if (values.response == "done" && expressions.remainder != 0) trial.select.insertStimulusFrame(text.remainder_warning, 1)]
+/ontrialend = [trial.select.resetStimulusFrames()]
+/stimulusframes = [1 = eraser, instructions, attribute1, attribute1_border, attribute1_box, attribute2, attribute2_border, attribute2_box,
+attribute3, attribute3_border, attribute3_box, instructions2, remainder, done]
+/validresponse = (attribute1_box, attribute2_box, attribute3_box, done)
+/ontrialend = [values.response = trial.select.response]
+/ontrialend = [if (trial.select.response == "attribute1_box") shape.attribute1_border.color = blue]
+/ontrialend = [if (trial.select.response == "attribute2_box") shape.attribute2_border.color = blue]
+/ontrialend = [if (trial.select.response == "attribute3_box") shape.attribute3_border.color = blue]
+/ontrialend = [if (expressions.remainder == 0 && values.number_attribute1 == "") values.number_attribute1 = 0]
+/ontrialend = [if (expressions.remainder == 0 && values.number_attribute2 == "") values.number_attribute2 = 0]
+/ontrialend = [if (expressions.remainder == 0 && values.number_attribute3 == "") values.number_attribute3 = 0]
+/branch = [if (trial.select.response == "attribute1_box") trial.attribute1]
+/branch = [if (trial.select.response == "attribute2_box") trial.attribute2]
+/branch = [if (trial.select.response == "attribute3_box") trial.attribute3]
+/branch = [if (script.subjectId == "monkey") trial.savedata]
+/branch = [if (trial.select.response == "done" && expressions.remainder != 0) trial.select]
+/branch = [trial.savedata]
+/recorddata = false
+</trial>
+
+Note: Instructions to use the keyboard numbers to input the numbers as well as instructions to use ENTER when done
+are flashed onto the screen next to the (highlighted) attribute 1 box.
+Participants can change numbers as often as they want (the Backspace button can be used to delete digits)
+If the pressed number would make the existing number greater than 100, the last digit is not accepted.
+<trial attribute1>
+/inputdevice = keyboard
+/showmousecursor = true
+/ontrialbegin = [if (expressions.remainder < 0) {
+						text.remainder.textColor = red;
+						trial.attribute1.insertStimulusFrame(text.remainder_warning, 1)}]
+/ontrialend = [trial.attribute1.resetStimulusFrames()]
+/stimulusframes = [1 = eraser, instructions, attribute1, attribute1_border, attribute1_box, attribute2, attribute2_border, attribute2_box,
+attribute3, attribute3_border, attribute3_box, instructions2, remainder, enter1]
+/validresponse = (2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 28, 14)
+/ontrialend = [values.response = trial.attribute1.response]
+/ontrialend = [expressions.responsedigitconversion]
+/ontrialend = [if (trial.attribute1.response == 14) 
+				{values.length2 = length(values.number_attribute1) - 1; values.number_attribute1 = subString(values.number_attribute1,0,values.length2)}]
+/ontrialend = [if (trial.attribute1.response !=28 && trial.attribute1.response !=14) values.number_attribute1 = concat(values.number_attribute1, values.digit)]
+/ontrialend = [if (length(values.number_attribute1) == 2 && subString(values.number_attribute1, 0, 1) == "0") values.number_attribute1 = subString(values.number_attribute1, 1, 1)]
+/ontrialend = [values.length = length(values.number_attribute1)]
+/ontrialend = [if (values.number_attribute1 > 100) {values.number_attribute1 = subString(values.number_attribute1,0,values.length - 1)}]
+/ontrialend = [if (values.number_attribute1 == "-1") values.number_attribute1 = ""]
+/ontrialend = [text.remainder.textColor = black]
+/branch = [if (trial.attribute1.response != 28) trial.attribute1 else trial.select]
+/recorddata = false
+</trial>
+
+<trial attribute2>
+/inputdevice = keyboard
+/showmousecursor = true
+/ontrialbegin = [if (expressions.remainder < 0) {
+						text.remainder.textColor = red;
+						trial.attribute2.insertStimulusFrame(text.remainder_warning, 1)}]
+/ontrialend = [trial.attribute2.resetStimulusFrames()]
+/stimulusframes = [1 = eraser, instructions, attribute1, attribute1_border, attribute1_box, attribute2, attribute2_border, attribute2_box,
+attribute3, attribute3_border, attribute3_box, instructions2, remainder, enter2]
+/validresponse = (2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 28, 14)
+/ontrialend = [values.response = trial.attribute2.response]
+/ontrialend = [expressions.responsedigitconversion]
+/ontrialend = [if (trial.attribute2.response == 14) 
+				{values.length2 = length(values.number_attribute2) - 1; values.number_attribute2 = subString(values.number_attribute2,0,values.length2)}]
+/ontrialend = [if (trial.attribute2.response !=28 && trial.attribute2.response !=14 && trial.attribute2.response !=14) values.number_attribute2 = concat(values.number_attribute2, values.digit)]
+/ontrialend = [if (length(values.number_attribute2) == 2 && subString(values.number_attribute2, 0, 1) == "0") values.number_attribute2 = subString(values.number_attribute2, 1, 1)]
+/ontrialend = [values.length = length(values.number_attribute2)]
+/ontrialend = [if (values.number_attribute2 > 100) {values.number_attribute2 = subString(values.number_attribute2,0,values.length - 1)}]
+/ontrialend = [if (values.number_attribute2 == "-1") values.number_attribute2 = ""]
+/ontrialend = [text.remainder.textColor = black]
+/branch = [if (trial.attribute2.response != 28) trial.attribute2 else trial.select]
+/recorddata = false
+</trial>
+
+<trial attribute3>
+/inputdevice = keyboard
+/showmousecursor = true
+/ontrialbegin = [if (expressions.remainder < 0) {
+						text.remainder.textColor = red;
+						trial.attribute3.insertStimulusFrame(text.remainder_warning, 1)}]
+/ontrialend = [trial.attribute3.resetStimulusFrames()]
+/stimulusframes = [1 = eraser, instructions, attribute1, attribute1_border, attribute1_box, attribute2, attribute2_border, attribute2_box,
+attribute3, attribute3_border, attribute3_box, instructions2, remainder, enter3]
+/validresponse = (2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 28, 14)
+/ontrialend = [values.response = trial.attribute3.response]
+/ontrialend = [expressions.responsedigitconversion]
+/ontrialend = [if (trial.attribute3.response == 14) 
+				{values.length2 = length(values.number_attribute3) - 1; values.number_attribute3 = subString(values.number_attribute3,0,values.length2)}]
+/ontrialend = [if (trial.attribute3.response !=28 && trial.attribute3.response !=14) values.number_attribute3 = concat(values.number_attribute3, values.digit)]
+/ontrialend = [if (length(values.number_attribute3) == 2 && subString(values.number_attribute3, 0, 1) == "0") values.number_attribute3 = subString(values.number_attribute3, 1, 1)]
+/ontrialend = [values.length = length(values.number_attribute3)]
+/ontrialend = [if (values.number_attribute3 > 100) {values.number_attribute3 = subString(values.number_attribute3,0,values.length - 1)}]
+/ontrialend = [if (values.number_attribute3 == "-1") values.number_attribute3 = ""]
+/ontrialend = [text.remainder.textColor = black]
+/branch = [if (trial.attribute3.response != 28) trial.attribute3 else trial.select]
+/recorddata = false
+</trial>
+
+<trial savedata>
+/recorddata = true
+/trialduration = 0
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<block demo>
+/preinstructions = (constantsumdemo)
+/trials = [1 = select]
+</block>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+<expt constantSum>
+/blocks = [1 = demo]
+/onexptend = [values.completed = 1]
+</expt>
+
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

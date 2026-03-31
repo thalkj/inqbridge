@@ -1,0 +1,416 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+										FRAMING HEURISTIC
+___________________________________________________________________________________________________________________	
+
+Script Author: Sean Draine, Ph.D. (seandr@millisecond.com)
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a procedure to study the Framing Heuristic; a cognitive bias in decision making that 
+results from the semantics ('framing') of the given choices.
+
+Reference:
+
+Tversky, A. & Kahneman, D. (1981). "The framing of decisions and the psychology of choice". 
+Science 211 (4481): 453-458.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+Participants are presented scenarios such as "A) 10% chance of $90" or "B) 90% chance of $10"
+and are asked to select the option that they prefer.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'framing_raw*.iqdat'
+
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group, 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block. 
+										
+stimulusitem.1:					the presented question
+response:						the participant's response
+responseCategory:				selected response category: "high odds/low pay-off" vs. "low odds/high pay-off"
+latency: 						the response latency (in ms); measured from: onset of question
+count_higherOddsLowerPayOff:	tracks the number of "higherOdds/lower pay-off" choices
+
+oddsa:							stores the probabilities for choice A
+payoffa:						store the amount of money that could be won for choice A
+oddsb:							stores the probabilities for choice B (probability of B = 1-probability of A)
+payoffb:						store the amount of money that could be won for choice B
+
+selectedoption:					stores the current choice of the participant (A or B)
+outcome:						stores the actual win amount for the current trial
+earnings:						stores the total amount of money earned across trials
+
+
+(2) Summary data file: 'framing_summary*.iqdat'
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+earnings:							stores the total amount of money earned across trials
+prop_highOdds_lowPayOff_choices:	the proportion of "lower odds/higher pay-off" choices
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+- 8 different payoff scenarios: 
+	8 odds for A (10%, 20%, 30%, 40%, 60%, 70%, 80%, 90%); 8 odds for B (90%, 80%, 70%, 60%, 40%, 30%, 20%, 10%)
+	coupled with reversed payoffs: e.g. 10% A, payoff: 90
+- 3 repetitions of each scenario
+(one for practice)
+- order is randomly determined
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<button exit>
+/ caption = "EXIT"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 80%)
+/ size = (20%, 5%)
+/ valign = center
+/ halign = center
+</button>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text choice>
+/ items = ("<%expressions.buttoninstruct1%> the option that you prefer.")
+/ position = (50%, 30%)
+</text>
+
+<text continue>
+/ items = ("<%expressions.buttoninstruct1%> anywhere to continue.")
+/ position = (50%, 30%)
+</text>
+
+<text choicea>
+/ items = ("A) <% values.oddsa %>% chance of $<% values.payoffa %>") 
+/ position = (30%, 50%)
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 0)
+/ erase = false
+/ txbgcolor = gray
+</text>
+
+<text choiceb>
+/ items = ("B) <% values.oddsb %>% chance of $<% values.payoffb %>")
+/ position = (70%, 50%)
+/ erase = false
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 0)
+/ txbgcolor = gray
+</text>
+
+<text result>
+/ items = ("You chose <% values.selectedoption %> and won $<% values.outcome %>.")
+/ position = (50%, 60%)
+/ txcolor = red
+</text>
+
+<text earnings>
+/ items = ("You now have $<% values.earnings %>.")
+/ position = (50%, 70%)
+/ erase = false
+/ txcolor = lightblue
+</text>
+
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/ buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"Touch";} else {"Click";}
+</expressions>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 0)
+/ txbgcolor = black
+/ txcolor = white
+/ screencolor = black
+/ inputdevice = mouse
+/ minimumversion = "6.5.2.0"
+/ canvasaspectratio = (4,3)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***************
+raw data
+***************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum, stimulusitem response values.responseCategory, values.count_higherOddsLowerPayOff,latency, 
+values.oddsa values.payoffa values.oddsb values.payoffb 
+values.selectedoption values.outcome values.earnings)
+</data>
+
+***************
+summary data
+***************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, values.earnings, expressions.prop_highOdds_lowPayOff_choices)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+earnings:								stores the total amount of money earned across trials
+payoffa/payoffb:						store the amount of money that could be won for choice a/choice b
+oddsa/oddsb:							store the probabilities for choice a and b (probability of b = 1-probability of a)
+outcome:								stores the actual win amount for the current trial
+selectedoption:							stores the current choice of the participant (A or B)
+
+<values>
+/ earnings = 0
+/ payoffa = 0
+/ payoffb = 0
+/ oddsa = 0
+/ oddsb = 0
+/ outcome = 0
+/ selectedoption = 0
+
+/count_higherOddsLowerPayOff = 0
+/responseCategory = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/prop_highOdds_lowPayOff_choices = values.count_higherOddsLowerPayOff/trial.choice.totaltrialcount
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+list.oddsa selects randomly with no replacement (= no repeats until list runs out of options, then it resets and starts anew)
+a target probability p.
+Based on list.oddsa, list.oddsb selects target probability 1- p.
+The payoffs for these odds are regulated by list.payoffa and list.payoffb and depend
+on list.oddsa selected item.
+
+<list oddsa>
+/ replace = false
+/ items = (10, 20, 30, 40, 60, 70, 80, 90)
+</list>
+
+<list payoffa>
+/ selectionmode = list.oddsa.currentIndex
+/ items = (90, 80, 70, 60, 40, 30, 20, 10)
+</list>
+
+<list oddsb>
+/ selectionmode = list.oddsa.currentIndex
+/ items = (90, 80, 70, 60, 40, 30, 20, 10)
+</list>
+
+<list payoffb>
+/ selectionmode = list.oddsa.currentIndex
+/ items = (10, 20, 30, 40, 60, 70, 80, 90)
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial choice>
+/ ontrialbegin = [
+	values.responseCategory = "";
+	values.outcome = 0;
+	values.oddsa = list.oddsa.nextValue;
+	values.payoffa = list.payoffa.nextValue;
+	values.oddsb = list.oddsb.nextValue;
+	values.payoffb = list.payoffb.nextValue;
+	text.result.textColor=red;
+	text.choicea.textColor = white;
+	text.choiceb.textColor = white;
+]
+/ stimulusframes = [1 = choice, choicea, choiceb]
+/ validresponse = (choicea, choiceb)
+/ ontrialend = [
+	if ( trial.choice.response == "choicea" && values.oddsa >= rand(0, 100) ) {
+		values.outcome = values.payoffa;
+		values.earnings = values.earnings + values.outcome;
+		text.result.textColor=green;
+	} else if ( trial.choice.response == "choiceb" && values.oddsb >= rand(0, 100) ) {
+		values.outcome = values.payoffb;
+		values.earnings = values.earnings + values.outcome;
+		text.result.textColor=green;
+	}
+	
+	if ( trial.choice.response == "choicea" ) {
+		values.selectedoption = "A";
+		text.choicea.textColor = yellow;
+	} else {
+		values.selectedoption = "B";
+		text.choiceb.textColor = yellow;
+	}
+	
+	if (trial.choice.response == "choicea"){
+		if (values.oddsa < 50){
+			values.responseCategory = "low odds/high pay-off";
+	
+		} else {
+			values.responseCategory = "high odds/low pay-off";
+			values.count_higherOddsLowerPayOff += 1;
+		}
+	} else {
+		if (values.oddsb < 50){
+			values.responseCategory = "low odds/high pay-off";
+		} else {
+			values.responseCategory = "high odds/low pay-off";
+			values.count_higherOddsLowerPayOff += 1;
+		}		
+	}
+]
+/ branch = [
+	if (true){
+	 return trial.result;
+	}
+]
+</trial>
+
+<trial result>
+/ stimulusframes = [1 = result, continue, choicea, choiceb, earnings]
+/ validresponse = (lbuttondown)
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block framing>
+/ trials = [1-25 = choice]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt framing>
+/ blocks = [
+	1 =framing;
+	2 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

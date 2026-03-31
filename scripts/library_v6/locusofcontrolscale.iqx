@@ -1,0 +1,730 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									LOCUS OF CONTROL SCALE
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-12-2017
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of the Rotter's Locus of Control Scale as published in:
+
+Rotter, J.B. (1966). "Generalized expectancies of internal versus external control of reinforcements". 
+Psychological Monographs, 80, 1-18.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+23 2-FC questions regarding locus of control (external vs. internal) and 6 filler questions 										
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'locusofcontrolscale.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 0 (for internal choice) - 1 (for external choice)
+								Note: external choice can be either a) or b)
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'locusofcontrolscale_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+textbox.age.response:				contains the response to the age question (if answered)
+radiobuttons.gender.response:		contains the response to the gender question (if answered)
+IEscore:							contains the total IE score = number of EXTERNAL choices
+IEscore_percentile:					contains the percentile  (see Rotter, 1966, Appendix B, Table B1, percentiles calculated across male/female frequency)							
+IEscore_percentile_gender:			contains the percentile by gender (see Rotter, 1966, Appendix B, Table B1) if gender is known (otherwise => "not determined")
+																
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________
+23 2-FC questions regarding locus of control and 6 filler questions 
+- the total score is the number of external choices
+- percentiles calculated based on data published by Rotter (1966) (gender-specific)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+main instructions were taken from Rotter (1966) and adapted to the computer;
+edit under section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:						the initial instructions presented
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "
+This is a questionnaire to find out the way in which certain important events in our society affect different people. 
+
+Each item consists of a pair of alternatives lettered a or b. Please select the one statement of each pair which you more strongly believe to be the case as far as you're concerned.  Be sure to select the one you actually believe to be more true rather than the one you think you should choose or the one you would like to be true.  This is a measure of personal belief: obviously there are no right or wrong answers.
+
+In some instances you may discover that you believe both statements or neither one. In such cases, be sure to select the one you more strongly believe to be the case as far as you're concerned. 
+
+Also try to respond to each item independently when making your choice; do not be influenced by your previous choices."
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+textbox.age.response, radiobuttons.gender.response, expressions.IEscore, expressions.IEscore_percentile, values.IEscore_percentile_gender)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<values>
+/IEscore_percentile_gender = "not determined"
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/IEscore = radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response +
+radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + 
+radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q11.response + 
+radiobuttons.q12.response + radiobuttons.q13.response + radiobuttons.q15.response +
+radiobuttons.q16.response + radiobuttons.q17.response + radiobuttons.q18.response +
+radiobuttons.q20.response + radiobuttons.q21.response + radiobuttons.q22.response +
+radiobuttons.q23.response + radiobuttons.q25.response + radiobuttons.q26.response +
+radiobuttons.q28.response + radiobuttons.q29.response
+
+
+/IEscore_percentile = {
+	if (expressions.IEscore <= 0) {
+		0.80;
+	} else if (expressions.IEscore <= 1){
+		2.41;	
+	} else if (expressions.IEscore <= 2){
+		6.34;
+	} else if (expressions.IEscore <= 3) {
+		12.23;
+	} else if (expressions.IEscore <= 4) {
+		19.82;
+	} else if (expressions.IEscore <= 5) {
+		26.79;
+	} else if (expressions.IEscore <= 6) {
+		31.96;
+	} else if (expressions.IEscore <= 7) {
+		41.07;
+	} else if (expressions.IEscore <= 8) {
+		52.32;
+	} else if (expressions.IEscore <= 9) {
+		62.77;
+	} else if (expressions.IEscore <= 10) {
+		70.89;
+	} else if (expressions.IEscore <= 11) {
+		77.5;
+	} else if (expressions.IEscore <= 12) {
+		83.13;
+	} else if (expressions.IEscore <= 13) {
+		89.19;
+	} else if (expressions.IEscore <= 14) {
+		92.59;
+	} else if (expressions.IEscore <= 15) {
+		95;
+	} else if (expressions.IEscore <= 16) {
+		96.61;
+	} else if (expressions.IEscore <= 17) {
+		98.39;
+	} else if (expressions.IEscore <= 18) {
+		99.38;
+	} else if (expressions.IEscore <= 19) {
+		99.73;		
+	} else if (expressions.IEscore <= 20) {
+		99.91;		
+	} else {
+		100;
+	}
+}
+
+/IEscore_percentile_F = {
+	if (expressions.IEscore <= 0) {
+		0.66;
+	} else if (expressions.IEscore <= 1){
+		1.98;	
+	} else if (expressions.IEscore <= 2){
+		5.62;
+	} else if (expressions.IEscore <= 3) {
+		11.74;
+	} else if (expressions.IEscore <= 4) {
+		18.68;
+	} else if (expressions.IEscore <= 5) {
+		24.79;
+	} else if (expressions.IEscore <= 6) {
+		35.7;
+	} else if (expressions.IEscore <= 7) {
+		43.97;
+	} else if (expressions.IEscore <= 8) {
+		52.73;
+	} else if (expressions.IEscore <= 9) {
+		63.31;
+	} else if (expressions.IEscore <= 10) {
+		70.25;
+	} else if (expressions.IEscore <= 11) {
+		77.19;
+	} else if (expressions.IEscore <= 12) {
+		82.31;
+	} else if (expressions.IEscore <= 13) {
+		88.43;
+	} else if (expressions.IEscore <= 14) {
+		92.23;
+	} else if (expressions.IEscore <= 15) {
+		95.04;
+	} else if (expressions.IEscore <= 16) {
+		96.36;
+	} else if (expressions.IEscore <= 17) {
+		98.02;
+	} else if (expressions.IEscore <= 18) {
+		99.17;
+	} else if (expressions.IEscore <= 19) {
+		99.67;		
+	} else if (expressions.IEscore <= 20) {
+		99.83;		
+	} else {
+		100;
+	}
+}
+
+/IEscore_percentile_M = {
+	if (expressions.IEscore <= 0) {
+		0.87;
+	} else if (expressions.IEscore <= 1){
+		2.61;	
+	} else if (expressions.IEscore <= 2){
+		6.43;
+	} else if (expressions.IEscore <= 3) {
+		11.48;
+	} else if (expressions.IEscore <= 4) {
+		18.96;
+	} else if (expressions.IEscore <= 5) {
+		26.09;
+	} else if (expressions.IEscore <= 6) {
+		35.13;
+	} else if (expressions.IEscore <= 7) {
+		44.17;
+	} else if (expressions.IEscore <= 8) {
+		56.87;
+	} else if (expressions.IEscore <= 9) {
+		66.09;
+	} else if (expressions.IEscore <= 10) {
+		74.61;
+	} else if (expressions.IEscore <= 11) {
+		80.17;
+	} else if (expressions.IEscore <= 12) {
+		85.74;
+	} else if (expressions.IEscore <= 13) {
+		91.13;
+	} else if (expressions.IEscore <= 14) {
+		93.74;
+	} else if (expressions.IEscore <= 15) {
+		95.48;
+	} else if (expressions.IEscore <= 16) {
+		97.22;
+	} else if (expressions.IEscore <= 17) {
+		98.96;
+	} else if (expressions.IEscore <= 18) {
+		99.65;
+	} else if (expressions.IEscore <= 19) {
+		99.83;			
+	} else {
+		100;
+	}
+}
+
+
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_filler>
+/ caption = "Question #1"
+/ options = ("(a) Children get into trouble because their parents punish them too much.", 
+"(b) The trouble with most children nowadays is that their parents are too easy with them.")
+/ optionvalues = ("3", "4")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q2>
+/ caption = "Question #2"
+/ options = ("(a) Many of the unhappy things in people's lives are partly due to bad luck", 
+"(b) People's misfortunes result from the mistakes they make.")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q3>
+/ caption = "Question #3"
+/ options = ("(a) One of the major reasons why we have wars is because people don't take enough interest in politics.", 
+"(b) here will always be wars, no matter how hard people try to prevent them.")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q4>
+/ caption = "Question #4"
+/ options = ("(a) In the long run people get the respect they deserve in this world.", 
+"(b) Unfortunately, an individual's worth often passes unrecognized no matter how hard he tries.")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q5>
+/ caption = "Question #5"
+/ options = ("(a) The idea that teachers are unfair to students is nonsense.", 
+"(b) Most students don't realize the extent to which their grades are influenced by accidental happenings.")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q6>
+/ caption = "Question #6"
+/ options = ("(a) Without the right breaks one cannot be an effective leader.", 
+"(b) Capable people who fail to become leaders have not taken advantage of their opportunities.")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q7>
+/ caption = "Question #7"
+/ options = ("(a) No matter how hard you try some people just don't like you.", 
+"(b) People who can't get others to like them don't understand how to get along with others.")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q8_filler>
+/ caption = "Question #8"
+/ options = ("(a) Heredity plays the major role in determining one's personality.", 
+"(b) It is one's experiences in life which determine what they're like.")
+/ optionvalues = ("3", "4")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q9>
+/ caption = "Question #9"
+/ options = ("(a) I have often found that what is going to happen will happen.", 
+"(b) Trusting to fate has never turned out as well for me as making a decision to take a definite course of action.")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q10>
+/ caption = "Question #10"
+/ options = ("(a) In the case of the well prepared student there is rarely if ever such a thing as an unfair test.", 
+"(b) Many times exam questions tend to be so unrelated to course work that studying is really useless.")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q11>
+/ caption = "Question #11"
+/ options = ("(a) Becoming a success is a matter of hard work, luck has little or nothing to do with it.", 
+"(b) Getting a good job depends mainly on being in the right place at the right time.")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q12>
+/ caption = "Question #12"
+/ options = ("(a) The average citizen can have an influence in government decisions.", 
+"(b) This world is run by the few people in power, and there is not much the little guy can do about it.")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q13>
+/ caption = "Question #13"
+/ options = ("(a) When I make plans, I am almost certain that I can make them work.", 
+"(b) It is not always wise to plan too far ahead because many things turn out to be a matter of good or bad fortune anyhow.")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q14_filler>
+/ caption = "Question #14"
+/ options = ("(a) There are certain people who are just no good.", 
+"(b) There is some good in everybody.")
+/ optionvalues = ("3", "4")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q15>
+/ caption = "Question #15"
+/ options = ("(a) In my case getting what I want has little or nothing to do with luck.", 
+"(b) Many times we might just as well decide what to do by — flipping a coin.")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+ <radiobuttons q16>
+/ caption = "Question #16"
+/ options = ("(a) Who gets to be the boss often depends on who was lucky enough to be in the right place first.", 
+"(b) Getting people to do the right thing depends upon ability, luck has little or nothing to do with it.")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+ <radiobuttons q17>
+/ caption = "Question #17"
+/ options = ("(a) As far as world affairs are concerned, most of us are the victims of forces we can neither understand, nor control.", 
+"(b) By taking an active part in political and social affairs the people can control world events.")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+ 
+ <radiobuttons q18>
+/ caption = "Question #18"
+/ options = ("(a) Most people don't realize the extent to which their lives are controlled by accidental happenings.", 
+"(b) There really is no such thing as 'luck.'")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+ <radiobuttons q19_filler>
+/ caption = "Question #19"
+/ options = ("(a) One should always be willing to admit mistakes.", 
+"(b) It is usually best to cover up one's mistakes.")
+/ optionvalues = ("3", "4")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+ <radiobuttons q20>
+/ caption = "Question #20"
+/ options = ("(a) It is hard to know whether or not a person really likes you.", 
+"(b) How many friends you have depends upon how nice a person you are.")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+ <radiobuttons q21>
+/ caption = "Question #21"
+/ options = ("(a) In the long run the bad things that happen to us are balanced by the good ones.", 
+"(b) Most misfortunes are the result of lack of ability, ignorance, laziness, or all three.")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+ <radiobuttons q22>
+/ caption = "Question #22"
+/ options = ("(a) With enough effort we can wipe out political corruption.", 
+"(b) It is difficult for people to have much control over the things politicians do in office.")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+ <radiobuttons q23>
+/ caption = "Question #23"
+/ options = ("(a) Sometimes I can't understand how teachers arrive at the grades they give.", 
+"(b) There is a direct connection between how hard I study and the grades I get.")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+ <radiobuttons q24_filler>
+/ caption = "Question #24"
+/ options = ("(a) A good leader expects people to decide for themselves what they should do.", 
+"(b) A good leader makes it clear to everybody what their jobs are.")
+/ optionvalues = ("3", "4")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+ <radiobuttons q25>
+/ caption = "Question #25"
+/ options = ("(a) Many times I feel that I have little influence over the things that happen to me.", 
+"(b) It is impossible for me to believe that chance or luck plays an important role in my life.")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+ <radiobuttons q26>
+/ caption = "Question #26"
+/ options = ("(a) People are lonely because they don't try to be friendly.", 
+"(b) There's not much use in trying too hard to please people, if they like you, they like you.")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+ <radiobuttons q27_filler>
+/ caption = "Question #27"
+/ options = ("(a) There is too much emphasis on athletics in high school.", 
+"(b) Team sports are an excellent way to build character")
+/ optionvalues = ("3", "4")
+/required = true
+/orientation = vertical
+</radiobuttons>
+ 
+ <radiobuttons q28>
+/ caption = "Question #28"
+/ options = ("(a) What happens to me is my own doing.", 
+"(b) Sometimes I feel that I don't have enough control over the direction my life is taking.")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+ <radiobuttons q29>
+/ caption = "Question #29"
+/ options = ("(a) Most of the time I can't understand why politicians behave the way they do.", 
+"(b) In the long run the people are responsible for bad government on a national as well as on a local level.")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+****optional*****
+
+<radiobuttons gender>
+/caption = "Your gender:"
+/ options = ("Female", "Male")
+/ other = "Other (please, explain):"
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<textbox age>
+/ caption = "Your age:"
+/ mask = integer
+/ maxchars = 3
+/ required = false
+</textbox>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage LOC_instruct>
+/caption ="<%parameters.pageinstructions%>"
+</surveypage>
+
+<surveypage LOC1>
+/caption ="For each question, select the response that more strongly feels to be the case for you.
+"
+/questions = [1 = q1_filler, q2, q3]
+</surveypage>
+
+<surveypage LOC2>
+/caption ="For each question, select the response that more strongly feels to be the case for you.
+"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage LOC3>
+/caption ="For each question, select the response that more strongly feels to be the case for you.
+"
+/questions = [1 = q7, q8_filler, q9]
+</surveypage>
+
+<surveypage LOC4>
+/caption ="For each question, select the response that more strongly feels to be the case for you.
+"
+/questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage LOC5>
+/caption ="For each question, select the response that more strongly feels to be the case for you.
+"
+/questions = [1 = q13, q14_filler, q15]
+</surveypage>
+
+<surveypage LOC6>
+/caption ="For each question, select the response that more strongly feels to be the case for you.
+"
+/questions = [1 = q16, q17, q18]
+</surveypage>
+
+<surveypage LOC7>
+/caption ="For each question, select the response that more strongly feels to be the case for you.
+"
+/questions = [1 = q19_filler, q20, q21]
+</surveypage>
+
+<surveypage LOC8>
+/caption ="For each question, select the response that more strongly feels to be the case for you.
+"
+/questions = [1 = q22, q23, q24_filler]
+</surveypage>
+
+<surveypage LOC9>
+/caption ="For each question, select the response that more strongly feels to be the case for you.
+"
+/questions = [1 = q25, q26, q27_filler]
+</surveypage>
+
+<surveypage LOC10>
+/caption ="For each question, select the response that more strongly feels to be the case for you.
+"
+/questions = [1 = q28, q29]
+</surveypage>
+
+<surveypage demographics>
+/caption ="Demographic Information
+"
+/questions = [1 = age, gender]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey locusofcontrolscale>
+/pages = [
+	1 = LOC_instruct; 
+	2 = LOC1; 
+	3 = LOC2; 
+	4 = LOC3; 
+	5 = LOC4; 
+	6 = LOC5; 
+	7 = LOC6; 
+	8 = LOC7;
+	9 = LOC8;
+	10 = LOC9;
+	11 = LOC10;
+	12 = demographics;
+]
+/screencapture = false
+/ onblockend = [
+	if (radiobuttons.gender.response == "Female"){
+		values.IEscore_percentile_gender = expressions.IEscore_percentile_F;
+	} else if (radiobuttons.gender.response == "Male"){
+		values.IEscore_percentile_gender = expressions.IEscore_percentile_M;
+	}
+]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

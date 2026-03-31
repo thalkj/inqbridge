@@ -1,0 +1,1753 @@
+<usermanual>
+__________________________________________________________________________________________________________________	
+
+								* Choice Reaction Time Task (Touchscreen)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 08-17-2018
+last updated:  04-16-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 04-16-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a Choice Reaction Time Task for the touchscreen.
+ 
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION
+___________________________________________________________________________________________________________________	
+Choice Reaction Time Task: press a home button that is presented within the half circle of 5 possible
+response buttons until one of the response buttons turns yellow, then click the yellow response button 
+as fast as possible
+
+The Choice Reaction Time Task tracks the durations participants spent on various subtasks:
+1. time spent on HomeButton
+2. time between onset of target stimulus and lifting finger off HomeButton (A)
+3. time between lifting finger off HomeButton and pressing down on target stimulus (B)
+4. time spent on target stimulus (C)
+5. time between lifting finger off target stimulus and pressing down on HomeButton (D)
+
+Note: 
+The stimuli in this script can be sized absolutely so that distances btw. buttons are the same
+on each monitor. To do so, go to section Editable Parameters and check out parameters.runAbsoluteSizes
+and parameters.canvasHeight_in_mm.
+
+By default, this script uses proportional sizing; using 100% of the available screen height and
+screen width = 4/3 * screen height (width:height: 4:3)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'choicereactiontimetask_touchscreen_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block. 
+										
+(parameter) runAbsoluteSizes:	true (1) = runs absolutely sized canvas (see (parameter) canvasHeight_in_mm)
+								false (0) = uses proportionally sized canvas (uses width = 4/3*screenHeight) (default)
+
+(parameter) canvasHeight_in_mm:	!!!only relevant if (parameter) runAbsoluteSizes = true (1)		
+								The height of the active canvas in mm (default: 140mm ~ ipad screen height)
+								=> the width of the active canvas size is automatically set at 4/3*canvasHeight
+								=> all other stimuli are sized proportionally for the active canvas size
+								=> Result: you achieve the same sized stimuli on all screens
+								=> IF the screen is not sufficient to allow for the canvassize
+								the script will terminate prematurely.										
+										
+										
+list.practiceCorrect.mean:		stores the proportion correct of the last 5 responses during the current practice session
+
+practicePass:					0 = participant did not pass practice criteria; 
+								1 = participant passed practice criteria	
+
+	
+trialcount:						counts all trials (trial = current trial sequence) in a block
+isi:							current interstimulus interval in ms
+targetPosition:					response square 1-5
+responseArea:					stores the response area clicked
+								choice Reaction Time Task: 'target button' vs. 'elsewhere'  vs. " " (did not respond during response window)
+																		
+ACC:							1=correct/right stimulus, 
+								2="elsewhere" i.e. outside the stimulus; 
+								3 = no response
+									
+finalACC:						stores final correctness of response (1 = correct; 0 = incorrect)
+								choice Reaction Time Task: correct = target is pressed
+									
+rt:								response time (in ms) from onset of Stim until the stim is pressed
+								(rt is empty if the stim is not pressed)
+									
+rt_down1:						script.elapsedTime (in ms) of clicking home-button (measured relative to start of script in ms)
+								!Note: if finger lifts off home button prior to Stim appearance, 
+								rt_down1 resets to the moment the finger returns to the home button
+								and isi is restarted from that moment.
+										
+rt_up1:							script.elapsedTime (in ms) of lifting finger off home-button (measured relative to start of script in ms)
+								Note: rt_up1 is measured AFTER Stim appearance
+										
+rt_down2:						script.elapsedTime (in ms) of clicking stim-button or 'elsewhere' (measured relative to start of script in ms)
+rt_up2:							script.elapsedTime (in ms) of lifting finger off stim-button or 'elsewhere' (measured relative to start of script in ms)
+
+rt_down3:						script.elapsedTime (in ms) of clicking home-button after lifting finger off stim-button (measured relative to start of script in ms)					
+								Note: if participants stays on home button until stim appears 
+								rt_down3 is assigned rt_down1 of the next trial
+
+stimPresentTime:				timestamp of target square (measured relative to start of script in ms):
+								the time (in ms) measured from start of script until this target appeared on screen
+									
+A:		time (in ms) btw. onset of target button (stimPresentTime) and lifting finger off home button (rt_up1)
+B:		time (in ms) btw taking finger off Home Button and pressing down on Stim Button
+C:		time (in ms) finger spends on Stim Button (pressing down on stimulus to lifting off stimulus)
+D:		time (in ms) btw taking finger off Stim Button and pressing down again on Home Button
+									
+duration_HomeButton:		time (in ms) finger spent on HomeButton
+count_earlyResponses:		counts premature lift-offs (off homebutton) during the current trial
+total_earlyResponses:		counts premature lift-offs (off homebutton) across all test trials
+
+	
+(2) Summary data file: 'choicereactiontimetask_touchscreen_summary*.iqdat'
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+								
+(parameter) runAbsoluteSizes:		true (1) = runs absolutely sized canvas (see (parameter) canvasHeight_in_mm)
+									false (0) = uses proportionally sized canvas (uses width = 4/3*screenHeight) (default)
+
+(parameter) canvasHeight_in_mm:		!!!only relevant if (parameter) runAbsoluteSizes = true (1)		
+									The height of the active canvas in mm (default: 140mm ~ ipad screen height)
+									=> the width of the active canvas size is automatically set at 4/3*canvasHeight
+									=> all other stimuli are sized proportionally for the active canvas size
+									=> Result: you achieve the same sized stimuli on all screens
+									=> IF the screen is not sufficient to allow for the canvassize
+									the script will terminate prematurely.								
+									
+choiceRTDuration:					stores the duration (in ms) of the choice RT task (only test session; excludes demo & practice)
+
+practicePass_choiceRT:				0 = participant did not pass practice criteria for choiceRT; 
+									1 = participant passed practice criteria for choiceRT
+									
+meanRT_choiceRT:					mean latency (in ms) of pressing down on stim (latency measured from onset of target to 
+									pressing down on it); only correct responses
+									
+ACC_choiceRT:						mean proportion correct (correct = target square was hit as opposed to elsewhere or no response)
+
+total_earlyResponses_choiceRT:		counts premature lift-offs (off homebutton) across all test trials in the choiceRT task
+
+only for responses with finalACC = 1:
+meanDuration_A:				mean duration (in ms) btw. onset of target button (stimPresentTime) and lifting finger off home button
+meanDuration_B:				mean duration (in ms) btw taking finger off Home Button and pressing down on Stim Button
+meanDuration_C:				mean duration (in ms) finger spent on Stim Button
+meanDuration_D:				mean duration (in ms) btw taking finger off Stim Button and pressing down again on Home Button
+									
+meanDuration_HomeButton:	mean duration (in ms) finger spent on HomeButton
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+
+1. Intro with a demo: runs 2 demo trials for each participant regardless of performance
+
+2. Practice:
+- max. 10 trials
+- Pass Criteria: 5 correct trials in a row (correct = finger lifts off home button after square appears and presses down on square within 5000ms)
+
+3. Test: 20 trials (default; each response button runs 4 times)
+- 4 isi (see list.isi_choiceRT: 1000ms, 3000, 2000ms, 4000ms), selected randomly
+	
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided under section Editable Instructions
+
+__________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to further customize your experiment.
+
+The parameters you can change are:
+
+User Interface:
+/runAbsoluteSizes:							true = runs absolutely sized canvas (see parameters.canvasHeight_in_mm)
+											false = uses proportionally sized canvas (uses width = 4/3*screenHeight) (default)
+
+/canvasHeight_in_mm:							!!!only relevant if parameters.runAbsoluteSizes = true (1)			
+											the height of the active canvas in mm (default: 140mm ~ ipad screen height)
+											=> the width of the active canvas size is automatically set at 4/3*canvasHeight
+											=> all other stimuli are sized proportionally for the active canvas size
+											=> you can further customize the size of the homeButton/responseButtonSize/etc.
+											=> Result: you achieve the same sized stimuli on all screens
+											=> IF the screen is not sufficient to allow for the canvassize
+											the script will terminate prematurely.
+											
+/homeButtonSize:							the proportional size of the Home Button (relative to canvas) (default: 15%)
+/responsebuttonSize::						the proportional size of the response squares (relative to canvas) (default: 15%)																	
+											
+/HomeButton_choiceRT_y:						the vertical position of the HomeButton in the choice Reaction Time Task in canvas height% (default: 50%)
+/circleproportion:							proportion of canvas height used for the circle radius of response buttons in choice Reaction Time Task (default: 0.4)
+											
+											
+
+
+/button1_choiceRT:							true (default) = button 1 (left button) is presented; false = button 1 not presented
+/button2_choiceRT:							true (default) = button 2 is presented; false = button 2 not presented
+/button3_choiceRT:							true (default) = button 3 (center button) is presented; false = button 3 not presented
+/button4_choiceRT:							true (default) = button 4 is presented; false = button 4 not presented
+/button5_choiceRT:							true (default) = button 5 (right button) is presented; false = button 5 not presented
+
+/numberTestTrials:							the number of test trials run (default: 20)
+												Note: needs to be divisible by the number of presented responsebuttons (responseaquares)
+												
+/presentFinalRTfeedback:					true (1): participants receive feedback about their average (correct) reaction time 
+												at test termination (default)
+											false (0): no reaction time feedback is provided at the end
+
+
+
+/feedback:									presents feedback (default: 2000ms)
+
+/homeButton_RW:								home button response window until a reminder is flashed onto the screen (default:  6000ms)
+												Note: the trial continues until the home button is pressed
+												
+/stim_RW:									response window after stim is presented (default: 6000ms)	
+
+</usermanual>
+
+
+<parameters>
+/runAbsoluteSizes = false
+/canvasHeight_in_mm = 140
+/homeButtonSize = 15%
+/responsebuttonSize = 15%
+/HomeButton_choiceRT_y = 50%
+/circleproportion = 0.3
+
+/button1_choiceRT = true
+/button2_choiceRT = true
+/button3_choiceRT = true
+/button4_choiceRT = true
+/button5_choiceRT = true
+
+/numberTestTrials = 20
+/presentFinalRTfeedback = true
+
+/feedback = 2000
+/homeButton_RW = 6000
+/stim_RW = 6000
+</parameters>
+
+<shape canvas>
+/shape = rectangle
+/color = red
+/ size = (expressions.canvasWidth, expressions.canvasHeight)
+</shape>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item choiceRT_intro>
+/1 = "~n~n~n~n~n~n~n~n~n~n~n~n
+This is a test of how quickly you can touch a YELLOW square on the screen according to the rule:
+
+As soon as you see the YELLOW square, touch it!
+
+After you have touched the YELLOW square, return to the HOME button and wait for the next YELLOW square."
+/2 = "~n~n~n~n~n~n~n~n~n~n~n~n
+This is a test of how quickly you can touch a YELLOW square on the screen according to the rule:
+
+As soon as you see the YELLOW square, touch it!
+
+After you have touched the YELLOW square, return to the HOME button and wait for the next YELLOW square."
+
+/3 = "Now it’s time for you to practice the task. 
+
+Remember: 
+Touch the yellow square as quickly as you can. 
+
+Then return your finger to the HOME button and hold it down until you see the next YELLOW square.
+
+
+Press the START button when you are ready to begin."
+
+/4 = "Now you will start the real task which is the same as the one you just practiced. It will take approx. 2 minutes.
+
+Remember: 
+Touch the YELLOW square as quickly as you can. 
+
+Then return your finger to the HOME button and hold it down until you see the next YELLOW square.
+
+Press the START button when you are ready to begin."
+</item>
+
+
+<item choiceRT_feedback>
+/1 = "You did not touch the YELLOW square. Make sure you touch inside the YELLOW square."
+/2 = "Keep your finger on the home button until the YELLOW square appears."
+/3 = "Remember: touch the YELLOW square."
+/4 = "Return your finger to the HOME button."
+</item>
+
+
+<item instructionReminder>
+/1 = "Put your finger firmly on the HOME button to begin the task. "
+</item>
+
+
+<text Welcome>
+/ items = ("Welcome!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 20%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ erase = false
+</text>
+
+<text header>
+/ items = ("This is a reaction time task for the touchscreen.")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ position = (50%, 35%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ erase = false
+</text>
+
+<text introInstructions>
+/ items = ("Touch the HOME button now for a demonstration")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 10%)
+/ vjustify = center
+</text>
+
+<button showHB>
+/ caption = "Touch here to show the HOME Button"
+/ size = (40%, 5%)
+/ position = (50%, 95%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</button>
+
+<text demoStimReminder>
+/ items = ("As soon as you see the YELLOW square, touch it as quickly as you can!")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ position = (50%, 5%)
+/ size = (80%, 10%)
+/ vjustify = center
+</text>
+
+<button choiceRT_continue>
+/ caption = "START"
+/ size = (30%, 8%)
+/ position = (50%, 90%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</button>
+
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 40%)
+/ size = (80%, 80%)
+/ vjustify = center
+</text>
+
+<text finalFeedback>
+/ items = ("<%expressions.finalFeedback%>")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ position = (50%, 60%)
+/ size = (80%, 20%)
+/ vjustify = center
+</text>
+
+<expressions>
+/finalFeedback = if (parameters.presentFinalRTfeedback == true){
+	if (values.practicePass == 1){
+"You hit the YELLOW square in <%expressions.ACC_choiceRT*100%>% of all trials
+Your average reaction time was: <%expressions.meanRT_choiceRT%> ms"		
+	}
+} else {
+	""
+}
+</expressions>
+
+<button exit>
+/ caption = "Exit"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (30%, 8%)
+</button>
+
+<text monitorSizeFail>
+/ items = ("This task requires a minimum screen height of <%parameters.canvasHeight_in_mm%> mm.
+Your current screen has been evaluated to be too small.")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 20%)
+/ vjustify = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: list.targetbuttons_choiceRT dynamically assembles a list of the active target positions;
+samples randomly without replacement (constraint on maxrunsize: 4 samplings of the same position in a row is the maximum);
+<list targetbuttons_choiceRT>
+/ replace = false
+/ maxrunsize = 4
+</list>
+
+
+Note: list.isi_choiceRT randomly (with replacement) selects an isi
+<list isi_choiceRT>
+/items = (1000, 2000, 3000, 4000)
+/ replace = true
+</list>
+
+Note: list.isi_choiceRT randomly selects an isi
+<list isi_choiceRTpractice>
+/items = (1000, 2000, 3000, 4000)
+/ replace = true
+</list>
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvassize = (expressions.canvasWidth, expressions.canvasHeight)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = (166, 166, 166)
+/ txcolor = (0, 0, 0)
+/ inputdevice = mouse
+/ screencolor = (166, 166, 166)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+<data>
+/ columns = (expressions.targetStimButtonx_px
+
+build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum, parameters.runAbsoluteSizes, parameters.canvasHeight_in_mm,
+list.practiceCorrect.mean, values.practicePass, 
+values.trialcount, values.isi,values.targetPosition,
+values.responseArea, values.ACC, values.finalACC, 
+values.rt, values.rt_down1, values.rt_up1, values.rt_down2, values.rt_up2, values.rt_down3, values.stimPresentTime,
+expressions.A, expressions.B, expressions.C, expressions.D,
+expressions.duration_HomeButton, 
+values.count_earlyResponses, values.total_earlyResponses)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, parameters.runAbsoluteSizes, parameters.canvasHeight_in_mm, display.canvasHeight, display.canvasWidth, 
+
+values.choiceRTDuration, 
+values.practicePass_choiceRT, 
+expressions.meanRT_choiceRT, expressions.ACC_choiceRT,
+values.total_earlyResponses_choiceRT
+expressions.meanDuration_A,
+expressions.meanDuration_B,
+expressions.meanDuration_C,
+expressions.meanDuration_D,
+expressions.meanDuration_HomeButton)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/practice: 				1 = practice session; 0 = test session
+/trialcount:			counts all trials (trial = sequence of 2 trials) in a block
+/repeat:				0 = new trial sequence; 1 = repeated trialsequence after early response
+/isi:					current inter stimulus interval in ms 
+/valid:					helper variable to determine valid responses for trial that conclude with lifting finger of target button
+/countUP:				counts the number of UP responses in a trial
+
+/targetposition:			
+						choice RT task:
+								1 = first button (from left)
+								...
+								5 = last button (from left)
+/nr_stims:				stores the number of active response rectangles in choice Reaction Time Task
+
+/button1_choiceRT-
+/button5_choiceRT:		true = response rectangle is activated; 0 = response rectangle is deactivated
+							Note: response rectangle 'button1' => 12 o'clock position; going clockwise
+
+/selectFeedback:		stores the itemnumber of the current feedback Stim
+/choiceRTDuration:		duration (in ms) of test
+/stopChoiceRTPractice:	1 = stop practice block (pass criteria has been reached); 0 = otherwise
+/practicePass:			1 = practice criteria has been reached; 0 = otherwise
+
+<values>
+/practice = 0
+/trialcount = 0
+/repeat = 0
+/isi = 0
+/valid = 0
+
+/countUP = 0
+
+/targetPosition = 0
+/nr_stims = 0
+
+/selectFeedback = 0
+
+/choiceRTDuration = "not run"
+/stopChoiceRTPractice = 0
+/practicePass = 1
+/practicePass_choiceRT = 1
+</values>
+
+
+/responseArea:				stores the response area clicked 
+									choice Reaction Time Task: target button vs. elsewhere
+/correct:					0=incorrect/wrong stimulus, 1=correct/right stimulus, 2=”elsewhere” i.e. outside the stimulus				
+/finalACC:					stores correctness of response (1 = correct; 0 = incorrect)
+									choice Reaction Time Task: correct = target; 0 = otherwise
+/rt_down1:					script.elapsedTime (in ms) of clicking home-button (measured relative to start of script in ms)
+/rt_up1:					script.elapsedTime (in ms) of lifting finger off home-button
+/rt_down2:					script.elapsedTime (in ms) of clicking stim-button
+/rt_up2:					script.elapsedTime (in ms) of lifting finger off stim-button 
+/rt_releaseHB:				latency (in ms) of lifting finger off home-button After stim presentation (measured from onset of stimulus)
+
+/stimPresentTime:			stores the script.elapsedTime at the current stim presentation time
+
+/prev_stimPresentTime:		stores the stim present Time from the previous trial
+
+/stimButtonOnset:			stores the script elapsed time predicted to present the Stim Button for the current trial
+/count_earlyResponses:		counts how many times values.rt_down1 was adjusted after premature lift-offs
+/countdownresponses:		tracks the number of DOWN responses recorded in critical trials
+
+<values>
+/responseArea = ""
+/ACC = 0
+/finalACC = 0
+/rt_down1 = 0
+/rt_up1=0
+/rt_down2 = 0
+/rt_up2=0
+/rt_releaseHB = 0
+/rt = 0
+/rt_down3 = 0
+/stimPresentTime = 0
+/stimButtonOnset = 0
+/count_earlyResponses = 0
+/total_earlyResponses = 0
+/total_earlyResponses_choiceRT = 0
+/countdownresponses = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+Expressions to define the active canvas size on the current monitor
+/ px_per_mm: 				pixel per mm (conversion rate on the current monitor)
+
+/screenHeight_inmm:			the calculated screen height in mm (based on the available pixels and expressions.px_per_mm)
+
+/canvasHeight_inpx:			calculates the canvasHeight in pixel used for the task on the current monitor
+								- takes into account whether absolute sizing is to be used
+
+/canvasWidth_inpx:			calculates the canvasWidth in pixels used for the task on the current monitor
+							The width is always 4/3*the height (=> width:height = 4:3)
+
+Expressions that calculate the areas of the stim buttons
+
+/StimButtonx_choiceRT_px-
+/targetStimButton_right:		Expressions that calculate the pixel borders for the stim/target response rectangles
+
+
+Expressions that calculate latency measures
+/duration_HomeButton:			time (in ms) finger spends on HomeButton
+/A:								time (in ms) btw. onset of stim button (values.stimPresentTime) and lifting finger off home button (values.rt_up1)
+/B:								time (in ms) btw taking finger off Home Button and pressing down on Stim Button
+/C:								time (in ms) finger spends on Stim Button (pressing down on stimulus to lifting off stimulus)
+/D:								time (in ms) btw taking finger off Stim Button and pressing down again on Home Button
+
+/meanRT_choiceRT:				mean latency (in ms) of pressing down on stim (latency measured from onset of stimulus to pressing down on it)
+/meanRT_complexRT:				mean latency (in ms) of pressing down on correct stim (latency measured from onset of stimulus to pressing down on it)
+/meanRT_choiceRT:				mean latency (in ms) of pressing down on correct stim=target (latency measured from onset of stimulus to pressing down on it)
+
+<expressions>
+/ px_per_mm = display.height/display.getmmy(display.height, 1)
+/screenHeight_inmm = display.getmmy(display.height)
+/canvasHeight = if (parameters.runAbsoluteSizes == true && expressions.screenHeight_inmm >= parameters.canvasHeight_in_mm){
+	1mm * parameters.canvasHeight_in_mm;
+} else {
+	1px * display.height;	
+}
+
+/canvasWidth = if (parameters.runAbsoluteSizes == true && expressions.screenHeight_inmm >= parameters.canvasHeight_in_mm){
+	1mm * parameters.canvasHeight_in_mm * 4/3;
+} else {
+	1px * display.height * 4/3;
+}
+
+/targetStimButtonx_px = shape.target.hposition
+/targetStimButtony_px = shape.target.vposition
+/targetStimButton_top = 1px * (expressions.targetStimButtony_px - 0.5 * display.getPixelsY(shape.target.height))
+/targetStimButton_bottom = 1px * (expressions.targetStimButtony_px + 0.5 * display.getPixelsY(shape.target.height))
+/targetStimButton_left = 1px * (expressions.targetStimButtonx_px - 0.5 * display.getPixelsX(shape.target.width))
+/targetStimButton_right = 1px * (expressions.targetStimButtonx_px + 0.5 *  display.getPixelsX(shape.target.width))
+
+/HomeButtonx_px = display.getPixelsX(shape.homeButton_choiceRT.hposition)
+/HomeButtony_px = display.getPixelsY(shape.homeButton_choiceRT.vposition)
+/HomeButton_top = expressions.HomeButtony_px - 0.5 * display.getPixelsY(shape.homeButton_choiceRT.height)
+/HomeButton_bottom = expressions.HomeButtony_px + 0.5 * display.getPixelsY(shape.homeButton_choiceRT.height)
+/HomeButton_left = expressions.HomeButtonx_px - 0.5 * display.getPixelsX(shape.homeButton_choiceRT.width)
+/HomeButton_right = expressions.HomeButtonx_px + 0.5 * display.getPixelsX(shape.homeButton_choiceRT.width)
+
+/duration_HomeButton = 
+if (values.rt_down1 != ""){
+	if (values.rt_up1 != ""){
+		values.rt_up1-values.rt_down1;
+	} else {
+		script.elapsedTime - values.rt_down1;
+	}		
+} else {
+	"";
+}
+
+/A = if (values.rt_up1 != "" && values.stimPresentTime != ""){
+	values.rt_up1 - values.stimPresentTime;
+} else {
+	"";
+}
+
+/B = if (values.rt_down2 != "" && values.rt_up1 != ""){
+	values.rt_down2 - values.rt_up1;
+} else {
+	"";
+}
+
+/C = if (values.rt_up2 != "" && values.rt_down2 != ""){
+	values.rt_up2 - values.rt_down2	
+} else {
+	"";
+}
+
+/D = if (values.rt_down3 != "" && values.rt_up2 != ""){
+	values.rt_down3-values.rt_up2;
+} else {
+	"";
+}
+
+/meanRT_choiceRT = list.latencies_choiceRT.mean
+/ACC_choiceRT = list.ACC_choiceRT.mean
+
+/meanDuration_A = list.durationsA.mean
+/meanDuration_B = list.durationsB.mean
+/meanDuration_C = list.durationsC.mean
+/meanDuration_D = list.durationsD.mean
+
+/meanDuration_HomeButton = list.homeButton_durations.mean
+</expressions>
+
+
+3 Circle Coordinates: expressions to calculate 5 circle positions around the center coordinate
+with expressions.radius_px
+
+<expressions>
+/centerx = 0.5 * display.canvasWidth
+/centery = 0.5 * display.canvasHeight
+
+/radius_px = parameters.circleproportion * display.canvasHeight
+/Radians_angle45 = rad(45)
+
+/heightchange_angle90 = expressions.radius_px
+/widthchange_angle90 = 0 
+/heightchange_angle45 = sin(expressions.Radians_angle45) * expressions.radius_px
+/widthchange_angle45 = cos(expressions.Radians_angle45) * expressions.radius_px
+/heightchange_angle0 = 0
+/widthchange_angle0 = expressions.radius_px
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text choiceRT_intro>
+/ items = choiceRT_intro
+/ select = sequence
+/ resetinterval = 0
+/ vjustify = center
+/ hjustify = left
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<trial choiceRT_HBdemo>
+/ stimulusframes = [1 = choiceRT_intro, welcome, header, showHB]
+/ validresponse = (showHB)
+/ responseinterrupt = immediate
+/ recorddata = true
+/ branch = [
+	trial.choiceRT_HBdemo2;
+]
+</trial>
+
+<trial choiceRT_HBdemo2>
+/ ontrialbegin = [	
+	values.isi = 4000;
+	values.rt = "";
+]
+/ stimulusframes = [1 = choiceRT_intro, welcome, header, HomeButton_choiceRT, HomeButtonLabel_choiceRT, introInstructions]
+/ validresponse = (homeButton_choiceRT)
+/ responseinterrupt = immediate
+/ recorddata = true
+/ ontrialend = [
+	text.instructionReminder.textcolorblue = 166;
+	text.instructionReminder.textcolorgreen = 166;
+	text.instructionReminder.textcolorred = 166;
+]
+/ branch = [
+	trial.choiceRTpractice_HB;
+]
+/ responsemessage = (anyresponse, clearScreen, 0)
+</trial>
+
+<trial choiceRT_intro>
+/ inputdevice = mouse
+/ stimulusframes = [1 = clearScreen, choiceRT_intro, choiceRT_continue]
+/ validresponse = (choiceRT_continue)
+/ recorddata = false
+</trial>
+
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish, finalFeedback]
+/ timeout = 2000
+/ recorddata = false
+</trial>
+
+<trial choiceRT_monitorSizeCheck>
+/ stimulusframes = [1 = monitorSizeFail, exit]
+/ validresponse = (exit)
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+choice RT
+***********************
+
+<shape 1>
+/ shape = rectangle
+/ size = (parameters.responsebuttonSize * 0.75%, parameters.responsebuttonSize)
+/ hposition = 1px * (expressions.centerx - expressions.widthchange_angle0)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_angle0)
+/erase = false
+/ color = lightGray
+</shape>
+
+<shape 2>
+/ shape = rectangle
+/ size = (parameters.responsebuttonSize * 0.75%, parameters.responsebuttonSize)
+/ hposition = 1px * (expressions.centerx - expressions.widthchange_angle45)
+/ vposition = 1px * (expressions.centery - expressions.heightchange_angle45)
+/erase = false
+/ color = lightGray
+</shape>
+
+<shape 3>
+/ shape = rectangle
+/ size = (parameters.responsebuttonSize * 0.75%, parameters.responsebuttonSize)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle90)
+/ vposition = 1px * (expressions.centery - expressions.heightchange_angle90)
+/erase = false
+/ color = lightGray
+</shape>
+
+<shape 4>
+/ shape = rectangle
+/ size = (parameters.responsebuttonSize * 0.75%, parameters.responsebuttonSize)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle45)
+/ vposition = 1px * (expressions.centery - expressions.heightchange_angle45)
+/erase = false
+/ color = lightGray
+</shape>
+
+<shape 5>
+/ shape = rectangle
+/ size = (parameters.responsebuttonSize * 0.75%, parameters.responsebuttonSize)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_angle0)
+/ vposition = 1px * (expressions.centery - expressions.heightchange_angle0)
+/erase = false
+/ color = lightGray
+</shape>
+
+<shape target>
+/ shape = rectangle
+/ size = (parameters.responsebuttonSize * 0.75%, parameters.responsebuttonSize)
+/ erase = false
+/ color = yellow
+</shape>
+
+<shape HomeButton_choiceRT>
+/ shape = circle
+/ color = black
+/ position = (50%, parameters.HomeButton_choiceRT_y)
+/ size = (parameters.homeButtonSize*0.75, parameters.homeButtonSize)
+/ erase = false
+</shape>
+
+<text HomeButtonLabel_choiceRT>
+/ items = ("HOME")
+/ txcolor = white
+/ size = (10%, 7%)
+/ position = (50%, 50%)
+/ erase = false
+/ txbgcolor = black
+/ vjustify = center
+</text>
+
+<text HomeButtonLabel2_choiceRT>
+/ items = ("HOME")
+/ txcolor = blue
+/ size = (10%, 7%)
+/ position = (50%, 50%)
+/ erase = false
+/ txbgcolor = black
+/ vjustify = center
+</text>
+
+<text choiceRT_feedback>
+/items = choiceRT_feedback
+/ select = values.selectFeedback
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+/ position = (50%, 75%)
+/ size = (80%, 15%)
+/ txbgcolor = transparent
+/erase = false
+</text>
+
+<text choiceRT_HBfeedback>
+/ items = choiceRT_feedback
+/ select = 2
+/ size = (80%, 15%)
+/ position = (50%, 80%)
+/ txcolor = red
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</text>
+
+<text choiceRT_feedbackEraser>
+/items = ("")
+/ vjustify = center
+/ hjustify = left
+/ position = (50%, 75%)
+/ size = (80%, 15%)
+/ erase = false
+</text>
+
+<shape eraseButton_choiceRT>
+/ shape = rectangle
+/ size = (parameters.responsebuttonSize * 0.75%, parameters.responsebuttonSize)
+/ erase = false
+/ color = lightGray
+/ hposition = shape.target.hposition
+/ vposition = shape.target.vposition
+</shape>
+
+
+
+<text instructionReminder>
+/ items = instructionReminder
+/ select = 1
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (80%, 20%)
+/ position = (50%, 90%)
+/ hjustify = center
+/ vjustify = center
+/txcolor = black
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response (participant hit square within time limit); 0 = otherwise
+<list ACC_choiceRT>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+measured from onset of stim to pressing down on stim
+<list latencies_choiceRT>
+</list>
+
+list stores the values.ACC of the last 5 practice trials
+<list practiceCorrect>
+/items = (0, 0, 0, 0, 0)
+</list>
+
+//collects all expressions.A
+<list durationsA>
+</list>
+
+<list durationsB>
+</list>
+
+<list durationsC>
+</list>
+
+<list durationsD>
+</list>
+
+<list homeButton_durations>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS : Choice Reaction Time Task
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: trial.assembleTargetButtonList_choiceRT
+
+- creates list.targetbuttons_choiceRT based on the active circle response rectangles
+- set the color of the active response rectangles gray; white otherwise
+- calculates the needed poolSize of list.targetbuttons_choiceRT (for 5 response boxes => 5 * 9 = 45)
+- calculates the number of active response rectangles
+
+<trial assembleTargetButtonList_choiceRT>
+/ ontrialbegin = [
+	values.nr_stims = parameters.button1_choiceRT + parameters.button2_choiceRT + 
+	parameters.button3_choiceRT + parameters.button4_choiceRT + parameters.button5_choiceRT;
+]
+/ trialduration = 0
+/ branch = [
+	return trial.assembleTargetButtonList_choiceRT_B;
+]
+/ recorddata = true
+</trial>
+
+<trial assembleTargetButtonList_choiceRT_B>
+/ ontrialbegin = [
+	if (parameters.button1_choiceRT == true){
+		list.targetbuttons_choiceRT.insertItem(1, 1);
+		shape.1.color = lightGray;
+	} else {	
+		shape.1.colorblue = 166;
+		shape.1.colorgreen = 166;
+		shape.1.colorred = 166;
+	}
+	if (parameters.button2_choiceRT == true){
+		list.targetbuttons_choiceRT.insertItem(2, 1);
+		shape.2.color = lightGray;
+	} else {
+		shape.2.colorblue = 166;
+		shape.2.colorgreen = 166;
+		shape.2.colorred = 166;
+	}
+	if (parameters.button3_choiceRT == true){
+		list.targetbuttons_choiceRT.insertItem(3, 1);
+		shape.3.color = lightGray;
+	} else {
+		shape.3.colorblue = 166;
+		shape.3.colorgreen = 166;
+		shape.3.colorred = 166;
+	}	
+	if (parameters.button4_choiceRT == true){
+		list.targetbuttons_choiceRT.insertItem(4, 1);
+		shape.4.color = lightGray;
+	} else {
+		shape.4.colorblue = 166;
+		shape.4.colorgreen = 166;
+		shape.4.colorred = 166;
+	}	
+	if (parameters.button5_choiceRT == true){
+		list.targetbuttons_choiceRT.insertItem(5, 1);
+		shape.5.color = lightGray;
+	} else {
+		shape.5.colorblue = 166;
+		shape.5.colorgreen = 166;
+		shape.5.colorred = 166;
+	}
+]
+/ trialduration = 0
+/ branch = [
+	if (trial.assembleTargetButtonList_choiceRT_B.trialcount < parameters.numberTestTrials/values.nr_stims){
+			return trial.assembleTargetButtonList_choiceRT_B;
+	} else {
+		values.nr_stims = list.targetbuttons_choiceRT.poolSize;
+	}
+	return null;
+]
+/ recorddata = true
+</trial>
+
+
+
+Note:
+- trial presents HomeButton and response buttons and stores script.elapsedTime as the time the finger touches down on HomeButton
+- the trial concludes with pressing down on the HomeButton and calls trial.ChoiceRT_HB
+
+Note: 
+* after a predetermined time frame, a reminder to press on home button is flashed onto the screen
+* trial is only run once at the start of the test sequence to collect the very first up response
+
+<trial ChoiceRT_start>
+/ontrialbegin = [	
+	values.repeat = 0;
+	values.selectFeedback = 4;
+	trial.ChoiceRT_start.insertStimulusTime(text.choiceRT_feedback, parameters.homeButton_RW);
+]
+/ stimulusframes = [1 = clearScreen, ChoiceRT_feedbackEraser,homeButton_ChoiceRT, 
+HomeButtonLabel_ChoiceRT, 1, 2, 3, 4, 5, instructionReminder]
+/ beginresponsetime = -1
+/ validresponse = (homeButton_choiceRT)
+/ isvalidresponse = [
+	if (trial.ChoiceRT_start.response == "homeButton_ChoiceRT") {
+		values.rt_down1 = script.elapsedTime;
+		values.rt_down3 = values.rt_down1;
+	}
+	return (trial.ChoiceRT_start.response == "homeButton_ChoiceRT");
+]
+/ responseinterrupt = immediate
+/ ontrialend = [
+		trial.ChoiceRT_start.resetStimulusFrames();
+		
+		text.instructionReminder.textcolorblue = 166;
+		text.instructionReminder.textcolorgreen = 166;
+		text.instructionReminder.textcolorred = 166;
+]
+/ branch = [
+		return trial.ChoiceRT_HB;
+]
+/ recorddata = false
+/ responsemessage = ("homeButton_ChoiceRT", text.CHoiceRT_feedbackEraser, 0)
+</trial>
+
+Note: trial.choiceRT_HB introduces a buffer time after pressing down on the HomeButton
+to ensure that Stimulus is not presented unless the finger has rested on the Homebutton for 
+values.isi 
+* HB label changes color to blue
+* if the finger stays on HomeButton (no 'up' response detected) for values.isi time
+then trial.choiceRTpractice2 is called
+* if the finger is lifted off too early from HomeButton, trial.choiceRT_HBdown_repeat is called
+
+<trial ChoiceRT_HB>
+/ ontrialbegin = [
+	if (values.repeat == 0){
+		values.responseArea = "";
+		values.trialcount += 1;
+		values.valid = 1;
+		values.stimPresentTime = "";
+		values.isi = list.isi_choiceRT.nextValue;
+		values.countUp = 0;
+		values.count_earlyResponses = 0;
+		values.rt = "";	
+		values.rt_down1 = values.rt_down3;
+		values.rt_down3 = "";
+		values.rt_down2 = "";
+		values.rt_up1 = "";
+		values.rt_up2 = "";	
+	
+		values.targetPosition = list.targetbuttons_choiceRT.nextValue;
+		if (values.targetPosition == 1) {
+			shape.target.hposition = shape.1.hposition;
+			shape.target.vposition = shape.1.vposition;			
+		} else if (values.targetPosition == 2){
+			shape.target.hposition = shape.2.hposition;
+			shape.target.vposition = shape.2.vposition;		
+		} else if (values.targetPosition == 3){
+			shape.target.hposition = shape.3.hposition;
+			shape.target.vposition = shape.3.vposition;				
+		} else if (values.targetPosition == 4){
+			shape.target.hposition = shape.4.hposition;
+			shape.target.vposition = shape.4.vposition;			
+		} else if (values.targetPosition == 5){
+			shape.target.hposition = shape.5.hposition;
+			shape.target.vposition = shape.5.vposition;				
+		}	
+	}	
+]	
+/ stimulustimes = [0 = HomeButton_choiceRT, HomeButtonLabel2_choiceRT]
+/ validresponse = (lbuttonup)
+/ responseinterrupt = immediate
+/ beginresponsetime = -1
+/ timeout = values.isi
+/ ontrialend = [
+	trial.choiceRT_HB.resetStimulusFrames();	
+]
+/ branch = [
+	if (trial.choiceRT_HB.response == 0 || monkey.monkeyMode){
+		return trial.choiceRT_HBoffSTIMdown;
+	} else {
+		return trial.choiceRT_HBdown_repeat;
+	}
+]
+/ recorddata = false
+/ responsemessage = ("lbuttonup", HomeButtonLabel_choiceRT, 0)
+/ responsemessage = (0,	choiceRT_feedbackEraser, 0)
+</trial>
+
+Note: trial.choiceRT_HBdown_repeat waits once more for a HomeButton touchdown
+- home button label changes back to white
+- values.rt_down1 is updated to reflect the new HomeButton touchdown 
+- if no touchdown occurs within 5000ms, a reminder/error message is presented
+- once the touchdown occurs, trial.choiceRT_HB is called once more
+
+<trial choiceRT_HBdown_repeat>
+/ ontrialbegin = [
+	values.repeat = 1;
+	values.selectFeedback = 4;
+	trial.choiceRT_HBdown_repeat.insertStimulusTime(text.choiceRT_feedback, parameters.homeButton_RW);
+]
+/ stimulusframes = [1 = choiceRT_feedbackEraser, choiceRT_HBfeedback, homeButton_choiceRT, HomeButtonLabel_choiceRT]
+/ validresponse = (homeButton_choiceRT)
+/ responseinterrupt = immediate
+/ beginresponsetime = -1
+/ ontrialend = [
+		trial.choiceRT_HBdown_repeat.resetStimulusFrames();
+		
+		if (trial.choiceRT_HBdown_repeat.response == "homeButton_choiceRT"){
+				values.rt_down1 = script.elapsedTime;
+				values.count_earlyResponses += 1;
+				values.total_earlyResponses += 1;
+				values.total_earlyResponses_choiceRT += 1;
+		}
+]
+/ branch = [
+	return trial.choiceRT_HB;
+]	
+/ recorddata = false
+/ responsemessage = ("homeButton_choiceRT", text.choiceRT_feedbackEraser, 0)
+</trial>
+
+
+Note: trial.choiceRT is called after the homebutton is pressed for values.isi
+- the Stim button appears
+- collects script.elapsedTime when finger lifts off HomeButton after Stim presentation 
+and turns the Home Button label back to white
+- collects script.elapsedTime when finger touches down on Stim Button 
+- values.finalACC stores whether the response was actually correct (=Stim Button was pressed within predetermined time frame and finger wasn't lifted of Home Button); 0 = finger went down elsewhere
+
+<trial choiceRT_HBoffSTIMdown>
+/ ontrialbegin = [
+	values.valid = 1;
+	values.ACC = 0;
+	values.finalACC = 0;
+]
+/ stimulustimes = [0 = target]
+/ validresponse = (lbuttonup, lbuttondown)
+/ beginresponsetime = -1
+/timeout = parameters.stim_RW
+/ isvalidresponse = [
+	if (trial.choiceRT_HBoffSTIMdown.response == "lbuttonup"){
+			values.countUP += 1;
+			values.rt_up1 = script.elapsedTime;
+			values.rt_releaseHB = values.rt_up1 - shape.target.timestamp;				
+			
+	} else if (trial.choiceRT_HBoffSTIMdown.response == "lbuttondown"){
+		values.valid = 1;
+	
+		values.rt_down2 = script.elapsedTime;
+		if (mouse.y >= expressions.targetStimButton_top && mouse.y <= expressions.targetStimButton_bottom && 
+			mouse.x >= expressions.targetStimButton_left && mouse.x <= expressions.targetStimButton_right){
+
+			values.responseArea = "Target";
+			values.finalACC = 1;
+			values.ACC = 1;
+
+		} else {
+			values.ACC = 2;
+			values.responseArea = "elsewhere";
+		}		
+	}
+	
+	return (values.valid == 1);
+]
+/ correctresponse = (lbuttondown)
+/ response = correct
+/ errormessage = true(HomeButtonLabel_choiceRT, 0)
+/ responsemessage = (lbuttondown, eraseButton_choiceRT, 0)
+
+/ ontrialend = [
+	trial.choiceRT_HBoffSTIMdown.resetStimulusFrames();
+	values.stimPresentTime = shape.target.timestamp;
+	if (values.finalACC == 1){
+		values.rt = expressions.A + expressions.B;			
+	}
+		
+	if (values.ACC == 1){
+		list.latencies_choiceRT.appendItem(values.rt);
+	
+	}	
+	list.ACC_choiceRT.appendItem(values.finalACC);
+	
+	if (values.responseArea == ""){
+		values.ACC = 3;
+	}
+
+]
+/ branch = [
+	if (values.responseArea == ""){
+		values.selectFeedback = 3;
+		return trial.choiceRT_feedback;
+	} else {
+		return trial.choiceRT_StimOFF;
+	}
+]
+/ recorddata = false
+</trial>
+
+Note: trial
+- collects second UP response (ideally finger lifts off the Stim button)
+- if something other than the Stim button was pressed, trial.choiceRT_feedback is called
+<trial choiceRT_STIMoff>
+/ validresponse = (lbuttonup)
+/ beginresponsetime = -1
+/ isvalidresponse = [
+	values.rt_up2 = script.elapsedTime;
+	trial.choiceRT_StimOFF.response == "lbuttonup";
+]
+/ ontrialend = [
+	values.countUP += 1;
+]
+/ branch = [
+	if (values.responseArea == "elsewhere"){
+		values.selectFeedback = 1;
+		return trial.choiceRT_feedback;
+	} else {
+		return trial.choiceRT_HBdown;
+	}
+]
+/ recorddata = false
+</trial>
+
+
+<trial choiceRT_feedback>
+/ stimulusframes = [1 = clearScreen, choiceRT_feedback]
+/ trialduration = parameters.feedback
+/ recorddata = false
+/ branch = [
+	return (trial.choiceRT_HBdown);
+]
+</trial>
+
+Note: this trial collects the down response on the homebutton after the finger is lifted off the stim button;
+if more trials need to be run it calls trial.choiceRT_HB;
+<trial choiceRT_HBdown>
+/ontrialbegin = [
+	values.repeat = 0;
+	values.selectFeedback = 4;
+	trial.choiceRT_HBdown.insertStimulusTime(text.choiceRT_feedback, parameters.homeButton_RW);
+]
+/ stimulusframes = [1 = choiceRT_feedbackEraser,homeButton_choiceRT, HomeButtonLabel_choiceRT, 1, 2, 3, 4, 5, instructionReminder]
+/ beginresponsetime = -1
+/ validresponse = (homeButton_choiceRT)
+/ isvalidresponse = [
+	if (trial.choiceRT_HBdown.response == "homeButton_choiceRT") {
+		values.rt_down3 = script.elapsedTime;
+	}
+	return (trial.choiceRT_HBdown.response == "homeButton_choiceRT");
+]
+/ responseinterrupt = immediate
+/ ontrialend = [
+	trial.choiceRT_HBdown.resetStimulusFrames();
+		
+	text.instructionReminder.textcolorblue = 166;
+	text.instructionReminder.textcolorgreen = 166;
+	text.instructionReminder.textcolorred = 166;
+	
+	if (values.finalACC == 1){
+		if (expressions.A != ""){
+			list.durationsA.appendItem(expressions.A);		
+		}
+		if (expressions.B != ""){
+			list.durationsB.appendItem(expressions.B);		
+		}
+		if (expressions.C != ""){
+			list.durationsC.appendItem(expressions.C);		
+		}	
+		if (expressions.D != ""){
+			list.durationsD.appendItem(expressions.D);		
+		}	
+		if (expressions.duration_HomeButton != ""){
+			list.homeButton_durations.appendItem(expressions.duration_HomeButton);		
+		}		
+	}
+]
+/ branch = [
+	if (values.trialcount < parameters.numberTestTrials){
+		return trial.choiceRT_HB;	
+	}
+	return null;
+]
+/ recorddata = true
+/ responsemessage = ("homeButton_choiceRT", text.choiceRT_feedbackEraser, 0)
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS : Choice Reaction Time Task
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+Note:
+- trial presents HomeButton and response buttons and stores script.elapsedTime as the time the finger touches down on HomeButton
+- the trial concludes with pressing down on the HomeButton and calls trial.ChoiceRTpractice_HB
+
+Note: 
+* after a predetermined time frame, a reminder to press on home button is flashed onto the screen
+* trial is only run once at the start of the test sequence to collect the very first up response
+
+<trial ChoiceRTpractice_start>
+/ontrialbegin = [	
+	values.repeat = 0;
+	values.selectFeedback = 4;
+	trial.ChoiceRTpractice_start.insertStimulusTime(text.ChoiceRT_feedback, parameters.homeButton_RW);
+]
+/ stimulusframes = [1 = clearScreen, ChoiceRT_feedbackEraser,homeButton_ChoiceRT, 
+HomeButtonLabel_ChoiceRT, 1, 2, 3, 4, 5, instructionReminder]
+/ beginresponsetime = -1
+/ validresponse = (homeButton_ChoiceRT)
+/ isvalidresponse = [
+	if (trial.ChoiceRTpractice_start.response == "homeButton_ChoiceRT") {
+		values.rt_down1 = script.elapsedTime;
+		values.rt_down3 = values.rt_down1;
+	}
+	return (trial.ChoiceRTpractice_start.response == "homeButton_ChoiceRT");
+]
+/ responseinterrupt = immediate
+/ ontrialend = [
+		trial.ChoiceRTpractice_start.resetStimulusFrames();
+		
+		text.instructionReminder.textcolorblue = 166;
+		text.instructionReminder.textcolorgreen = 166;
+		text.instructionReminder.textcolorred = 166;
+]
+/ branch = [
+		return trial.ChoiceRTpractice_HB;
+]
+/ recorddata = false
+/ responsemessage = ("homeButton_ChoiceRT", text.ChoiceRT_feedbackEraser, 0)
+</trial>
+
+Note: trial.ChoiceRTpractice_HB introduces a buffer time after pressing down on the HomeButton
+to ensure that Stimulus is not presented unless the finger has rested on the Homebutton for 
+values.isi 
+* HB label changes color to blue
+* if the finger stays on HomeButton (no 'up' response detected) for values.isi time
+then trial.ChoiceRTpracticepractice2 is called
+* if the finger is lifted off too early from HomeButton, trial.ChoiceRTpractice_HBdown_repeat is called
+
+<trial ChoiceRTpractice_HB>
+/ ontrialbegin = [
+	if (values.repeat == 0){
+		values.responseArea = "";
+		values.trialcount += 1;
+		values.valid = 1;
+		values.stimPresentTime = "";
+		values.isi = list.isi_ChoiceRTpractice.nextValue;
+		values.countUp = 0;
+		values.count_earlyResponses = 0;
+		values.rt = "";	
+		values.rt_down1 = values.rt_down3;
+		values.rt_down3 = "";
+		values.rt_down2 = "";
+		values.rt_up1 = "";
+		values.rt_up2 = "";	
+	
+		values.targetPosition = list.targetbuttons_ChoiceRT.nextValue;
+		if (values.targetPosition == 1) {
+			shape.target.hposition = shape.1.hposition;
+			shape.target.vposition = shape.1.vposition;			
+		} else if (values.targetPosition == 2){
+			shape.target.hposition = shape.2.hposition;
+			shape.target.vposition = shape.2.vposition;		
+		} else if (values.targetPosition == 3){
+			shape.target.hposition = shape.3.hposition;
+			shape.target.vposition = shape.3.vposition;				
+		} else if (values.targetPosition == 4){
+			shape.target.hposition = shape.4.hposition;
+			shape.target.vposition = shape.4.vposition;			
+		} else if (values.targetPosition == 5){
+			shape.target.hposition = shape.5.hposition;
+			shape.target.vposition = shape.5.vposition;				
+		}	
+	}	
+]	
+/ stimulustimes = [0 = HomeButton_ChoiceRT, HomeButtonLabel2_ChoiceRT, 1, 2, 3, 4, 5]
+/ validresponse = (lbuttonup)
+/ responseinterrupt = immediate
+/ beginresponsetime = -1
+/ timeout = values.isi
+/ ontrialend = [
+	trial.ChoiceRTpractice_HB.resetStimulusFrames();	
+]
+/ branch = [
+	if (trial.ChoiceRTpractice_HB.response == 0 || monkey.monkeyMode){
+		return trial.ChoiceRTpractice_HBoffSTIMdown;
+	} else {
+		return trial.ChoiceRTpractice_HBdown_repeat;
+	}
+]
+/ recorddata = false
+/ responsemessage = ("lbuttonup", HomeButtonLabel_ChoiceRT, 0)
+/ responsemessage = (0,	ChoiceRT_feedbackEraser, 0)
+</trial>
+
+Note: trial.ChoiceRTpractice_HBdown_repeat waits once more for a HomeButton touchdown
+- home button label changes back to white
+- values.rt_down1 is updated to reflect the new HomeButton touchdown 
+- if no touchdown occurs within 5000ms, a reminder/error message is presented
+- once the touchdown occurs, trial.ChoiceRTpractice_HB is called once more
+
+<trial ChoiceRTpractice_HBdown_repeat>
+/ ontrialbegin = [
+	values.repeat = 1;
+	values.selectFeedback = 4;
+	trial.ChoiceRTpractice_HBdown_repeat.insertStimulusTime(text.ChoiceRT_feedback, parameters.homeButton_RW);
+]
+/ stimulusframes = [1 = ChoiceRT_feedbackEraser, ChoiceRT_HBfeedback, homeButton_ChoiceRT, HomeButtonLabel_ChoiceRT]
+/ validresponse = (homeButton_ChoiceRT)
+/ responseinterrupt = immediate
+/ beginresponsetime = -1
+/ ontrialend = [
+		trial.ChoiceRTpractice_HBdown_repeat.resetStimulusFrames();
+		
+		if (trial.ChoiceRTpractice_HBdown_repeat.response == "homeButton_ChoiceRT"){
+				values.rt_down1 = script.elapsedTime;
+				values.count_earlyResponses += 1;
+		}
+]
+/ branch = [
+	return trial.ChoiceRTpractice_HB;
+]	
+/ recorddata = false
+/ responsemessage = ("homeButton_ChoiceRT", text.ChoiceRT_feedbackEraser, 0)
+</trial>
+
+
+Note: trial.ChoiceRTpractice is called after the homebutton is pressed for values.isi
+- the Stim button appears
+- collects script.elapsedTime when finger lifts off HomeButton after Stim presentation 
+and turns the Home Button label back to white
+- collects script.elapsedTime when finger touches down on Stim Button 
+- values.finalACC stores whether the response was actually correct (=Stim Button was pressed within predetermined time frame and finger wasn't lifted of Home Button); 0 = finger went down elsewhere
+
+<trial ChoiceRTpractice_HBoffSTIMdown>
+/ ontrialbegin = [
+	values.valid = 1;
+	values.ACC = 0;
+	values.finalACC = 0;
+	
+	if (values.practice == "demo"){
+		trial.choiceRTpractice_HBoffSTIMdown.insertStimulusFrame(text.demoStimReminder, 1);
+	}	
+]
+/ stimulustimes = [0 = target]
+/ validresponse = (lbuttonup, lbuttondown)
+/ beginresponsetime = -1
+/timeout = parameters.stim_RW
+/ isvalidresponse = [
+	if (trial.ChoiceRTpractice_HBoffSTIMdown.response == "lbuttonup"){
+			values.countUP += 1;
+			values.rt_up1 = script.elapsedTime;
+			values.rt_releaseHB = values.rt_up1 - shape.target.timestamp;				
+			
+	} else if (trial.ChoiceRTpractice_HBoffSTIMdown.response == "lbuttondown"){
+		values.valid = 1;
+	
+		values.rt_down2 = script.elapsedTime;
+		if (mouse.y >= expressions.targetStimButton_top && mouse.y <= expressions.targetStimButton_bottom && 
+			mouse.x >= expressions.targetStimButton_left && mouse.x <= expressions.targetStimButton_right){
+
+			values.responseArea = "Target";
+			values.finalACC = 1;
+			values.ACC = 1;
+
+		} else {
+			values.ACC = 2;
+			values.responseArea = "elsewhere";
+		}		
+	}
+	
+	return (values.valid == 1);
+]
+/ correctresponse = (lbuttondown)
+/ response = correct
+/ errormessage = true(HomeButtonLabel_ChoiceRT, 0)
+/ responsemessage = (lbuttondown, eraseButton_ChoiceRT, 0)
+
+/ ontrialend = [
+	trial.ChoiceRTpractice_HBoffSTIMdown.resetStimulusFrames();
+	list.practiceCorrect.removeitem(5);
+	list.practiceCorrect.insertItem(values.finalACC, 1);	
+	
+	values.stimPresentTime = shape.target.timestamp;
+	if (values.finalACC == 1){
+		values.rt = expressions.A + expressions.B;			
+	}
+			
+	if (values.responseArea == ""){
+		values.ACC = 3;
+	}
+
+]
+/ branch = [
+	if (values.responseArea == ""){
+		values.selectFeedback = 3;
+		return trial.ChoiceRTpractice_feedback;
+	} else {
+		return trial.ChoiceRTpractice_StimOFF;
+	}
+]
+/ recorddata = false
+</trial>
+
+Note: trial
+- collects second UP response (ideally finger lifts off the Stim button)
+- if something other than the Stim button was pressed, trial.ChoiceRTpractice_feedback is called
+<trial ChoiceRTpractice_STIMoff>
+/ validresponse = (lbuttonup)
+/ beginresponsetime = -1
+/ isvalidresponse = [
+	values.rt_up2 = script.elapsedTime;
+	return (trial.ChoiceRTpractice_StimOFF.response == "lbuttonup");
+]
+/ ontrialend = [
+	values.countUP += 1;
+]
+/ branch = [
+	if (values.responseArea == "elsewhere"){
+		values.selectFeedback = 1;
+		return trial.ChoiceRTpractice_feedback;
+	} else {
+		return trial.ChoiceRTpractice_HBdown;
+	}
+]
+/ recorddata = false
+</trial>
+
+
+<trial ChoiceRTpractice_feedback>
+/ stimulusframes = [1 = clearScreen, ChoiceRT_feedback]
+/ trialduration = parameters.feedback
+/ recorddata = false
+/ branch = [
+	return trial.ChoiceRTpractice_HBdown;
+]
+</trial>
+
+Note: this trial collects the down response on the homebutton after the finger is lifted off the stim button;
+if more trials need to be run it calls trial.ChoiceRTpractice_HB;
+<trial ChoiceRTpractice_HBdown>
+/ontrialbegin = [
+	values.repeat = 0;
+	values.selectFeedback = 4;
+	trial.ChoiceRTpractice_HBdown.insertStimulusTime(text.ChoiceRT_feedback, parameters.homeButton_RW);
+]
+/ stimulusframes = [1 = ChoiceRT_feedbackEraser,homeButton_ChoiceRT, HomeButtonLabel_ChoiceRT, 1, 2, 3, 4, 5, instructionReminder]
+/ beginresponsetime = -1
+/ validresponse = (homeButton_ChoiceRT)
+/ isvalidresponse = [
+	if (trial.ChoiceRTpractice_HBdown.response == "homeButton_ChoiceRT") {
+		values.rt_down3 = script.elapsedTime;
+	}
+	return (trial.ChoiceRTpractice_HBdown.response == "homeButton_ChoiceRT");
+]
+/ responseinterrupt = immediate
+/ ontrialend = [
+		trial.ChoiceRTpractice_HBdown.resetStimulusFrames();
+		
+		text.instructionReminder.textcolorblue = 166;
+		text.instructionReminder.textcolorgreen = 166;
+		text.instructionReminder.textcolorred = 166;
+		
+		if (list.practiceCorrect.mean >= 1 || monkey.monkeyMode){
+			values.stopChoiceRTPractice = 1;
+		}
+]
+/ recorddata = true
+/ responsemessage = ("homeButton_ChoiceRT", text.ChoiceRT_feedbackEraser, 0)
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block choiceRT_monitorSizeCheck>
+/ skip = [
+	(parameters.runAbsoluteSizes == false) || (expressions.screenHeight_inmm >= parameters.canvasHeight_in_mm);
+]
+/ trials = [
+	1 = choiceRT_monitorSizeCheck;
+]
+/ onblockend = [
+	script.abort();
+]
+</block>
+
+<block choiceRT_intro>
+/ onblockbegin = [
+	values.practice = "demo";
+	list.practiceCorrect.reset();
+	values.trialcount = 0;
+	text.instructionReminder.textColor = black;
+]
+/ trials = [
+	1 = assembleTargetButtonList_choiceRT; 
+	2= choiceRT_HBdemo; 
+	3 = choiceRTpractice_HB; 
+	4 = choiceRT_intro;
+]
+/ recorddata = false
+</block>
+
+<block choiceRT_practice>
+/ onblockbegin = [
+	values.practice = 1;
+	list.practiceCorrect.reset();
+	values.trialcount = 0;
+	text.instructionReminder.textColor = black;
+	values.stopchoiceRTPractice = 0;	
+]
+/ stop = [
+	values.stopchoiceRTPractice == 1
+]
+/ trials = [
+	1= choiceRTpractice_start; 
+	2-10 = choiceRTpractice_HB;
+]
+/ onblockend = [
+	list.isi_choiceRTpractice.reset();
+	if (values.trialcount >= 10 && list.practiceCorrect.mean <1){
+		values.practicePass = 0;
+		values.practicePass_choiceRT = 0;
+	}
+]
+</block>
+
+<block choiceRT>
+/ skip = [
+	(values.practicePass == 0 && !monkey.monkeyMode);
+]
+/ onblockbegin = [
+	values.choiceRTDuration = script.elapsedTime;
+	values.practice = 0;
+	values.trialcount = 0;
+	list.latencies_choiceRT.reset();
+	text.instructionReminder.textColor = black;
+	list.targetbuttons_choiceRT.resetSelection();
+]
+/ trials = [
+	1 = choiceRT_intro; 
+	2 = choiceRT_start;
+]
+/ onblockend = [
+	list.isi_choiceRT.reset();
+]
+</block>
+
+
+<block choiceRT_end>
+/ onblockbegin = [
+	values.choiceRTDuration = script.elapsedTime - values.choiceRTDuration;
+]
+/ trials = [1 = finish]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt crt>
+/ blocks = [
+	1 = choiceRT_monitorSizeCheck;
+	2 = choiceRT_intro;
+	3 = choiceRT_practice;
+	4 = choiceRT;
+	5 = choiceRT_end;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

@@ -1,0 +1,3007 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+										TOKEN TEST - computerized adaptation*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 10-15-2015
+last updated:  04-16-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-16-2024 Millisecond Software
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized adaptation of the original Token Test for Aphasia as described in:
+
+DeRenzi, E. & Vignolo, L.A. (1962). The Token Test: A Sensitive Test to detect Receptive disturbances
+in Aphasiacs, Brain, 85, 665-678.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+Participants are presented rows of rectangles and circles in different colors and are given visual and 
+(by default) verbal* instructions of what to do with these rectangles and circles 
+(Example: "Click on the red rectangle").
+The test has 5 phases (10 trials each) that are getting progressively more difficult.
+
+* the verbal instructions are provided with the built-in Inquisit voiceover feature. 
+It can easily be turned off if needed.
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'tokentest_raw.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.										
+										
+trialcount_phase:				number of trials run per phase
+itemnumber:						the number of the currently selected item 
+instructions:					stores the currently selected instructions
+attempts:						stores the number of attempts per trial (Max 2)
+
+response:						the participant's response
+								Note: 
+								lS_red = large square red; 
+								sS_red = small square red; 
+								lC_red = large circle red; 
+								sC_red = small circle red (etc.)
+									
+								R2C1 = empty cell of row 2 column 1 - R2C5 (empty cells below squares) - used in phase 5 only
+								R2C1 = below red square; 
+								R2C2 = below blue square; 
+								R2C3 = below green square; 
+								R2C4 = below yellow square; 
+								R2C5 = below purple square
+								R4C1 = empty cell of row 4 column 1 - R4C5 (empty cells below circles) - used in phase 5 only
+								R4C1 = below blue circle; 
+								R4C2 = below purple circle; 
+								R4C3 = below red circle; 
+								R4C4 = below yellow circle; 
+								R4C5 = below green circle
+								background = participant clicked the canvas and not any of the shapes 
+								0 = noresponse
+									
+correct:						the correctness of the response (1 = correct; 0 = incorrect)
+latency: 						the response latency (in ms) of the data-recording trial
+points:							stores the points for the current trial (0-2)
+phasepoints:					stores the accumulated points for the current phase
+totalpoints:					stores the accumulated points across phases
+ 
+repeat:							0 = the trial will not be repeated; 
+								1 = the trial will be repeated
+
+(2) Summary data file: 'tokentest_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+
+points_phase1-
+points_phase5:					stores the accumulated points separately for each of the 5 phases (Max for each phase: 20)
+
+totalpoints:					stores the accumulated points across phases (Max: 100)
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+The test runs 5 phases: each phase is getting progressively more difficult
+
+Phase 1: 
+a row of large squares (random order of colors: red, purple, blue, green, yellow) 
+a row of large circles (random order of colors: red, purple, blue, green, yellow)
+10 simple instructions such as "Click on the yellow square" - randomized order for each participant
+Each task has a predetermined time limit (see Editable Parameters) and can be repeated once
+
+Phase2: 
+a row of large squares (random order of colors: red, purple, blue, green, yellow) 
+a row of small squares (random order of colors: red, purple, blue, green, yellow) 
+a row of large circles (random order of colors: red, purple, blue, green, yellow)
+a row of large circles (random order of colors: red, purple, blue, green, yellow)
+10 simple instructions such as "Click on the large yellow square" - randomized order for each participant
+Each task has a predetermined time limit (see Editable Parameters) and can be repeated once
+
+Phase 3: 
+a row of large squares (random order of colors: red, purple, blue, green, yellow) 
+a row of large circles (random order of colors: red, purple, blue, green, yellow)
+10 instructions such as "Click on the yellow square and the blue circle" - randomized order for each participant
+Each task has a predetermined time limit (see Editable Parameters) and can be repeated once
+
+Phase4: 
+a row of large squares (random order of colors: red, purple, blue, green, yellow) 
+a row of small squares (random order of colors: red, purple, blue, green, yellow) 
+a row of large circles (random order of colors: red, purple, blue, green, yellow)
+a row of large circles (random order of colors: red, purple, blue, green, yellow)
+10 audio instructions such as "Click on the large yellow square and the small blue circle" - randomized order for each participant
+Each task has a predetermined time limit (see Editable Parameters) and can be repeated once
+
+Phase5: 
+a row of large squares (random order of colors: red, purple, blue, green, yellow) 
+(empty row)
+a row of large circles (random order of colors: red, purple, blue, green, yellow)
+(empty row)
+10 idiosyncratic audio instructions such as "Drop the yellow circle on the red square"* - order is the same for each participant
+Each task has a predetermined time limit (see Editable Parameters) and can be repeated once
+
+* the original DeRenzi & Vignolo (1962) study uses 20 instructions; not all of these 20 instructions can be easily
+translated from a 3D-world onto a 2-D computer screen. 
+
+Scoring in this script:
+Participants get 2 chances per trial.
+First Run: if correct 2 points
+Second Run: if correct 1 point
+
+Maximum Number of Points: 5 phases x 10 trials x 2 = 100 points
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see section Editable Instructions.
+By default, the instructions are presented visually (but can be easily exchanged with auditory ones).
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/run_phase1:				true = phase1 is run; false = phase1 is skipped (default: true)
+/run_phase2:				true = phase1 is run; false = phase2 is skipped (default: true)
+/run_phase3:				true = phase1 is run; false = phase3 is skipped (default: true)
+/run_phase4:				true = phase1 is run; false = phase4 is skipped (default: true)
+/run_phase5:				true = phase1 is run; false = phase5 is skipped (default: true)
+
+/instructionsduration:	the time in ms for instruction trials (default: 5000)
+/phase1_timelimit:			the time in ms for phase 1 task (default: 10000)
+/phase2_timelimit:			the time in ms for phase 2 task (default: 12000)
+/phase3_timelimit:			the time in ms for phase 3 task (default: 15000)
+/phase4_timelimit:			the time in ms for phase 4 task (default: 18000)
+/phase5_timelimit:			the time in ms for phase 1 task (default: 20000)
+/iti:						the time in ms for the trials in between tasks (either next or repeat message) (default: 2000)
+
+/largesize:					the size of the large items in canvas height percentage (default: 20%)
+/smallsize:					the size of the small items in canvas height percentage (default: 10%)
+
+
+</usermanual>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ run_phase1 = true
+/ run_phase2 = true
+/ run_phase3 = true
+/ run_phase4 = true
+/ run_phase5 = true
+
+/ instructionsduration = 5000
+/ phase1_timelimit = 10000
+/ phase2_timelimit = 12000
+/ phase3_timelimit = 15000
+/ phase4_timelimit = 18000
+/ phase5_timelimit = 20000
+/ iti = 1000
+
+/ largesize = 20%
+/ smallsize = 10%
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+************************************************************************************
+Phase1-4:
+if the questions are changed in such  a way that a different element would be the
+correct response, change the corresponding correct answer items as well
+
+Note: for touchscreens the phrasing can easily be changed to "touch the xxx"
+
+Phase5:
+each phase 5 questionis unique and is run by its own trial. If the phrasing gets changed, 
+the corresponding trial may have to be updated accordingly
+************************************************************************************
+
+<item phase1_instructions>
+/ 1 = "<%expressions.buttoninstruct2%> the red square"
+/ 2 = "<%expressions.buttoninstruct2%> the yellow square"
+/ 3 = "<%expressions.buttoninstruct2%> the blue square"
+/ 4 = "<%expressions.buttoninstruct2%> the green square"
+/ 5 = "<%expressions.buttoninstruct2%> the purple square"
+/ 6 = "<%expressions.buttoninstruct2%> the red circle"
+/ 7 = "<%expressions.buttoninstruct2%> the yellow circle"
+/ 8 = "<%expressions.buttoninstruct2%> the blue circle"
+/ 9 = "<%expressions.buttoninstruct2%> the green circle"
+/ 10 = "<%expressions.buttoninstruct2%> the purple circle"
+</item>
+
+<item phase1_correctresponses>
+/ 1 = "lS_red"
+/ 2 = "lS_yellow"
+/ 3 = "lS_blue"
+/ 4 = "lS_green"
+/ 5 = "lS_purple"
+/ 6 = "lC_red"
+/ 7 = "lC_yellow"
+/ 8 = "lC_blue"
+/ 9 = "lC_green"
+/ 10 = "lC_purple"
+</item>
+
+<item phase2_instructions>
+/ 1 = "<%expressions.buttoninstruct2%> the large red square"
+/ 2 = "<%expressions.buttoninstruct2%> the small yellow square"
+/ 3 = "<%expressions.buttoninstruct2%> the large blue square"
+/ 4 = "<%expressions.buttoninstruct2%> the small green square"
+/ 5 = "<%expressions.buttoninstruct2%> the large purple square"
+/ 6 = "<%expressions.buttoninstruct2%> the small red circle"
+/ 7 = "<%expressions.buttoninstruct2%> the large yellow circle"
+/ 8 = "<%expressions.buttoninstruct2%> the small blue circle"
+/ 9 = "<%expressions.buttoninstruct2%> the large green circle"
+/ 10 = "<%expressions.buttoninstruct2%> the small purple circle"
+</item>
+
+<item phase2_correctresponses>
+/ 1 = "lS_red"
+/ 2 = "sS_yellow"
+/ 3 = "lS_blue"
+/ 4 = "sS_green"
+/ 5 = "lS_purple"
+/ 6 = "sC_red"
+/ 7 = "lC_yellow"
+/ 8 = "sC_blue"
+/ 9 = "lC_green"
+/ 10 = "sC_purple"
+</item>
+
+<item phase3_instructions>
+/ 1 = "<%expressions.buttoninstruct2%> the red square and the purple circle"
+/ 2 = "<%expressions.buttoninstruct2%> the yellow square and the blue circle"
+/ 3 = "<%expressions.buttoninstruct2%> the blue square and the red circle"
+/ 4 = "<%expressions.buttoninstruct2%> the green square and the yellow circle"
+/ 5 = "<%expressions.buttoninstruct2%> the purple square and the green circle"
+/ 6 = "<%expressions.buttoninstruct2%> the red circle and the green square"
+/ 7 = "<%expressions.buttoninstruct2%> the yellow circle and the red square"
+/ 8 = "<%expressions.buttoninstruct2%> the blue circle and the purple square"
+/ 9 = "<%expressions.buttoninstruct2%> the green circle and the blue square"
+/ 10 = "<%expressions.buttoninstruct2%> the purple circle and the yellow square"
+</item>
+
+<item phase3_correctresponsesA>
+/ 1 = "lS_red"
+/ 2 = "lS_yellow"
+/ 3 = "lS_blue"
+/ 4 = "lS_green"
+/ 5 = "lS_purple"
+/ 6 = "lC_red"
+/ 7 = "lC_yellow"
+/ 8 = "lC_blue"
+/ 9 = "lC_green"
+/ 10 = "lC_purple"
+</item>
+
+<item phase3_correctresponsesB>
+/ 1 = "lC_purple"
+/ 2 = "lC_blue"
+/ 3 = "lC_red"
+/ 4 = "lC_yellow"
+/ 5 = "lC_green"
+/ 6 = "lS_green"
+/ 7 = "lS_red"
+/ 8 = "lS_purple"
+/ 9 = "lS_blue"
+/ 10 = "lS_yellow"
+</item>
+
+<item phase4_instructions>
+/ 1 = "<%expressions.buttoninstruct2%> the small red square and the large blue circle"
+/ 2 = "<%expressions.buttoninstruct2%> the large yellow square and the small purple circle"
+/ 3 = "<%expressions.buttoninstruct2%> the small blue square and the large yellow circle"
+/ 4 = "<%expressions.buttoninstruct2%> the large green square and the small red circle"
+/ 5 = "<%expressions.buttoninstruct2%> the small purple square and the large green circle"
+/ 6 = "<%expressions.buttoninstruct2%> the small red circle and the large yellow square"
+/ 7 = "<%expressions.buttoninstruct2%> the large yellow circle and the small green square"
+/ 8 = "<%expressions.buttoninstruct2%> the small blue circle and the large purple square"
+/ 9 = "<%expressions.buttoninstruct2%> the large green circle and the small blue square"
+/ 10 = "<%expressions.buttoninstruct2%> the small purple circle and the large red square"
+</item>
+
+<item phase4_correctresponsesA>
+/ 1 = "sS_red"
+/ 2 = "lS_yellow"
+/ 3 = "sS_blue"
+/ 4 = "lS_green"
+/ 5 = "sS_purple"
+/ 6 = "sC_red"
+/ 7 = "lC_yellow"
+/ 8 = "sC_blue"
+/ 9 = "lC_green"
+/ 10 = "sC_purple"
+</item>
+
+<item phase4_correctresponsesB>
+/ 1 = "lC_blue"
+/ 2 = "sC_purple"
+/ 3 = "lC_yellow"
+/ 4 = "sC_red"
+/ 5 = "lC_green"
+/ 6 = "lS_yellow"
+/ 7 = "sS_green"
+/ 8 = "lS_purple"
+/ 9 = "sS_blue"
+/ 10 = "lS_red"
+</item>
+
+
+!Note: phase 5 instructions are all unique and each of these problems has its own trial.
+If the problems are changed, the trials will have to be edited accordingly.
+<item phase5_instructions>
+/ 1 = "Drop the red circle onto the green square"
+/ 2 = "Move the yellow square below the purple circle"
+/ 3 = "Move the green square far away from the yellow square"
+/ 4 = "Move the green circle close to the red square"
+/ 5 = "<%expressions.buttoninstruct2%> the yellow circle after you <%expressions.buttoninstruct2%>ed on the green circle"
+/ 6 = "Move the purple square above the red circle"
+/ 7 = "If there is a black square, <%expressions.buttoninstruct2%> on the yellow circle"
+/ 8 = "When the red square is highlighted, <%expressions.buttoninstruct2%> on the purple circle"
+/ 9 = "<%expressions.buttoninstruct2%> the green circle - no!- the blue circle!"
+/ 10 = "Before <%expressions.buttoninstruct2%>ing on the green circle, <%expressions.buttoninstruct2%> the yellow square"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item intro>
+/ 1 = "In this test you will see rows of squares and rows of circles. The shapes have different colors.
+
+The computer will ask you to perform different tasks."
+/ 2 = "<%expressions.buttoninstruct2%> here to start"
+</item>
+
+<item feedback>
+/ 1 = "Let's try that one again"
+/ 2 = "<h1><div style='background-color:green'><font color='white'>Next</font></div></h1>"
+</item>
+
+
+<page phase1>
+<center><br><br><br><br>
+<hr><h1>Phase 1</h1><hr></center>
+</page>
+
+<page phase2>
+<center><br><br><br><br>
+<hr><h1>Phase 2</h1><hr><br>
+In this phase there will be <u>additional</u> rows of small squares and small circles.</center>
+</page>
+
+<page phase3>
+<center><br><br><br><br>
+<hr><h1>Phase 3</h1><hr></center>
+</page>
+
+<page phase4>
+<center><br><br><br><br>
+<hr><h1>Phase 4</h1><hr><br>
+In this phase there will be <u>additional</u> rows of small squares and small circles.<center>
+</page>
+
+<page phase5>
+<center><br><br><br><br>
+<hr><h1>Phase 5</h1><hr></center>
+</page>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<button exitbutton>
+/ caption = "EXIT"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 80%)
+/ size = (20%, 5%)
+/ valign = center
+/ halign = center
+</button>
+
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ navigationbuttonfontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ finishlabel = "START"
+</instruct>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/ buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {return "touch with your pointer";} else {return "click with your mouse";}
+/ buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {return "touch";} else {return "click";}
+</expressions>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ txcolor = black
+/ inputdevice = mouse
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+values.trialcount_phase, values.itemnumber, values.instructions, 
+values.attempts, response, correct, latency, 
+values.points, values.phasepoints, values.totalpoints, values.repeat)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+values.points_phase1, values.points_phase2, values.points_phase3, values.points_phase4, values.points_phase5, values.totalpoints)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/touch_x:				the x coordinate of the selected/touched screen				
+/touch_y:				the y coordinate of the selected/touched screen	
+/itemnumber:			the number of the currently selected item 
+/instructions:			stores the currently selected instructions
+/attempts:				stores the number of attempts per trial (Max 2)
+/trialcount_phase:		number of trials run per phase
+/repeat:				0 = the trial will not be repeated; 1 = the trial will be repeated
+/points:				stores the points for the given trial (0-2)
+/totalpoints:			stores the accumulated points across phases 
+/phasepoints:			stores the accumulated points for the current phase
+/points_phase1-
+/points_phase5:			stores the accumulated points for each of the 5 phases
+
+/remainingduration:		stores the duration (in ms) left for a trial
+
+/phase3_response1 -
+/phase4_response1:		helper variables to keep track of responses that span more than one Inquisit trial
+
+<values>
+/ touch_x = 0
+/ touch_y = 0
+/ itemnumber = 0
+/ instructions = 0
+/ attempts = 0
+/ trialcount_phase = 0
+/ repeat = 0
+/ points = 0
+/ totalpoints = 0
+/ phasepoints = 0;
+/ points_phase1 = 0
+/ points_phase2 = 0;
+/ points_phase3 = 0;
+/ points_phase4 = 0;
+/ points_phase5 = 0;
+
+/ remainingduration = 0
+
+/ phase3_response1 = 0
+/ phase4_response1 = 0
+
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text intro>
+/ items = intro
+/ select = 1
+/ position = (50%, 80%)
+/ vjustify = center
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ size = (90%, 40%)
+</text>
+
+<text click>
+/ items = intro
+/ select = 2
+/ position = (50%, 95%)
+/ vjustify = center
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+<trial intro>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.largeRx.nextValue;
+	shape.lS_red.vposition = list.largeRy.nextValue;
+	shape.lS_green.hposition = list.largeRx.nextValue;
+	shape.lS_green.vposition = list.largeRy.nextValue;	
+	shape.lS_blue.hposition = list.largeRx.nextValue;
+	shape.lS_blue.vposition = list.largeRy.nextValue;	
+	shape.lS_yellow.hposition = list.largeRx.nextValue;
+	shape.lS_yellow.vposition = list.largeRy.nextValue;
+	shape.lS_purple.hposition = list.largeRx.nextValue;
+	shape.lS_purple.vposition = list.largeRy.nextValue;
+	shape.lC_red.hposition = list.largeCx.nextValue;
+	shape.lC_red.vposition = list.largeCy.nextValue;
+	shape.lC_green.hposition = list.largeCx.nextValue;
+	shape.lC_green.vposition = list.largeCy.nextValue;	
+	shape.lC_blue.hposition = list.largeCx.nextValue;
+	shape.lC_blue.vposition = list.largeCy.nextValue;	
+	shape.lC_yellow.hposition = list.largeCx.nextValue;
+	shape.lC_yellow.vposition = list.largeCy.nextValue;
+	shape.lC_purple.hposition = list.largeCx.nextValue;
+	shape.lC_purple.vposition = list.largeCy.nextValue;	
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, intro, click]
+/ validresponse = (click)
+/ recorddata = false
+</trial>
+
+<text phase1_instructions>
+/ items = phase1_instructions
+/ select = values.itemnumber
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (80%, 8%)
+/ voiceover = true
+</text>
+
+<text phase2_instructions>
+/ items = phase2_instructions
+/ select = values.itemnumber
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (80%, 8%)
+/ voiceover = true
+</text>
+
+<text phase3_instructions>
+/ items = phase3_instructions
+/ select = values.itemnumber
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (80%, 8%)
+/ voiceover = true
+</text>
+
+<text phase4_instructions>
+/ items = phase4_instructions
+/ select = values.itemnumber
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (80%, 8%)
+/ voiceover = true
+</text>
+
+<text phase5_instructions>
+/ items = phase5_instructions
+/ select = values.itemnumber
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (80%, 8%)
+/ voiceover = true
+</text>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<shape lS_red>
+/ shape = rectangle
+/ size = (parameters.largesize * 0.75, parameters.largesize)
+/ color = red
+/ erase = false
+/ dropsource = true
+/ droptarget = true
+/ dropposition = (shape.lS_red.hposition, shape.lS_red.vposition)
+</shape>
+
+<shape lS_red_highlight>
+/ shape = rectangle
+/ width = (parameters.largesize + 3%) * 0.75
+/ height = parameters.largesize + 3%
+/ hposition = shape.lS_red.hposition
+/ vposition = shape.lS_red.vposition
+/ color = orange
+/ erase = false
+</shape>
+
+<shape lS_yellow>
+/ shape = rectangle
+/ size = (parameters.largesize * 0.75, parameters.largesize)
+/ color = yellow
+/ erase = false
+/ dropsource = true
+/ droptarget = true
+/ dropposition = (shape.lS_yellow.hposition, shape.lS_yellow.vposition)
+</shape>
+
+<shape lS_green>
+/ shape = rectangle
+/ size = (parameters.largesize * 0.75, parameters.largesize)
+/ color = green
+/ erase = false
+/ dropsource = true
+/ droptarget = true
+/ dropposition = (shape.lS_green.hposition, shape.lS_green.vposition)
+</shape>
+
+<shape lS_blue>
+/ shape = rectangle
+/ size = (parameters.largesize * 0.75, parameters.largesize)
+/ color = blue
+/ erase = false
+/ dropsource = true
+/ droptarget = true
+/ dropposition = (shape.lS_blue.hposition, shape.lS_blue.vposition)
+</shape>
+
+<shape lS_purple>
+/ shape = rectangle
+/ size = (parameters.largesize * 0.75, parameters.largesize)
+/ color = purple
+/ erase = false
+/ dropsource = true
+/ droptarget = true
+/ dropposition = (shape.lS_purple.hposition, shape.lS_purple.vposition)
+</shape>
+
+<shape sS_red>
+/ shape = rectangle
+/ size = (parameters.smallsize * 0.75, parameters.smallsize)
+/ color = red
+/ erase = false
+</shape>
+
+<shape sS_yellow>
+/ shape = rectangle
+/ size = (parameters.smallsize * 0.75, parameters.smallsize)
+/ color = yellow
+/ erase = false
+</shape>
+
+<shape sS_green>
+/ shape = rectangle
+/ size = (parameters.smallsize * 0.75, parameters.smallsize)
+/ color = green
+/ erase = false
+</shape>
+
+<shape sS_blue>
+/ shape = rectangle
+/ size = (parameters.smallsize * 0.75, parameters.smallsize)
+/ color = blue
+/ erase = false
+</shape>
+
+<shape sS_purple>
+/ shape = rectangle
+/ size = (parameters.smallsize * 0.75, parameters.smallsize)
+/ color = purple
+/ erase = false
+</shape>
+
+<shape lC_red>
+/ shape = circle
+/ size = (parameters.largesize * 0.75, parameters.largesize)
+/ color = red
+/ erase = false
+/ dropsource = true
+/ droptarget = true
+/ dropposition = (shape.lC_red.hposition, shape.lC_red.vposition)
+</shape>
+
+<shape lC_yellow>
+/ shape = circle
+/ size = (parameters.largesize * 0.75, parameters.largesize)
+/ color = yellow
+/ erase = false
+/ dropsource = true
+/ droptarget = true
+/ dropposition = (shape.lC_yellow.hposition, shape.lC_yellow.vposition)
+</shape>
+
+<shape lC_green>
+/ shape = circle
+/ size = (parameters.largesize * 0.75, parameters.largesize)
+/ color = green
+/ erase = false
+/ dropsource = true
+/ droptarget = true
+/ dropposition = (shape.lC_green.hposition, shape.lC_green.vposition)
+</shape>
+
+<shape lC_blue>
+/ shape = circle
+/ size = (parameters.largesize * 0.75, parameters.largesize)
+/ color = blue
+/ erase = false
+/ dropsource = true
+/ droptarget = true
+/ dropposition = (shape.lC_blue.hposition, shape.lC_blue.vposition)
+</shape>
+
+<shape lC_purple>
+/ shape = circle
+/ size = (parameters.largesize * 0.75, parameters.largesize)
+/ color = purple
+/ erase = false
+/ dropsource = true
+/ droptarget = true
+/ dropposition = (shape.lC_purple.hposition, shape.lC_purple.vposition)
+</shape>
+
+<shape sC_red>
+/ shape = circle
+/ size = (parameters.smallsize * 0.75, parameters.smallsize)
+/ color = red
+/ erase = false
+</shape>
+
+<shape sC_yellow>
+/ shape = circle
+/ size = (parameters.smallsize * 0.75, parameters.smallsize)
+/ color = yellow
+/ erase = false
+</shape>
+
+<shape sC_green>
+/ shape = circle
+/ size = (parameters.smallsize * 0.75, parameters.smallsize)
+/ color = green
+/ erase = false
+</shape>
+
+<shape sC_blue>
+/ shape = circle
+/ size = (parameters.smallsize * 0.75, parameters.smallsize)
+/ color = blue
+/ erase = false
+</shape>
+
+<shape sC_purple>
+/ shape = circle
+/ size = (parameters.smallsize * 0.75, parameters.smallsize)
+/ color = purple
+/ erase = false
+</shape>
+
+shape pointer>
+/ shape = circle
+/ size = (5% * 0.75, 5%)
+/ hposition = 1px*values.touch_x
+/ vposition = 1px*values.touch_y
+/ color = orange
+/ erase = false
+/ dropsource = true
+/ droptarget = true
+</shape>
+
+<text pointer>
+/ items = ("+")
+/ fontstyle = ("Arial", 10%, false, false, false, false, 5, 1)
+/ size = (10% * 0.75, 10%)
+/ hposition = 1px*values.touch_x
+/ vposition = 1px*values.touch_y
+/ color = orange
+/ erase = false
+/ dropsource = true
+/ droptarget = true
+/ txbgcolor = transparent
+</text>
+
+<shape background>
+/ shape = rectangle
+/ size = (100%, 100%)
+/ color = white
+/ position = (50%, 50%)
+/ erase = false
+/ droptarget = true
+/ dropposition = (anywhere, anywhere)
+</shape>
+
+************************************************
+phase 5
+************************************************
+
+<shape R2C1>
+/ shape = rectangle
+/ size = (25%*0.75, 25%)
+/ hposition = 10%
+/ vposition = 33.75%
+/ color = white
+/ erase = false
+/ dropsource = false
+/ droptarget = true
+/ dropposition = (10%, 33.75%)
+</shape>
+
+<shape R2C2>
+/ shape = rectangle
+/ size = (25%*0.75, 25%)
+/ hposition = 30%
+/ vposition = 33.75%
+/ color = white
+/ erase = false
+/ dropsource = false
+/ droptarget = true
+/ dropposition = (30%, 33.75%)
+</shape>
+
+<shape R2C3>
+/ shape = rectangle
+/ size = (25%*0.75, 25%)
+/ hposition = 50%
+/ vposition = 33.75%
+/ color = white
+/ erase = false
+/ dropsource = false
+/ droptarget = true
+/ dropposition = (50%, 33.75%)
+</shape>
+
+<shape R2C4>
+/ shape = rectangle
+/ size = (25%*0.75, 25%)
+/ hposition = 70%
+/ vposition = 33.75%
+/ color = white
+/ erase = false
+/ dropsource = false
+/ droptarget = true
+/ dropposition = (70%, 33.75%)
+</shape>
+
+<shape R2C5>
+/ shape = rectangle
+/ size = (25%*0.75, 25%)
+/ hposition = 90%
+/ vposition = 33.75%
+/ color = white
+/ erase = false
+/ dropsource = false
+/ droptarget = true
+/ dropposition = (90%, 33.75%)
+</shape>
+
+<shape R4C1>
+/ shape = rectangle
+/ size = (25%*0.75, 25%)
+/ hposition = 10%
+/ vposition = 78.75%
+/ color = white
+/ erase = false
+/ dropsource = false
+/ droptarget = true
+/ dropposition = (10%, 78.75%)
+</shape>
+
+<shape R4C2>
+/ shape = rectangle
+/ size = (25%*0.75, 25%)
+/ hposition = 30%
+/ vposition = 78.75%
+/ color = white
+/ erase = false
+/ dropsource = false
+/ droptarget = true
+/ dropposition = (30%, 78.75%)
+</shape>
+
+<shape R4C3>
+/ shape = rectangle
+/ size = (25%*0.75, 25%)
+/ hposition = 50%
+/ vposition = 78.75%
+/ color = white
+/ erase = false
+/ dropsource = false
+/ droptarget = true
+/ dropposition = (50%, 78.75%)
+</shape>
+
+<shape R4C4>
+/ shape = rectangle
+/ size = (25%*0.75, 25%)
+/ hposition = 70%
+/ vposition = 78.75%
+/ color = white
+/ erase = false
+/ dropsource = false
+/ droptarget = true
+/ dropposition = (70%, 78.75%)
+</shape>
+
+<shape R4C5>
+/ shape = rectangle
+/ size = (25%*0.75, 25%)
+/ hposition = 90%
+/ vposition = 78.75%
+/ color = white
+/ erase = false
+/ dropsource = false
+/ droptarget = true
+/ dropposition = (90%, 78.75%)
+</shape>
+
+<text nextproblem>
+/ items = feedback
+/ select = 2
+</text>
+
+<text feedback>
+/ items = feedback
+/ select = 1
+/ position = (50%, 50%)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list instructions>
+/ items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+/ selectionmode = random
+/ replace = false
+</list>
+
+
+<list largeRx>
+/ items = (
+10%, 30%, 50%, 70%, 90%)
+/ selectionmode = random
+/ replace = false
+/ selectionrate = always
+/ resetinterval = 0
+</list>
+
+<list largeRy>
+/ items = (
+11.25%, 11.25%, 11.25%, 11.25%, 11.25%)
+/ selectionmode = list.largeRx.currentIndex
+/ selectionrate = always
+</list>
+
+<list largeCx>
+/ items = (
+10%, 30%, 50%, 70%, 90%)
+/ selectionmode = random
+/ replace = false
+/ selectionrate = always
+/ resetinterval = 0
+</list>
+
+<list largeCy>
+/ items = (
+56.25%, 56.25%, 56.25%, 56.25%, 56.25%)
+/ selectionmode = list.largeCx.currentIndex
+/ selectionrate = always
+</list>
+
+<list smallRx>
+/ items = (
+10%, 30%, 50%, 70%, 90%)
+/ selectionmode = random
+/ replace = false
+/ selectionrate = always
+/ resetinterval = 0
+</list>
+
+<list smallRy>
+/ items = (
+33.75%, 33.75%, 33.75%, 33.75%, 33.75%)
+/ selectionmode = list.smallRx.currentIndex
+/ selectionrate = always
+</list>
+
+<list smallCx>
+/ items = (
+10%, 30%, 50%, 70%, 90%)
+/ selectionmode = random
+/ replace = false
+/ selectionrate = always
+/ resetinterval = 0
+</list>
+
+<list smallCy>
+/ items = (
+78.75%, 78.75%, 78.75%, 78.75%, 78.75%)
+/ selectionmode = list.smallCx.currentIndex
+/ selectionrate = always
+</list>
+
+<list phase5_Rx>
+/ items = (
+10%, 30%, 50%, 70%, 90%)
+/ selectionmode = sequence
+/ selectionrate = always
+</list>
+
+<list phase5_Ry>
+/ items = (
+11.25%, 11.25%, 11.25%, 11.25%, 11.25%)
+/ selectionmode = list.phase5_Rx.currentIndex
+/ selectionrate = always
+</list>
+
+<list phase5_Cx>
+/ items = (
+10%, 30%, 50%, 70%, 90%)
+/ selectionmode = sequence
+/ selectionrate = always
+</list>
+
+<list phase5_Cy>
+/ items = (
+56.25%, 56.25%, 56.25%, 56.25%, 56.25%)
+/ selectionmode = list.phase5_Cx.currentIndex
+/ selectionrate = always
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************************
+Phase 1
+*************************************************************
+
+Note: trial.phase1_positions
+* assigns the rectangles and circles of the various colors to their respective (randomly determined) positions
+for phase 1
+<trial phase1_positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.largeRx.nextValue;
+	shape.lS_red.vposition = list.largeRy.nextValue;
+	shape.lS_green.hposition = list.largeRx.nextValue;
+	shape.lS_green.vposition = list.largeRy.nextValue;	
+	shape.lS_blue.hposition = list.largeRx.nextValue;
+	shape.lS_blue.vposition = list.largeRy.nextValue;	
+	shape.lS_yellow.hposition = list.largeRx.nextValue;
+	shape.lS_yellow.vposition = list.largeRy.nextValue;
+	shape.lS_purple.hposition = list.largeRx.nextValue;
+	shape.lS_purple.vposition = list.largeRy.nextValue;
+	shape.lC_red.hposition = list.largeCx.nextValue;
+	shape.lC_red.vposition = list.largeCy.nextValue;
+	shape.lC_green.hposition = list.largeCx.nextValue;
+	shape.lC_green.vposition = list.largeCy.nextValue;	
+	shape.lC_blue.hposition = list.largeCx.nextValue;
+	shape.lC_blue.vposition = list.largeCy.nextValue;	
+	shape.lC_yellow.hposition = list.largeCx.nextValue;
+	shape.lC_yellow.vposition = list.largeCy.nextValue;
+	shape.lC_purple.hposition = list.largeCx.nextValue;
+	shape.lC_purple.vposition = list.largeCy.nextValue;	
+
+]
+/ trialduration = 0
+/ recorddata = false
+</trial>
+
+Note: trial.phase1_instructions
+* present the instructions for the current trial (either new or repeat)
+<trial phase1_instructions>
+/ ontrialbegin = [
+	if (values.repeat == 0) {
+		values.itemnumber = list.instructions.nextValue;
+		values.attempts = 0;
+		values.remainingduration = parameters.phase1_timelimit;
+		values.trialcount_phase += 1;
+	}
+]
+/ stimulusframes = [1 = phase1_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase1;
+]
+</trial>
+
+Note: trial.phase1
+* presents the set up for phase 1
+* waits for mouse click input
+* evaluates the response
+* calls trial.phase1highlight
+	values.touch_x = trial.phase1.responseX;
+	values.touch_y = trial.phase1.responseY;
+
+<trial phase1>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.points = 0;
+	values.attempts += 1;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple]
+/ validresponse = (lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ iscorrectresponse = [
+	return(trial.phase1.response == item.phase1_correctresponses.item(text.phase1_instructions.currentItemNumber));
+]
+/ ontrialend = [
+	values.instructions = text.phase1_instructions.currentItem;
+	values.touch_x = mouse.x;
+	values.touch_y = mouse.y;
+	
+	if (trial.phase1.correct) {
+		if (values.attempts == 1) {
+			values.points = 2;
+		} else {
+			values.points = 1;
+		}
+	}
+	values.totalpoints += values.points;
+	values.phasepoints += values.points;
+	
+	if (values.attempts == 1 && trial.phase1.error){
+		values.repeat = 1;
+	} else {
+		values.repeat = 0;
+	}
+]
+/ branch = [
+	if (trial.phase1.latency < values.remainingduration){
+		return trial.phase1highlight;
+	} else if (trial.phase1.response == 0 && values.attempts == 1){
+		return trial.repeatproblem_phase1;
+	} else {
+		return trial.nextproblem;
+	}
+]
+/ timeout = values.remainingduration
+</trial>
+
+Note: trial.phase1highlight
+* presents an 'x' where the mouse was clicked
+* calls trial.repeatproblem_phase1 or trial.nextproblem 
+<trial phase1highlight>
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, pointer]
+/ trialduration = 17
+/ recorddata = false
+/ branch = [
+	if (values.repeat == 1){
+		return trial.repeatproblem_phase1;
+	} else {
+		return trial.nextproblem;
+	}
+]			
+</trial>
+
+Note: trial.repeatproblem_phase1
+* alerts participant to try the same problem once more
+<trial repeatproblem_phase1>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase1_instructions;
+]
+</trial>
+
+
+*************************************************************
+Phase 2
+*************************************************************
+
+<trial phase2_positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.largeRx.nextValue;
+	shape.lS_red.vposition = list.largeRy.nextValue;
+	shape.lS_green.hposition = list.largeRx.nextValue;
+	shape.lS_green.vposition = list.largeRy.nextValue;	
+	shape.lS_blue.hposition = list.largeRx.nextValue;
+	shape.lS_blue.vposition = list.largeRy.nextValue;	
+	shape.lS_yellow.hposition = list.largeRx.nextValue;
+	shape.lS_yellow.vposition = list.largeRy.nextValue;
+	shape.lS_purple.hposition = list.largeRx.nextValue;
+	shape.lS_purple.vposition = list.largeRy.nextValue;
+	shape.lC_red.hposition = list.largeCx.nextValue;
+	shape.lC_red.vposition = list.largeCy.nextValue;
+	shape.lC_green.hposition = list.largeCx.nextValue;
+	shape.lC_green.vposition = list.largeCy.nextValue;	
+	shape.lC_blue.hposition = list.largeCx.nextValue;
+	shape.lC_blue.vposition = list.largeCy.nextValue;	
+	shape.lC_yellow.hposition = list.largeCx.nextValue;
+	shape.lC_yellow.vposition = list.largeCy.nextValue;
+	shape.lC_purple.hposition = list.largeCx.nextValue;
+	shape.lC_purple.vposition = list.largeCy.nextValue;
+	shape.sS_red.hposition = list.smallRx.nextValue;
+	shape.sS_red.vposition = list.smallRy.nextValue;
+	shape.sS_green.hposition = list.smallRx.nextValue;
+	shape.sS_green.vposition = list.smallRy.nextValue;	
+	shape.sS_blue.hposition = list.smallRx.nextValue;
+	shape.sS_blue.vposition = list.smallRy.nextValue;	
+	shape.sS_yellow.hposition = list.smallRx.nextValue;
+	shape.sS_yellow.vposition = list.smallRy.nextValue;
+	shape.sS_purple.hposition = list.smallRx.nextValue;
+	shape.sS_purple.vposition = list.smallRy.nextValue;
+	shape.sC_red.hposition = list.smallCx.nextValue;
+	shape.sC_red.vposition = list.smallCy.nextValue;
+	shape.sC_green.hposition = list.smallCx.nextValue;
+	shape.sC_green.vposition = list.smallCy.nextValue;	
+	shape.sC_blue.hposition = list.smallCx.nextValue;
+	shape.sC_blue.vposition = list.smallCy.nextValue;	
+	shape.sC_yellow.hposition = list.smallCx.nextValue;
+	shape.sC_yellow.vposition = list.smallCy.nextValue;
+	shape.sC_purple.hposition = list.smallCx.nextValue;
+	shape.sC_purple.vposition = list.smallCy.nextValue;	
+
+	values.repeat = 0;
+]
+/ trialduration = 0
+/ recorddata = false
+</trial>
+
+<trial phase2_instructions>
+/ ontrialbegin = [
+	if (values.repeat == 0) {
+		values.itemnumber = list.instructions.nextValue;
+		values.attempts = 0;
+		values.remainingduration = parameters.phase2_timelimit;
+		values.trialcount_phase += 1;
+	}
+]
+/ stimulusframes = [1 = background, phase2_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase2;
+]
+</trial>
+
+<trial phase2>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.points = 0;
+	values.attempts += 1;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+sS_red, sS_yellow, sS_blue, sS_green, sS_purple, sC_red, sC_yellow, sC_blue, sC_green, sC_purple]
+/ validresponse = (lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, sS_red, sS_yellow, sS_blue, sS_green, sS_purple, sC_red, sC_yellow, sC_blue, sC_green, sC_purple, background)
+/ iscorrectresponse = [
+	return(trial.phase2.response == item.phase2_correctresponses.item(text.phase2_instructions.currentItemNumber));
+]
+/ ontrialend = [
+	values.instructions = text.phase2_instructions.currentItem;
+	values.touch_x = trial.phase2.responseX;
+	values.touch_y = trial.phase2.responseY;
+	if (trial.phase2.correct) {
+		if (values.attempts == 1) {
+			values.points = 2;
+		} else {
+			values.points = 1;
+		}
+	}
+	values.totalpoints += values.points;
+	values.phasepoints += values.points;	
+	
+	if (values.attempts == 1 && trial.phase2.error){
+		values.repeat = 1;
+	} else {
+		values.repeat = 0;
+	}
+]
+/ branch = [
+	if (trial.phase2.latency < values.remainingduration){
+		return trial.phase2highlight;
+	} else if (trial.phase2.response == 0 && values.attempts == 1){
+		return trial.repeatproblem_phase2;
+	} else {
+		return trial.nextproblem;
+	}	
+]
+/ timeout = values.remainingduration
+</trial>
+
+<trial phase2highlight>
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+sS_red, sS_yellow, sS_blue, sS_green, sS_purple, sC_red, sC_yellow, sC_blue, sC_green, sC_purple, pointer]
+/ trialduration = 17
+/ recorddata = false
+/ branch = [
+	if (values.repeat == 1){
+		return trial.repeatproblem_phase2;
+	} else {
+		return trial.nextproblem;
+	}
+]	
+</trial>
+
+<trial repeatproblem_phase2>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase2_instructions;
+]
+</trial>
+*************************************************************
+Phase 3
+*************************************************************
+
+<trial phase3_positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.largeRx.nextValue;
+	shape.lS_red.vposition = list.largeRy.nextValue;
+	shape.lS_green.hposition = list.largeRx.nextValue;
+	shape.lS_green.vposition = list.largeRy.nextValue;	
+	shape.lS_blue.hposition = list.largeRx.nextValue;
+	shape.lS_blue.vposition = list.largeRy.nextValue;	
+	shape.lS_yellow.hposition = list.largeRx.nextValue;
+	shape.lS_yellow.vposition = list.largeRy.nextValue;
+	shape.lS_purple.hposition = list.largeRx.nextValue;
+	shape.lS_purple.vposition = list.largeRy.nextValue;
+	shape.lC_red.hposition = list.largeCx.nextValue;
+	shape.lC_red.vposition = list.largeCy.nextValue;
+	shape.lC_green.hposition = list.largeCx.nextValue;
+	shape.lC_green.vposition = list.largeCy.nextValue;	
+	shape.lC_blue.hposition = list.largeCx.nextValue;
+	shape.lC_blue.vposition = list.largeCy.nextValue;	
+	shape.lC_yellow.hposition = list.largeCx.nextValue;
+	shape.lC_yellow.vposition = list.largeCy.nextValue;
+	shape.lC_purple.hposition = list.largeCx.nextValue;
+	shape.lC_purple.vposition = list.largeCy.nextValue;
+
+	values.repeat = 0;
+]
+/ trialduration = 0
+/ recorddata = false
+</trial>
+
+<trial phase3_instructions>
+/ ontrialbegin = [
+	if (values.repeat == 0) {
+		values.itemnumber = list.instructions.nextValue;
+		values.attempts = 0;
+		values.remainingduration = parameters.phase3_timelimit;
+		values.trialcount_phase += 1;		
+	}
+]
+/ stimulusframes = [1 = background, phase3_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase3A;
+]
+</trial>
+
+<trial phase3A>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.points = 0;
+	values.attempts += 1;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple]
+/ validresponse = (lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ iscorrectresponse = [
+	return(trial.phase3A.response == item.phase3_correctresponsesA.item(text.phase3_instructions.currentItemNumber));
+]
+/ ontrialend = [
+	values.instructions = text.phase3_instructions.currentItem;
+	values.phase3_response1  = trial.phase3A.response;
+	values.touch_x = trial.phase3A.responseX;
+	values.touch_y = trial.phase3A.responseY;
+	
+	if (values.attempts == 1 && trial.phase3A.latency >= values.remainingduration) {
+		values.repeat = 1;
+	} else {
+		values.repeat = 0;
+	}
+]
+/ branch = [
+	if (trial.phase3A.latency < values.remainingduration){
+		return trial.phase3Ahighlight;
+	} else if (trial.phase3A.response == 0 && values.attempts == 1){
+		return trial.repeatproblem_phase3;
+	} else {
+		return trial.nextproblem;
+	}	
+]
+/ timeout = values.remainingduration
+</trial>
+
+<trial phase3Ahighlight>
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, pointer]
+/ trialduration = 17
+/ recorddata = false
+/ branch = [ 
+	return trial.phase3B;
+]
+</trial>
+
+<trial phase3B>
+/ ontrialbegin = [
+	values.remainingduration -= trial.phase3A.latency;
+]
+/ inputdevice = mouse
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple]
+/ validresponse = (lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ iscorrectresponse = [
+	return(trial.phase3B.response == item.phase3_correctresponsesB.item(text.phase3_instructions.currentItemNumber));
+]
+/ ontrialend = [
+
+	values.touch_x = trial.phase3B.responseX;
+	values.touch_y = trial.phase3B.responseY;
+
+	if (trial.phase3A.correct && trial.phase3B.correct) {
+		if (values.attempts == 1) {
+			values.points = 2;
+		} else {
+			values.points = 1;
+		}
+	}
+	
+	values.totalpoints += values.points;
+	values.phasepoints += values.points;
+	
+	if (values.attempts == 1 && values.points == 0) {
+		values.repeat = 1;
+	} else {
+		values.repeat = 0;
+	}
+]
+/ branch = [
+	if (trial.phase3B.latency < values.remainingduration){
+		return trial.phase3Bhighlight;
+	} else if (trial.phase3B.response == 0 && values.attempts == 1){
+		return trial.repeatproblem_phase3;
+	} else {
+		return trial.nextproblem;
+	}
+]
+/ timeout = values.remainingduration
+</trial>
+
+<trial phase3Bhighlight>
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, pointer]
+/ trialduration = 17
+/ recorddata = false
+/ branch = [
+	if (values.repeat == 1){
+		return trial.repeatproblem_phase3;
+	} else {
+		return trial.nextproblem;
+	}
+]
+</trial>
+
+<trial repeatproblem_phase3>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase3_instructions;
+]
+</trial>
+
+*************************************************************
+Phase 4
+*************************************************************
+
+<trial phase4_positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.largeRx.nextValue;
+	shape.lS_red.vposition = list.largeRy.nextValue;
+	shape.lS_green.hposition = list.largeRx.nextValue;
+	shape.lS_green.vposition = list.largeRy.nextValue;	
+	shape.lS_blue.hposition = list.largeRx.nextValue;
+	shape.lS_blue.vposition = list.largeRy.nextValue;	
+	shape.lS_yellow.hposition = list.largeRx.nextValue;
+	shape.lS_yellow.vposition = list.largeRy.nextValue;
+	shape.lS_purple.hposition = list.largeRx.nextValue;
+	shape.lS_purple.vposition = list.largeRy.nextValue;
+	shape.lC_red.hposition = list.largeCx.nextValue;
+	shape.lC_red.vposition = list.largeCy.nextValue;
+	shape.lC_green.hposition = list.largeCx.nextValue;
+	shape.lC_green.vposition = list.largeCy.nextValue;	
+	shape.lC_blue.hposition = list.largeCx.nextValue;
+	shape.lC_blue.vposition = list.largeCy.nextValue;	
+	shape.lC_yellow.hposition = list.largeCx.nextValue;
+	shape.lC_yellow.vposition = list.largeCy.nextValue;
+	shape.lC_purple.hposition = list.largeCx.nextValue;
+	shape.lC_purple.vposition = list.largeCy.nextValue;
+	shape.sS_red.hposition = list.smallRx.nextValue;
+	shape.sS_red.vposition = list.smallRy.nextValue;
+	shape.sS_green.hposition = list.smallRx.nextValue;
+	shape.sS_green.vposition = list.smallRy.nextValue;	
+	shape.sS_blue.hposition = list.smallRx.nextValue;
+	shape.sS_blue.vposition = list.smallRy.nextValue;	
+	shape.sS_yellow.hposition = list.smallRx.nextValue;
+	shape.sS_yellow.vposition = list.smallRy.nextValue;
+	shape.sS_purple.hposition = list.smallRx.nextValue;
+	shape.sS_purple.vposition = list.smallRy.nextValue;
+	shape.sC_red.hposition = list.smallCx.nextValue;
+	shape.sC_red.vposition = list.smallCy.nextValue;
+	shape.sC_green.hposition = list.smallCx.nextValue;
+	shape.sC_green.vposition = list.smallCy.nextValue;	
+	shape.sC_blue.hposition = list.smallCx.nextValue;
+	shape.sC_blue.vposition = list.smallCy.nextValue;	
+	shape.sC_yellow.hposition = list.smallCx.nextValue;
+	shape.sC_yellow.vposition = list.smallCy.nextValue;
+	shape.sC_purple.hposition = list.smallCx.nextValue;
+	shape.sC_purple.vposition = list.smallCy.nextValue;	
+
+	values.repeat = 0;
+]
+/ trialduration = 0
+/ recorddata = false
+</trial>
+
+<trial phase4_instructions>
+/ ontrialbegin = [
+	if (values.repeat == 0) {
+		values.itemnumber = list.instructions.nextValue;
+		values.attempts = 0;
+		values.remainingduration = parameters.phase4_timelimit;
+		values.trialcount_phase += 1;		
+	}
+]
+/ stimulusframes = [1 = background, phase4_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase4A;
+]
+</trial>
+
+<trial phase4A>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.points = 0;
+	values.attempts += 1;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+sS_red, sS_yellow, sS_blue, sS_green, sS_purple, sC_red, sC_yellow, sC_blue, sC_green, sC_purple]
+/ validresponse = (lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, sS_red, sS_yellow, sS_blue, sS_green, sS_purple, sC_red, sC_yellow, sC_blue, sC_green, sC_purple, background)
+/ iscorrectresponse = [
+	return(trial.phase4A.response == item.phase4_correctresponsesA.item(text.phase4_instructions.currentItemNumber)); 
+]
+/ ontrialend = [
+	
+	values.instructions = text.phase4_instructions.currentItem;
+	values.phase4_response1  = trial.phase4A.response;
+	values.touch_x = trial.phase4A.responseX;
+	values.touch_y = trial.phase4A.responseY;
+	
+	if (values.attempts == 1 && trial.phase4A.latency >= values.remainingduration) {
+		values.repeat = 1;
+	} else {
+		values.repeat = 0;
+	}
+]
+/ branch = [
+	if (trial.phase4A.latency < values.remainingduration){
+		return trial.phase4Ahighlight;
+	} else if (trial.phase4A.response == 0 && values.attempts == 1){
+		return trial.repeatproblem_phase4;
+	} else {
+		return trial.nextproblem;
+	}
+]
+/ timeout = values.remainingduration
+</trial>
+
+<trial phase4Ahighlight>
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+sS_red, sS_yellow, sS_blue, sS_green, sS_purple, sC_red, sC_yellow, sC_blue, sC_green, sC_purple, pointer]
+/ trialduration = 17
+/ recorddata = false
+/ branch = [ 
+	return trial.phase4B;
+]
+</trial>
+
+
+<trial phase4B>
+/ ontrialbegin = [
+	values.remainingduration -= trial.phase4A.latency;
+]
+/ inputdevice = mouse
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+sS_red, sS_yellow, sS_blue, sS_green, sS_purple, sC_red, sC_yellow, sC_blue, sC_green, sC_purple,]
+/ validresponse = (lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, sS_red, sS_yellow, sS_blue, sS_green, sS_purple, sC_red, sC_yellow, sC_blue, sC_green, sC_purple, background)
+/ iscorrectresponse = [
+	return(trial.phase4B.response == item.phase4_correctresponsesB.item(text.phase4_instructions.currentItemNumber));
+
+]
+/ ontrialend = [
+
+	values.touch_x = trial.phase4B.responseX;
+	values.touch_y = trial.phase4B.responseY;
+
+	if (trial.phase4A.correct && trial.phase4B.correct) {
+		if (values.attempts == 1) {
+			values.points = 2;
+		} else {
+			values.points = 1;
+		}
+	}
+	
+	values.totalpoints += values.points;
+	values.phasepoints += values.points;
+	
+	if (values.attempts == 1 && values.points == 0) {
+		values.repeat = 1;
+	} else {
+		values.repeat = 0;
+	}
+]
+/ branch = [
+	if (trial.phase4B.latency < values.remainingduration){
+		return trial.phase4Bhighlight;
+	} else if (trial.phase4B.response == 0 && values.attempts == 1){
+		return trial.repeatproblem_phase4;
+	} else {
+		return trial.nextproblem;
+	}
+]
+/ timeout = values.remainingduration
+</trial>
+
+<trial phase4Bhighlight>
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+sS_red, sS_yellow, sS_blue, sS_green, sS_purple, sC_red, sC_yellow, sC_blue, sC_green, sC_purple, pointer]
+/ trialduration = 17
+/ recorddata = false
+/ branch = [
+	if (values.repeat == 1){
+		return trial.repeatproblem_phase4;
+	} else {
+		return trial.nextproblem;
+	}
+]
+</trial>
+
+<trial repeatproblem_phase4>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase4_instructions;
+]
+</trial>
+
+
+*************************************************************
+Phase 5: each of the unique 10 problems has its own trial
+*************************************************************
+
+**********************************
+Phase 5 - Trial 1
+**********************************
+/1 = "Drop the red circle onto the green square"
+
+<trial phase5_1positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.phase5_Rx.nextValue;
+	shape.lS_red.vposition = list.phase5_Ry.nextValue;
+	shape.lS_blue.hposition = list.phase5_Rx.nextValue;
+	shape.lS_blue.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_green.hposition = list.phase5_Rx.nextValue;
+	shape.lS_green.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_yellow.hposition = list.phase5_Rx.nextValue;
+	shape.lS_yellow.vposition = list.phase5_Ry.nextValue;
+	shape.lS_purple.hposition = list.phase5_Rx.nextValue;
+	shape.lS_purple.vposition = list.phase5_Ry.nextValue;
+	shape.lC_blue.hposition = list.phase5_Cx.nextValue;
+	shape.lC_blue.vposition = list.phase5_Cy.nextValue;
+	shape.lC_purple.hposition = list.phase5_Cx.nextValue;
+	shape.lC_purple.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_red.hposition = list.phase5_Cx.nextValue;
+	shape.lC_red.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_yellow.hposition = list.phase5_Cx.nextValue;
+	shape.lC_yellow.vposition = list.phase5_Cy.nextValue;
+	shape.lC_green.hposition = list.phase5_Cx.nextValue;
+	shape.lC_green.vposition = list.phase5_Cy.nextValue;
+
+	values.itemnumber = 1;
+	values.remainingduration = parameters.phase5_timelimit;
+	if (values.repeat == 0){
+		values.trialcount_phase += 1;
+	}
+]
+/ stimulusframes = [1 = background, phase5_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase5_1;
+]
+</trial>
+
+* trial.phase5_1:
+* It presents a row of large rectangles, an empty row, a row of large circles, and an empty row. 
+All of these spaces are clickable and all of the stimuli can be used as a dropsource and a droptarget.
+The empty spaces can be used as a droptarget.
+*correct response is: the red circle is placed on top of the green square
+<trial phase5_1>
+/ inputdevice = dragdrop
+/ ontrialbegin = [
+	values.attempts += 1;
+	values.repeat = 0;
+	values.points = 0;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple,
+R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5]
+/ validresponse = (R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ iscorrectresponse = [
+		if (trial.phase5_1.response == "lS_green" && shape.lC_red.hposition == shape.lS_green.hposition && 
+		shape.lC_red.vposition == shape.lS_green.vposition){
+			return true;
+		} else {
+			return false;
+		}
+]
+/ ontrialend = [			
+	values.instructions = text.phase5_instructions.currentItem;
+	
+	if (values.attempts == 1){
+		if (trial.phase5_1.error){
+			values.repeat = 1;
+		} else {
+			values.points = 2;
+			values.totalpoints += values.points;
+			values.phasepoints += values.points;			
+		}
+	} else {
+		if (trial.phase5_1.correct){
+			values.points = 1;
+			values.totalpoints += values.points;
+			values.phasepoints += values.points;			
+		}
+	}	
+]
+
+/ branch = [
+	if (values.repeat == 1){
+		return trial.repeatproblem_phase5_1
+	} else {
+		return trial.nextproblem;
+	}	
+]
+
+/ timeout = values.remainingduration
+</trial>
+
+<trial repeatproblem_phase5_1>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase5_1positions;
+]
+</trial>
+
+
+**********************************
+Phase 5 - Trial 2
+**********************************
+/2 = "Move the yellow square below the purple circle"
+
+<trial phase5_2positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.phase5_Rx.nextValue;
+	shape.lS_red.vposition = list.phase5_Ry.nextValue;
+	shape.lS_blue.hposition = list.phase5_Rx.nextValue;
+	shape.lS_blue.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_green.hposition = list.phase5_Rx.nextValue;
+	shape.lS_green.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_yellow.hposition = list.phase5_Rx.nextValue;
+	shape.lS_yellow.vposition = list.phase5_Ry.nextValue;
+	shape.lS_purple.hposition = list.phase5_Rx.nextValue;
+	shape.lS_purple.vposition = list.phase5_Ry.nextValue;
+	shape.lC_blue.hposition = list.phase5_Cx.nextValue;
+	shape.lC_blue.vposition = list.phase5_Cy.nextValue;
+	shape.lC_purple.hposition = list.phase5_Cx.nextValue;
+	shape.lC_purple.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_red.hposition = list.phase5_Cx.nextValue;
+	shape.lC_red.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_yellow.hposition = list.phase5_Cx.nextValue;
+	shape.lC_yellow.vposition = list.phase5_Cy.nextValue;
+	shape.lC_green.hposition = list.phase5_Cx.nextValue;
+	shape.lC_green.vposition = list.phase5_Cy.nextValue;
+	
+	values.points = 0;
+	values.itemnumber = 2;
+	values.remainingduration = parameters.phase5_timelimit;
+	if (values.repeat == 0){
+		values.trialcount_phase += 1;
+	}
+]
+/ stimulusframes = [1 = background,phase5_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase5_2;
+]
+</trial>
+
+<trial phase5_2>
+/ inputdevice = dragdrop
+/ ontrialbegin = [
+	values.attempts += 1;
+	values.points = 0;
+	values.repeat = 0;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+					R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5]
+/ validresponse = (R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ iscorrectresponse = [
+
+		if (trial.phase5_2.response == "R4C2" && shape.lS_yellow.hposition == shape.R4C2.hposition && 
+		shape.lS_yellow.vposition == shape.R4C2.vposition){
+			return true;
+		} else {
+			return false;
+		}
+]
+/ ontrialend = [	
+	values.instructions = text.phase5_instructions.currentItem;
+
+	if (values.attempts == 1){
+		if (trial.phase5_2.error){
+			values.repeat = 1;
+		} else {
+			values.points = 2;
+			values.totalpoints += values.points;
+			values.phasepoints += values.points;			
+		}
+	} else {
+		if (trial.phase5_2.correct){
+			values.points = 1;
+			values.totalpoints += values.points;
+			values.phasepoints += values.points;			
+		}
+	}	
+]
+
+/ branch = [
+	if (values.repeat == 1){
+		return trial.repeatproblem_phase5_2;
+	} else {
+		return trial.nextproblem;
+	}	
+]
+
+/ timeout = values.remainingduration	
+
+</trial>
+
+<trial repeatproblem_phase5_2>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase5_2positions;
+]
+</trial>
+
+
+**********************************
+Phase 5 - Trial 3
+**********************************
+/3 = "Move the green square far away from the yellow square"
+
+<trial phase5_3positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.phase5_Rx.nextValue;
+	shape.lS_red.vposition = list.phase5_Ry.nextValue;
+	shape.lS_blue.hposition = list.phase5_Rx.nextValue;
+	shape.lS_blue.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_green.hposition = list.phase5_Rx.nextValue;
+	shape.lS_green.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_yellow.hposition = list.phase5_Rx.nextValue;
+	shape.lS_yellow.vposition = list.phase5_Ry.nextValue;
+	shape.lS_purple.hposition = list.phase5_Rx.nextValue;
+	shape.lS_purple.vposition = list.phase5_Ry.nextValue;
+	shape.lC_blue.hposition = list.phase5_Cx.nextValue;
+	shape.lC_blue.vposition = list.phase5_Cy.nextValue;
+	shape.lC_purple.hposition = list.phase5_Cx.nextValue;
+	shape.lC_purple.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_red.hposition = list.phase5_Cx.nextValue;
+	shape.lC_red.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_yellow.hposition = list.phase5_Cx.nextValue;
+	shape.lC_yellow.vposition = list.phase5_Cy.nextValue;
+	shape.lC_green.hposition = list.phase5_Cx.nextValue;
+	shape.lC_green.vposition = list.phase5_Cy.nextValue;
+
+	values.points = 0;
+	values.itemnumber = 3;
+	values.remainingduration = parameters.phase5_timelimit;
+	if (values.repeat == 0){
+		values.trialcount_phase += 1;
+	}
+]
+/ stimulusframes = [1 = background, phase5_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase5_3;
+]
+</trial>
+
+Note: correct responses = green square is dropped into the empty field below the red square or the empty field below the blue circle
+<trial phase5_3>
+/ inputdevice = dragdrop
+/ ontrialbegin = [
+	values.attempts += 1;
+	values.points = 0;
+	values.repeat = 0;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+					R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5]
+/ validresponse = (R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5, 
+lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+background)
+
+/ iscorrectresponse = [
+	return((trial.phase5_3.response == "R2C1" && shape.lS_green.hposition == shape.R2C1.hposition && 
+	shape.lS_green.vposition == shape.R2C1.vposition) ||
+	(trial.phase5_3.response == "R4C1" && shape.lS_green.hposition == shape.R4C1.hposition && 
+	shape.lS_green.vposition == shape.R4C1.vposition));
+]
+/ ontrialend = [	
+	values.instructions = text.phase5_instructions.currentItem;
+
+	if (values.attempts == 1){
+		if (trial.phase5_3.error){
+			values.repeat = 1;
+		} else {
+			values.points = 2;
+			values.totalpoints += values.points;
+			values.phasepoints += values.points;			
+		}
+	} else {
+		if (trial.phase5_3.correct){
+			values.points = 1;
+			values.totalpoints += values.points;
+			values.phasepoints += values.points;			
+		}
+	}	
+]
+
+/ branch = [
+	if (values.repeat == 1){
+		trial.repeatproblem_phase5_3;
+	} else {
+		trial.nextproblem;
+	}	
+]
+
+/ timeout = values.remainingduration	
+</trial>
+
+<trial repeatproblem_phase5_3>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase5_3positions;
+]
+</trial>
+
+
+**********************************
+Phase 5 - Trial 4
+**********************************
+/4 = "Move the green circle close to the red square"
+
+<trial phase5_4positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.phase5_Rx.nextValue;
+	shape.lS_red.vposition = list.phase5_Ry.nextValue;
+	shape.lS_blue.hposition = list.phase5_Rx.nextValue;
+	shape.lS_blue.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_green.hposition = list.phase5_Rx.nextValue;
+	shape.lS_green.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_yellow.hposition = list.phase5_Rx.nextValue;
+	shape.lS_yellow.vposition = list.phase5_Ry.nextValue;
+	shape.lS_purple.hposition = list.phase5_Rx.nextValue;
+	shape.lS_purple.vposition = list.phase5_Ry.nextValue;
+	shape.lC_blue.hposition = list.phase5_Cx.nextValue;
+	shape.lC_blue.vposition = list.phase5_Cy.nextValue;
+	shape.lC_purple.hposition = list.phase5_Cx.nextValue;
+	shape.lC_purple.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_red.hposition = list.phase5_Cx.nextValue;
+	shape.lC_red.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_yellow.hposition = list.phase5_Cx.nextValue;
+	shape.lC_yellow.vposition = list.phase5_Cy.nextValue;
+	shape.lC_green.hposition = list.phase5_Cx.nextValue;
+	shape.lC_green.vposition = list.phase5_Cy.nextValue;
+
+	values.points = 0;
+	values.itemnumber = 4;
+	values.remainingduration = parameters.phase5_timelimit;
+	if (values.repeat == 0){
+		values.trialcount_phase += 1;
+	}
+]
+/ stimulusframes = [1 = background,phase5_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase5_4;
+]
+</trial>
+
+<trial phase5_4>
+/ inputdevice = dragdrop
+/ ontrialbegin = [
+	values.attempts += 1;
+	values.points = 0;
+	values.repeat = 0;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+					R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5]
+/ validresponse = (R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ iscorrectresponse = [ 
+	return(trial.phase5_4.response == "R2C1" && shape.lC_green.hposition == shape.R2C1.hposition && 
+	shape.lC_green.vposition == shape.R2C1.vposition);
+]
+/ ontrialend = [
+	values.instructions = text.phase5_instructions.currentItem;
+	
+	if (values.attempts == 1){
+		if (trial.phase5_4.error){
+			values.repeat = 1;
+		} else {
+			values.points = 2;
+			values.totalpoints += values.points;
+			values.phasepoints += values.points;			
+		}
+	} else {
+		if (trial.phase5_4.correct){
+			values.points = 1;
+			values.totalpoints += values.points;
+			values.phasepoints += values.points;			
+		}
+	}	
+]
+
+/ branch = [
+	if (values.repeat == 1){
+		return trial.repeatproblem_phase5_4;
+	} else {
+		return trial.nextproblem;
+	}	
+]
+
+/ timeout = values.remainingduration	
+</trial>
+
+<trial repeatproblem_phase5_4>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase5_4positions;
+]
+</trial>
+
+
+**********************************
+Phase 5 - Trial 5
+**********************************
+/5 ="Click the yellow circle after you clicked on the green circle"
+
+<trial phase5_5positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.phase5_Rx.nextValue;
+	shape.lS_red.vposition = list.phase5_Ry.nextValue;
+	shape.lS_blue.hposition = list.phase5_Rx.nextValue;
+	shape.lS_blue.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_green.hposition = list.phase5_Rx.nextValue;
+	shape.lS_green.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_yellow.hposition = list.phase5_Rx.nextValue;
+	shape.lS_yellow.vposition = list.phase5_Ry.nextValue;
+	shape.lS_purple.hposition = list.phase5_Rx.nextValue;
+	shape.lS_purple.vposition = list.phase5_Ry.nextValue;
+	shape.lC_blue.hposition = list.phase5_Cx.nextValue;
+	shape.lC_blue.vposition = list.phase5_Cy.nextValue;
+	shape.lC_purple.hposition = list.phase5_Cx.nextValue;
+	shape.lC_purple.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_red.hposition = list.phase5_Cx.nextValue;
+	shape.lC_red.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_yellow.hposition = list.phase5_Cx.nextValue;
+	shape.lC_yellow.vposition = list.phase5_Cy.nextValue;
+	shape.lC_green.hposition = list.phase5_Cx.nextValue;
+	shape.lC_green.vposition = list.phase5_Cy.nextValue;	
+
+	values.points = 0;
+	values.itemnumber = 5;
+	values.remainingduration = parameters.phase5_timelimit;
+	if (values.repeat == 0){
+		values.trialcount_phase += 1;	
+	}
+]
+/ stimulusframes = [1 = background, phase5_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase5_5A;
+]
+</trial>
+
+<trial phase5_5A>
+/ inputdevice = mouse
+/ ontrialbegin = [
+
+	values.attempts += 1;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+					R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5]
+/ validresponse = (R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ correctresponse = (lC_green)
+/ ontrialend = [
+	values.touch_x = trial.phase5_5A.responseX;
+	values.touch_y = trial.phase5_5A.responseY;	
+	values.instructions = text.phase5_instructions.currentItem;
+	if (values.attempts == 1 && trial.phase5_5A.response == 0){
+		values.repeat = 1;
+	} else {
+		values.repeat = 0;
+	}
+]
+/ branch = [
+	if (trial.phase5_5A.latency < values.remainingduration){
+		return trial.phase5_5Ahighlight;
+	} else if (values.repeat == 1){
+		return trial.repeatproblem_phase5_5;
+	} else {
+		return trial.nextproblem;
+	}
+]
+/ timeout = values.remainingduration
+</trial>
+
+<trial phase5_5Ahighlight>
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, pointer]
+/ trialduration = 17
+/ recorddata = false
+/ branch = [ 
+		return trial.phase5_5B;
+]
+</trial>
+
+<trial phase5_5B>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.remainingduration -= trial.phase5_5A.latency;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+					R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5]
+/ validresponse = (R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ correctresponse = (lC_yellow)
+/ ontrialend = [
+
+	if (trial.phase5_5B.correct && trial.phase5_5A.correct) {
+		if (values.attempts == 1){
+			values.points = 2;
+		} else {
+			values.points = 1;
+		}
+	}
+	
+	values.totalpoints += values.points;
+	values.phasepoints += values.points;
+	
+	if (values.attempts == 1 && values.points == 0){
+		values.repeat = 1;
+	} else {
+		values.repeat = 0;
+	}
+		
+	values.instructions = text.phase5_instructions.currentItem;
+	values.touch_x = trial.phase5_5B.responseX;
+	values.touch_y = trial.phase5_5B.responseY;
+]
+/ branch = [
+	if (trial.phase5_5B.latency < values.remainingduration){
+		return trial.phase5_5Bhighlight;
+	} else if (values.repeat == 1){
+		return trial.repeatproblem_phase5_5;
+	} else {
+		return trial.nextproblem;		
+	}
+]
+/ timeout = values.remainingduration
+</trial>
+
+<trial phase5_5Bhighlight>
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, 
+lC_purple, pointer]
+/ trialduration = 17
+/ recorddata = false
+/ branch = [
+	if (values.attempts == 1 && values.points == 0){
+		return trial.repeatproblem_phase5_5;
+	} else {
+		return trial.nextproblem;
+	}
+]
+</trial>
+
+<trial repeatproblem_phase5_5>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase5_5positions;
+]
+</trial>
+
+**********************************
+Phase 5 - Trial 6
+**********************************
+/6 = "Move the purple square above the red circle"
+
+<trial phase5_6positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.phase5_Rx.nextValue;
+	shape.lS_red.vposition = list.phase5_Ry.nextValue;
+	shape.lS_blue.hposition = list.phase5_Rx.nextValue;
+	shape.lS_blue.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_green.hposition = list.phase5_Rx.nextValue;
+	shape.lS_green.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_yellow.hposition = list.phase5_Rx.nextValue;
+	shape.lS_yellow.vposition = list.phase5_Ry.nextValue;
+	shape.lS_purple.hposition = list.phase5_Rx.nextValue;
+	shape.lS_purple.vposition = list.phase5_Ry.nextValue;
+	shape.lC_blue.hposition = list.phase5_Cx.nextValue;
+	shape.lC_blue.vposition = list.phase5_Cy.nextValue;
+	shape.lC_purple.hposition = list.phase5_Cx.nextValue;
+	shape.lC_purple.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_red.hposition = list.phase5_Cx.nextValue;
+	shape.lC_red.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_yellow.hposition = list.phase5_Cx.nextValue;
+	shape.lC_yellow.vposition = list.phase5_Cy.nextValue;
+	shape.lC_green.hposition = list.phase5_Cx.nextValue;
+	shape.lC_green.vposition = list.phase5_Cy.nextValue;	
+
+	values.points = 0;
+	values.itemnumber = 6;
+	values.remainingduration = parameters.phase5_timelimit;
+	if (values.repeat == 0){
+		values.trialcount_phase += 1;
+	}
+]
+/ stimulusframes = [1 = background, phase5_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase5_6;
+]
+</trial>
+
+<trial phase5_6>
+/ inputdevice = dragdrop
+/ ontrialbegin = [
+	values.attempts += 1;
+	values.points = 0;
+	values.repeat = 0;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+					R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5]
+/ validresponse = (R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ iscorrectresponse = [
+	return (trial.phase5_6.response == "R2C3" && 
+	shape.lS_purple.hposition == shape.R2C3.hposition && 
+	shape.lS_purple.vposition == shape.R2C3.vposition);
+]
+/ ontrialend = [
+	values.instructions = text.phase5_instructions.currentItem;
+	
+	if (values.attempts == 1){
+		if (trial.phase5_6.error){
+			values.repeat = 1;
+		} else {
+			values.points = 2;
+			values.totalpoints += values.points;
+			values.phasepoints += values.points;			
+		}
+	} else {
+		if (trial.phase5_6.correct){
+			values.points = 1;
+			values.totalpoints += values.points;
+			values.phasepoints += values.points;			
+		}
+	}	
+]
+
+/ branch = [
+	if (values.repeat == 1){
+		return trial.repeatproblem_phase5_6;
+	} else {
+		return trial.nextproblem;
+	}	
+]
+
+/ timeout = values.remainingduration
+</trial>
+
+<trial repeatproblem_phase5_6>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase5_6positions;
+]
+</trial>
+
+
+**********************************
+Phase 5 - Trial 7
+**********************************
+/7 = "If there is a black square, click on the yellow circle"
+
+<trial phase5_7positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.phase5_Rx.nextValue;
+	shape.lS_red.vposition = list.phase5_Ry.nextValue;
+	shape.lS_blue.hposition = list.phase5_Rx.nextValue;
+	shape.lS_blue.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_green.hposition = list.phase5_Rx.nextValue;
+	shape.lS_green.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_yellow.hposition = list.phase5_Rx.nextValue;
+	shape.lS_yellow.vposition = list.phase5_Ry.nextValue;
+	shape.lS_purple.hposition = list.phase5_Rx.nextValue;
+	shape.lS_purple.vposition = list.phase5_Ry.nextValue;
+	shape.lC_blue.hposition = list.phase5_Cx.nextValue;
+	shape.lC_blue.vposition = list.phase5_Cy.nextValue;
+	shape.lC_purple.hposition = list.phase5_Cx.nextValue;
+	shape.lC_purple.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_red.hposition = list.phase5_Cx.nextValue;
+	shape.lC_red.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_yellow.hposition = list.phase5_Cx.nextValue;
+	shape.lC_yellow.vposition = list.phase5_Cy.nextValue;
+	shape.lC_green.hposition = list.phase5_Cx.nextValue;
+	shape.lC_green.vposition = list.phase5_Cy.nextValue;	
+
+	values.points = 0;
+	values.itemnumber = 7;
+	values.remainingduration = parameters.phase5_timelimit;
+	if (values.repeat == 0){
+		values.trialcount_phase += 1;	
+	}
+]
+/ stimulusframes = [1 = background, phase5_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase5_7;
+]
+</trial>
+
+<trial phase5_7>
+/ inputdevice = mouse
+/ ontrialbegin = [
+
+	values.attempts += 1;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+					R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5]
+/ validresponse = (R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ correctresponse = (noresponse)
+
+/ ontrialend = [
+	if (trial.phase5_7.correct){
+		if (values.attempts == 1){
+			values.points = 2;
+		} else {	
+			values.points = 1;
+		}
+	}
+	values.totalpoints += values.points;
+	values.phasepoints += values.points;
+	
+	if (values.attempts == 1 && values.points == 0){
+		values.repeat = 1;
+	} else {
+		values.repeat = 0;
+	}
+		
+	values.instructions = text.phase5_instructions.currentItem;
+]
+/ branch = [
+	if (values.repeat == 1){
+		return trial.repeatproblem_phase5_7;
+	} else {
+		values.attempts = 0;
+		return trial.nextproblem;		
+	}
+]
+/ timeout = parameters.phase5_timelimit
+</trial>
+
+<trial repeatproblem_phase5_7>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase5_7positions;
+]
+</trial>
+
+**********************************
+Phase 5 - Trial 8
+**********************************
+/8 = "When the red square is highlighted, click on the purple circle"
+
+<trial phase5_8positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.phase5_Rx.nextValue;
+	shape.lS_red.vposition = list.phase5_Ry.nextValue;
+	shape.lS_blue.hposition = list.phase5_Rx.nextValue;
+	shape.lS_blue.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_green.hposition = list.phase5_Rx.nextValue;
+	shape.lS_green.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_yellow.hposition = list.phase5_Rx.nextValue;
+	shape.lS_yellow.vposition = list.phase5_Ry.nextValue;
+	shape.lS_purple.hposition = list.phase5_Rx.nextValue;
+	shape.lS_purple.vposition = list.phase5_Ry.nextValue;
+	shape.lC_blue.hposition = list.phase5_Cx.nextValue;
+	shape.lC_blue.vposition = list.phase5_Cy.nextValue;
+	shape.lC_purple.hposition = list.phase5_Cx.nextValue;
+	shape.lC_purple.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_red.hposition = list.phase5_Cx.nextValue;
+	shape.lC_red.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_yellow.hposition = list.phase5_Cx.nextValue;
+	shape.lC_yellow.vposition = list.phase5_Cy.nextValue;
+	shape.lC_green.hposition = list.phase5_Cx.nextValue;
+	shape.lC_green.vposition = list.phase5_Cy.nextValue;	
+
+	values.points = 0;
+	values.itemnumber = 8;
+	values.remainingduration = parameters.phase5_timelimit;
+	if (values.repeat == 0){
+		values.trialcount_phase += 1;
+	}
+]
+/ stimulusframes = [1 = background, phase5_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase5_8;
+]
+</trial>
+
+<trial phase5_8>
+/ inputdevice = mouse
+/ ontrialbegin = [
+
+	values.attempts += 1;
+	trial.phase5_8.insertStimulusTime(shape.lS_red_highlight, 2000);
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+					R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5]
+/ validresponse = (R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ beginresponsetime = 0
+/ iscorrectresponse = [ 
+	return (trial.phase5_8.response == "lC_purple" && trial.phase5_8.latency > 2000);
+]
+
+/ ontrialend = [
+	trial.phase5_8.resetStimulusFrames();
+	
+	if (trial.phase5_8.correct) {
+		if (values.attempts == 1){
+			values.points = 2;
+		} else {
+			values.points = 1;
+		}
+	}
+	
+	values.totalpoints += values.points;
+	values.phasepoints += values.points;
+	
+	if (values.attempts == 1 && values.points == 0){
+		values.repeat = 1
+	} else {
+		values.repeat = 0;
+	}
+		
+	values.instructions = text.phase5_instructions.currentItem;
+]
+/ branch = [
+	if (values.repeat == 1){
+		return trial.repeatproblem_phase5_8;
+	} else {
+		return trial.nextproblem;
+	}
+]
+/ timeout = values.remainingduration
+</trial>
+
+<trial repeatproblem_phase5_8>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase5_8positions;
+]
+</trial>
+
+**********************************
+Phase 5 - Trial 9
+**********************************
+/9 ="click the green circle - no!- the blue circle!"
+
+<trial phase5_9positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.phase5_Rx.nextValue;
+	shape.lS_red.vposition = list.phase5_Ry.nextValue;
+	shape.lS_blue.hposition = list.phase5_Rx.nextValue;
+	shape.lS_blue.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_green.hposition = list.phase5_Rx.nextValue;
+	shape.lS_green.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_yellow.hposition = list.phase5_Rx.nextValue;
+	shape.lS_yellow.vposition = list.phase5_Ry.nextValue;
+	shape.lS_purple.hposition = list.phase5_Rx.nextValue;
+	shape.lS_purple.vposition = list.phase5_Ry.nextValue;
+	shape.lC_blue.hposition = list.phase5_Cx.nextValue;
+	shape.lC_blue.vposition = list.phase5_Cy.nextValue;
+	shape.lC_purple.hposition = list.phase5_Cx.nextValue;
+	shape.lC_purple.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_red.hposition = list.phase5_Cx.nextValue;
+	shape.lC_red.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_yellow.hposition = list.phase5_Cx.nextValue;
+	shape.lC_yellow.vposition = list.phase5_Cy.nextValue;
+	shape.lC_green.hposition = list.phase5_Cx.nextValue;
+	shape.lC_green.vposition = list.phase5_Cy.nextValue;	
+
+	values.points = 0;
+	values.itemnumber = 9;
+	values.remainingduration = parameters.phase5_timelimit;
+	if (values.repeat == 0){
+		values.trialcount_phase += 1;
+	}
+]
+/ stimulusframes = [1 = background, phase5_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase5_9;
+]
+</trial>
+
+<trial phase5_9>
+/ inputdevice = mouse
+/ ontrialbegin = [
+
+	values.attempts += 1;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple]
+/ validresponse = (lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ correctresponse = (lC_blue)
+/ ontrialend = [
+
+	if (trial.phase5_9.correct) {
+		if (values.attempts == 1){
+			values.points = 2;
+		} else {
+			values.points = 1;
+		}
+	}
+	
+	values.totalpoints += values.points;
+	values.phasepoints += values.points;
+	
+	if (values.attempts == 1 && values.points == 0){
+		values.repeat = 1;
+	} else {
+		values.repeat = 0;
+	}
+		
+	values.instructions = text.phase5_instructions.currentItem;
+]
+/ branch = [
+	if (values.repeat == 1){
+		return trial.repeatproblem_phase5_9;
+	} else {
+		return trial.nextproblem;
+	}
+]
+/ timeout = values.remainingduration
+</trial>
+
+<trial repeatproblem_phase5_9>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase5_9positions;
+]
+</trial>
+
+**********************************
+Phase 5 - Trial 10
+**********************************
+/10 = "Before clicking on the green circle, click the yellow square"
+
+<trial phase5_10positions>
+/ ontrialbegin = [
+	shape.lS_red.hposition = list.phase5_Rx.nextValue;
+	shape.lS_red.vposition = list.phase5_Ry.nextValue;
+	shape.lS_blue.hposition = list.phase5_Rx.nextValue;
+	shape.lS_blue.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_green.hposition = list.phase5_Rx.nextValue;
+	shape.lS_green.vposition = list.phase5_Ry.nextValue;	
+	shape.lS_yellow.hposition = list.phase5_Rx.nextValue;
+	shape.lS_yellow.vposition = list.phase5_Ry.nextValue;
+	shape.lS_purple.hposition = list.phase5_Rx.nextValue;
+	shape.lS_purple.vposition = list.phase5_Ry.nextValue;
+	shape.lC_blue.hposition = list.phase5_Cx.nextValue;
+	shape.lC_blue.vposition = list.phase5_Cy.nextValue;
+	shape.lC_purple.hposition = list.phase5_Cx.nextValue;
+	shape.lC_purple.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_red.hposition = list.phase5_Cx.nextValue;
+	shape.lC_red.vposition = list.phase5_Cy.nextValue;	
+	shape.lC_yellow.hposition = list.phase5_Cx.nextValue;
+	shape.lC_yellow.vposition = list.phase5_Cy.nextValue;
+	shape.lC_green.hposition = list.phase5_Cx.nextValue;
+	shape.lC_green.vposition = list.phase5_Cy.nextValue;	
+
+	values.points = 0;
+	values.itemnumber = 10;
+	values.remainingduration = parameters.phase5_timelimit;
+	if (values.repeat == 0){
+		values.trialcount_phase += 1;
+	}
+]
+/ stimulusframes = [1 = background, phase5_instructions]
+/ trialduration = parameters.instructionsduration
+/ recorddata = false
+/ branch = [
+	return trial.phase5_10A;
+]
+</trial>
+
+<trial phase5_10A>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.attempts += 1;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+					R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5]
+/ validresponse = (R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ correctresponse = (lS_yellow)
+/ ontrialend = [			
+	values.instructions = text.phase5_instructions.currentItem;
+	values.touch_x = trial.phase5_10A.responseX;
+	values.touch_y = trial.phase5_10A.responseY;
+	
+	if (values.attempts == 1 && trial.phase5_10A.response == 0){
+		values.repeat = 1;
+	} else {
+		values.repeat = 0;
+	}
+]
+/ branch = [
+	if (trial.phase5_10A.latency < values.remainingduration){
+		return trial.phase5_10Ahighlight;
+	} else if (values.repeat == 1){
+		return trial.repeatproblem_phase5_10;
+	} else {
+		return trial.nextproblem;
+	}
+]
+/ timeout = values.remainingduration
+</trial>
+
+<trial phase5_10Ahighlight>
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, pointer]
+/ trialduration = 17
+/ recorddata = false
+/ branch = [ 
+		return trial.phase5_10B;
+]
+</trial>
+
+<trial phase5_10B>
+/ inputdevice = mouse
+/ ontrialbegin = [
+	values.remainingduration -= trial.phase5_10A.latency;
+]
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, 
+					R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5]
+/ validresponse = (R2C1, R2C2, R2C3, R2C4, R2C5, R4C1, R4C2, R4C3, R4C4, R4C5, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, background)
+/ correctresponse = (lC_green)
+/ ontrialend = [
+
+	if (trial.phase5_10B.correct && trial.phase5_10A.correct) {
+		if (values.attempts == 1){
+			values.points = 2;
+		} else {
+			values.points = 1;
+		}
+	}
+	
+	values.totalpoints += values.points;
+	values.phasepoints += values.points;
+	
+	if (values.attempts == 1 && values.points == 0){
+		values.repeat = 1;
+	} else {
+		values.repeat = 0;
+	}
+		
+	values.instructions = text.phase5_instructions.currentItem;
+	values.touch_x = trial.phase5_10B.responseX;
+	values.touch_y = trial.phase5_10B.responseY;
+]
+/ branch = [
+	if (trial.phase5_10B.latency < values.remainingduration){
+		return trial.phase5_10Bhighlight;
+	} else if (values.repeat == 1){
+		return trial.repeatproblem_phase5_10;
+	} else {
+		return trial.nextproblem;	
+	}
+]
+/ timeout = values.remainingduration
+</trial>
+
+<trial phase5_10Bhighlight>
+/ stimulusframes = [1 = background, lS_red, lS_yellow, lS_blue, lS_green, lS_purple, lC_red, lC_yellow, lC_blue, lC_green, lC_purple, pointer]
+/ trialduration = 17
+/ recorddata = false
+/ branch = [
+	if (values.attempts == 1 && values.points == 0){
+		return trial.repeatproblem_phase5_10;
+	} else {
+		return trial.nextproblem;
+	}
+]
+</trial>
+
+<trial repeatproblem_phase5_10>
+/ stimulusframes = [1 = background, feedback]
+/ trialduration = parameters.iti
+/ recorddata = false
+/ branch = [
+	return trial.phase5_10positions;
+]
+</trial>
+
+<trial nextproblem>
+/ skip = [
+	values.trialcount_phase == 10
+]
+/ ontrialbegin = [
+	values.repeat = 0;
+	values.attempts = 0;
+]
+/ stimulustimes = [0 = background, nextproblem]
+/ trialduration = parameters.iti
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block intro>
+/ trials = [1 = intro]
+</block>
+
+<block phase1>
+/ preinstructions = (phase1)
+/ skip = [
+	parameters.run_phase1 == false
+]
+/ onblockbegin = [
+	values.phasepoints = 0;
+	values.trialcount_phase = 0;
+	values.repeat = 0;
+	values.attempts = 0;
+]
+/ trials = [
+	1 = phase1_positions; 
+	2-11 = phase1_instructions;
+]
+/ onblockend = [
+	values.points_phase1 = values.phasepoints;
+]
+</block>
+
+<block phase2>
+/ preinstructions = (phase2)
+/ skip = [
+	parameters.run_phase2 == false
+]
+/ onblockbegin = [
+	values.phasepoints = 0;
+	values.trialcount_phase = 0;
+	values.repeat = 0;
+	values.attempts = 0;
+]
+/ trials = [
+	1 = phase2_positions; 
+	2-11 = phase2_instructions;
+]
+/ onblockend = [
+	values.points_phase2 = values.phasepoints;
+]
+</block>
+
+<block phase3>
+/ preinstructions = (phase3)
+/ skip = [
+	parameters.run_phase3 == false
+]
+/ onblockbegin = [
+	values.phasepoints = 0;
+	values.trialcount_phase = 0;
+	values.repeat = 0;
+	values.attempts = 0;	
+]
+/ trials = [
+	1 = phase3_positions; 
+	2-11 = phase3_instructions;
+]
+/ onblockend = [
+	values.points_phase3 = values.phasepoints;
+]
+</block>
+
+<block phase4>
+/ preinstructions = (phase4)
+/ skip = [
+	parameters.run_phase4 == false
+]
+/ onblockbegin = [
+	values.phasepoints = 0;
+	values.trialcount_phase = 0;
+	values.repeat = 0;
+	values.attempts = 0;	
+]
+/ trials = [
+	1 = phase4_positions; 
+	2-11 = phase4_instructions;
+]
+/ onblockend = [
+	values.points_phase4 = values.phasepoints;
+]
+</block>
+
+<block phase5>
+/ preinstructions = (phase5)
+/ skip = [
+	parameters.run_phase5 == false
+]
+/ onblockbegin = [
+	values.phasepoints = 0;
+	values.trialcount_phase = 0;
+	values.repeat = 0;
+	values.attempts = 0;	
+]
+/ trials = [
+	1 = phase5_1positions; 
+	2 = phase5_2positions; 
+	3 = phase5_3positions; 
+	4 = phase5_4positions; 
+	5 = phase5_5positions; 
+	6 = phase5_6positions; 
+	7 = phase5_7positions; 
+	8 = phase5_8positions;
+	9 = phase5_9positions;
+	10 = phase5_10positions;
+]
+/ onblockend = [
+	values.points_phase5 = values.phasepoints;
+]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt tokentest>
+/ blocks = [
+	1 = intro;
+	2 = phase1; 
+	3 = phase2; 
+	4 = phase3; 
+	5 = phase4; 
+	6 = phase5;
+	7 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

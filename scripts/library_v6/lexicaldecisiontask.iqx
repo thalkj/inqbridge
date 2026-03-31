@@ -1,0 +1,681 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									Lexical Decision Task
+___________________________________________________________________________________________________________________	
+
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a simple Lexical Decision Task to investigate semantic memory and lexical access.
+The implemented procedure is based on:
+	
+Lepore & Brown (2002), The Role of Awareness: Divergent Automatic Stereotype 
+Activation and Implicit Judgment Correction, Social Cognition, 20 (4), pp 321-351.
+	
+This script uses placeholders for actual stimuli.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants are asked to categorize words into words and nonwords by pressing the E-key (non words)
+or I-key (words) as fast as possible when a word/nonword stimulus appears on screen.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'lexicaldecisiontask_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group, 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block. 
+
+condition:						"Category Word", "Neutral Word", "Non Word"										
+presentedStim:					the currently presented word or non-word										
+										
+response:						the participant's response (scancode of response button)
+										18 = E (non word)
+										23 = I (word)
+										57 = spacebar
+										 
+correct:						the correctness of the response (1 = correct; 0 = incorrect)
+latency: 						the response latency (in ms); latency measured from onset of stimulus
+
+
+(2) Summary data file: 'lexicaldecisiontask_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+PropCorrect:					overall proportion correct across all testtrials
+MeanRT:							overall mean latency of correct responses across all correct testtrials
+STD:							overall standard deviation of correct latencies
+MedianRT:						overall median latency of correct responses across all correct testtrials
+
+PropCorrect_CatW:				proportion correct of responses to category words
+MeanRT_CatW:					mean latency of correct responses to category words
+STD_CatW:						standard deviation of correct responses to category words
+MedianRT_CatW:					median latency of correct responses to category words
+
+PropCorrect_NeutralW			proportion correct of responses to neutral words
+MeanRT_NeutralW:				mean latency of correct responses to neutral words
+STD_NeutralW:					standard deviation of correct responses to neutral words
+MedianRT_NeutralW:				median latency of correct responses to neutral words
+
+PropCorrect_NonW:				proportion correct of responses to non words
+MeanRT_NonW:					mean latency of correct responses to non words
+STD_NonW:						standard deviation of correct responses to non words
+MedianRT_NonW:					median latency of correct responses to non words
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+3 types of words (category words, neutral words, nonwords) tested within participants in a mixed design
+
+1 Practice Block: 6 trials (3 neutral words, 3 nonwords; order randomly selected)
+1 Test Block: 52 trials (13 category words, 13 neutral words, 26 non words; order and stimuli randomly selected)
+
+Trial Sequence:
+* (for 700ms) -> stimulus (250ms) -> blank screen until response (latency measured from onset of stimulus)
+(Durations can be edited under section Editable Parameters)
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+are spaceholders - actual stimuli can be easily inserted under section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/fixationDuration:			the duration (in ms) of the fixation stimulus presented at the start of each trial (default: 700ms)
+/stimDuration:				the duration (in ms) of the presented word/nonword in ms (default: 250ms)
+
+/stimSize:					the proportional height (to active canvas) of the stimuli (default: 5%)
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/fixationDuration = 700
+/stimDuration = 250
+
+/stimSize = 5%
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+    All stimuli and instruction text are defined in the top section immediately 
+    below. To adapt this script, simply replace the filler stimuli below with your own 
+    category, neutral, and nonwords. Instruction text can also be modified in this 
+    section.
+**************************************************************************************************************
+
+<item category>
+/ 1 = "category1"
+/ 2 = "category2"
+/ 3 = "category3"
+/ 4 = "category4"
+/ 5 = "category5"
+/ 6 = "category6"
+/ 7 = "category7"
+/ 8 = "category8"
+/ 9 = "category9"
+/ 10 = "category10"
+/ 11 = "category11"
+/ 12 = "category12"
+/ 13 = "category13"
+</item>
+
+<item neutral>
+/ 1 = "neutral1"
+/ 2 = "neutral2"
+/ 3 = "neutral3"
+/ 4 = "neutral4"
+/ 5 = "neutral5"
+/ 6 = "neutral6"
+/ 7 = "neutral7"
+/ 8 = "neutral8"
+/ 9 = "neutral9"
+/ 10 = "neutral10"
+/ 11 = "neutral11"
+/ 12 = "neutral12"
+/ 13 = "neutral13"
+</item>
+
+<item nonword>
+/ 1 = "nonword1"
+/ 2 = "nonword2"
+/ 3 = "nonword3"
+/ 4 = "nonword4"
+/ 5 = "nonword5"
+/ 6 = "nonword6"
+/ 7 = "nonword7"
+/ 8 = "nonword8"
+/ 9 = "nonword9"
+/ 10 = "nonword10"
+/ 11 = "nonword11"
+/ 12 = "nonword12"
+/ 13 = "nonword13"
+/ 14 = "nonword14"
+/ 15 = "nonword15"
+/ 16 = "nonword16"
+/ 17 = "nonword17"
+/ 18 = "nonword18"
+/ 19 = "nonword19"
+/ 20 = "nonword20"
+/ 21 = "nonword21"
+/ 22 = "nonword22"
+/ 23 = "nonword23"
+/ 24 = "nonword24"
+/ 25 = "nonword25"
+/ 26 = "nonword26"
+</item>
+
+<item neutralPractice>
+/ 1 = "neutral1"
+/ 2 = "neutral2"
+/ 3 = "neutral3"
+</item>
+
+<item nonwordPractice>
+/ 1 = "nonword1"
+/ 2 = "nonword2"
+/ 3 = "nonword3"
+</item>
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item instructions>
+/ 1 = "In the following task, a '*' will be presented at the center of the screen, and then a string of letters will briefly appear.  Your task is to decide whether or not the letters make up a valid English word.
+
+If the letters form a valid word, press the right 'I' <%expressions.buttoninstruct1%>.
+
+If the letters do NOT form a valid word, press the left 'E' <%expressions.buttoninstruct1%>.
+
+Try to classify the letter stimuli as words or nonwords as quickly and accurately as you can.
+
+You will start with a few practice trials. <%expressions.buttoninstruct2%> 
+
+When you are ready to begin, press the spacebar."
+/2 = "Practice is now over, and the task will begin. As a reminder:
+
+If the letters are a valid word, press the right 'I' <%expressions.buttoninstruct1%>.
+
+If the letters do NOT form a valid word, press the left 'E' <%expressions.buttoninstruct1%>.
+
+Try to classify the letter stimuli as words or nonwords as quickly and accurately as you can.
+
+When you are ready to begin, press the spacebar."
+</item>
+
+
+<text word>
+/ items = ("WORD")
+/ position = (85%, 10%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = darkolivegreen
+</text>
+
+<text noword>
+/ items = ("NONWORD")
+/ position = (15%, 10%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = darkolivegreen
+</text>
+
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"button";} else {"key";}
+/buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"Response buttons will be located at the bottom of the screen. Keep your index fingers ready.";} else {"Get ready for the task by placing your fingers on the 'E' and 'I' keys. ";}
+</expressions>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 0)
+/ screencolor = black
+/ txcolor = white
+/ txbgcolor = black
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+************
+raw data
+************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+values.condition, values.presentedStim, response, correct, latency)
+</data>
+
+************
+summary data
+************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.PropCorrect, expressions.MeanRT, expressions.STD, expressions.MedianRT,
+expressions.PropCorrect_CatW, expressions.MeanRT_CatW, expressions.STD_CatW, expressions.MedianRT_CatW,
+expressions.PropCorrect_NeutralW, expressions.MeanRT_NeutralW, expressions.STD_NeutralW, expressions.MedianRT_NeutralW,
+expressions.PropCorrect_NonW, expressions.MeanRT_NonW, expressions.STD_NonW, expressions.MedianRT_NonW)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/presentedStim = ""
+/Condition = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+/PropCorrect:			overall proportion correct across all testtrials
+/MeanRT:				overall mean latency of correct responses across all correct testtrials
+/STD:					overall standard deviation of correct latencies
+/MedianRT:				overall median latency of correct responses across all correct testtrials
+
+/PropCorrect_CatW:		proportion correct of responses to category words
+/MeanRT_CatW:			mean latency of correct responses to category words
+/STD_CatW:				standard deviation of correct responses to category words
+/MedianRT_CatW:			median latency of correct responses to category words
+
+/PropCorrect_NeutralW:	proportion correct of responses to Neutral words
+/MeanRT_NeutralW:		mean latency of correct responses to Neutral words
+/STD_NeutralW:			standard deviation of correct responses to Neutral words
+/MedianRT_NeutralW:		median latency of correct responses to Neutral words
+
+/PropCorrect_NonW:		proportion correct of responses to Non words
+/MeanRT_NonW:			mean latency of correct responses to Non words
+/STD_NonW:				standard deviation of correct responses to Non words
+/MedianRT_NonW:			median latency of correct responses to Non words
+
+<expressions >
+/PropCorrect = list.overallaccuracy.mean
+/MeanRT = list.overallRT.mean
+/STD = list.overallRT.standarddeviation
+/MedianRT = list.overallRT.median
+
+/PropCorrect_CatW = list.catwords.mean
+/MeanRT_CatW = list.catwords_correctRT.mean
+/STD_CatW = list.catwords_correctRT.standarddeviation
+/MedianRT_CatW = list.catwords_correctRT.median
+
+/PropCorrect_NeutralW = list.Neutralwords.mean
+/MeanRT_NeutralW = list.Neutralwords_correctRT.mean
+/STD_NeutralW = list.Neutralwords_correctRT.standarddeviation
+/MedianRT_NeutralW = list.Neutralwords_correctRT.median
+
+/PropCorrect_NonW = list.Nonwords.mean
+/MeanRT_NonW = list.Nonwords_correctRT.mean
+/STD_NonW = list.Nonwords_correctRT.standarddeviation
+/MedianRT_NonW = list.Nonwords_correctRT.median
+
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text instructions>
+/ items = instructions
+/ select = sequence
+/ size = (85%, 60%)
+/ txcolor = white
+/ hjustify = left
+/ resetinterval = 0
+/ position = (50%, 50%)
+/ hjustify = left
+</text>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text category>
+/ items = category
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 0)
+</text>
+
+<text neutral>
+/ items = neutral
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 0)
+</text>
+
+<text nonword>
+/ items = nonword
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 0)
+</text>
+
+<text neutralPractice>
+/ items = neutralPractice
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 0)
+</text>
+
+<text nonwordPractice>
+/ items = nonwordPractice
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 0)
+</text>
+
+<text ready>
+/ items = ("*")
+/ fontstyle = ("Arial", parameters.stimSize, false, false, false, false, 5, 0)
+</text>
+
+<shape blank>
+/ shape = rectangle
+/ color = black
+/ size = (30%, 30%)
+</shape>
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+The following lists collect accuracy and latency data for the 3 different types of words and overall:
+(the lists fill up during runtime)
+
+<list catwords>
+</list>
+
+<list neutralwords>
+</list>
+
+<list nonwords>
+</list>
+
+<list catwords_correctRT>
+</list>
+
+<list neutralwords_correctRT>
+</list>
+
+<list nonwords_correctRT>
+</list>
+
+<list overallaccuracy>
+</list>
+
+<list overallRT>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial ldtcategory>
+/ ontrialbegin = [
+	values.condition = "Category Word";
+	trial.ldtcategory.insertStimulusTime(text.category, parameters.fixationDuration);
+	trial.ldtcategory.insertStimulusTime(shape.blank, (parameters.fixationDuration + parameters.stimDuration));	
+]
+/ stimulustimes = [0=ready]
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/beginresponsetime = parameters.fixationDuration
+/ ontrialend = [
+	trial.ldtcategory.resetStimulusFrames();
+	
+	list.catwords.appendItem(trial.ldtcategory.correct);
+	list.overallaccuracy.appendItem(trial.ldtcategory.correct);
+	if (trial.ldtcategory.correct) {
+		list.catwords_correctRT.appendItem(trial.ldtcategory.latency);
+		list.overallRT.appendItem(trial.ldtcategory.latency);
+	}
+	
+	values.presentedStim = text.category.currentItem;
+]
+</trial>
+
+<trial ldtneutral>
+/ ontrialbegin = [
+	values.condition = "Neutral Word";
+	trial.ldtneutral.insertStimulusTime(text.neutral, parameters.fixationDuration);
+	trial.ldtneutral.insertStimulusTime(shape.blank, (parameters.fixationDuration + parameters.stimDuration));	
+]
+/ stimulustimes = [0=ready]
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/beginresponsetime = parameters.fixationDuration
+/ ontrialend = [
+	trial.ldtneutral.resetStimulusFrames();
+	
+	list.neutralwords.appendItem(trial.ldtneutral.correct);
+	list.overallaccuracy.appendItem(trial.ldtneutral.correct);		
+	if (trial.ldtneutral.correct) {
+		list.neutralwords_correctRT.appendItem(trial.ldtneutral.latency);
+		list.overallRT.appendItem(trial.ldtneutral.latency);		
+	}	
+	
+	values.presentedStim = text.neutral.currentItem;
+]
+</trial>
+
+<trial ldtnonword>
+/ ontrialbegin = [
+	values.condition = "Non Word";
+	trial.ldtnonword.insertStimulusTime(text.nonword, parameters.fixationDuration);
+	trial.ldtnonword.insertStimulusTime(shape.blank, (parameters.fixationDuration + parameters.stimDuration));	
+]
+/ stimulustimes = [0=ready]
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/beginresponsetime = parameters.fixationDuration
+/ ontrialend = [
+	trial.ldtnonword.resetStimulusFrames();
+	
+	list.nonwords.appendItem(trial.ldtnonword.correct);
+	list.overallaccuracy.appendItem(trial.ldtnonword.correct);	
+	if (trial.ldtnonword.correct) {
+		list.nonwords_correctRT.appendItem(trial.ldtnonword.latency);
+		list.overallRT.appendItem(trial.ldtnonword.latency);		
+	}	
+	
+	values.presentedStim = text.nonword.currentItem;
+]
+</trial>
+
+
+<trial ldtneutralPractice>
+/ ontrialbegin = [
+	values.condition = "Neutral Word";
+	trial.ldtneutralPractice.insertStimulusTime(text.neutralPractice, parameters.fixationDuration);
+	trial.ldtneutralPractice.insertStimulusTime(shape.blank, (parameters.fixationDuration + parameters.stimDuration));	
+]
+/ stimulustimes = [0=ready]
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/beginresponsetime = parameters.fixationDuration
+/ ontrialend = [
+	trial.ldtneutralPractice.resetStimulusFrames();
+	values.presentedStim = text.neutralPractice.currentItem;
+]
+</trial>
+
+<trial ldtnonwordPractice>
+/ ontrialbegin = [
+	values.Condition = "Non Word";
+	trial.ldtnonwordPractice.insertStimulusTime(text.nonwordPractice, parameters.fixationDuration);
+	trial.ldtnonwordPractice.insertStimulusTime(shape.blank, (parameters.fixationDuration + parameters.stimDuration));	
+]
+/ stimulustimes = [0=ready]
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/beginresponsetime = parameters.fixationDuration
+/ ontrialend = [
+	trial.ldtnonwordPractice.resetStimulusFrames();
+	values.presentedStim = text.nonwordPractice.currentItem;
+]
+</trial>
+
+<trial instructions>
+/ stimulustimes = [0=instructions]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block lexicalDecisionTask>
+/ bgstim = (word, noword)
+/ trials = [
+	1=instructions; 
+	2-53=noreplace(ldtcategory, ldtneutral, ldtnonword, ldtnonword);
+]
+</block>
+
+<block lexicalDecisionTaskPractice>
+/ bgstim = (word, noword)
+/ trials = [
+	1=instructions; 
+	2-7=noreplace(ldtneutralPractice, ldtnonwordPractice);
+]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt lexicaldecisiontask>
+/ blocks = [
+	1=lexicalDecisionTaskPractice; 
+	2=lexicalDecisionTask;
+	3 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

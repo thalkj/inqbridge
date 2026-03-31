@@ -1,0 +1,1752 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									*Cued Recall Procedure*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-11-2020
+last updated:  02-21-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-21-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a variant of the Cued Recall Procedure. The Cued Recall Procedure was
+introduced by Tolan & Tehan (1999) and was designed to study proactive interference effects on word retrieval. 
+The Inquisit script implements a variant of the design described in Friedman & Miyake (2004).
+
+References:
+
+(1) Friedman, N.P. & Miyake, A. (2004). The relations among inhibition and interferene
+control functions: a latent-variable analysis. Journal of Experimental Psychology: General,
+133, 101-135.
+
+(2) Tolan, G. A., & Tehan, G. (1999). Determinants of short-term forgetting:
+Decay, retroactive interference, or proactive interference? International
+Journal of Psychology, 34, 285–292.
+
+for target/foil words:
+(3) McEvoy, C. L., & Nelson, D. L. (1982). Category name and instance norms for 106 categories of various sizes. 
+American Journal of Psychology, 95, 581-634.
+Nairne, J. S. (1990). A feature model of immediate memory. Memory and Cognition, 18, 251-269.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+
+Participants view either one or two blocks of four words each and must retrieve the word from the most recent
+block that belongs to a cued category.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 20 minutes to complete
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'cuedrecallprocedure_raw*.iqdat'*
+
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+																				
+trialCount:							custom trial counter (1-36) 
+
+trialCategory:						0 = practice trials
+									1 = 2block_target (runs foil word in block1; target word in block2)
+									2 = 2block_control (runs no foil words)
+									3 = 1block
+									(Note: the trials are run in a fixed order (that was determined randomly). To 
+									change the order to a complete randomized order, go to 'list.testtrials' and follow instructions)
+									
+target:								stores the selected target word for the current trial sequence
+									(target word = the word that needs to be entered into the textbox)
+ 
+targetCategory:						stores the category of the selected target word 
+
+foil:								stores the foil word (if applicable for '2block_target' trials; otherwise empty) 
+									Foil words come from the same category as the target words and are
+									presented during the first block in '2block' trials.
+									Foils are stronger representatives of the target category than the targets themselves
+									Example: category bird; target = penguin, foil = robin
+
+foilBlockWords:						stores the 4 words presented during the 'foil' block 
+									Notes: 
+										- the foil block contains non-target words:
+										=> it's the first block of 4 words for '2block' trials 
+										=> no foil block for '1block' trials
+										- the words are stored in the order they appeared
+									
+targetBlockWords:					stores the 4 words presented during the 'target' block 
+									Notes: 
+										- the target block contains the target word; 
+										=> it's the second block of 4 words for '2block' trials	
+										=> it's the only/first block for '1block' trials
+										- the words are stored in the order they appeared
+										
+2digitNumber:						the 2digit number presented during distractor trial										
+										
+response:							the participant's response
+										distractor trial: 
+											scancode of response button
+											31=S
+											38=L
+											
+										recall trial:
+											the entered word as it was typed
+											
+recallResponse:						the recall response in lower case letters only											
+											
+											
+
+correct:							accuracy of response: 1 = correct response; 0 = otherwise		
+										distractor trials:
+											1 = the presented number was correctly categorized
+											0 = otherwise
+											
+										recall trial:
+										1 = the entered word was the target word
+										0 = otherwise
+										Note: it is recommended to manually check the responses as 
+										spelling errors will be noted as '0'
+											
+latency: 							the response latency (in ms); measured from: onset of trial											
+
+
+recallRT:							the duration (in ms) that it took participant to enter the recallSolution											
+											
+
+(2) Summary data file: 'cuedrecallprocedure_summary*.iqdat'*
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+Recall Performance:
+									
+propCorrect_overall:				overall proportion correct recall (across all test trials)
+meanCorrRT_overall:					overall mean response time (in ms) of submitting correct recall response (across all test trials)
+
+propCorrect_2block_target:			proportion correct recall in 2block-foil/target condition
+meanCorrRT_2block_target:			mean response time (in ms) of submitting correct recall response in 2block-foil/target condition
+
+propCorrect_2block_control:			proportion correct recall in 2block-control condition (no foil is run)
+meanCorrRT_2block_control:			mean response time (in ms) of submitting correct recall response in 2block-control condition
+
+propCorrect_1block:					proportion correct recall in 1block-control condition
+meanCorrRT_1block:					mean response time (in ms) of submitting correct recall response in 1block-control condition								
+
+DistractorTask Performance:
+
+propCorrect_DistractorTask_overall:			overall proportion correct magnitude judgments (across all test trials)
+meanCorrRT_DistractorTask_overall:			overall mean response (in ms) of making correct magnitude judgments (across all test trials)
+
+propCorrect_DistractorTask_2block_target:	proportion correct magnitude judgments in 2block-foil/target condition
+meanCorrRT_DistractorTask_2block_target:	mean response (in ms) of making correct magnitude judgments in 2block-foil/target condition
+
+propCorrect_DistractorTask_2block_control:	proportion correct magnitude judgments in 2block-control condition
+meanCorrRT_DistractorTask_2block_control:	mean response (in ms) of making correct magnitude judgments in 2block-control condition
+
+propCorrect_DistractorTask_1block:			proportion correct magnitude judgments in 1block-control condition
+meanCorrRT_DistractorTask_1block:			mean response (in ms) of making correct magnitude judgments in 1block-control condition
+																
+							
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+
+(1) DEMO
+2 demo trials to explain the procedure:
+- 1block
+- 2block (fixed sequence)
+
+The demo trials provide more time to the participants for instructions, the distractor task 
+as well as the recall trials.
+
+(2) TEST
+1 test block of 36 trials (12 trials per 3 trialtypes): by default the order of the trials is fixed
+(one random sequence has been determined a-priori, see list.testtrials)
+
+General trial set-up:
+
+-> get ready (2000ms)
+-> instructions (aloud/silent) (1000ms)
+-> block1 words (each of the 4 words is presented for 1000ms) -> 'foil' block
+			(word1 -> word2 -> word3 -> word4)
+-> instructions (aloud/silent) (1000ms)
+-> block2 words (each of the 4 words is presented for 1000ms) -> 'target' block
+			(word1 -> word2 -> word3 -> word4)
+-> 8 distractor trials (magnitude trials; each 2 digit number is presented for 1000ms)
+			(number1 -> number2 -> number3 -> number4 -> number5 -> number6 -> number7 -> number8)
+-> cued recall trial (presents target category; time limit = 5000ms)
+
+(a) 12 '2block-target' trials:
+	- presents 2 blocks of 4 words: 
+		- first block is referred to as the 'foil' block in this script; it contains the foil word
+		that is matched to the randomly selected target (they come from the same category), 
+		the remaining three words are randomly selected filler words
+		(order of 4 words is randomly determined)
+		- second block is referred to as the 'target' block in this script; it contains
+		the randomly selected target word; the remaining three words are randomly selected
+		filler words 
+		(order of 4 words is randomly determined)
+		- 'aloud' instructions are given to the first block (foil block); 
+		'silent' instructions are given to second block (target block)
+
+(b) 12 '2block-control' trials: same as above but instead of a foil word, a fourth filler word
+is selected for the 'foil' block
+
+(c) 12 '1block' trials:
+	- presents 1 block of words ('target block')
+	- all four words are randomly selected filler words
+	- order of words is randomly determined
+	- 'aloud' instructions are given to the block
+
+Notes: 
+- no word is ever repeated in this experiment. Categories are only repeated for foil and target words.
+- the target words/target categories are randomly selected for each trial.
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+provided by Millisecond Software - can be edited under section Editable Stimuli
+
+36 Target/Foil Categories: selected from
+
+McEvoy, C. L., & Nelson, D. L. (1982). Category name and instance norms for 106 categories of various sizes. 
+American Journal of Psychology, 95, 581-634.
+Nairne, J. S. (1990). A feature model of immediate memory. Memory and Cognition, 18, 251-269.
+
+Note: Foil words were always the words with a higher correlation with the target category compared to the
+target words themselves.
+
+Remaining filler words were taken from the above article as well as from everyday life. 
+Constraints: Filler words should never overlap with any of the selected target categories.
+All words can easily be replaced under section Editable Stimuli.
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:	
+</usermanual>
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/getReadyDuration = 3000 				//the duration (in ms) of the get-ready-trial (default: 3000)
+
+/instructDuration = 1000				//the duration (in ms) the aloud/silent instructions are presented during the test (default: 1000)
+										//Note: the duration during the demo trials is significantly longer (-> 10s)
+										
+/stimPresentationDuration = 1000		//the duration (in ms) of the individual words (default: 1000)
+
+/distractorTaskDuration = 1000			//the duration (in ms) of each distractor (magnitude estimation) task (default: 1000)
+										//Note: the duration during the demo trials is significantly longer (-> 10s)
+
+/cuedRecallTimeout = 5000				//the max. duration (in ms) for the recall trial (default: 5000ms)
+										//Note: the duration during the demo trials is significantly longer (-> 20s)
+
+
+/ wordSize = 8%							//the proportional sizing (relative to active canvas height) of the presented words (default: 8%)
+
+
+/key_smaller = "S"						//the key used for 'smaller than 50' judgments (default: S)
+/key_larger = "L"						//the key used for 'larger than 50' judgments (default: L)
+										//Note: 'key_smaller' key should be located to the left of 'key_larger'
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+**********************************************
+Practice
+**********************************************
+
+<item practiceFillerWords>
+/ 1 = "tundra"
+/ 2 = "catamaran"
+/ 3 = "daisy"
+/ 4 = "window"
+/ 5 = "battery"
+/ 6 = "screwdriver"
+/ 7 = "theater"
+/ 8 = "college"
+/ 9 = "ruler"
+/ 10 = "finger"
+</item>
+
+<list practiceFillerItemnumbers>
+/ poolSize = 10
+/ replace = false
+/ selectionrate = always
+/ resetinterval = 0
+</list>
+
+<item practiceTargetsWords>
+/ 1 = "auburn"
+/ 2 = "saddle"
+</item>
+
+<item practiceTargetCategories>
+/ 1 = "Hair Color"
+/ 2 = "Piece of Horse-Riding Equipment"
+</item>
+
+<list practiceTargetItemnumbers>
+/ poolSize = 2
+/ replace = false
+/ selectionrate = always
+/ resetinterval = 0
+</list>
+
+**********************************************
+Test
+**********************************************
+
+for target/foil words:
+
+McEvoy, C. L., & Nelson, D. L. (1982). Category name and instance norms for 106 categories of various sizes. 
+American Journal of Psychology, 95, 581-634.
+Nairne, J. S. (1990). A feature model of immediate memory. Memory and Cognition, 18, 251-269.
+
+<item targets>
+/ 1="mouth"
+/ 2="dawn"
+/ 3="sister"
+/ 4="trampoline"
+/ 5="breakfast"
+/ 6="boot"
+/ 7="helmet"
+/ 8="shovel"
+/ 9="chair"
+/ 10="maple"
+/ 11="pencil"
+/ 12="kitchen"
+/ 13="lake"
+/ 14="tenor"
+/ 15="mascara"
+/ 16="falcon"
+/ 17="zipper"
+/ 18="terrier"
+/ 19="winter"
+/ 20="princess"
+/ 21="clarinet"
+/ 22="rowboat"
+/ 23="theft"
+/ 24="monarchy"
+/ 25="acorn"
+/ 26="garnet"
+/ 27="green"
+/ 28="bark"
+/ 29="blender"
+/ 30="nutmeg"
+/ 31="peony"
+/ 32="dentist"
+/ 33="hornet"
+/ 34="hexagon"
+/ 35="lollipop"
+/ 36="rabbit"
+</item>
+
+<item foils>
+/ 1="nose"
+/ 2="noon"
+/ 3="uncle"
+/ 4="tumbling"
+/ 5="lunch"
+/ 6="sandal"
+/ 7="cap"
+/ 8="rake"
+/ 9="sofa"
+/ 10="aak"
+/ 11="pen"
+/ 12="bedroom"
+/ 13="river"
+/ 14="soprano"
+/ 15="lipstick"
+/ 16="eagle"
+/ 17="button"
+/ 18="poodle"
+/ 19="summer"
+/ 20="queen"
+/ 21="flute"
+/ 22="yacht"
+/ 23="murder"
+/ 24="democracy"
+/ 25="pecan"
+/ 26="diamond"
+/ 27="red"
+/ 28="trunk"
+/ 29="toaster"
+/ 30="cinnamon"
+/ 31="rose"
+/ 32="surgeon"
+/ 33="bee"
+/ 34="triangle"
+/ 35="gum"
+/ 36="rat"
+</item>
+
+<item targetCategories>
+/ 1="Part of a Face"
+/ 2="Time of Day"
+/ 3="Type of Relative"
+/ 4="Gymnastic's Event"
+/ 5="Daily Meal"
+/ 6="Type of Footwear"
+/ 7="Type of Hat"
+/ 8="Gardening Tool"
+/ 9="Piece of Living Room Furniture"
+/ 10="Kind of Wood"
+/ 11="Writing Implement"
+/ 12="Room in a House"
+/ 13="Type of Waterway"
+/ 14="Type of Singing Voice"
+/ 15="Type of Cosmetic"
+/ 16="Bird of Prey"
+/ 17="Type of Fasteners"
+/ 18="Breed of Dog"
+/ 19="Season of the Year"
+/ 20="Member of Royalty"
+/ 21="Musical Wind Instrument"
+/ 22="Type of Ship"
+/ 23="Felony Crime"
+/ 24="Form of Government"
+/ 25="Type of Nut"
+/ 26="Precious Gem"
+/ 27="Primary Color"
+/ 28="Part of a Tree"
+/ 29="Small Kitchen Appliance"
+/ 30="Spice"
+/ 31="Type of Flower"
+/ 32="Medical Specialty"
+/ 33="Insect That Stings"
+/ 34="Geometric Shape"
+/ 35="Type of Candy"
+/ 36="Rodent"
+</item>
+
+
+//filler items: 192
+//12 2-block target trials: run 72 filler items
+//12 2-block control trials: run 84 filler items
+//12 1-block trials: run 36 filler items
+<item fillers>
+/ 1="bongo"
+/ 2="toe"
+/ 3="noun"
+/ 4="oar"
+/ 5="gunpowder"
+/ 6="smile"
+/ 7="dinosaur"
+/ 8="peach"
+/ 9="web"
+/ 10="radio"
+/ 11="plow"
+/ 12="polka"
+/ 13="linen"
+/ 14="breeze"
+/ 15="cement"
+/ 16="tomb"
+/ 17="blouse"
+/ 18="van"
+/ 19="box"
+/ 20="penguin"
+/ 21="scooter"
+/ 22="fork"
+/ 23="tennis"
+/ 24="apartment"
+/ 25="legislative"
+/ 26="meter"
+/ 27="navy"
+/ 28="west"
+/ 29="slime"
+/ 30="mug"
+/ 31="guppy"
+/ 32="oven"
+/ 33="mermaid"
+/ 34="junior"
+/ 35="scar"
+/ 36="physics"
+/ 37="electron"
+/ 38="chalice"
+/ 39="dime"
+/ 40="crater"
+/ 41="bread"
+/ 42="rattle"
+/ 43="cello"
+/ 44="hydrant"
+/ 45="nitrogen"
+/ 46="yogurt"
+/ 47="tin"
+/ 48="signature"
+/ 49="codeine"
+/ 50="hourglass"
+/ 51="clown"
+/ 52="party"
+/ 53="blue"
+/ 54="light"
+/ 55="antilope"
+/ 56="second"
+/ 57="judge"
+/ 58="tent"
+/ 59="ham"
+/ 60="corn"
+/ 61="forcepts"
+/ 62="tornado"
+/ 63="bathtub"
+/ 64="chalk"
+/ 65="viper"
+/ 66="admiral"
+/ 67="magnet"
+/ 68="dragon"
+/ 69="electricity"
+/ 70="spinach"
+/ 71="surfing"
+/ 72="necklace"
+/ 73="spear"
+/ 74="brandy"
+/ 75="saw"
+/ 76="fear"
+/ 77="locker"
+/ 78="subtraction"
+/ 79="viewfinder"
+/ 80="chips"
+/ 81="petal"
+/ 82="sponge"
+/ 83="cake"
+/ 84="tarantula"
+/ 85="seal"
+/ 86="mosque"
+/ 87="torch"
+/ 88="carousel"
+/ 89="fence"
+/ 90="blackberry"
+/ 91="zombie"
+/ 92="surface"
+/ 93="tablet"
+/ 94="bulimia"
+/ 95="tepid"
+/ 96="mine"
+/ 97="below"
+/ 98="paw"
+/ 99="plumber"
+/100="measels"
+/101="sleep"
+/102="virus"
+/103="liver"
+/104="rabbi"
+/105="buddhism"
+/106="clutch"
+/107="soda"
+/108="focus"
+/109="friend"
+/110="book"
+/111="frame"
+/112="mango"
+/113="leopard"
+/114="turtle"
+/115="toad"
+/116="wombat"
+/117="tapeworm"
+/118="laughter"
+/119="knot"
+/120="knight"
+/121="joke"
+/122="soup"
+/123="program"
+/124="coin"
+/125="espresso"
+/126="stapler"
+/127="canasta"
+/128="roulette"
+/129="membrane"
+/130="limerick"
+/131="trigonometry"
+/132="barge"
+/133="helicopter"
+/134="snow"
+/135="kerosene"
+/136="tuesday"
+/137="highway"
+/138="thriller"
+/139="mustard"
+/140="checkers"
+/141="blonde"
+/142="spit"
+/143="bubble"
+/144="razor"
+/145="exercise"
+/146="pain"
+/147="rocket"
+/148="canteen"
+/149="rye"
+/150="switch"
+/151="break"
+/152="prison"
+/153="receipt"
+/154="peace"
+/155="cable"
+/156="stamp"
+/157="sleeve"
+/158="dot"
+/159="bell"
+/160="pipe"
+/161="glitter"
+/162="bite"
+/163="envy"
+/164="path"
+/165="chirp"
+/166="crate"
+/167="pouch"
+/168="story"
+/169="marriage"
+/170="respect"
+/171="disgust"
+/172="sleep"
+/173="eraser"
+/174="blanket"
+/175="unicorn"
+/176="blood"
+/177="desert"
+/178="dream"
+/179="tyre"
+/180="tragedy"
+/181="panic"
+/182="flake"
+/183="belt"
+/184="dolphin"
+/185="starfish"
+/186="recipe"
+/187="clam"
+/188="snail"
+/189="pier"
+/190="sign"
+/191="hole"
+/192="exit"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ inputdevice = keyboard
+</instruct>
+
+<page intro>
+<h1>Welcome!</h1><hr>
+
+You will be studying a series of 'one-block' and 'two-block' trials, in which each block consists of four words
+that are presented one after the other for 1 second each.<br><br>
+Your task is to remember the words of the <u>most recent</u> block. Thus, if the trial turns out to be a 
+2-block trial, you need to forget the words of the first block and concentrate on remembering the words 
+of the second block instead.<br><br>
+
+Before each block of words is presented, you will get instructions how to read the following words: aloud or silently.<br><br>
+
+After the final block of words in each trial, you will be presented eight 2-digit numbers and have to categorize each number to be 
+smaller or larger than 50 by pressing the '<%parameters.key_smaller%>' or '<%parameters.key_larger%>' <%expressions.buttoninstruct2%>
+respectively.<br><br>
+
+<i>Each trial concludes with a cued-recall question: you will be given a category that one of the words of the
+<u>most recent</u> block belonged to and are asked to enter this word  into a textbox as fast as possible.
+There will only be one word that fits the category.</i><br><br>
+
+This is a lot of information to process so let's work through two demo trials of the procedure.
+</page>
+
+<page test>
+<h1>Test Start</h1><hr>
+The actual test is about to start. The test will take approximately 15 minutes.<br><br>
+
+The sequence of events for each trial is just like the ones during practice but timing will be <u>much</u> faster:<br><br>
+You will only have <%parameters.distractorTaskDuration/1000%>s to categorize each number to be be smaller or larger than 50.<br>
+You will only have <%parameters.cuedRecallTimeout/1000%>s to enter the recall word. <br><br>
+
+Start when you are ready.
+</page>
+
+
+<text instruct1>
+/ items = ("aloud")
+/ fontstyle = ("Arial", 10.00%, true, false, false, false, 5, 1)
+/ size = (80%, 8%)
+/ position = (50%, 50%)
+/ vjustify = center
+/ txcolor = blue
+</text>
+
+<text instruct1_demo>
+/ items = ("This tells you to read the following words out <u>loud</u>.<br>
+Remember each word.")
+/ fontstyle = ("Arial", 4.00%, true, false, false, false, 5, 1)
+/ position = (50%, 70%)
+/ vjustify = center
+/ txcolor = blue
+</text>
+
+<text instruct2>
+/ items = ("silent")
+/ fontstyle = ("Arial", 10.00%, true, false, false, false, 5, 1)
+/ size = (80%, 8%)
+/ position = (50%, 50%)
+/ vjustify = center
+/ txcolor = blue
+</text>
+
+<text instruct2_demo>
+/ items = ("This tells you that another block is following.<br>
+Forget the words of the first block and remember the next ones.<br><br>
+Read the following words <u>silently</u>.")
+/ fontstyle = ("Arial", 4.00%, true, false, false, false, 5, 1)
+/ position = (50%, 70%)
+/ vjustify = center
+/ txcolor = blue
+</text>
+
+<text distractor_demo>
+/ items = ("Decide whether the number is smaller or greater than 50 and select the corresponding <%expressions.buttoninstruct2%> as fast as possible")
+/ fontstyle = ("Arial", 4.00%, true, false, false, false, 5, 1)
+/ size = (80%, 20%)
+/ position = (50%, 75%)
+/ vjustify = center
+/ txcolor = blue
+/ erase = false
+</text>
+
+<text cue_instructions>
+/ items = ("Enter the word from the <u>last</u> block of 4 words that came from this category:")
+/ fontstyle = ("Arial", 4.00%, true, false, false, false, 5, 1)
+/ position = (50%, 10%)
+/ vjustify = center
+/ txcolor = blue
+/ erase = false
+</text>
+
+<text cue_instructionsDemo>
+/ items = ("The computer will automatically convert your response to lowercase letters.")
+/ fontstyle = ("Arial", 3.00%, true, true, false, false, 5, 1)
+/ position = (50%, 22%)
+/ vjustify = center
+/ txcolor = red
+/ erase = false
+</text>
+
+<text smaller>
+/ items = ("<%parameters.key_smaller%>: < 50")
+/ fontstyle = ("Arial", 8%, false, false, false, false, 5, 1)
+/ position = (25%, 90%)
+/ size = (30%, 8%)
+/ valign = center
+/ halign = center
+/ erase = false
+</text>
+
+<text bigger>
+/ items = ("<%parameters.key_larger%>: > 50")
+/ fontstyle = ("Arial", 8%, false, false, false, false, 5, 1)
+/ position = (75%, 90%)
+/ size = (30%, 8%)
+/ valign = center
+/ halign = center
+/ erase = false
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<button exitbutton>
+/ caption = "EXIT"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 80%)
+/ size = (30%, 8%)
+/ valign = center
+/ halign = center
+</button>
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/ items = ("Get Ready!")
+/ fontstyle = ("Arial", 10.00%, true, false, false, false, 5, 1)
+/ size = (80%, 80%)
+/ vjustify = center
+/ position = (50%, 50%)
+</text>
+
+<text getReady2>
+/ items = ("<%expressions.buttoninstruct1%>")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (80%, 10%)
+/ position = (50%, 70%)
+/ vjustify = center
+</text>
+
+<text getReady_demo>
+/ items = ("You will need these <%expressions.buttoninstruct2%>s to work on the number categorization task.")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ size = (80%, 10%)
+/ position = (50%, 80%)
+/ vjustify = center
+/ txcolor = blue
+</text>
+
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {
+	"put your index fingers over the <%parameters.key_smaller%> and <%parameters.key_larger%> buttons below";} 
+else {"place your index fingers on the <%parameters.key_smaller%> and <%parameters.key_larger%> keys";}
+/buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {
+	"button";} 
+else {"key";}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+
+values.trialCount, values.trialCategory,
+values.target, values.targetCategory, 
+values.foil, values.foilBlockWords, values.targetBlockWords,
+values.2digitNumber,
+response, values.recallResponse, correct, latency)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+expressions.propCorrect_overall,
+expressions.meanCorrRT_overall,
+expressions.propCorrect_2block_target,
+expressions.meanCorrRT_2block_target,
+expressions.propCorrect_2block_control,
+expressions.meanCorrRT_2block_control,
+expressions.propCorrect_1block,
+expressions.meanCorrRT_1block,
+
+expressions.propCorrect_DistractorTask_overall,
+expressions.meanCorrRT_DistractorTask_overall,
+expressions.propCorrect_DistractorTask_2block_target,
+expressions.meanCorrRT_DistractorTask_2block_target,
+expressions.propCorrect_DistractorTask_2block_control,
+expressions.meanCorrRT_DistractorTask_2block_control,
+expressions.propCorrect_DistractorTask_1block,
+expressions.meanCorrRT_DistractorTask_1block)
+
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/phase = ""								//"practice" vs. "test"
+/trialCategory = ""						//1 = 2blocks foil/target; 2 = 2blocks control; 3 = 1block
+/target = ""							//stores the target word
+/targetCategory = ""					//stores the target category
+/foil = ""								//stores the foil word - if applicable
+/foilBlockWords = ""					//stores all the words presented during the 'foil' block (1st block for 2block trials)
+/targetBlockWords = ""					//stores all the words presented during the 'target' block		
+/word1 = ""								//stores the selected itemnumbers for word1 to word4 selected from temporary item lists
+/word2 = ""
+/word3 = ""
+/word4 = ""
+
+/distractorNumberCount = 0				//counts the number of distractor numbers run for each trial
+/2digitNumber = ""						//stores the selected 2digit number
+
+/instructDuration = 0					//stores the duration allowed for instructions
+/distractorDuration = 0					//stores the duration allowed for distractor presentation
+/cuedRecallDuration = 0					//stores the duration allowed for cuedRecall
+
+/trialCount = 0							//counts the number of trials run during each phase
+/recallResponse = ""					//the recall response in lower case letters only
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/propCorrect_overall = list.ACC_overall.mean
+/meanCorrRT_overall = list.corrRT_overall.mean
+/propCorrect_2block_target = list.2block_target_ACC.mean
+/meanCorrRT_2block_target = list.2block_target_RT.mean
+/propCorrect_2block_control = list.2block_control_ACC.mean
+/meanCorrRT_2block_control = list.2block_control_RT.mean
+/propCorrect_1block = list.1block_ACC.mean
+/meanCorrRT_1block = list.1block_RT.mean
+
+/propCorrect_DistractorTask_overall = list.distractorACC_overall.mean
+/meanCorrRT_DistractorTask_overall = list.distractorRT_overall.mean
+/propCorrect_DistractorTask_2block_target = list.distractorACC_2block_target.mean
+/meanCorrRT_DistractorTask_2block_target = list.distractorRT_2block_target.mean
+/propCorrect_DistractorTask_2block_control = list.distractorACC_2block_control.mean
+/meanCorrRT_DistractorTask_2block_control = list.distractorRT_2block_control.mean
+/propCorrect_DistractorTask_1block = list.distractorACC_1block.mean
+/meanCorrRT_DistractorTask_1block = list.distractorRT_1block.mean
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+finish trial
+**************************************************************************************************************
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+//filled during runtime for each trial
+//for 2-block trials (target trials): first item will the foil
+<item words_foilBlock>
+</item>
+
+//filled during runtime for each trial
+//first item will the target
+<item words_targetBlock>
+</item>
+
+<text word1_foilBlock>
+/ items = words_foilBlock
+/ select = values.word1
+/ vjustify = center
+/ size = (80%, parameters.wordSize*1.1)
+/ fontstyle = ("Arial", parameters.wordSize, false, false, false, false, 5, 1)
+</text>
+
+<text word2_foilBlock>
+/ items = words_foilBlock
+/ select = values.word2
+/ vjustify = center
+/ size = (80%, parameters.wordSize*1.1)
+/ fontstyle = ("Arial", parameters.wordSize, false, false, false, false, 5, 1)
+</text>
+
+<text word3_foilBlock>
+/ items = words_foilBlock
+/ select = values.word3
+/ vjustify = center
+/ size = (80%, parameters.wordSize*1.1)
+/ fontstyle = ("Arial", parameters.wordSize, false, false, false, false, 5, 1)
+</text>
+
+<text word4_foilBlock>
+/ items = words_foilBlock
+/ select = values.word4
+/ vjustify = center
+/ size = (80%, parameters.wordSize*1.1)
+/ fontstyle = ("Arial", parameters.wordSize, false, false, false, false, 5, 1)
+</text>
+
+<text word1_targetBlock>
+/ items = words_targetBlock
+/ select = values.word1
+/ vjustify = center
+/ size = (80%, parameters.wordSize*1.1)
+/ fontstyle = ("Arial", parameters.wordSize, false, false, false, false, 5, 1)
+</text>
+
+<text word2_targetBlock>
+/ items = words_targetBlock
+/ select = values.word2
+/ vjustify = center
+/ size = (80%, parameters.wordSize*1.1)
+/ fontstyle = ("Arial", parameters.wordSize, false, false, false, false, 5, 1)
+</text>
+
+<text word3_targetBlock>
+/ items = words_targetBlock
+/ select = values.word3
+/ vjustify = center
+/ size = (80%, parameters.wordSize*1.1)
+/ fontstyle = ("Arial", parameters.wordSize, false, false, false, false, 5, 1)
+</text>
+
+<text word4_targetBlock>
+/ items = words_targetBlock
+/ select = values.word4
+/ vjustify = center
+/ size = (80%, parameters.wordSize*1.1)
+/ fontstyle = ("Arial", parameters.wordSize, false, false, false, false, 5, 1)
+</text>
+
+<text 2digitNumber>
+/ items = ("<%values.2digitNumber%>")
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 10%, true, false, false, false, 5, 1)
+</text>
+
+<text cue>
+/ items = ("<%values.targetCategory%>")
+/ vjustify = center
+/ size = (80%, 5%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ position = (50%, 30%)
+/ erase = false
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list targetItemnumbers>
+/ poolSize = item.targetCategories.itemCount
+/ replace = false
+/ resetinterval = 0
+/ selectionrate = always
+</list>
+
+<list fillerItemnumbers>
+/ poolSize = item.fillers.itemCount
+/ replace = false
+/ resetinterval = 0
+/ selectionrate = always
+</list>
+
+<list blockitemnumbers>
+/items = (1, 2, 3, 4)
+/ replace = false
+/ resetinterval = 0
+/ selectionrate = always
+</list>
+
+//2-digit numbers for the distractor test
+//number 50 is excluded
+<list 2digitNumbers>
+/ items = (
+10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+51, 52, 53, 54, 55, 56, 57, 58, 59,
+60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
+70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
+90, 91, 92, 93, 94, 95, 96, 97, 98, 99)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_overall>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list corrRT_overall>
+</list> 
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list 2block_target_ACC>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list 2block_target_RT>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list 2block_control_ACC>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list 2block_control_RT>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list 1block_ACC>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list 1block_RT>
+</list>
+
+<list distractorACC_overall>
+</list>
+
+<list distractorRT_overall>
+</list>
+
+<list distractorACC_2block_target>
+</list>
+
+<list distractorRT_2block_target>
+</list>
+
+<list distractorACC_2block_control>
+</list>
+
+<list distractorRT_2block_control>
+</list>
+
+<list distractorACC_1block>
+</list>
+
+<list distractorRT_1block>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS: 
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+<trial 2block_demo>
+/ ontrialbegin = [
+	values.trialCategory = 0;
+	values.foilBlockWords = "";
+	values.targetBlockWords = "";
+	values.distractorNumberCount = 0;
+	list.2digitNumbers.reset();
+	values.2digitNumber = "";
+	values.recallResponse = "";
+	
+	//timeouts for demo trial is slightly longer than for the test trials
+	values.instructDuration = 10000;
+	values.distractorDuration = 10000;
+	values.cuedRecallDuration = 20000;
+	
+	//clear the block lists for new items:
+	item.words_foilBlock.clearItems();
+	item.words_targetBlock.clearItems();
+	
+	//add the 4 items to targetBlock
+	item.words_targetBlock.appendItem(item.practiceTargetsWords.item(list.practiceTargetItemnumbers.nextIndex));	
+	values.target = item.words_targetBlock.item(1);
+	values.foil = "NA";
+	values.targetCategory = item.practiceTargetCategories.item(list.practiceTargetItemnumbers.currentIndex);
+	
+	item.words_targetBlock.appendItem(item.practiceFillerWords.item(list.practiceFillerItemnumbers.nextIndex));
+	item.words_targetBlock.appendItem(item.practiceFillerWords.item(list.practiceFillerItemnumbers.nextIndex));
+	item.words_targetBlock.appendItem(item.practiceFillerWords.item(list.practiceFillerItemnumbers.nextIndex));	
+	
+	//add the 4 items to fillerBlock	
+	item.words_foilBlock.appendItem(item.practiceFillerWords.item(list.practiceFillerItemnumbers.nextIndex));
+	item.words_foilBlock.appendItem(item.practiceFillerWords.item(list.practiceFillerItemnumbers.nextIndex));
+	item.words_foilBlock.appendItem(item.practiceFillerWords.item(list.practiceFillerItemnumbers.nextIndex));
+	item.words_foilBlock.appendItem(item.practiceFillerWords.item(list.practiceFillerItemnumbers.nextIndex));	
+
+	//dynamic stimulus insertion:	
+	trial.2block_demo.insertStimulusTime(clearScreen, 5000);
+	trial.2block_demo.insertStimulusTime(text.instruct1, 5000);
+	trial.2block_demo.insertStimulusTime(text.instruct1_demo, 5000);
+]
+/ stimulusframes = [1 = clearScreen, getReady, getReady2, getReady_demo]
+
+/ validresponse = (parameters.key_smaller, parameters.key_larger)
+/ isvalidresponse = [
+	return false; //present inactive magnitude response keys on touchscreen devices
+]
+
+/ trialduration = (parameters.getReadyDuration + values.instructDuration)
+/ ontrialend = [
+	trial.2block_demo.resetStimulusFrames();
+]
+/ branch = [
+	return trial.foilBlock;
+]
+/ recorddata = false
+</trial>
+
+
+<trial 1block_demo>
+/ ontrialbegin = [
+	values.trialCategory = 0;
+	values.foilBlockWords = "";
+	values.targetBlockWords = "";
+	values.distractorNumberCount = 0;
+	list.2digitNumbers.reset();
+	values.2digitNumber = "";
+	values.recallResponse = "";
+	
+	//timeouts for demo trial is slightly longer than for the test trials
+	values.instructDuration = 10000;
+	values.distractorDuration = 10000;
+	values.cuedRecallDuration = 20000;
+
+	//clear the block lists for new items:
+	item.words_foilBlock.clearItems();
+	item.words_targetBlock.clearItems();
+	
+	//add the 4 items to targetBlock (this trial does not use foilBlock):
+	item.words_targetBlock.appendItem(item.practiceTargetsWords.item(list.practiceTargetItemnumbers.nextIndex));	
+	values.target = item.words_targetBlock.item(1);
+	values.foil = "NA";
+	values.targetCategory = item.practiceTargetCategories.item(list.practiceTargetItemnumbers.currentIndex);
+	
+	item.words_targetBlock.appendItem(item.practiceFillerWords.item(list.practiceFillerItemnumbers.nextIndex));
+	item.words_targetBlock.appendItem(item.practiceFillerWords.item(list.practiceFillerItemnumbers.nextIndex));
+	item.words_targetBlock.appendItem(item.practiceFillerWords.item(list.practiceFillerItemnumbers.nextIndex));
+	
+	//dynamic stimulus insertion:
+	trial.1block_demo.insertStimulusTime(clearScreen, 10000);
+	trial.1block_demo.insertStimulusTime(text.instruct1, 10000);
+	trial.1block_demo.insertStimulusTime(text.instruct1_demo, 10000);
+]
+/ stimulusframes = [1 = clearScreen, getReady, getReady2, getReady_demo]
+
+/ validresponse = (parameters.key_smaller, parameters.key_larger)
+/ isvalidresponse = [
+	return false; //present inactive magnitude response keys on touchscreen devices
+]
+
+/ trialduration = (parameters.getReadyDuration + values.instructDuration)
+/ ontrialend = [
+	trial.1block_demo.resetStimulusFrames();
+]
+/ branch = [
+	return trial.targetBlock;
+]
+/ recorddata = false
+</trial>
+
+
+<trial 2block_target_instruct1>
+/ ontrialbegin = [
+	values.trialCount += 1;
+	values.trialCategory = 1;
+	values.foilBlockWords = "";
+	values.targetBlockWords = "";
+	values.distractorNumberCount = 0;
+	list.2digitNumbers.reset();
+	values.2digitNumber = "";
+	values.recallResponse = "";
+	values.instructDuration = parameters.instructDuration;
+	values.distractorDuration = parameters.distractorTaskDuration;
+	values.cuedRecallDuration = parameters.cuedRecallTimeout;
+	text.instruct2_demo.skip = true;
+	text.distractor_demo.skip = true;
+	
+	//clear the block lists for new items:
+	item.words_foilBlock.clearItems();
+	item.words_targetBlock.clearItems();
+	
+	//add the new items to foilBlock/targetBlock:	
+	//add foils/targets to index positions '1':
+	item.words_targetBlock.appendItem(item.targets.item(list.targetItemnumbers.nextIndex));	
+	item.words_foilBlock.appendItem(item.foils.item(list.targetItemnumbers.currentIndex));
+	values.target = item.words_targetBlock.item(1);
+	values.foil = item.words_foilBlock.item(1);
+	values.targetCategory = item.targetCategories.item(list.targetItemnumbers.currentIndex);
+	
+	//add the remaining 3 filler items to foilBlock:
+	item.words_foilBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	item.words_foilBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	item.words_foilBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	
+	//add the remaining 3 filler items to targetBlock:
+	item.words_targetBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	item.words_targetBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	item.words_targetBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	
+	//dynamic stimulus insertion:
+	trial.2block_target_instruct1.insertStimulusTime(clearScreen, parameters.getReadyDuration);
+	trial.2block_target_instruct1.insertStimulusTime(text.instruct1, parameters.getReadyDuration);
+]
+/ stimulusframes = [1 = clearScreen, getReady, getReady2]
+
+/ validresponse = (parameters.key_smaller, parameters.key_larger)
+/ isvalidresponse = [
+	return false; //present inactive magnitude response keys on touchscreen devices
+]
+
+/ trialduration = (parameters.getReadyDuration + values.instructDuration)
+/ ontrialend = [
+	trial.2block_target_instruct1.resetStimulusFrames();
+]
+/ branch = [
+	return trial.foilBlock;
+]
+/ recorddata = false
+</trial>
+
+<trial 2block_control_instruct1>
+/ ontrialbegin = [
+	values.trialCount += 1;
+	values.trialCategory = 2;
+	values.foilBlockWords = "";
+	values.targetBlockWords = "";
+	values.distractorNumberCount = 0;
+	list.2digitNumbers.reset();
+	values.2digitNumber = "";
+	values.recallResponse = "";
+	values.instructDuration = parameters.instructDuration;
+	values.distractorDuration = parameters.distractorTaskDuration;
+	values.cuedRecallDuration = parameters.cuedRecallTimeout;
+	text.instruct2_demo.skip = true;
+	text.distractor_demo.skip = true;
+	
+	//clear the block lists for new items:
+	item.words_foilBlock.clearItems();
+	item.words_targetBlock.clearItems();
+	
+	//add the new items to foilBlock/targetBlock:	
+	//add foils/targets to index positions '1':
+	item.words_targetBlock.appendItem(item.targets.item(list.targetItemnumbers.nextIndex));	
+	item.words_foilBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	values.target = item.words_targetBlock.item(1);
+	values.foil = "NA";
+	values.targetCategory = item.targetCategories.item(list.targetItemnumbers.currentIndex);
+	
+	//add the remaining 3 filler items to foilBlock:
+	item.words_foilBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	item.words_foilBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	item.words_foilBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	
+	//add the remaining 3 filler items to targetBlock:
+	item.words_targetBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	item.words_targetBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	item.words_targetBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	
+	//dynamic stimulus insertion:
+	trial.2block_control_instruct1.insertStimulusTime(clearScreen, parameters.getReadyDuration);
+	trial.2block_control_instruct1.insertStimulusTime(text.instruct1, parameters.getReadyDuration);
+]
+/ stimulusframes = [1 = clearScreen, getReady, getReady2]
+
+/ validresponse = (parameters.key_smaller, parameters.key_larger)
+/ isvalidresponse = [
+	return false; //present inactive magnitude response keys on touchscreen devices
+]
+
+/ trialduration = (parameters.getReadyDuration + values.instructDuration)
+/ ontrialend = [
+	trial.2block_control_instruct1.resetStimulusFrames();
+]
+/ branch = [
+	return trial.foilBlock;
+]
+/ recorddata = false
+
+</trial>
+
+//assembles the item lists for targetBlock words (Note: targetBlock acts as foilBlock for 1block trials)
+//presents 'aloud' instructions
+<trial 1block_instruct>
+/ ontrialbegin = [
+	values.trialCount += 1;
+	values.trialCategory = 3;
+	values.foilBlockWords = "";
+	values.targetBlockWords = "";
+	values.distractorNumberCount = 0;
+	list.2digitNumbers.reset();
+	values.2digitNumber = "";
+	values.recallResponse = "";
+	values.instructDuration = parameters.instructDuration;
+	values.distractorDuration = parameters.distractorTaskDuration;
+	values.cuedRecallDuration = parameters.cuedRecallTimeout;
+	text.instruct2_demo.skip = true;
+	text.distractor_demo.skip = true;
+	
+	//clear the block lists for new items:
+	item.words_foilBlock.clearItems();
+	item.words_targetBlock.clearItems();
+	
+	//add the 4 items to targetBlock (this trial does not use foilBlock):
+	item.words_targetBlock.appendItem(item.targets.item(list.targetItemnumbers.nextIndex));	
+	values.target = item.words_targetBlock.item(1);
+	values.foil = "NA";
+	values.targetCategory = item.targetCategories.item(list.targetItemnumbers.currentIndex);
+	
+	item.words_targetBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	item.words_targetBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	item.words_targetBlock.appendItem(item.fillers.item(list.fillerItemnumbers.nextIndex));
+	
+	//dynamic stimulus insertion:	
+	trial.1block_instruct.insertStimulusTime(clearScreen, parameters.getReadyDuration);
+	trial.1block_instruct.insertStimulusTime(text.instruct1, parameters.getReadyDuration);
+]
+/ stimulusframes = [1 = clearScreen, getReady, getReady2]
+
+/ validresponse = (parameters.key_smaller, parameters.key_larger)
+/ isvalidresponse = [
+	return false; //present inactive magnitude response keys on touchscreen devices
+]
+
+/ trialduration = (parameters.getReadyDuration + values.instructDuration)
+/ ontrialend = [
+	trial.1block_instruct.resetStimulusFrames();
+]
+/ branch = [
+	return trial.targetBlock;
+]
+/ recorddata = false
+
+</trial>
+
+
+//for 2blocktrials: presents block 1 words 
+//for 1block trials: this trial is skipped
+<trial foilBlock>
+/ ontrialbegin = [
+	values.word1 = list.blockitemnumbers.nextValue;
+	values.word2 = list.blockitemnumbers.nextValue;
+	values.word3 = list.blockitemnumbers.nextValue;
+	values.word4 = list.blockitemnumbers.nextValue;
+	trial.foilBlock.insertStimulusTime(text.word2_foilBlock, parameters.stimPresentationDuration);
+	trial.foilBlock.insertStimulusTime(text.word3_foilBlock, 2*parameters.stimPresentationDuration);
+	trial.foilBlock.insertStimulusTime(text.word4_foilBlock, 3*parameters.stimPresentationDuration);
+]
+/ stimulustimes = [0 = clearScreen, word1_foilBlock]
+
+/ validresponse = (parameters.key_smaller, parameters.key_larger)
+/ isvalidresponse = [
+	return false; //present inactive magnitude response keys on touchscreen devices
+]
+
+/ ontrialend = [
+	trial.foilBlock.resetStimulusFrames();
+	values.foilBlockWords = concat(values.foilBlockWords, text.word1_foilBlock.currentItem);
+	values.foilBlockWords = concat(values.foilBlockWords, ",");
+	values.foilBlockWords = concat(values.foilBlockWords, text.word2_foilBlock.currentItem);
+	values.foilBlockWords = concat(values.foilBlockWords, ",");
+	values.foilBlockWords = concat(values.foilBlockWords, text.word3_foilBlock.currentItem);
+	values.foilBlockWords = concat(values.foilBlockWords, ",");
+	values.foilBlockWords = concat(values.foilBlockWords, text.word4_foilBlock.currentItem);
+	values.foilBlockWords = concat(values.foilBlockWords, ",");
+]
+/ trialduration = (4*parameters.stimPresentationDuration)
+/ branch = [
+	return trial.instruct2;
+]
+/ recorddata = false
+</trial>
+
+<trial instruct2>
+/ stimulusframes = [1 = clearScreen, instruct2, instruct2_demo]
+
+/ validresponse = (parameters.key_smaller, parameters.key_larger)
+/ isvalidresponse = [
+	return false; //present inactive magnitude response keys on touchscreen devices
+]
+
+/ trialduration = values.instructDuration
+
+/ branch = [
+	return trial.targetBlock;
+]
+/ recorddata = false
+</trial>
+
+//for 2blocktrials: presents block 2 words
+//for 1block trials: this trial presents the only block of 4 words run
+<trial targetBlock>
+/ ontrialbegin = [
+	values.word1 = list.blockitemnumbers.nextValue;
+	values.word2 = list.blockitemnumbers.nextValue;
+	values.word3 = list.blockitemnumbers.nextValue;
+	values.word4 = list.blockitemnumbers.nextValue;
+	trial.targetBlock.insertStimulusTime(text.word2_targetBlock, parameters.stimPresentationDuration);
+	trial.targetBlock.insertStimulusTime(text.word3_targetBlock, 2*parameters.stimPresentationDuration);
+	trial.targetBlock.insertStimulusTime(text.word4_targetBlock, 3*parameters.stimPresentationDuration);
+]
+/ stimulustimes = [0 = clearScreen, word1_targetBlock]
+
+/ validresponse = (parameters.key_smaller, parameters.key_larger)
+/ isvalidresponse = [
+	return false; //present inactive magnitude response keys on touchscreen devices
+]
+
+/ ontrialend = [
+	trial.targetBlock.resetStimulusFrames();
+	values.targetBlockWords = concat(values.targetBlockWords, text.word1_targetBlock.currentItem);
+	values.targetBlockWords = concat(values.targetBlockWords, ",");
+	values.targetBlockWords = concat(values.targetBlockWords, text.word2_targetBlock.currentItem);
+	values.targetBlockWords = concat(values.targetBlockWords, ",");
+	values.targetBlockWords = concat(values.targetBlockWords, text.word3_targetBlock.currentItem);
+	values.targetBlockWords = concat(values.targetBlockWords, ",");
+	values.targetBlockWords = concat(values.targetBlockWords, text.word4_targetBlock.currentItem);
+	values.targetBlockWords = concat(values.targetBlockWords, ",");
+]
+/ trialduration = (4*parameters.stimPresentationDuration)
+/ recorddata = false
+/ branch = [
+	return trial.distractortask;
+]
+</trial>
+
+<trial distractortask>
+/ ontrialbegin = [
+	values.distractorNumberCount += 1;
+	values.2digitNumber = list.2digitNumbers.nextValue;
+	mouse.x = 50%;
+	mouse.y = 50%;
+]
+/ stimulusframes = [1 = clearScreen, 2digitNumber, distractor_demo, smaller, bigger]
+
+/ validresponse = (parameters.key_smaller, parameters.key_larger)
+/ timeout = values.distractorDuration
+/ iscorrectresponse = [
+	return ((values.2digitNumber < 50 && trial.distractortask.responseText == parameters.key_smaller) ||
+(values.2digitNumber > 50 && trial.distractortask.responseText == parameters.key_larger))
+]
+/ ontrialend = [
+	if (values.phase == "test"){
+		list.distractorACC_overall.appendItem(trial.distractortask.correct);
+		if (trial.distractortask.correct){
+			list.distractorRT_overall.appendItem(trial.distractortask.latency);
+		}
+		
+		if (values.trialCategory == 1){
+			list.distractorACC_2block_target.appendItem(trial.distractortask.correct);
+			if (trial.distractortask.correct){
+				list.distractorRT_2block_target.appendItem(trial.distractortask.latency);
+			}			
+		} else if (values.trialCategory == 2){
+			list.distractorACC_2block_control.appendItem(trial.distractortask.correct);
+			if (trial.distractortask.correct){
+				list.distractorRT_2block_control.appendItem(trial.distractortask.latency);
+			}			
+		} else if (values.trialCategory == 3){
+			list.distractorACC_1block.appendItem(trial.distractortask.correct);
+			if (trial.distractortask.correct){
+				list.distractorRT_1block.appendItem(trial.distractortask.latency);
+			}			
+		} 
+	}
+]
+
+/ branch = [
+	if (values.distractorNumberCount < 8) {
+		return trial.distractortask;
+	} else {
+		return openended.cuedRecall;
+	}
+]
+/ recorddata = true
+</trial>
+
+<openended cuedRecall>
+/ ontrialbegin = [
+	values.2digitNumber = "";
+]
+
+/ stimulusframes = [1 = clearScreen, cue, cue_instructions, cue_instructionsDemo]
+/ fontstyle = ("Arial", parameters.wordSize, false, false, false, false, 5, 1)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ timeout = values.cuedRecallDuration
+/ iscorrectresponse = [
+	values.recallResponse = tolower(openended.cuedRecall.response);
+	return (values.recallResponse == values.target);
+]
+/ monkeyresponse = (values.target, "monkey")
+/ ontrialend = [
+	
+	//Summary Variables:	
+	if (values.phase == "test"){
+		list.ACC_overall.appendItem(openended.cuedRecall.correct);
+		if (openended.cuedRecall.correct){
+			list.corrRT_overall.appendItem(openended.cuedRecall.latency);
+		}
+	
+		if (values.trialCategory == 1) {
+			list.2block_target_ACC.appendItem(openended.cuedRecall.correct);
+			if (openended.cuedRecall.correct) {
+				list.2block_target_RT.appendItem(openended.cuedRecall.latency);
+			}
+		} else if (values.trialCategory == 2) {
+			list.2block_control_ACC.appendItem(openended.cuedRecall.correct);
+			if (openended.cuedRecall.correct) {
+				list.2block_control_RT.appendItem(openended.cuedRecall.latency);
+			}
+		} else if (values.trialCategory == 3) {
+			list.1block_ACC.appendItem(openended.cuedRecall.correct);
+			if (openended.cuedRecall.correct) {
+				list.1block_RT.appendItem(openended.cuedRecall.latency);
+			}
+		}		
+	}
+]
+/ buttonlabel = "Enter"
+/ recorddata = true
+</openended>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block practice>
+/ onblockbegin = [
+	values.phase = "practice";
+]
+
+/ trials = [
+	1 = 1block_demo;
+	2 = 2block_demo;
+]
+</block>
+
+//this list controls the sequence of the test trials
+//by default the trials are selected sequentially (Note: the order of the current trial sequence was randomly determined)
+//=> all participant run with the task with the same sequence
+//to change to a random selection: replace /selectionmode = sequence with /replace = false. 
+<list testtrials>
+/items = (
+trial.2block_control_instruct1,trial.2block_target_instruct1,trial.2block_control_instruct1,trial.1block_instruct,
+trial.1block_instruct,trial.2block_control_instruct1,trial.2block_target_instruct1,trial.1block_instruct,
+trial.2block_control_instruct1,trial.2block_control_instruct1,trial.2block_control_instruct1,trial.2block_control_instruct1,
+trial.2block_target_instruct1,trial.2block_control_instruct1,trial.2block_target_instruct1,trial.2block_target_instruct1,
+trial.2block_target_instruct1,trial.1block_instruct,trial.1block_instruct,trial.1block_instruct,
+trial.2block_target_instruct1,trial.2block_target_instruct1,trial.1block_instruct,trial.2block_control_instruct1,
+trial.2block_target_instruct1,trial.1block_instruct,trial.2block_target_instruct1,trial.1block_instruct,
+trial.2block_target_instruct1,trial.2block_target_instruct1,trial.2block_control_instruct1,trial.1block_instruct,
+trial.2block_control_instruct1,trial.1block_instruct,trial.2block_control_instruct1,trial.1block_instruct,
+)
+/ selectionmode = sequence
+</list>
+
+<block test>
+/ preinstructions = (test)
+/ onblockbegin = [
+	values.phase = "test";
+	values.trialCount = 0;
+	text.cue_instructionsDemo.skip = true;
+]
+/ trials = [1-36 = list.testtrials]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt cuedrecall>
+/ preinstructions = (intro)
+/ blocks = [
+	1 = practice;
+	2 = test;
+	3 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

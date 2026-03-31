@@ -1,0 +1,542 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*Ten Item Personality Inventory (TIPI)*
+___________________________________________________________________________________________________________________	
+
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 10-11-2016
+last updated:  10-23-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-23-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a computerized version of the Ten Item Personality Inventory (TIPI) described in:
+
+Gosling, S. D., Rentfrow, P. J., & Swann, W. B. Jr. (2003). A very brief measure of the Big-Five personality domains.
+Journal of Research in Personality, 37, 504–528. 
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+10 7-point Likert questions: 2 for each of the 5 personality domains 
+(Extraversion, Agreeableness, Conscientiousness, Emotional Stability, Openeness)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes less than 1 minute
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'tipi.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	   	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (disagree strongly) - 7 (agree strongly)
+								R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'tipi_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+
+Range: 1-7 => the higher the score the higher the particular facet has been affirmed by participant 
+								
+Extraversion:					mean Extraversion score
+Agreeableness:					mean Agreeableness score
+Conscientiousness:				mean Conscientiousness score
+EmotionalStability:				mean Emotional Stability score
+Openeness:						mean Openeness score
+
+///Norms:
+
+(parameter) calculateGenderPercentile:	true (1) = z-score and percentiles are calculated based on gender norms (provided by Gosling et al, 2003, p.526) - can be set under Editable Parameters
+										false (0) = z-score and percentiles are calculated using the overall norms (provided by Gosling et al, 2003, p.526)
+
+radiobuttons.gender.response:	1 = female; 2 = male; empty (=> question wasn't asked)
+								
+z_E:							calculated z-score of the Extraversion score (based on data provided by Gosling et al, 2003, p.526)
+E_percentile:					z-score percentile of the Extraversion score (based on data provided by Gosling et al, 2003, p.526)
+
+z_A:							calculated z-score of the Agreeableness score (based on data provided by Gosling et al, 2003, p.526)
+A_percentile:					z-score percentile of the Agreeableness score (based on data provided by Gosling et al, 2003, p.526)
+
+z_C:							calculated z-score of the Conscientiousness score (based on data provided by Gosling et al, 2003, p.526)
+C_percentile:					z-score percentile of the Conscientiousness score (based on data provided by Gosling et al, 2003, p.526)
+
+z_ES:							calculated z-score of the Emotional Stability score (based on data provided by Gosling et al, 2003, p.526)
+ES_percentile:					z-score percentile of the Emotional Stability score (based on data provided by Gosling et al, 2003, p.526)
+
+z_O:							calculated z-score of the Openeness score (based on data provided by Gosling et al, 2003, p.526)
+O_percentile:					z-score percentile of the Openeness score (based on data provided by Gosling et al, 2003, p.526)
+
++ individual responses
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________
+
+10 7-point Likert questions
+- 2 for each of the 5 personality domains (Extraversion, Agreeableness, Conscientiousness, Emotional Stability, Openeness)
+- one of the two questions is reversed scored (automatically done by the program)
+- if parameters.calculateGenderPercentile is set to 'true', a gender question is provided at the end of the questionnaire
+(by default, the gender question is omitted)
+
+Scoring:
+* computer automatically calculates the average score for the 5 categories
+* computer automatically calculates the z-score and percentile values of the 5 scores based on data published by
+Gosling et al (2003)
+-> by default, overall means across gender and ethnic groups are used
+-> if parameters.calculateGenderPercentile is set to 'true', percentiles are calculated based on the reported gender
+(across ethnic groups)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+slightly adapted from Gosling et al (2003) to reflect a different testing setup.
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:				the instructions posted on top of each page of the questionnaire
+
+/calculateGenderPercentile:		true (1) = z-score and percentiles are calculated based on gender norms (provided by Gosling et al, 2003)
+								false (0) = z-score and percentiles are calculated using the overall norms (provided by Gosling et al, 2003) 
+								(default)
+
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "Here are a number of personality traits that may or may not apply to you.
+Please indicate on the provided scale the extent to which you agree or disagree with that statement. You should rate the extent to which the pair of traits applies to you, even if one characteristic applies more strongly than the other.
+"
+
+/calculateGenderPercentile = false
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	LISTS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: list contains the overall means for E, A, C, ES, 0 scores (in that order) as reported in Gosling et al (2003), p.526 (Appendix B)
+<list allMeans>
+/items = (4.44,5.23,5.40,4.83,5.38)
+</list>
+
+Note: list contains the overall SDs for E, A, C, ES, 0 scores (in that order) as reported in Gosling et al (2003), p.526 (Appendix B)
+<list allSD>
+/items = (1.45, 1.11, 1.32, 1.42, 1.07)
+</list>
+
+Note: list contains the means for E, A, C, ES, 0 scores for males (in that order) as reported in Gosling et al (2003), p.526 (Appendix B)
+<list maleMeans>
+/items = (4.25, 5.06, 5.19, 5.13, 5.34)
+</list>
+
+Note: list contains the SDs for E, A, C, ES, 0 scores for males (in that order) as reported in Gosling et al (2003), p.526 (Appendix B)
+<list maleSD>
+/items = (1.41, 1.10, 1.15, 1.31, 1.09)
+</list>
+
+Note: list contains the means for E, A, C, ES, 0 scores for females (in that order) as reported in Gosling et al (2003), p.526 (Appendix B)
+<list femaleMeans>
+/items = (4.54, 5.32, 5.51, 4.66, 5.40)
+</list>
+
+Note: list contains the SDs for E, A, C, ES, 0 scores for females (in that order) as reported in Gosling et al (2003), p.526 (Appendix B)
+<list femaleSD>
+/items = (1.47, 1.11, 1.11, 1.45, 1.06)
+</list>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.Extraversion, expressions.Agreeableness, expressions.Conscientiousness, expressions.EmotionalStability, expressions.Openeness,
+parameters.calculateGenderPercentile, radiobuttons.gender.response,
+values.z_E, values.E_percentile,
+values.z_A, values.A_percentile,
+values.z_C, values.C_percentile,
+values.z_ES, values.ES_percentile,
+values.z_O, values.O_percentile,
+
+//individual responses
+radiobuttons.q1_E.response,
+radiobuttons.q2_A_R.response,
+radiobuttons.q3_C.response,
+radiobuttons.q4_R_ES.response,
+radiobuttons.q5_O.response,
+radiobuttons.q6_E_R.response,
+radiobuttons.q7_A.response,
+radiobuttons.q8_C_R.response,
+radiobuttons.q9_ES.response,
+radiobuttons.q10_O_R.response
+
+)
+
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/z_E:					calculated z-score of the Extraversion score (based on data provided by Gosling et al, 2003)
+/z_A:					calculated z-score of the Agreeableness score (based on data provided by Gosling et al, 2003)
+/z_C:					calculated z-score of the Conscientiousness score (based on data provided by Gosling et al, 2003)
+/z_ES:					calculated z-score of the Emotional Stability score (based on data provided by Gosling et al, 2003)
+/z_O:					calculated z-score of the Openeness score (based on data provided by Gosling et al, 2003)
+/E_percentile:			z-score percentile of the Extraversion score (based on data provided by Gosling et al, 2003)
+/A_percentile:			z-score percentile of the Agreeableness score (based on data provided by Gosling et al, 2003)
+/C_percentile:			z-score percentile of the Conscientiousness score (based on data provided by Gosling et al, 2003)
+/ES_percentile:			z-score percentile of the Emotional Stability score (based on data provided by Gosling et al, 2003)
+/O_percentile:			z-score percentile of the Openeness score (based on data provided by Gosling et al, 2003)
+
+<values>
+/z_E = ""
+/z_A = ""
+/z_C = ""
+/z_ES = ""
+/z_O = ""
+
+/E_percentile = ""
+/A_percentile = ""
+/C_percentile = ""
+/ES_percentile = ""
+/O_percentile = ""
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/Extraversion = (radiobuttons.q1_E.response + radiobuttons.q6_E_R.response)/2
+/Agreeableness = (radiobuttons.q2_A_R.response + radiobuttons.q7_A.response)/2
+/Conscientiousness = (radiobuttons.q3_C.response + radiobuttons.q8_C_R.response)/2
+/EmotionalStability = (radiobuttons.q4_R_ES.response + radiobuttons.q9_ES.response)/2
+/Openeness = (radiobuttons.q5_O.response + radiobuttons.q10_O_R.response)/2
+
+/ calculateE_percentile = {	
+if (parameters.calculateGenderPercentile == true){
+	if (radiobuttons.gender.response == 2){
+		values.z_E = (expressions.Extraversion - list.maleMeans.item(1))/list.maleSD.item(1);
+	} else {
+		values.z_E = (expressions.Extraversion - list.femaleMeans.item(1))/list.femaleSD.item(1);
+	}
+} else {
+	values.z_E = (expressions.Extraversion - list.allMeans.item(1))/list.allSD.item(1);
+}	
+	
+	values.E_percentile = pofz(values.z_E);	
+}
+
+/ calculateA_percentile = {	
+if (parameters.calculateGenderPercentile == true){
+	if (radiobuttons.gender.response == 2){
+		values.z_A = (expressions.Agreeableness - list.maleMeans.item(2))/list.maleSD.item(2);
+	} else {
+		values.z_A = (expressions.Agreeableness - list.femaleMeans.item(2))/list.femaleSD.item(2);
+	}
+} else {
+	values.z_A = (expressions.Agreeableness - list.allMeans.item(2))/list.allSD.item(2);
+}	
+	
+	values.A_percentile = pofz(values.z_A);	
+}
+
+/ calculateC_percentile = {	
+if (parameters.calculateGenderPercentile == true){
+	if (radiobuttons.gender.response == 2){
+		values.z_C = (expressions.Conscientiousness - list.maleMeans.item(3))/list.maleSD.item(3);
+	} else {
+		values.z_C = (expressions.Conscientiousness - list.femaleMeans.item(3))/list.femaleSD.item(3);
+	}
+} else {
+	values.z_C = (expressions.Conscientiousness - list.allMeans.item(3))/list.allSD.item(3);
+}	
+	
+	values.C_percentile = pofz(values.z_C);	
+}
+
+/ calculateES_percentile = {	
+if (parameters.calculateGenderPercentile == true){
+	if (radiobuttons.gender.response == 2){
+		values.z_ES = (expressions.EmotionalStability - list.maleMeans.item(4))/list.maleSD.item(4);
+	} else {
+		values.z_ES = (expressions.EmotionalStability - list.femaleMeans.item(4))/list.femaleSD.item(4);
+	}
+} else {
+	values.z_ES = (expressions.EmotionalStability - list.allMeans.item(4))/list.allSD.item(4);
+}	
+	
+	values.ES_percentile = pofz(values.z_ES);	
+}
+
+/ calculateO_percentile = {	
+if (parameters.calculateGenderPercentile == true){
+	if (radiobuttons.gender.response == 2){
+		values.z_O = (expressions.Openeness - list.maleMeans.item(5))/list.maleSD.item(5);
+	} else {
+		values.z_O = (expressions.Openeness - list.femaleMeans.item(5))/list.femaleSD.item(5);
+	}
+} else {
+	values.z_O = (expressions.Openeness - list.allMeans.item(5))/list.allSD.item(5);
+}	
+	
+	values.O_percentile = pofz(values.z_O);	
+}
+
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_E>
+/caption = "1. Extraverted, enthusiastic"
+/ options = ("Disagree~nstrongly", "Disagree~nmoderately", "Disagree~na little", "Neither agree~nnor disagree", "Agree ~na little", "Agree~nmoderately", "Agree~nstrongly")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_A_R>
+/caption = "2. Critical, quarrelsome"
+/ options = ("Disagree~nstrongly", "Disagree~nmoderately", "Disagree~na little", "Neither agree~nnor disagree", "Agree ~na little", "Agree~nmoderately", "Agree~nstrongly")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_C>
+/caption = "3. Dependable, self-disciplined"
+/ options = ("Disagree~nstrongly", "Disagree~nmoderately", "Disagree~na little", "Neither agree~nnor disagree", "Agree ~na little", "Agree~nmoderately", "Agree~nstrongly")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_R_ES>
+/caption = "4. Anxious, easily upset"
+/ options = ("Disagree~nstrongly", "Disagree~nmoderately", "Disagree~na little", "Neither agree~nnor disagree", "Agree ~na little", "Agree~nmoderately", "Agree~nstrongly")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_O>
+/caption = "5. Open to new experiences, complex"
+/ options = ("Disagree~nstrongly", "Disagree~nmoderately", "Disagree~na little", "Neither agree~nnor disagree", "Agree ~na little", "Agree~nmoderately", "Agree~nstrongly")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_E_R>
+/caption = "6. Reserved, quiet"
+/ options = ("Disagree~nstrongly", "Disagree~nmoderately", "Disagree~na little", "Neither agree~nnor disagree", "Agree ~na little", "Agree~nmoderately", "Agree~nstrongly")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_A>
+/caption = "7. Sympathetic, warm"
+/ options = ("Disagree~nstrongly", "Disagree~nmoderately", "Disagree~na little", "Neither agree~nnor disagree", "Agree ~na little", "Agree~nmoderately", "Agree~nstrongly")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_C_R>
+/caption = "8. Disorganized, careless"
+/ options = ("Disagree~nstrongly", "Disagree~nmoderately", "Disagree~na little", "Neither agree~nnor disagree", "Agree ~na little", "Agree~nmoderately", "Agree~nstrongly")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_ES>
+/caption = "9. Calm, emotionally stable"
+/ options = ("Disagree~nstrongly", "Disagree~nmoderately", "Disagree~na little", "Neither agree~nnor disagree", "Agree ~na little", "Agree~nmoderately", "Agree~nstrongly")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10_O_R>
+/caption = "10. Conventional, uncreative"
+/ options = ("Disagree~nstrongly", "Disagree~nmoderately", "Disagree~na little", "Neither agree~nnor disagree", "Agree ~na little", "Agree~nmoderately", "Agree~nstrongly")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons gender>
+/ options = ("Female", "Male")
+/ optionvalues = ("1", "2")
+/ required = true
+</radiobuttons>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage TIPI1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1_E, q2_A_R, q3_C]
+</surveypage>
+
+<surveypage TIPI2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4_R_ES, q5_O, q6_E_R]
+</surveypage>
+
+<surveypage TIPI3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7_A, q8_C_R, q9_ES]
+</surveypage>
+
+<surveypage TIPI4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10_O_R]
+</surveypage>
+
+<surveypage TIPI5>
+/ skip = [
+	parameters.calculateGenderPercentile == false;
+]
+/caption ="Please indicate your gender"
+/questions = [1 = gender]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey TIPI>
+/pages = [
+	1 = TIPI1; 
+	2 = TIPI2; 
+	3 = TIPI3; 
+	4 = TIPI4;
+	5 = TIPI5;
+]
+/screencapture = false
+/ onblockend = [
+	expressions.calculateA_percentile;
+	expressions.calculateE_percentile;
+	expressions.calculateC_percentile;
+	expressions.calculateES_percentile;
+	expressions.calculateO_percentile;
+]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

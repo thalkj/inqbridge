@@ -1,0 +1,3103 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							FALSE MEMORIES: DEESE-ROEDIGER-McDERMOTT (DRM) procedure
+							(visual presentation of study words)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 09-27-2016
+last updated:  06-13-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 06-13-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Deese–Roediger–McDermott (DRM) procedure to study false memories based on:
+
+Deese, J. (1959). On the prediction of occurrence of particular verbal intrusions in immediate
+recall. Journal of Experimental Psychology, 58, 17–22.
+
+Roediger, H. L., III, & McDermott, K. B. (1995). Creating false memories: Remembering words not
+presented in list. Journal of Experimental Psychology: Learning, Memory, and Cognition,
+21, 803–814. (Experiment 2)
+
+Note: this script presents the study words visually.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants study 16 lists of 15 related words. The words are presented visually with a Stimulus Onset Asynchrony (SOA)
+of 1500ms. One item that is highly related to all the words of one list ('lure') is
+not included in the study lists. In an immediate recall test after 8 randomly selected lists, participants have to list as many
+of the study words as they recall. Number of correctly recalled items as well number of times (and position on recall list)
+of the 'lure' item is assessed by computer. Participants work on simple addition and multiplication problems after the
+remaining 8 lists (=control task).
+Once all 16 lists have been studied, participants are given a recognition test (old/new) of 96 randomly presented items
+and remember-know judgments if the item has been identified as "old".
+The recognition test contains all 'lure' items of the study lists (16) as well as 3 study items of each of the 16 study lists (48).
+The remaining items are new items.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 60 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'falsememories_visual_raw*.iqdat'*
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group, 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+										
+listCount:						stores the number of lists run
+recallListCount:				counts number of recall lists run
+mathListCount:					counts number of math lists run
+nextList:						stores the list index (1-15 of the currently presented study list)
+lure:							stores the lure of the currently presented study list 
+wordCategory:					Recognition Phase: "new", "new-lure", "recall" (for study words used with recall task), "recall-lure", "math" (for study words used with math task), "math-lure"						
+stimulusitem:					the presented stimuli in order of trial presentation
+response:						the participant's response
+correct:						the correctness of the response (1 = correct; 0 = incorrect) - if applicable
+latency: 						the response latency (in ms)
+Recall:							stores the recall text input (with single commas to separate the different words)
+countCorrect_Recall:			tracks the number of correctly recalled words per list
+RecallWordEstimate:				stores the computer-derived estimate of the number of words recalled
+								Note: see below of algoritm implemented. Algorithm does not check whether the recalled words are actual words.
+
+PositionLure_Recall:			if lure is present in recall: stores the position of the lure in the recall list
+nr_otherRecalledWords:			stores the number of other recalled words that are neither study words nor lures
+
+intrusionOther:					stores the character strings contained in the recall string that are neither the study words nor the lure
+								Note: misspelled study words will show up here
+									
+(2) Summary data file: 'falsememories_visual_summary*.iqdat'*
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+Recall:
+mean_WordRecall:					mean of the estimated number of words recalled
+									Note: the word count estimation is done by computer using the algorithm described below.
+									There may be instances when the algorithm does not return the correct count.
+									Furthermore, the algorithm does NOT check if the input consists of actual words.
+									
+SD_WordRecall:						standard deviation of the estimated number of words recalled
+
+prop_word1Recall-
+prop_word15Recall:					stores the proportion of correctly recalled words in study positions 1 - 12 (Max: 6/6 for each item)/prop lureRecall:				stores proportion of recalling the lure (=a specific highly related item that was NOT a study item) based on the number of recall trials (Max: 6/6)
+									Note: spelling errors of correctly recalled items are counted as 'errors' by the search algorithm 
+									(search algorithm only searches for correctly spelled words)
+									
+prop_lureRecall:					stores recall proportion of the lure (=a specific highly related item that was NOT a study item) based on the number of recall trials (Max: 8/8)								
+mean_LurePosition:					calculates the mean lure Position in the list of recalled items across all lists
+SD_LurePosition:					standard deviation of the lure positions in the list of recalled items across all lists 
+
+mean_IntrusionsOther:				calculates the mean number of other word intrusions on recall
+									!Note: a value > 0 could be a flag to manually check in the raw data file (e.g. values.intrusionOther) whether misspellings of study list words 
+									occurred as these misspelled word would be counted as 'other intrusions'
+																		
+Recognition:									
+									
+propHits:						hit rate (across all studied words)
+propHits_recallWords:			hit rate for study words used in recall blocks
+propHits_mathWords:				hit rate for study words used in math blocks
+propFA:							false alarm rate (across all non-studied words)
+propFA_recallLures:				false alarm rate for lures tied to study words in recall blocks
+propFA_mathLures:				false alarm rate for lures tied to study words in math blocks
+propFA_newWords:				false alarm rate for study words from lists that were not studied
+propFA_newLures:				false alarm rate for lures of non-studied lists
+
+propRemember_recallWords:		proportion remember judgments for hits for study words used in recall blocks
+propRemember_recallLures:		proportion remember judgments for false alarms  for recall study word lures
+
+propRemember_mathWords:		proportion remember judgments for hits for study words used in math blocks
+propRemember_mathLures:		proportion remember judgments for false alarms  for math study word lures
+
+propRemember_newWords:		proportion remember judgments for false alarms for study words from lists that were not studied
+propRemember_newLures:		proportion remember judgments for false alarms for lures of non-studied lists	
+
+Math:
+nr_MathProblems:			number of math problems attempted 
+propCorrect_Math:			proportion correct math problems
+
+
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+- 24 lists of 15 study items + 1 'lure' item (=16 items per list) get randomly assigned to be used for study-recall lists (8), 
+study-math lists (8) and recognition-only lists (8)
+
+(I) Study-Phase:
+- the order of study-recall and study-math tasks (8 each) is randomly determined
+- the presentation order of the study words during the study phase is sequential
+- words are presented visually with a SOA 1500ms
+
+Recall Task:
+Algorithm to estimate number of recalled words:
+In general this algorithm uses the number of a specific word separator (here: comma)
+to estimate the number of words in between the separators: estimated word count = number of separators + 1
+The algorithm uses several steps to clean up the text input to ensure as much as 
+possible that only single commas are used as word separators. It also removes
+trailing commas from the input if necessary.
+
+Steps:
+(1) textbox response is stored in values.Recall (Example: values.Recall = "bed; chair; table") (note: there is a space AND a ; after bed and chair)
+(2) values.Recall replaces 7 types of possible word separator symbols (e.g. ";", " ") with a comma (Example: values.Recall = "bed,,chair,,table")
+(3) values.Recall adds a comma to the first item (Example: values.Recall = ",bed,,chair,,table")
+(3) values.Recall replaces all consecutive commas with a single comma (Example: values.Recall = ",bed,chair,table")
+(4) if values.Recall does not end in a comma at this point, this comma is added (Example: values.Recall = ",bed,chair,table,")
+(5) the length of the variable values.Recall is stored in variable values.RecallLength (Example: values.RecallLength = 17)
+(6) a second variable (values.reducedRecall) deletes all commas in values.Recall (Example: values.reducedRecall = "bedchairtable" => length: 13)
+(7) the word count estimate = length of values.Recall* - length of values.reducedRecall - 1 (extra comma) (Example: estimate = 17 - 13 - 1 = 3)
+		*with length = number of characters 
+
+Note: the recall scoring algorithms implemented in this script depend on participants 
+(a) using the implemented separators
+(b) make no spelling mistakes
+(c) don't use phonetically similar words (e.g. pain instead of pane)
+Manual checks of the raw data might be necessary to adjust the scores (see values.intrustionOther)
+		
+		
+(II) Recognition Phase:
+- 96 items (48 old/48 new): order is randomly determined
+	48 => 3 from all 16 study lists (items selected: position1, 8, 10) (old words)
+	24 => the 'lures' of all 24 lists (new words)
+	24 => 3 from the 8 recognition only study lists (items selected: position1, 8, 10) (new words)
+- old/new judgments
+- if old: remember-know judgments
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+- words published by Roediger & McDermott (1995)
+- study words presented black on white in the center of the screen (size can be adjusted under section Editable Parameters)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+instructions are provided by Millisecond Software and followed the guidelines outlined in
+Roediger & McDermott (1995). The Instructions can be edited under section Editable Instructions.
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/wordpresentationSOA:	the stimulus onset asynchrony (in ms) of the presented study words (default: 1500ms)
+/recallDelay:			the delay (in ms) between last presented study list word and the recall trial (default: 0ms)
+/maxRecallDuration:		the time (in ms) allotted to the recall of the words (default: 2.5mins or 150000ms)
+/MinRecognitionDelay:	the minimum delay (in ms) between end of last trial and the recognition task (default: 2 min or 120000ms)
+/studywordSize:			proportional sizing of study words (default: 5% of canvas height)
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/wordpresentationSOA = 1500
+/recallDelay = 0
+/maxRecallDuration = 150000
+/MinRecognitionDelay = 120000
+/studywordSize = 5%
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+List1
+***********************
+<item studyWords_list1>
+/1 = "mad"
+/2 = "fear"
+/3 = "hate"
+/4 = "rage"
+/5 = "temper"
+/6 = "fury"
+/7 = "ire"
+/8 = "wrath"
+/9 = "happy"
+/10 = "fight"
+/11 = "hatred"
+/12 = "mean"
+/13 = "calm"
+/14 = "emotion"
+/15 = "enrage"
+</item>
+
+<item lure_list1>
+/1 = "anger"
+</item>
+
+***********************
+List2
+***********************
+
+<item studyWords_list2>
+/1 = "white"
+/2 = "dark"
+/3 = "cat"
+/4 = "charred"
+/5 = "night"
+/6 = "funeral"
+/7 = "color"
+/8 = "grief"
+/9 = "blue"
+/10 = "death"
+/11 = "ink"
+/12 = "bottom"
+/13 = "coal"
+/14 = "brown"
+/15 = "gray"
+</item>
+
+<item lure_list2>
+/1 = "black"
+</item>
+
+***********************
+List3
+***********************
+
+<item studyWords_list3>
+/1 = "butter"
+/2 = "food"
+/3 = "eat"
+/4 = "sandwich"
+/5 = "rye"
+/6 = "jam"
+/7 = "milk"
+/8 = "flour"
+/9 = "jelly"
+/10 = "dough"
+/11 = "crust"
+/12 = "slice"
+/13 = "wine"
+/14 = "loaf"
+/15 = "toast"
+</item>
+
+<item lure_list3>
+/1 = "bread"
+</item>
+
+***********************
+List4
+***********************
+<item studyWords_list4>
+/1 = "table"
+/2 = "sit"
+/3 = "legs"
+/4 = "seat"
+/5 = "couch"
+/6 = "desk"
+/7 = "recliner"
+/8 = "sofa"
+/9 = "wood"
+/10 = "cushion"
+/11 = "swivel"
+/12 = "stool"
+/13 = "sitting"
+/14 = "rocking"
+/15 = "bench"
+</item>
+
+<item lure_list4>
+/1 = "chair"
+</item>
+
+***********************
+List5
+***********************
+<item studyWords_list5>
+/1 ="hot"
+/2 = "snow"
+/3 = "warm"
+/4 = "winter"
+/5 = "ice"
+/6 = "wet"
+/7 = "frigid"
+/8 = "chilly"
+/9 = "heat"
+/10 = "weather"
+/11 = "freeze"
+/12 = "air"
+/13 = "shiver"
+/14 = "arctic"
+/15 = "frost"
+</item>
+
+<item lure_list5>
+/1 = "cold"
+</item>
+
+***********************
+List6
+***********************
+
+<item studyWords_list6>
+/1 = "nurse"
+/2 = "sick"
+/3 = "lawyer"
+/4 = "medicine"
+/5 = "health"
+/6 = "hospital"
+/7 = "dentist"
+/8 = "physician"
+/9 = "ill"
+/10 = "patient"
+/11 = "office"
+/12 = "stethoscope"
+/13 = "surgeon"
+/14 = "clinic"
+/15 = "cure"
+</item>
+
+<item lure_list6>
+/1 = "doctor"
+</item>
+
+***********************
+List7
+***********************
+
+<item studyWords_list7>
+/1 = "shoe"
+/2 = "hand"
+/3 = "toe"
+/4 = "kick"
+/5 = "sandals"
+/6 = "soccer"
+/7 = "yard"
+/8 = "walk"
+/9 = "ankle"
+/10 = "arm"
+/11 = "boot"
+/12 = "inch"
+/13 = "sock"
+/14 = "smell"
+/15 = "mouth"
+</item>
+
+<item lure_list7>
+/1 = "foot"
+</item>
+
+***********************
+List8
+***********************
+
+<item studyWords_list8>
+/1 = "apple"
+/2 = "vegetable"
+/3 = "orange"
+/4 = "kiwi"
+/5 = "citrus"
+/6 = "ripe"
+/7 = "pear"
+/8 = "banana"
+/9 = "berry"
+/10 = "cherry"
+/11 = "basket"
+/12 = "juice"
+/13 = "salad"
+/14 = "bowl"
+/15 = "cocktail"
+</item>
+
+<item lure_list8>
+/1 = "fruit"
+</item>
+
+***********************
+List9
+***********************
+
+<item studyWords_list9>
+/1 = "boy"
+/2 = "dolls"
+/3 = "female"
+/4 = "young"
+/5 = "dress"
+/6 = "pretty"
+/7 = "hair"
+/8 = "niece"
+/9 = "dance"
+/10 = "beautiful"
+/11 = "cute"
+/12 = "date"
+/13 = "aunt"
+/14 = "daughter"
+/15 = "sister"
+</item>
+
+<item lure_list9>
+/1 = "girl"
+</item>
+
+***********************
+List10
+***********************
+
+<item studyWords_list10>
+/1 ="low"
+/2 = "clouds"
+/3 = "up"
+/4 = "tall"
+/5 = "tower"
+/6 = "jump"
+/7 = "above"
+/8 = "building"
+/9 = "noon"
+/10 = "cliff"
+/11 = "sky"
+/12 = "over"
+/13 = "airplane"
+/14 = "dive"
+/15 = "elevate"
+</item>
+
+<item lure_list10>
+/1 = "high"
+</item>
+
+***********************
+List11
+***********************
+
+<item studyWords_list11>
+/1 ="queen"
+/2 = "England"
+/3 = "crown"
+/4 = "prince"
+/5 = "George"
+/6 = "dictator"
+/7 = "palace"
+/8 = "throne"
+/9 = "chess"
+/10 = "rule"
+/11 = "subjects"
+/12 = "monarch"
+/13 = "royal"
+/14 = "leader"
+/15 = "reign"
+</item>
+
+<item lure_list11>
+/1 = "king"
+</item>
+
+***********************
+List12
+***********************
+
+<item studyWords_list12>
+/1 = "woman"
+/2 = "husband"
+/3 = "uncle"
+/4 = "lady"
+/5 = "mouse"
+/6 = "male"
+/7 = "father"
+/8 = "strong"
+/9 = "friend"
+/10 = "beard"
+/11 = "person"
+/12 = "handsome"
+/13 = "muscle"
+/14 = "suit"
+/15 = "old"
+</item>
+
+<item lure_list12>
+/1 = "man"
+</item>
+
+***********************
+List13
+***********************
+<item studyWords_list13>
+/1 = "hill"
+/2 = "valley"
+/3 = "climb"
+/4 = "summit"
+/5 = "top"
+/6 = "molehill"
+/7 = "peak"
+/8 = "plain"
+/9 = "glacier"
+/10 = "goat"
+/11 = "bike"
+/12 = "climber"
+/13 = "range"
+/14 = "steep"
+/15 = "ski"
+</item>
+
+<item lure_list13>
+/1 = "mountain"
+</item>
+
+***********************
+List14
+***********************
+
+<item studyWords_list14>
+/1 = "note"
+/2 = "sound"
+/3 = "piano"
+/4 = "sing"
+/5 = "radio"
+/6 = "band"
+/7 = "melody"
+/8 = "horn"
+/9 = "concert"
+/10 = "instrument"
+/11 = "symphony"
+/12 = "jazz"
+/13 = "orchestra"
+/14 = "art"
+/15 = "rhythm"
+</item>
+
+<item lure_list14>
+/1 = "music"
+</item>
+
+***********************
+List15
+***********************
+
+<item studyWords_list15>
+/1 = "thread"
+/2 = "pin"
+/3 = "eye"
+/4 = "sewing"
+/5 = "sharp"
+/6 = "point"
+/7 = "prick"
+/8 = "thimble"
+/9 = "haystack"
+/10 = "thorn"
+/11 = "hurt"
+/12 = "injection"
+/13 = "syringe"
+/14 = "cloth"
+/15 = "knitting"
+</item>
+
+<item lure_list15>
+/1 = "needle"
+</item>
+
+***********************
+List16
+***********************
+
+<item studyWords_list16>
+/1 = "water"
+/2 = "stream"
+/3 = "lake"
+/4 = "Mississippi"
+/5 = "boat"
+/6 = "tide"
+/7 = "swim"
+/8 = "flow"
+/9 = "run"
+/10 = "barge"
+/11 = "creeek"
+/12 = "brook"
+/13 = "fish"
+/14 = "bridge"
+/15 = "winding"
+</item>
+
+<item lure_list16>
+/1 = "river"
+</item>
+
+***********************
+List17
+***********************
+
+<item studyWords_list17>
+/1 = "smooth"
+/2 = "bumpy"
+/3 = "road"
+/4 = "tough"
+/5 = "sandpaper"
+/6 = "jagged"
+/7 = "ready"
+/8 = "coarse"
+/9 = "uneven"
+/10 = "riders"
+/11 = "rugged"
+/12 = "sand"
+/13 = "boards"
+/14 = "ground"
+/15 = "gravel"
+</item>
+
+<item lure_list17>
+/1 = "rough"
+</item>
+
+***********************
+List18
+***********************
+
+<item studyWords_list18>
+/1 = "bed"
+/2 = "rest"
+/3 = "awake"
+/4 = "tired"
+/5 = "dream"
+/6 = "wake"
+/7 = "snooze"
+/8 = "blanket"
+/9 = "doze"
+/10 = "slumber"
+/11 = "snore"
+/12 = "nap"
+/13 = "peace"
+/14 = "yawn"
+/15 = "drowsy"
+</item>
+
+<item lure_list18>
+/1 = "sleep"
+</item>
+
+***********************
+List19
+***********************
+
+<item studyWords_list19>
+/1 = "fast"
+/2 = "lethargic"
+/3 = "stop"
+/4 = "listless"
+/5 = "snail"
+/6 = "cautious"
+/7 = "delay"
+/8 = "traffic"
+/9 = "turtle"
+/10 = "hesitant"
+/11 = "speed"
+/12 = "quick"
+/13 = "sluggish"
+/14 = "wait"
+/15 = "molasses"
+</item>
+
+<item lure_list19>
+/1 = "slow"
+</item>
+
+***********************
+List20
+***********************
+
+<item studyWords_list20>
+/1 = "hard"
+/2 = "light"
+/3 = "pillow"
+/4 = "plush"
+/5 = "loud"
+/6 = "cotton"
+/7 = "fur"
+/8 = "touch"
+/9 = "fluffy"
+/10 = "feather"
+/11 = "furry"
+/12 = "downy"
+/13 = "kitten"
+/14 = "skin"
+/15 = "tender"
+</item>
+
+<item lure_list20>
+/1 = "soft"
+</item>
+
+***********************
+List21
+***********************
+<item studyWords_list21>
+/1 = "web"
+/2 = "insect"
+/3 = "bug"
+/4 = "fright"
+/5 = "fly"
+/6 = "arachnid"
+/7 = "crawl"
+/8 = "tarantula"
+/9 = "poison"
+/10 = "bite"
+/11 = "creepy"
+/12 = "animal"
+/13 = "ugly"
+/14 = "feelers"
+/15 = "small"
+</item>
+
+<item lure_list21>
+/1 = "spider"
+</item>
+
+
+***********************
+List22
+***********************
+
+<item studyWords_list22>
+/1 ="sour"
+/2 = "candy"
+/3 = "sugar"
+/4 = "bitter"
+/5 = "good"
+/6 = "taste"
+/7 = "tooth"
+/8 = "nice"
+/9 = "honey"
+/10 = "soda"
+/11 = "chocolate"
+/12 = "heart"
+/13 = "cake"
+/14 = "tart"
+/15 = "pie"
+</item>
+
+<item lure_list22>
+/1 = "sweet"
+</item>
+
+***********************
+List23
+***********************
+
+<item studyWords_list23>
+/1 = "steal"
+/2 = "robber"
+/3 = "crook"
+/4 = "burglar"
+/5 = "money"
+/6 = "cop"
+/7 = "bad"
+/8 = "rob"
+/9 = "jail"
+/10 = "gun"
+/11 = "villain"
+/12 = "crime"
+/13 = "bank"
+/14 = "bandit"
+/15 = "criminal"
+</item>
+
+<item lure_list23>
+/1 = "thief"
+</item>
+
+***********************
+List24
+***********************
+
+<item studyWords_list24>
+/1 = "door"
+/2 = "glass"
+/3 = "pane"
+/4 = "shade"
+/5 = "ledge"
+/6 = "sill"
+/7 = "house"
+/8 = "open"
+/9 = "curtain"
+/10 = "frame"
+/11 = "view"
+/12 = "breeze"
+/13 = "sash"
+/14 = "screen"
+/15 = "shutter"
+</item>
+
+<item lure_list24>
+/1 = "window"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</instruct>
+
+<page Intro>
+<h1>This is a study on Memory.</h1><hr>
+You will get several lists of words to study. The words are presented in the middle of the screen, one at a time, at a steady pace.
+Pay close attention to each word.<br>
+<br>Immediately after the last word, you are asked to do one of these 2 tasks:<br>
+<br>(A) Recall Test or (B) Math Test
+</page>
+
+<page Intro2>
+<h1>(A) Recall Test</h1><hr>
+If you are asked to to do the recall test, you will be provided a textbox in the middle of the screen. Type as many words
+of the list as you remember. <u>Type each word on a new line.</u><br>
+<br>Start with the last few items first and then recall the remaining words in any order.<br>
+<br>Write down all the words you remember but be reasonably confident that each word you write down was in fact part of the study list.<br>
+<br><br>You will have <%parameters.maxRecallDuration/1000/60%>min to complete the recall task before the next study list will be presented.
+</page>
+
+<page Intro3>
+<h1>(B) Math Test</h1><hr>
+If you are asked to do the math test, you will receive simple addition and multiplication problems. Solve as many as you can.<br>
+<br>You will have <%parameters.maxRecallDuration/1000/60%>min to complete the math task before the next study list will be presented.<br>
+<br><br>Start with the first study list when you are ready.
+</page>
+
+<page recognitionPhase>
+<h1>Recognition Test </h1><hr>
+You will now receive a second memory test.<br>
+<br>In this task you will see a single word and are asked to decide whether the word was part of any of the word lists
+you previously studied.<br>
+<br>Select <b>OLD</b> if the word was one of the words from your study lists, but select <b>NEW</b> if it was not.
+</page>
+
+<page recognitionPhase2>
+<h1>Recognition Test </h1><hr>
+If you select <b>OLD</b>, you will be asked to distinguish between <i>'REMEMBERING'</i> the item on the study lists and 
+simply <i>'KNOWING'</i> it was one of the study lists.<br>
+<br>Make a <b>'REMEMBER judgment'</b> when you have a memory of the actual presentation of this word. For example,
+you might still remember something distinctive about the speakers voice while presenting this particular word.
+Or you might remember what you were thinking when you studied this word.<br>
+<br>Make a <b>'KNOW judgment'</b> when you think the item was on one of the lists but you lack an actual 
+memory of its presentation.<br>
+<br>Always make your choice in regard to its actual presentation, not based on a memory that you
+wrote it down during a recall test.
+<br><br><br>Start when you are ready.
+</page>
+
+<page End>
+<center><br><br><br><br>
+<h1>Thank You!</h1><br>
+You have reached the end of the task.<br>
+</page>
+
+<text recallInstructions>
+/ items = ("Recall as many of the words from the previous study list as you can.
+ Press <Enter> key after each word.")
+/ position = (50%, 10%)
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ size = (90%, 10%)
+</text>
+
+<text recognitionInstructions>
+/ items = ("Is this word one of your study words (=OLD) or not (=NEW)?")
+/ position = (50%, 10%)
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+<text rememberknowInstructions>
+/ items = ("Do you REMEMBER the following word from your study lists or simply KNOW it was on one of the lists?")
+/ position = (50%, 10%)
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+<text break>
+/ items = ("Take a short break")
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/items = ("Get Ready:
+~n<%expressions.buttoninstruct6%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"response buttons located on the bottom of your screen";} else {"keys on your keyboard";}
+/buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"tap";} else {"click on";}
+/buttoninstruct3 = if (computer.touch && !computer.hasKeyboard) {"tapping";} else {"clicking on";}
+/buttoninstruct4 = if (computer.touch && !computer.hasKeyboard) {"tap";} else {"click";}
+/buttoninstruct5 = if (computer.touch && !computer.hasKeyboard) {"response button";} else {"key";}
+/buttoninstruct6 = if (computer.touch && !computer.hasKeyboard) {"Place your index fingers over...";} else {"Place your index fingers on...";}
+/buttoninstruct7 = if (computer.touch && !computer.hasKeyboard) {"Throughout the task keep your index fingers over the left and right response buttons.";} else {"Put your index fingers on the E and I keys to get ready.";}
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+/ inputdevice = mouse
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+values.listCount, values.recallListCount, values.mathListCount,
+values.nextList, values.lure, values.wordCategory, stimulusitem, stimulusitem, response, correct, latency, values.Recall, 
+values.countCorrect_Recall, values.RecallWordEstimate, values.positionLure_Recall, values.nr_otherRecalledWords, values.intrusionOther)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+expressions.mean_WordRecall, expressions.SD_WordRecall,
+expressions.prop_word1Recall,  
+expressions.prop_word2Recall,  
+expressions.prop_word3Recall,
+expressions.prop_word4Recall,
+expressions.prop_word5Recall,
+expressions.prop_word6Recall,
+expressions.prop_word7Recall,
+expressions.prop_word8Recall,
+expressions.prop_word9Recall,
+expressions.prop_word10Recall,
+expressions.prop_word11Recall,
+expressions.prop_word12Recall,
+expressions.prop_word13Recall,
+expressions.prop_word14Recall,
+expressions.prop_word15Recall,
+expressions.prop_lureRecall,
+expressions.mean_LurePosition, expressions.SD_LurePosition, expressions.mean_IntrusionsOther,
+
+expressions.propHits, expressions.propHits_recallWords, expressions.propHits_mathWords,
+expressions.propFA, expressions.propFA_recallLures, expressions.propFA_mathLures, expressions.propFA_newWords, expressions.propFA_newLures,
+expressions.propRemember_recallWords, expressions.propRemember_recallLures,
+expressions.propRemember_mathWords, expressions.propRemember_mathLures,
+expressions.propRemember_newWords, expressions.propRemember_newLures,
+
+expressions.nr_MathProblems, expressions.propCorrect_Math)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+/phase:							"study", "recall", "math"
+/nextList = 0
+/listCount:						stores the number of lists run
+/recallListCount:				counts number of recall lists run
+/mathListCount:					counts number of math lists run
+/word1_recall-
+/word15_recall:					stores the number of times the first (second, third, etc) word of a list was recalled
+/Recall:						stores the recall text input (with single commas to separate the different words)
+/countCorrect_Recall:			tracks the number of correctly recalled words per list
+/lure:							stores the lure of the currently presented study list 
+/lureHelper:					helper lure = lure surrounded by commas (example: ,bed,); used to determine if lure is contained in values.Recall
+/lure_recall:					counts number of time a lure was recalled
+/RecallWordEstimate:			stores the computer-derived estimate of the number of words recalled
+									Note: see below of algoritm implemented. Algorithm does not check whether the recalled words are actual words.
+
+/reducedRecall:					helper variable to estimate number of words recalled
+/recallLength:					helper variable to estimate number of words recalled
+/positionLure_Recall:			if lure is present in recall: stores the position of the lure in the recall list
+
+/index:							helper variable to analyze recall words and positions of certain symbols in the recall string (e.g 'comma')
+/countSeparator:				helper variable to analyze recall words and positions of certain symbols in the recall string
+/helperRecall:					helper variable to analyze recall words
+/intrusionOther:				stores the character strings contained in the recall string that are neither the study words nor the lure
+									Note: misspelled study words will show up here
+/nr_otherRecalledWords			stores the number of other recalled words that are neither study words nor lures
+/tempSearchTarget:				helper variable to look for certain words in the recall string
+/number1:						helper variables to create math problems 
+/number2:						helper variables to create math problems 
+/mathProblem:					stores the generated math problems
+/wordCategory:					Recognition Phase: "new", "new-lure", "recall" (for study words used with recall task), "recall-lure", "math" (for study words used with math task), "math-lure"						
+/recognitionResponse:			"old", "new"
+/rememberResponse:				"remember" vs. "know"
+/stim:							stores the stim presented for recognition response
+
+<values>
+/phase = ""
+/nextList = 0
+/listCount = 0
+/recallListCount = 0
+/mathListCount = 0
+
+/word1_recall = 0
+/word2_recall = 0
+/word3_recall = 0
+/word4_recall = 0
+/word5_recall = 0
+/word6_recall = 0
+/word7_recall = 0
+/word8_recall = 0
+/word9_recall = 0
+/word10_recall = 0
+/word11_recall = 0
+/word12_recall = 0
+/word13_recall = 0
+/word14_recall = 0
+/word15_recall = 0
+/Recall = ""
+/countCorrect_Recall = 0
+/lure = 0
+/lureHelper = ""
+/lure_recall = 0
+/RecallWordEstimate = 0
+/reducedRecall = 0
+/recallLength = 0
+/positionLure_Recall = 0
+/index = 0
+/countSeparator = 0
+/helperRecall = ""
+/intrusionOther = ""
+/nr_otherRecalledWords = 0
+/tempSearchTarget = ""
+
+/number1 = 0
+/number2 = 0
+/mathProblem = "";
+
+/wordCategory = 0
+/recognitionResponse = ""
+/rememberResponse = ""
+/stim = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/wordcountEstimate: 	algorithm to estimate the number of words recalled
+						-> algorithm replaces 7 possible word separators (" ", ;, etc) with "," in values.Recall
+						-> algorithm adds a comma before the first word
+						-> algoritm replaces multiple consecutive "," (up to 5) with a single one in values.Recall
+						-> algorithm adds a comma at the end of the string
+							-> values.Recall is as cleaned up as possible of random word separators
+						-> algorithm removes all "," from values.Recall and stores the resulting reduced string in values.reducedRecall
+						-> algorithm compares the length of values.reducedRecall to that of values.Recall
+						and uses the reduced length to estimate the number of words in between the separators
+						NOTE: values.recall will ideally contain only lower letter words separated by a single comma each at
+						the end of this function + a start and an ending comma
+
+/removeConsecutiveCommas:	recursive helper function to remove instances of consecutive commas from values.Recall						
+
+/lurePosition_Recall:	recursive algorithm to find the position of the lure in a list of recalled words (algorithm is only called for recall lists that contain the lure)
+						-> algorithm takes advantage of the comma separators in values.recall
+						-> finds the comma after which the word is equal to the lure
+						-> values.lure_listPosition = number of commas checked + 1;
+			
+<expressions>
+/wordcountEstimate = {
+	
+	
+	values.Recall = replaceAll(values.Recall, "\", ",");
+	values.Recall = replaceAll(values.Recall, "|", ",");	
+	values.Recall = replaceAll(values.Recall, "/", ",");	
+	values.Recall = replaceAll(values.Recall, ";", ",");	
+	values.Recall = replaceAll(values.Recall, " ", ",");	
+	values.Recall = replaceAll(values.Recall, ":", ",");
+	values.Recall = replaceAll(values.Recall, ".", ",");
+	if (computer.platform == "win"){
+values.Recall = replaceAll(values.Recall, "
+", ",");			
+	} else if (computer.platform == "mac"){
+		values.Recall = replaceAll(values.Recall, "
+", ",");
+	}	
+	values.Recall = concat(",", values.Recall);
+	expressions.removeConsecutiveCommas;
+		
+	if (!endswith(values.Recall, ",")){
+		values.Recall = concat(values.Recall, ",");	
+	}
+
+	values.RecallLength = length(values.Recall);
+	values.reducedRecall = replaceAll(values.Recall, ",", "");	
+	values.RecallWordEstimate= values.RecallLength - length(values.reducedRecall) - 1;
+}
+/removeConsecutiveCommas = {
+	values.Recall = replaceAll(values.Recall, ",,", ",");
+	if (contains(values.Recall, ",,")){
+		expressions.removeConsecutiveCommas;
+	}
+}
+/lurePosition_Recall = {
+	values.countSeparator += 1;
+	if (startswith(values.helperRecall, values.lureHelper)){
+			values.positionLure_Recall = values.countSeparator;
+	} else {
+			values.helperRecall = trimleft(values.helperRecall, ",");
+			values.index = search(values.helperRecall, ",");
+			
+			if (values.index >= 0){
+				values.helperRecall = subString(values.helperRecall, values.index, length(values.helperRecall)-values.index);
+				if (length(values.helperRecall) > 1){
+					expressions.lurePosition_Recall;			
+				}				
+			}
+	} 	
+}	
+/otherWordIntrusions = {
+	
+	values.helperRecall = values.Recall;
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(1), "");
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(2), "");	
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(3), "");	
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(4), "");
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(5), "");	
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(6), "");		
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(7), "");
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(8), "");	
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(9), "");		
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(10), "");
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(11), "");	
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(12), "");
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(13), "");
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(14), "");
+	values.helperRecall = replaceAll(values.helperRecall, item.studyWords_currentList.item(15), "");		
+	values.helperRecall = replaceAll(values.helperRecall, values.lure, "");
+	
+	if (length(replaceAll(values.helperRecall, ",", "")) > 0){
+		values.intrusionOther = values.helperRecall;		
+	} else {
+		values.intrusionOther = "";
+	}
+}
+</expressions>
+
+
+Recall:
+/mean_WordRecall:				mean of the estimated number of words recalled
+/SD_WordRecall:					standard deviation of the estimated number of words recalled
+
+/prop_word1Recall-
+/prop_word15Recall:				stores the recall proportion of words in study positions 1 - 15 (Max: 8/8 for each item)
+/prop_lureRecall:				stores recall proportion of the lure (=a specific highly related item that was NOT a study item) based on the number of recall trials (Max: 8/8)
+
+/mean_LurePosition:				calculates the mean lure Position in the list of recalled items across all lists
+/SD_LurePosition:				standard deviation of the lure positions in the list of recalled items across all lists 
+
+/mean_IntrusionsOther:			calculates the mean number of other word intrusions on recall
+									!Note: a value > 0 could be a flag to manually check in the raw data file whether misspellings of study list words 
+									occurred as these misspelled word would be counted as 'intrusions'
+/propCorrect_Math:				proportion correct math problems
+/nr_MathProblems:				number of math problems attempted 
+									
+Recognition:									
+									
+/propHits:						hit rate (across all studied words)
+/propHits_recallWords:			hit rate for study words used in recall blocks
+/propHits_mathWords:			hit rate for study words used in math blocks
+/propFA:						false alarm rate (across all non-studied words)
+/propFA_recallLures:			false alarm rate for lures tied to study words in recall blocks
+/propFA_mathLures:				false alarm rate for lures tied to study words in math blocks
+/propFA_newWords:				false alarm rate for study words from lists that were not studied
+/propFA_newLures:				false alarm rate for lures tied to study words from lists that were not studied
+
+/propRemember_recallWords:		proportion remember judgments for hits for study words used in recall blocks
+/propRemember_recallLures:		proportion remember judgments for false alarms  for recall study word lures
+
+/propRemember_mathWords:		proportion remember judgments for hits for study words used in math blocks
+/propRemember_mathLures:		proportion remember judgments for false alarms  for math study word lures
+
+/propRemember_newWords:			proportion remember judgments for false alarms for study words from lists that were not studied
+/propRemember_newLures:			proportion remember judgments for false alarms for lures of non-studied lists			
+								
+									
+<expressions>
+/mean_WordRecall = list.wordCountEstimates.mean
+/SD_WordRecall = list.wordCountEstimates.standarddeviation
+
+/prop_word1Recall = values.word1_recall/list.recallLists.itemCount
+/prop_word2Recall = values.word2_recall/list.recallLists.itemCount
+/prop_word3Recall = values.word3_recall/list.recallLists.itemCount
+/prop_word4Recall = values.word4_recall/list.recallLists.itemCount
+/prop_word5Recall = values.word5_recall/list.recallLists.itemCount
+/prop_word6Recall = values.word6_recall/list.recallLists.itemCount
+/prop_word7Recall = values.word7_recall/list.recallLists.itemCount
+/prop_word8Recall = values.word8_recall/list.recallLists.itemCount
+/prop_word9Recall = values.word9_recall/list.recallLists.itemCount
+/prop_word10Recall = values.word10_recall/list.recallLists.itemCount
+/prop_word11Recall = values.word11_recall/list.recallLists.itemCount
+/prop_word12Recall = values.word12_recall/list.recallLists.itemCount
+/prop_word13Recall = values.word13_recall/list.recallLists.itemCount
+/prop_word14Recall = values.word14_recall/list.recallLists.itemCount
+/prop_word15Recall = values.word15_recall/list.recallLists.itemCount
+
+/prop_lureRecall = values.lure_recall/list.recallLists.itemCount
+
+/mean_LurePosition = list.lurePositions.mean
+/SD_LurePosition = list.lurePositions.standarddeviation
+
+/mean_IntrusionsOther = list.intrusions.mean
+
+/propCorrect_Math = list.mathAccuracy.mean
+/nr_MathProblems = list.mathAccuracy.itemCount
+
+/propHits = (list.recognition_recallWords.mean*list.recognition_recallWords.itemCount + list.recognition_mathWords.mean*list.recognition_mathWords.itemCount)/
+(list.recognition_recallWords.itemCount + list.recognition_mathWords.itemCount)
+/propHits_recallWords = list.recognition_recallWords.mean
+/propHits_mathWords = list.recognition_mathWords.mean
+
+/propFA = 1 - ((list.recognition_mathLures.mean*list.recognition_mathLures.itemCount + list.recognition_newLures.mean*list.recognition_newLures.itemCount +
+list.recognition_newWords.mean*list.recognition_newWords.itemCount + list.recognition_recallLures.mean*list.recognition_recallLures.itemCount)/
+(list.recognition_mathLures.itemCount + list.recognition_newLures.itemCount + list.recognition_newWords.itemCount + list.recognition_recallLures.itemCount))
+/propFA_recallLures = 1 - list.recognition_recallLures.mean
+/propFA_mathLures = 1 - list.recognition_mathLures.mean
+/propFA_newWords = 1 - list.recognition_newWords.mean
+/propFA_newLures = 1 - list.recognition_newLures.mean
+
+/propRemember_recallWords = list.knowRemember_recallWords.mean
+/propRemember_recallLures = list.knowRemember_recallLures.mean
+
+/propRemember_mathWords = list.knowRemember_mathWords.mean
+/propRemember_mathLures = list.knowRemember_mathLures.mean
+
+/propRemember_newWords = list.knowRemember_newWords.mean
+/propRemember_newLures = list.knowRemember_newLures.mean
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+*****************************************
+These item list fill dynamically
+with the study words and lures
+of the currently tested list
+
+(done on block level)
+*****************************************
+
+<item studyWords_currentList>
+</item>
+
+<item lure_currentList>
+</item>
+
+
+**************************************
+Stimuli presented during Study Phase
+**************************************
+
+<text studyWord_currentList>
+/ items = studyWords_currentList
+/ txcolor = black
+/ select = sequence
+/ fontstyle = ("Arial", parameters.studywordSize, false, false, false, false, 5, 1)
+</text>
+
+<text mathProblem>
+/ items = ("<%values.mathProblem%> = ?")
+/ txcolor = black
+/ position = (50%, 40%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+</text>
+
+******************************************
+Recognition Phase
+*******************************************
+
+Note: item list fills dynamically during runtime with items from all recall study lists,
+presented at positions 1, 8, 10
+<item oldRecallItems>
+</item>
+
+Note: item list fills dynamically during runtime with items from all math study lists,
+presented at positions 1, 8, 10
+<item oldMathItems>
+</item>
+
+<item oldRecallLures>
+</item>
+
+<item oldMathLures>
+</item>
+
+<item newWords>
+</item>
+
+<item newLures>
+</item>
+
+<text recognition_newWord>
+/ items = newWords
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = blue
+</text>
+
+<text recognition_newLure>
+/ items = newLures
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = blue
+</text>
+
+<text recognition_recallWord>
+/ items = oldRecallItems
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = blue
+</text>
+
+<text recognition_recallLure>
+/ items = oldRecallLures
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = blue
+</text>
+
+<text recognition_mathWord>
+/ items = oldMathItems
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = blue
+</text>
+
+<text recognition_mathLure>
+/ items = oldMathLures
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = blue
+</text>
+
+<text old>
+/ items = ("OLD")
+/ position = (25%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (15%, 10%)
+/ vjustify = center
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+<text new>
+/ items = ("NEW")
+/ position = (75%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (15%, 10%)
+/ vjustify = center
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+<text stim>
+/ items = ("<%values.stim%>")
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = blue
+</text>
+
+<text remember>
+/ items = ("REMEMBER")
+/ position = (25%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (30%, 10%)
+/ vjustify = center
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+<text know>
+/ items = ("KNOW")
+/ position = (75%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (30%, 10%)
+/ vjustify = center
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: list.listAssignment randomly samples 8 lists to be used for study-recall, study-math, and recognition only
+<list listAssignment>
+/items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24)
+/ selectionrate = always
+/ replace = false
+/ resetinterval = 0
+</list>
+
+
+Note: the following lists fill dynamically at the beginning of the list.
+They will contain the randomly selected lists used as study lists (recall, math) and new lists.
+Each of these lists will contain 8 lists.
+
+<list recallLists>
+/ replace = false
+</list>
+
+<list mathLists>
+/ replace = false
+</list>
+
+<list newLists>
+/ replace = false
+/ selectionrate = always
+</list>
+
+
+Note: this list fills dynamically with 1 = recall; 2 = math for all old items used during recognition
+<list studyListPhase>
+</list>
+
+Note: list is used to generate simple addition and multiplication problems
+<list digits>
+/items = (1, 2, 3, 4, 5, 6, 7, 8, 9)
+/ replace = true
+/ selectionrate = always
+</list>
+
+
+
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: this list stores 1 = correct math solution; 0 = otherwise
+<list mathAccuracy>
+</list>
+
+
+Note: this list stores all wordCountEstimates across all recall lists
+<list wordCountEstimates>
+</list>
+
+Note: list stores number of correctly recalled words across recall lists
+<list accuracy_recall>
+</list>
+
+Note: list stores the word position of the recalled lures across recall lists
+<list lurePositions>
+</list>
+
+Note: list stores number of other intrusions on recall across all recall lists
+<list intrusions>
+</list>
+
+Note: list stores 1 = correct ; 0 = otherwise for newWord judgments
+<list recognition_newWords>
+</list>
+
+Note: list stores 1 = correct ; 0 = otherwise for newLure judgments
+<list recognition_newLures>
+</list>
+
+Note: list stores 1 = correct ; 0 = otherwise for recallWord judgments
+<list recognition_recallWords>
+</list>
+
+Note: list stores 1 = correct ; 0 = otherwise for recallLure judgments
+<list recognition_recallLures>
+</list>
+
+Note: list stores 1 = correct ; 0 = otherwise for mathWord judgments
+<list recognition_mathWords>
+</list>
+
+Note: list stores 1 = correct ; 0 = otherwise for mathLure judgments
+<list recognition_mathLures>
+</list>
+
+Note: list stores 1 = remember ; 0 = know for newWord know-remember judgments
+<list knowRemember_newWords>
+</list>
+
+Note: list stores 1 = remember ; 0 = know for newLure know-remember judgments
+<list knowRemember_newLures>
+</list>
+
+Note: list stores 1 = remember ; 0 = know for recallWord know-remember judgments
+<list knowRemember_recallWords>
+</list>
+
+Note: list stores 1 = remember ; 0 = know for recallLure know-remember judgments
+<list knowRemember_recallLures>
+</list>
+
+Note: list stores 1 = remember ; 0 = know for mathWord know-remember judgments
+<list knowRemember_mathWords>
+</list>
+
+Note: list stores 1 = remember ; 0 = know for mathLure know-remember judgments
+<list knowRemember_mathLures>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************
+currentList
+**************************
+
+Note: trial adds a delay before the presentation of the first list word
+<trial studyPhaseDelay>
+/ trialduration = parameters.wordpresentationSOA
+/ recorddata = false
+</trial>
+
+Note: trial.studyList_list
+* presents the next (randomly selected) study list word of the currently presented list for a predetermined amount of time
+* the first item of the current study list as well as a randomly selected item from positions 2-6
+are stored in item.old (specific to list) which will store the two 'old' items used for the recognition phase
+(Note: this step is coded under block level as it's specific to the list)
+
+<trial studyList_currentList>
+/ ontrialbegin = [
+	values.phase = "study";
+	values.lure = item.lure_currentList.item(1);
+	values.lureHelper = ",";
+	values.lureHelper = concat(values.lureHelper, values.lure);
+	values.lureHelper = concat(values.lureHelper, ",");	
+]
+/ stimulusframes = [1 = studyWord_currentList]
+/ trialduration = parameters.wordpresentationSOA
+</trial>
+
+************************
+immediate Recall
+************************
+
+Note: openended.recall_currentList 
+* presents a textbox to collect all recalled items
+(each of these items should ideally be put on a new line in the textbox)
+* trial estimates the number of estimated words (whether or not they really are words)
+* trial checks which study words (including the lure) have been mentioned 
+and counts the number of correctly recalled items. Note: script tests ",studyword," to ensure that the entire word is contained
+* recall is time-limited
+<openended recall_currentList>
+/ stimulusframes = [1 = recallInstructions]
+/ pretrialpause = parameters.recallDelay
+/ ontrialbegin = [
+	values.Recall = "";
+	values.countCorrect_Recall = 0;
+	values.phase = "recall";
+]
+/ size = (20%, 30%)
+/ multiline = true
+/ charlimit = 5000
+/ position = (50%, 50%)
+/ monkeyresponse = ("mad, ;wrath, enrage,butter,flour,toast,table,sofa,bench,hot,chilly,frost", "mad, ;wrath, enrage,butter,flour,toast,table,sofa,bench,hot,chilly,frost,anger,sleep,chair")
+/ ontrialend = [
+	values.Recall = tolower(openended.recall_currentList.response);
+	expressions.wordcountEstimate;
+	list.wordCountEstimates.insertItem(values.RecallWordEstimate, 1);	
+		
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(1));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word1_recall += 1;
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(2));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word2_recall += 1;		
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(3));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word3_recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(4));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word4_recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(5));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word5_recall += 1;		
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(6));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word6_recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(7));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word7_recall += 1;		
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(8));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;	
+		values.word8_recall += 1;		
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(9));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word9_recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(10));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word10_recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(11));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word11_recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(12));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word12_recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(13));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word13_recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(14));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word14_recall += 1;		
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.studyWords_currentList.item(15));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word15_recall += 1;		
+	}	
+	
+	
+	if (contains(values.Recall, values.lureHelper)){
+		values.lure_recall += 1;	
+		values.countSeparator = 0;
+		values.helperRecall = values.Recall;
+		values.index = 0;
+		expressions.lurePosition_Recall;
+		list.lurePositions.insertItem(values.positionLure_Recall, 1);
+	}	
+	
+	
+	values.nr_otherRecalledWords = values.RecallWordEstimate - values.countCorrect_Recall - (values.positionLure_Recall > 0);
+	list.intrusions.insertItem(values.nr_otherRecalledWords, 1);	
+	expressions.otherWordIntrusions;
+
+	list.accuracy_recall.insertItem(values.countCorrect_Recall, 1);
+
+]
+/ timeout = parameters.maxRecallDuration
+</openended>
+
+<openended math>
+/ ontrialbegin = [
+	values.phase = "math";
+	values.mathProblem = "";
+	values.number1 = list.digits.nextValue;
+	values.number2 = list.digits.nextValue;
+	values.mathProblem = concat(values.mathProblem, values.number1);
+	values.mathProblem = concat(values.mathProblem, " ");	
+	
+	if (replace(0,1) == 1){
+		values.mathProblem = concat(values.mathProblem, "*");
+	} else {
+		values.mathProblem = concat(values.mathProblem, "+");
+	}
+	
+	values.mathProblem = concat(values.mathProblem, " ");	
+	values.mathProblem = concat(values.mathProblem, values.number2);
+]
+/ stimulusframes = [1 = mathProblem]
+/ monkeyresponse = ("1", "2", "5", "12", "24", "10")
+/ iscorrectresponse = [
+	return (openended.math.response == evaluate(values.mathProblem));
+]
+/ ontrialend = [
+	list.mathAccuracy.insertItem(openended.math.correct, 1);
+]
+/ branch = [
+		return openended.math;		
+]
+/ buttonlabel = "submit"
+/ mask = integer
+</openended>
+
+<trial break>
+/ stimulusframes = [1 = break]
+/ recorddata = false
+/ trialduration = parameters.MinRecognitionDelay;
+</trial>
+
+
+*******************************************
+Recognition Trials
+*******************************************
+
+<trial recognition_newWord>
+/ ontrialbegin = [
+	values.wordCategory = "new";
+]
+/ stimulusframes = [1 = recognitionInstructions, recognition_newWord, old, new]
+/ validresponse = (old, new)
+/ correctresponse = (new)
+/ ontrialend = [
+	values.recognitionResponse = trial.recognition_newWord.response;
+	values.stim = text.recognition_newWord.currentItem;
+	list.recognition_newWords.insertItem(trial.recognition_newWord.correct, 1);
+]
+/ branch = [
+	if (values.recognitionResponse == "old"){
+		return trial.KnowRememberJudgment;
+	}
+]
+</trial>
+
+<trial recognition_newLure>
+/ ontrialbegin = [
+	values.wordCategory = "new-lure";
+]
+/ stimulusframes = [1 = recognitionInstructions, recognition_newLure, old, new]
+/ validresponse = (old, new)
+/ correctresponse = (new)
+/ ontrialend = [
+	values.recognitionResponse = trial.recognition_newLure.response;
+	values.stim = text.recognition_newLure.currentItem;
+	list.recognition_newLures.insertItem(trial.recognition_newLure.correct, 1);
+]
+/ branch = [
+	if (values.recognitionResponse == "old"){
+		return trial.KnowRememberJudgment;
+	}
+]
+</trial>
+
+
+<trial recognition_recallWord>
+/ ontrialbegin = [
+	values.wordCategory = "recall";
+]
+/ stimulusframes = [1 = recognitionInstructions, recognition_recallWord, old, new]
+/ validresponse = (old, new)
+/ correctresponse = (old)
+/ ontrialend = [
+	values.recognitionResponse = trial.recognition_recallWord.response;
+	values.stim = text.recognition_recallWord.currentItem;
+	list.recognition_recallWords.insertItem(trial.recognition_recallWord.correct, 1);
+]
+/ branch = [
+	if (values.recognitionResponse == "old"){
+		return trial.KnowRememberJudgment;
+	}
+]	
+</trial>
+
+<trial recognition_recallLure>
+/ ontrialbegin = [
+	values.wordCategory = "recall-lure";
+]
+/ stimulusframes = [1 = recognitionInstructions, recognition_recallLure, old, new]
+/ validresponse = (old, new)
+/ correctresponse = (new)
+/ ontrialend = [
+	values.recognitionResponse = trial.recognition_recallLure.response;
+	values.stim = text.recognition_recallLure.currentItem;
+	list.recognition_recallLures.insertItem(trial.recognition_recallLure.correct, 1);
+]
+/ branch = [
+	if (values.recognitionResponse == "old"){
+		return trial.KnowRememberJudgment;
+	}
+]
+</trial>
+
+<trial recognition_mathWord>
+/ ontrialbegin = [
+	values.wordCategory = "math";
+]
+/ stimulusframes = [1 = recognitionInstructions, recognition_mathWord, old, new]
+/ validresponse = (old, new)
+/ correctresponse = (old)
+/ ontrialend = [
+	values.recognitionResponse = trial.recognition_mathWord.response;
+	values.stim = text.recognition_mathWord.currentItem;
+	list.recognition_mathWords.insertItem(trial.recognition_mathWord.correct, 1);
+]
+/ branch = [
+	if (values.recognitionResponse == "old"){
+		return trial.KnowRememberJudgment;
+	}
+]
+</trial>
+
+<trial recognition_mathLure>
+/ ontrialbegin = [
+	values.wordCategory = "math-lure";
+]
+/ stimulusframes = [1 = recognitionInstructions, recognition_mathLure, old, new]
+/ validresponse = (old, new)
+/ correctresponse = (new)
+/ ontrialend = [
+	values.recognitionResponse = trial.recognition_mathLure.response;
+	values.stim = text.recognition_mathLure.currentItem;
+	list.recognition_mathLures.insertItem(trial.recognition_mathLure.correct, 1);
+]
+/ branch = [
+	if (values.recognitionResponse == "old"){
+		return trial.KnowRememberJudgment;
+	}
+]
+</trial>
+
+
+<trial KnowRememberJudgment>
+/ stimulusframes = [1=rememberknowInstructions, stim, remember, know]
+/ validresponse = (remember, know)
+/ ontrialend = [
+	if (trial.KnowRememberJudgment.response == "remember"){
+		values.rememberResponse = 1;
+	} else {
+		values.rememberResponse = 0;
+	}
+	
+	if (values.wordCategory == "new"){
+		list.knowRemember_newWords.insertItem(values.rememberResponse, 1);
+	} else if (values.wordCategory == "new-lure"){
+		list.knowRemember_newLures.insertItem(values.rememberResponse, 1);
+	} else if (values.wordCategory == "recall"){
+		list.knowRemember_recallWords.insertItem(values.rememberResponse, 1);
+	} else if (values.wordCategory == "recall-lure"){
+		list.knowRemember_recallLures.insertItem(values.rememberResponse, 1);
+	} else if (values.wordCategory == "math"){
+		list.knowRemember_mathWords.insertItem(values.rememberResponse, 1);
+	} else if (values.wordCategory == "math-lure"){
+		list.knowRemember_mathLures.insertItem(values.rememberResponse, 1);
+	}
+]
+</trial>
+
+********************************
+Recognition Helper Trial
+********************************
+
+Note: trial 
+* adds the 1st, 8th and 10th item of the 8 randomly selected 'new lists' to a 
+dynamically created item element of 24 words 
+* adds the lures of each 8 lists to item.newLures
+<trial newWordsCreation>
+/ ontrialbegin = [
+	values.nextList = list.newLists.nextValue;
+	if (values.nextList == 1){
+		item.newWords.insertItem(item.studyWords_list1.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list1.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list1.item(10), 1);
+		item.newLures.insertItem(item.lure_list1.item(1), 1);
+	} else if (values.nextList == 2){
+		item.newWords.insertItem(item.studyWords_list2.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list2.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list2.item(10), 1);
+		item.newLures.insertItem(item.lure_list2.item(1), 1);		
+	} else if (values.nextList == 3){
+		item.newWords.insertItem(item.studyWords_list3.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list3.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list3.item(10), 1);
+		item.newLures.insertItem(item.lure_list3.item(1), 1);		
+	} else if (values.nextList == 4){
+		item.newWords.insertItem(item.studyWords_list4.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list4.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list4.item(10), 1);
+		item.newLures.insertItem(item.lure_list4.item(1), 1);		
+	} else if (values.nextList == 5){
+		item.newWords.insertItem(item.studyWords_list5.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list5.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list5.item(10), 1);
+		item.newLures.insertItem(item.lure_list5.item(1), 1);		
+	} else if (values.nextList == 6){
+		item.newWords.insertItem(item.studyWords_list6.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list6.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list6.item(10), 1);
+		item.newLures.insertItem(item.lure_list6.item(1), 1);		
+	} else if (values.nextList == 7){
+		item.newWords.insertItem(item.studyWords_list7.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list7.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list7.item(10), 1);
+		item.newLures.insertItem(item.lure_list7.item(1), 1);		
+	} else if (values.nextList == 8){
+		item.newWords.insertItem(item.studyWords_list8.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list8.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list8.item(10), 1);
+		item.newLures.insertItem(item.lure_list8.item(1), 1);		
+	} else if (values.nextList == 9){
+		item.newWords.insertItem(item.studyWords_list9.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list9.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list9.item(10), 1);
+		item.newLures.insertItem(item.lure_list9.item(1), 1);		
+	} else if (values.nextList == 10){
+		item.newWords.insertItem(item.studyWords_list10.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list10.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list10.item(10), 1);
+		item.newLures.insertItem(item.lure_list10.item(1), 1);		
+
+	} else if (values.nextList == 11){
+		item.newWords.insertItem(item.studyWords_list11.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list11.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list11.item(10), 1);	
+		item.newLures.insertItem(item.lure_list11.item(1), 1);		
+	} else if (values.nextList == 12){
+		item.newWords.insertItem(item.studyWords_list12.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list12.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list12.item(10), 1);
+		item.newLures.insertItem(item.lure_list12.item(1), 1);		
+	} else if (values.nextList == 13){
+		item.newWords.insertItem(item.studyWords_list13.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list13.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list13.item(10), 1);
+		item.newLures.insertItem(item.lure_list13.item(1), 1);		
+	} else if (values.nextList == 14){
+		item.newWords.insertItem(item.studyWords_list14.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list14.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list14.item(10), 1);
+		item.newLures.insertItem(item.lure_list14.item(1), 1);		
+	} else if (values.nextList == 15){
+		item.newWords.insertItem(item.studyWords_list15.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list15.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list15.item(10), 1);
+		item.newLures.insertItem(item.lure_list15.item(1), 1);		
+	} else if (values.nextList == 16){
+		item.newWords.insertItem(item.studyWords_list16.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list16.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list16.item(10), 1);
+		item.newLures.insertItem(item.lure_list16.item(1), 1);		
+	} else if (values.nextList == 17){
+		item.newWords.insertItem(item.studyWords_list17.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list17.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list17.item(10), 1);
+		item.newLures.insertItem(item.lure_list17.item(1), 1);		
+	} else if (values.nextList == 18){
+		item.newWords.insertItem(item.studyWords_list18.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list18.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list18.item(10), 1);
+		item.newLures.insertItem(item.lure_list18.item(1), 1);		
+	} else if (values.nextList == 19){
+		item.newWords.insertItem(item.studyWords_list19.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list19.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list19.item(10), 1);
+		item.newLures.insertItem(item.lure_list19.item(1), 1);		
+	} else if (values.nextList == 20){
+		item.newWords.insertItem(item.studyWords_list20.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list20.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list20.item(10), 1);
+		item.newLures.insertItem(item.lure_list20.item(1), 1);		
+	} else if (values.nextList == 21){
+		item.newWords.insertItem(item.studyWords_list21.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list21.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list21.item(10), 1);
+		item.newLures.insertItem(item.lure_list21.item(1), 1);		
+	} else if (values.nextList == 22){
+		item.newWords.insertItem(item.studyWords_list22.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list22.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list22.item(10), 1);
+		item.newLures.insertItem(item.lure_list22.item(1), 1);		
+	} else if (values.nextList == 23){
+		item.newWords.insertItem(item.studyWords_list23.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list23.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list23.item(10), 1);
+		item.newLures.insertItem(item.lure_list23.item(1), 1);		
+	} else if (values.nextList == 24){
+		item.newWords.insertItem(item.studyWords_list24.item(1), 1);
+		item.newWords.insertItem(item.studyWords_list24.item(8), 1);		
+		item.newWords.insertItem(item.studyWords_list24.item(10), 1);
+		item.newLures.insertItem(item.lure_list24.item(1), 1);		
+	}		
+]
+/ trialduration = 0
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: block.recall
+- resets recall variable before each run and resets the studyWords_currentList items
+- randomly selects the next recall list from list.recallLists and fills the
+studyWords_currentList items with the items of the selected List (using 24 conditionals)
+<block recall>
+/ onblockbegin = [
+	values.listCount += 1;
+	values.recallListCount += 1;
+	values.RecallWordEstimate = 0;
+	values.positionLure_Recall = 0;
+	values.Recall = "";
+	values.nr_otherRecalledWords = 0;
+	values.countCorrect_Recall = 0;
+	values.intrusionOther = "";
+	
+	item.studyWords_currentList.reset();
+	item.lure_currentList.reset();
+	
+	values.nextList = list.recallLists.nextValue;	
+	if (values.nextList == 1){
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list1.item(1), 1);			
+	} else if (values.nextList == 2){
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list2.item(1), 1);
+	} else if (values.nextList == 3){
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list3.item(1), 1);
+	} else if (values.nextList == 4){
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(15), 15);		
+		item.lure_currentList.insertItem(item.lure_list4.item(1), 1);
+	} else if (values.nextList == 5){
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(15), 15);		
+		item.lure_currentList.insertItem(item.lure_list5.item(1), 1);
+	} else if (values.nextList == 6){
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(15), 15);		
+		item.lure_currentList.insertItem(item.lure_list6.item(1), 1);
+	} else if (values.nextList == 7){
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list7.item(1), 1);
+	} else if (values.nextList == 8){
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list8.item(1), 1);
+	} else if (values.nextList == 9){
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list9.item(1), 1);
+	} else if (values.nextList == 10){
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list10.item(1), 1);
+	} else if (values.nextList == 11){
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list11.item(1), 1);
+	} else if (values.nextList == 12){
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list12.item(1), 1);
+	} else if (values.nextList == 13){
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list13.item(1), 1);
+	} else if (values.nextList == 14){
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list14.item(1), 1);
+	} else if (values.nextList == 15){
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list15.item(1), 1);
+	} else if (values.nextList == 16){
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list16.item(1), 1);
+	} else if (values.nextList == 17){
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(15), 15);		
+		item.lure_currentList.insertItem(item.lure_list17.item(1), 1);
+	} else if (values.nextList == 18){
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list18.item(1), 1);
+	} else if (values.nextList == 19){
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(15), 15);		
+		item.lure_currentList.insertItem(item.lure_list19.item(1), 1);
+	} else if (values.nextList == 20){
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(15), 15);		
+		item.lure_currentList.insertItem(item.lure_list20.item(1), 1);
+	} else if (values.nextList == 21){
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list21.item(1), 1);
+	} else if (values.nextList == 22){
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list22.item(1), 1);
+	} else if (values.nextList == 23){
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list23.item(1), 1);
+	} else if (values.nextList == 24){
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list24.item(1), 1);
+	}	
+
+	item.oldRecallItems.insertItem(item.studyWords_currentList.item(1), 1);
+	item.oldRecallItems.insertItem(item.studyWords_currentList.item(8), 1);	
+	item.oldRecallItems.insertItem(item.studyWords_currentList.item(10), 1);
+	item.oldRecallLures.insertItem(item.lure_currentList.item(1), 1);	
+]	
+/ trials = [
+	1 = studyPhaseDelay;
+	2-16 = studyList_currentList; 
+	17 = recall_currentList; 
+]			
+</block>
+
+
+<block math>
+/ onblockbegin = [
+	values.listCount += 1;
+	values.mathListCount += 1;
+	values.RecallWordEstimate = 0;
+	values.positionLure_Recall = 0;
+	values.Recall = "";
+	values.nr_otherRecalledWords = 0;
+	values.countCorrect_Recall = 0;
+	values.intrusionOther = "";	
+	item.studyWords_currentList.reset();
+	item.lure_currentList.reset();
+	
+	values.nextList = list.mathLists.nextValue;	
+	if (values.nextList == 1){
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list1.item(15), 15);		
+		item.lure_currentList.insertItem(item.lure_list1.item(1), 1);			
+	} else if (values.nextList == 2){
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list2.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list2.item(1), 1);
+	} else if (values.nextList == 3){
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list3.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list3.item(1), 1);
+	} else if (values.nextList == 4){
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list4.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list4.item(1), 1);
+	} else if (values.nextList == 5){
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list5.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list5.item(1), 1);
+	} else if (values.nextList == 6){
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list6.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list6.item(1), 1);
+	} else if (values.nextList == 7){
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list7.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list7.item(1), 1);
+	} else if (values.nextList == 8){
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list8.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list8.item(1), 1);
+	} else if (values.nextList == 9){
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list9.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list9.item(1), 1);
+	} else if (values.nextList == 10){
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list10.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list10.item(1), 1);
+	} else if (values.nextList == 11){
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list11.item(15), 15);		
+		item.lure_currentList.insertItem(item.lure_list11.item(1), 1);
+	} else if (values.nextList == 12){
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list12.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list12.item(1), 1);
+	} else if (values.nextList == 13){
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list13.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list13.item(1), 1);
+	} else if (values.nextList == 14){
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list14.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list14.item(1), 1);
+	} else if (values.nextList == 15){
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list15.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list15.item(1), 1);
+	} else if (values.nextList == 16){
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list16.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list16.item(1), 1);
+	} else if (values.nextList == 17){
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list17.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list17.item(1), 1);
+	} else if (values.nextList == 18){
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list18.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list18.item(1), 1);
+	} else if (values.nextList == 19){
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list19.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list19.item(1), 1);
+	} else if (values.nextList == 20){
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list20.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list20.item(1), 1);
+	} else if (values.nextList == 21){
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list21.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list21.item(1), 1);
+	} else if (values.nextList == 22){
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list22.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list22.item(1), 1);
+	} else if (values.nextList == 23){
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list23.item(15), 15);				
+		item.lure_currentList.insertItem(item.lure_list23.item(1), 1);
+	} else if (values.nextList == 24){
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(1), 1);
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(2), 2);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(3), 3);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(4), 4);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(5), 5);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(6), 6);
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(7), 7);
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(8), 8);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(9), 9);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(10), 10);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(11), 11);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(12), 12);	
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(13), 13);
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(14), 14);
+		item.studyWords_currentList.insertItem(item.studyWords_list24.item(15), 15);			
+		item.lure_currentList.insertItem(item.lure_list24.item(1), 1);
+	}	
+
+	item.oldMathItems.insertItem(item.studyWords_currentList.item(1), 1);
+	item.oldMathItems.insertItem(item.studyWords_currentList.item(8), 1);	
+	item.oldMathItems.insertItem(item.studyWords_currentList.item(10), 1);
+	item.oldMathLures.insertItem(item.lure_currentList.item(1), 1);		
+]	
+/ trials = [1 = studyPhaseDelay; 2-16 = studyList_currentList]
+/ branch = [
+	return block.mathProblems;
+]
+</block>
+
+<block mathProblems>
+/ timeout = parameters.maxRecallDuration
+/ trials = [1 = math]
+</block>
+
+
+Note: block.break
+- dynamically creates the item lists used for the new items for the recognition task
+- resets all recall variables
+<block break>
+/ onblockbegin = [
+	values.RecallWordEstimate = "";
+	values.positionLure_Recall = "";
+	values.Recall = "";
+	values.nr_otherRecalledWords = "";
+	values.countCorrect_Recall = "";
+	values.intrusionOther = "";
+	values.lure = "";
+]
+/ trials = [1-8 = newWordsCreation; 9 = break]
+/ onblockend = [
+	values.nextList = "";
+]
+</block>
+
+Note: block.recognition
+* presents 96 trials (48 new, 48 old) in random order
+<block recognition>
+/ preinstructions = (recognitionPhase, recognitionPhase2)
+/ trials = [1-96 = noreplace(trial.recognition_newWord, trial.recognition_newWord, trial.recognition_newWord, trial.recognition_newLure,
+trial.recognition_recallWord, trial.recognition_recallWord, trial.recognition_recallWord, trial.recognition_recallLure,
+trial.recognition_mathWord, trial.recognition_mathWord, trial.recognition_mathWord, trial.recognition_mathLure)]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt a>
+/ preinstructions = (Intro, Intro2, Intro3)
+
+/ onexptbegin = [
+	var i = 0;
+	while (i < 8){
+		list.recallLists.appendItem(list.listAssignment.nextValue);
+		i += 1;
+	}
+
+	i = 0;
+	while (i < 8){
+		list.mathLists.appendItem(list.listAssignment.nextValue);
+		i += 1;
+	}
+	
+	i = 0;
+	while (i < 8){
+		list.newLists.appendItem(list.listAssignment.nextValue);
+		i += 1;
+	}
+]
+
+/blocks = [
+	1-16 = noreplace(block.recall, block.math);
+	17 = break;
+	18 = recognition;
+]		
+</expt>
+	
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

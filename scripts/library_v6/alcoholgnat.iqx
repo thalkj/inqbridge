@@ -1,0 +1,1231 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+										   Alcohol GNAT
+___________________________________________________________________________________________________________________
+									
+This script is in part based on the original gnatdemo.iqx by Brian Nosek (nosek@virginia.edu)
+last updated:  10-07-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-07-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+											
+This script implements an Alcohol Go-Nogo Association Task (GNAT).
+The Alcohol GNAT uses the Go-Nogo framework of responding to signal and noise stimuli to investigate implicit bias 
+towards alcohol. In contrast to reaction time based tests of implicit bias (e.g. Implicit Association Test), 
+the GNAT framework mainly focuses on accuracy data and specifically d prime measures (measures of sensitivity 
+to distinguish signals from noise in signal detection theory) to infer implicit bias. Within the GNAT framework, 
+greater sensitivity  to distinguish the signals (here: alcohol) from noise (here: non-alcoholic drinks) 
+if the signal is paired with one attributeA (here: good) than if it's paired with another attributeB (here: bad) 
+is indicative of a stronger association between  the target category and attributeA (here: alcohol-good) 
+than between the target and attribut B (here: alcohol-bad).
+
+											
+The implemented procedure is similarly to:
+											
+Obasi, E.M., Cavanagh, L., Pittman, D.M., & Brooks, J.J. (2016). Effects of evaluative context in implicit 
+cognitions associated with alcohol and violent behaviors. Addictive Behaviors Reports 3 (2016) 48–55										
+
+GNAT Literature Reference:
+Nosek, B. A., & Banaji, M. R. (2001). The go/no-go association task.  Social Cognition, 19(6), 625-666. 
+
+Adjustments to z-scores as recommended by:
+Gregg, A. & Sedikides, C. (2010). Narcissistic Fragility:
+Rethinking Its Links to Explicit and Implicit Self-esteem, Self and Identity, 9:2, 142-161 (p.148)
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants are asked to categorize attributes (e.g. "happy"; "unhappy") and target items (e.g "BEER") into 
+predetermined categories via keystroke presses. 
+
+The basic go-nogo task is to press the Spacebar if an item (e.g. "happy") belongs to the category 
+currently being tested  (e.g. "Good" = signal items)  and to do nothing if it doesn't (= noise items).
+
+For practice, participants sort items into signal categories "Good" (as opposed to noise: items from 'Bad' category), 
+"Bad" (as opposed to noise: items from 'Good' category), and "Alcoholic Drinks" 
+(as opposed to noise: items from "non-alcoholic drinks" category).
+
+For the test, participants are asked to sort items into the paired/combined categories (e.g. 
+"Alcoholic Drinks OR Good" and "Alcoholic Drinks OR Bad"). When an item belongs to either one of these two categories,  
+participants should press the Spacebar. If an item belongs to neither, participants should simply wait for the next
+item to come on screen.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 10 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'alcoholgnat_raw*.iqdat'
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+										
+
+responsetimeout_target:				time in ms that is allowed for response in a given target trial
+responsetimeout_noise:				time in ms that is allowed for response in a given noise trial
+
+signal:						  		1 = signal trial (spacebar response is correct); 
+									0 = noise trial (no response is correct)
+								
+phase:								"training" (one category) vs. "test" (two categories)								
+
+targettype:							"A"(here: A-alcoholic drinks)
+
+pairing:							"AA" -> targetA-attributeA (here: alcoholic drinks and good)
+									"AB" -> targetA-attributeB (here: alcoholic drinks and bad)
+									
+trialtype:							training phase: "training"
+									test phase: "practice" vs. "test"
+
+stimulusitem:						the presented stimulusitems in order of presentation in stimulusframes (see trials)
+response:							response made (either 57 = Spacebar or 0 for no response)
+correct:							the accuracy of response (1 = correct; 0 = error)
+latency:							the latency of the response in ms (or if no response: response timeout duration)
+
+(2) Summary data file: 'alcoholgnat_summary*.iqdat'
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+								
+///parameter settings:
+responsetimeout2_signal:			stores the response timeouts in ms used for signals in the first gnat round (2 blocks) in this script (default: 700ms)
+responsetimeout2_noise:				stores the response timeouts in ms used for noise in the first gnat round (2 blocks) in this script (default: 700ms)
+responsetimeout3_signal:			stores the response timeouts in ms used in this study for signals in the second gnat round (2 blocks) in this script (default: 550ms)
+
+responsetimeout3_noise:				stores the response timeouts in ms used for noise in the second gnat round (2 blocks) in this script (default: 550ms)
+									Notes: responsetimeouts1 (1000ms) are used for practice only
+
+///data:									
+propcorrect_AA:						overall proportion correct for pairing targetA-attributeA (here: alcoholic drinks-good); test trials only
+propcorrect_ABd:					overall proportion correct for pairing targetA-attributeB (here: alcoholic drinks-bad); test trials only
+
+////////////////////////////////////////////////////
+AA Condition:
+signals = alcoholic or good stims
+noise = anything else (non-alcoholic or bad stims)
+////////////////////////////////////////////////////
+
+rHit_AA:			hit rate for pairing targetA-attributeA (here: alcoholic drinks-good) across all responsetimeouts; test trials only
+						hit: pressing spacebar for signals (alcoholic OR good stims) in AA condition
+						
+rMiss_AA:			miss rate for pairing targetA-attributeA (here: alcoholic drinks-good) across all responsetimeouts; test trials only
+						miss: not pressing spacebar for signals (alcoholic OR good stims) in AA condition
+						
+rFa_AA:				false alarm (FA) rate for pairing targetA-attributeA (here: alcoholic drinks-good) across all responsetimeouts; test trials only
+						false alarm: pressing spacebar for noise stims (non alcoholic OR bad stims) in AA condition
+
+rCr_AA:				correct rejection (CR) for pairing targetA-attributeA (here: alcoholic drinks-good) across all responsetimeouts; test trials only
+						cr: not pressing spacebar for noise stims (non alcoholic OR bad stims) in AA condition
+
+zHit_AA:			z-score of hit rate for pairings targetA-attributeA (here: alcoholic drinks-good)
+zFa_AA:				z-score of FA rate for pairings targetA-attributeA (here: alcoholic drinks-good)
+										
+Note: *Adjustments to z-scores as recommended by:
+Gregg, A. & Sedikides, C. (2010). Narcissistic Fragility:
+Rethinking Its Links to Explicit and Implicit Self-esteem, Self and Identity, 9:2, 142-161 (p.148)										
+=> Adjustments are made if the  FArate (hitRate) = 0 (increased to 0.005) or 1 (decreased to 0.995)*
+
+dPrime_AA:	Computes d' (parametric measure of discriminability btw. signals and noise) for 'alcoholic drink-Good' Pairings
+			=> Range (in this script): 
+			-5.1516586840152740479 <= dprime <= 5.1516586840152740479 (=perfect performance)
+			=> The higher the value, the better signals (go stims) were  distinguished from noise (nogo stims)
+			(d' = 0: chance performance; negative d-primes: participant treated nontargets as targets and targets as nontargets)
+													
+c_AA: 		c-criterion in signal detection:The absolute value of c provides an indication of the strength of
+			the response bias/response style
+			negative: participant more likely to report that signal (go stims) is present (liberal response style);
+			may favor faster responding in speed-accuracy trade-off response paradigms
+			positive: favoring caution (conservative response style)										
+										
+
+////////////////////////////////////////////////////
+AB Condition:
+signals = alcoholic or bad stims
+noise = anything else (non-alcoholic or good stims)
+////////////////////////////////////////////////////
+										
+rHit_AB:			hit rate for pairing targetA-attributeB (here: alcoholic drinks-bad) across all responsetimeouts; test trials only
+						hit: pressing spacebar for signals (alcoholic OR good words) in AA condition
+						
+rMiss_AB:			miss rate for pairing targetA-attributeB (here: alcoholic drinks-bad) across all responsetimeouts; test trials only
+						miss: not pressing spacebar for signals (alcoholic OR good words) in AA condition
+						
+rFa_AB:				false alarm (FA) rate for pairing targetA-attributeB (here: alcoholic drinks-bad) across all responsetimeouts; test trials only
+						false alarm: pressing spacebar for noise stims (non alcoholic OR good words) in AA condition
+
+rCr_AB:				correct rejection (CR) for pairing targetA-attributeB (here: alcoholic drinks-bad) across all responsetimeouts; test trials only
+						cr: not pressing spacebar for noise stims (non alcoholic OR good words) in AA condition
+
+zHit_AB:			z-score of hit rate for pairings targetA-attributeA (here: alcoholic drinks-bad)
+zFa_AB:				z-score of FA rate for pairings targetA-attributeA (here: alcoholic drinks-bad)
+										
+
+dPrime_AB:	Computes d' (parametric measure of discriminability btw. signals and noise) for 'alcoholic drink-bad' Pairings													
+c_AB: 		c-criterion for for 'alcoholic drink-bad' Pairings
+
+										
+dPrimeDiff:	the difference in dprimes for 'Alcohol-Good' and 'Alcohol-Bad' pairings	(dPrime_AA-dPrime_AB)									
+			=> if d prime for Alcohol-Good is larger than for Alcohol-Bad (positive difference):
+			participant more closely associated Alcohol with Good attributes than with Bad attributes,
+			(IF the noise category was 'non-alcoholic' beverages)
+			=> if d prime for Alcohol-Good is smaller than for Alcohol-Bad (negative difference):
+			participant more closely associated Alcohol with Bad attributes than with Good attributes,
+			(IF the noise category was 'non-alcoholic' beverages)
+
+										
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+
+Default GNAT Set-Up in this script:
+(1) 3 training blocks: one training block each for categorizing targetA (signal: alcoholic drinks vs. noise: nonalcoholic drinks), 
+attributeA (signal: good vs. noise: bad), attributeB (signal: bad vs. noise: good)
+with response timeout of 1000ms (editable under section Editable Values)
+-> block order is determined randomly
+-> run 20 trials each (10 target:10 noise)
+
+(2) 2 test blocks that combine targets (here: alcoholic drinks) and attributes (either good or bad)
+with a faster response timeout (default: 750ms)
+-> block order of pairings is determined randomly
+-> each block runs 16 'practice trials' followed by 60 test trials (summary variables based on test trial performance only)
+-> signal : noise = 1 : 1
+
+(3) 2 test blocks that combine targets (here: alcoholic drinks) and attributes (either good or bad) 
+with an even faster response timeout (default: 550ms)
+-> block order of pairings is determined randomly
+-> each block runs 16 'practice trials' followed by 60 test trials (summary variables based on test trial performance only)
+-> signal : noise = 1 : 1
+
+Notes: 
+* Number of trials run as well as 'signal : noise' ratios can only be edited on block level (see section BLOCKS)
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+24 stimuli are used for signals (ALCOHOLIC DRINKS) and noise items.
+Go to section Editable Stimuli to check out the stimuli.
+
+Note: the default set-up in this script uses alcoholic drinks as the signals and and non-alcoholic drinks as noise items.
+__________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+!!!NOTE: "The most effective response deadlines for measuring automatic cognition are those fast enough
+to eliminate perfect responding but not so fast as to lower accuracy substantially, with an 
+approporiate range of response deadlines falling between 500 and 850ms." (Nosek & Banaji, 2001, p.636)
+
+/responsetimeout1_signal:						stores the longest response timeouts in ms used in this study for targets
+													Note: by default, the longest response timeout in this script is used for practice blocks
+													that test attributes and targets separately (default: 1000ms)
+													
+/responsetimeout2_signal:						stores the next response timeouts in ms used in this study for targets
+													Note: by default, in this script this is the first response time used for blocks
+													that test attributes and targets simultaneously (default 750ms)
+													
+/responsetimeout3_signal:						stores the next response timeouts in ms used in this study for targets
+													Note: by default, this is the second response time used for bloc
+													ks
+													that test attributes and targets simultaneously (default 550ms)
+
+(same for noise trials: by default they are the same in this script)
+
+
+
+/isi:											stores the interstimulus interval (time between offset of one stimulus and onset of next)
+											
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ responsetimeout1_signal = 1000
+/ responsetimeout2_signal = 750
+/ responsetimeout3_signal = 550
+
+/ responsetimeout1_noise = 1000
+/ responsetimeout2_noise = 750
+/ responsetimeout3_noise = 550
+
+/ isi = 500
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item targetAlabel>
+/ 1 = "ALCOHOLIC DRINK"
+</item>
+
+Note: this item list might differ from the original one used by Obasi et al (2016)
+<item TargetA>
+/ 1 = "BEER"
+/ 2 = "BRANDY"
+/ 3 = "WHISKY"
+/ 4 = "SCOTCH"
+/ 5 = "MARGARITA"
+/ 6 = "VODKA"
+/ 7 = "GIN"
+/ 8 = "LIQUOR"
+/ 9 = "PINA-COLADA"
+/ 10 = "BAILEYS"
+/ 11 = "CHAMPAGNE"
+/ 12 = "WINE"
+/ 13 = "RUM"
+/ 14 = "OUZO"
+/ 15 = "AMARETTO"
+/ 16 = "TEQUILA"
+/ 17 = "MOJITO"
+/ 18 = "GROG"
+/ 19 = "BACARDI"
+/ 20 = "ABSINTHE"
+/ 21 = "PROSECCO"
+/ 22 = "SCHNAPPS"
+/ 23 = "MARTINI"
+/ 24 = "BACARDI"
+</item>
+
+Notes: 
+* in this script the default noise items for target A 
+For a slighty different experimental set-up, use licit/illicit drugs instead
+* this item list might differ from the original one used by Obasi et al (2016)
+<item NoiseA>
+/ 1 = "COCA-COLA"  
+/ 2 = "FANTA" 
+/ 3 = "SEVEN-UP"
+/ 4 = "SPRITE" 
+/ 5 = "ORANGINA"
+/ 6 = "COFFEE" 
+/ 7 = "TEA"
+/ 8 = "WATER" 
+/ 9 = "PEPSI"
+/ 10 = "CAPPUCCINO" 
+/ 11 = "LATTE"
+/ 12 = "MOCCA" 
+/ 13 = "HOT CHOCOLATE"
+/ 14 = "LEMONADE" 
+/ 15 = "LIMEADE"
+/ 16 = "ORANGE JUICE" 
+/ 17 = "APPLE JUICE"
+/ 18 = "MILK" 
+/ 19 = "COCONUT MILK"
+/ 20 = "ALMOND MILK" 
+/ 21 = "SODA"
+/ 22 = "DR PEPPER" 
+/ 23 = "ROOT BEER"
+/ 24 = "GINGER ALE" 
+</item>
+
+<item attributeAlabel>
+/ 1 = "good"
+</item>
+
+Note: this item list might differ from the original one used by Obasi et al (2016)
+<item attributeA>
+/ 1 = "celebrating"
+/ 2 = "pleasure"
+/ 3 = "happy"
+/ 4 = "friendly"
+/ 5 = "joyful"
+/ 6 = "loving"
+/ 7 = "beautiful"
+/ 8 = "smiling"
+/ 9 = "glee"
+/ 10 = "glad"
+/ 11 = "glorious"
+/ 12 = "excitement"
+/ 13 = "wonderful"
+/ 14 = "triumph"
+/ 15 = "good"
+/ 16 = "excellent"
+/ 17 = "fabulous"
+/ 18 = "superb"
+/ 19 = "marvelous"
+/ 20 = "splendid"
+/ 21 = "laughing"
+/ 22 = "cheerful"
+/ 23 = "terrific"
+/ 24 = "likable"
+</item>
+
+<item attributeBlabel>
+/ 1 = "bad"
+</item>
+
+Note: this item list might differ from the original one used by Obasi et al (2016)
+<item attributeB>
+/ 1 = "horrible"
+/ 2 = "angry"
+/ 3 = "terrible"
+/ 4 = "noxious"
+/ 5 = "tragic"
+/ 6 = "unpleasant"
+/ 7 = "hate"
+/ 8 = "destroy"
+/ 9 = "brutal"
+/ 10 = "bad"
+/ 11 = "evil"
+/ 12 = "humiliate"
+/ 13 = "disaster"
+/ 14 = "nasty"
+/ 15 = "gross"
+/ 16 = "painful"
+/ 17 = "yucky"
+/ 18 = "ugly"
+/ 19 = "dirty"
+/ 20 = "dislike"
+/ 21 = "awful"
+/ 22 = "disgusting"
+/ 23 = "revolting"
+/ 24 = "sickening"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ wait = 1000 
+/ fontstyle = ("Arial", 3.0%, false, false, false, false, 5, 1)
+/ navigationbuttonfontstyle = ("Arial", 3.0%, false, false, false, false, 5, 1)
+/ screencolor = black
+/ txcolor = white
+</instruct>
+
+
+<page begin1>
+<br><br><center><big><b>Thank you for your interest in the <i>Alcohol Go/No-go Association Task</i>.</b></big><br><br><br>
+<i>Please read the instructions carefully before proceeding with the task.</i></center><br><br>
+This work assumes that you can read English fluently, and that your vision is normal or corrected 
+to normal.<br><br> 
+The tasks that you will be doing in this experiment involve category judgment. For 
+instance, in one condition your task may be to search for all the words that represent the 
+categories '<%item.attributeAlabel.item(1)%>.' (e.g., <%item.attributea.item(1)%>, <%item.attributea.item(2)%>) 
+or the category '<%item.targetalabel.item(1)%>' (e.g., <%item.targeta.item(1)%>, <%item.targeta.item(2)%>).<br><br>
+All categorizations will be made with the SPACEBAR <%expressions.buttoninstruct1%>.  When you see a word that 
+belongs to either one of the two categories (e.g., '<%item.attributeAlabel.items.1%>' or '<%item.targetAlabel.items.1%>') hit the spacebar <%expressions.buttoninstruct1%> as fast 
+as possible. Ignore words that do not belong to either category. 
+</page>
+
+<page begin2>
+<br><br>The words you will be looking for will be from the 3 groups listed below. Some examples are provided for each category:<br><br>
+<%item.targetAlabel.item(1)%></font> (white letters): <%item.targetA.item(1)%>,<%item.targetA.item(2)%>, <%item.targetA.item(3)%>, 
+<%item.targetA.item(4)%>, <%item.targetA.item(5)%>, ...<br><br>
+<font color='turquoise'><%item.attributeAlabel.item(1)%> (blue letters): <%item.attributeA.item(1)%>,<%item.attributeA.item(2)%>, <%item.attributeA.item(3)%>, 
+<%item.attributeA.item(4)%>, <%item.attributeA.item(5)%>, ...<br><br>
+<%item.attributeBlabel.item(1)%> (blue letters): <%item.attributeB.item(1)%>,<%item.attributeB.item(2)%>, 
+<%item.attributeB.item(3)%>, <%item.attributeB.item(4)%>, <%item.attributeB.item(5)%>, ...</font><br><br><br>
+All '<%item.attributeAlabel.item(1)%>' and '<%item.attributeBlabel.item(1)%>' items are descriptive (adjectives or adverbs), while 
+'<%item.targetAlabel.item(1)%>' are all objects (nouns).  The color coding of the words is there to help distinguish between 
+the <font color='turquoise'><b>evaluative (<%item.attributeAlabel.item(1)%> and <%item.attributeBlabel.item(1)%>) words</b></font>
+and the <b>object categories</b>.
+</page>
+
+<page begin3>
+<br><br>
+The task will <u>get faster and harder</u> as you get further along. In fact, you may at 
+times find it very difficult to correctly classify ANY of the trials. Do not despair.  
+This task is designed to be difficult and no one is expected to perform it perfectly.  
+Please persevere and just try to catch as many words as possible.<br><br>
+You will have an opportunity to practice each new set before the task begins.^^
+Hit the spacebar <%expressions.buttoninstruct1%> when you are ready to begin.
+</page>
+
+<page end>
+<center><br><br><br><br><br><br><br><br><br><br>
+You have reached the end of the task.
+<h1>Thank you!</h1></center>
+</page>
+
+<item reminders>
+/ 1 = "Words will appear in the center of the screen, one by one, at high speed. These words may or may not belong to the category you see printed at the top.
+~nPress the space bar as fast as you can if the word belongs to the category you see at the top. If they do not belong to the category, don't do anything. Just wait for the next word.
+~nIf you made an error, a red X appears below the word. Otherwise, you will see a green 'O'.
+~n~n~nPress the space bar to start."
+/ 2 = "New category!
+~nPress the space bar to start the categorization trials for this new category."
+/ 3 = "The set-up has changed. Instead of only one category, you now see TWO categories printed at the top.
+~nPress the space bar as fast as you can if the word appearing in the center belongs to EITHER one of the two categories you see at the top. Don't do anything if the word does not belong to either one of the categories.
+~n~n~nPress the space bar to practice these two categories."
+/ 4 = "New categories! 
+~nPress the space bar to practice the new categories"
+</item>
+
+<text testTrialStart>
+/ items = ("You are now starting the main trials for the same two categories.
+~nPress the space bar as fast as you can if the word appearing in the center belongs to EITHER one of the two categories you see at the top.
+~n~n~nPress the space bar to start.")
+/ position = (50%, 65%) 
+/ size = (60%, 50%)
+/ txcolor = white 
+/ fontstyle = ("Arial", 2.67%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+<text speedup>
+/ items = ("The next set of blocks is faster than the last.  Get ready!")
+/ position = (50, 75) 
+/ txcolor = white 
+/ fontstyle = ("Arial", 2.67%, false, false, false, false, 5, 1)
+</text>
+
+<expressions>
+/ buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"button";} else {"key";}
+/ buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"using response buttons on your screen"} else {"on the keyboard";}
+</expressions>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txbgcolor = black 
+/ screencolor = black
+/ validresponse = (" ") 
+/ pretrialpause = 0 
+/ minimumversion = "6.5.2.0"
+/ canvasaspectratio = (4,3)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+******************************
+raw data
+******************************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+values.responsetimeout_target, values.responsetimeout_noise, values.signal, 
+values.phase, values.targettype, values.pairing, values.trialtype,
+stimulusitem, response, correct, latency)
+</data>
+
+******************************
+summary data
+******************************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+parameters.responsetimeout2_signal, parameters.responsetimeout2_noise, parameters.responsetimeout3_signal, parameters.responsetimeout3_noise,
+expressions.propCorrect_AA, expressions.propCorrect_AB,
+expressions.rHit_AA, expressions.rMiss_AA, expressions.rFa_AA, expressions.rCr_AA, 
+expressions.zHit_AA, expressions.zFa_AA, expressions.dPrime_AA, expressions.c_AA,
+expressions.rHit_AB, expressions.rMiss_AB, expressions.rFa_AB, expressions.rCr_AB, 
+expressions.zHit_AB, expressions.zFa_AB, expressions.dPrime_AB, expressions.c_AB,
+expressions.dPrimeDiff)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+/phase:							"training" vs. "test"
+/responsetimeout_target:		time in ms that is allowed for response in the current target trial
+/responsetimeout_noise:			time in ms that is allowed for response in the current noise trial
+/signal:						1 = signal trial (spacebar response is correct); 0 = noisetrial (no response is correct)
+
+/targettype:					"A" (here: A-alcoholic drinks)
+/pairing:						"AA" -> targetA-attributeA (here: alcoholic drinks and good)
+								"AB" -> targetA-attributeB (here: alcoholic drinks and bad)
+/trialtype:						"practice" vs. "test"
+
+<values>
+/ phase = "training"
+/ responsetimeout_target = 0
+/ responsetimeout_noise = 0
+/ signal = 0
+/ targettype = ""
+/ pairing = ""
+/ trialtype = "training"
+/ selectReminders = 1
+</values>
+
+******************************
+Summary values
+******************************
+
+/count_signalAA:			counts signal trials for pairing targetA-attributeA (here: alcoholic drinks-good) - across all responsetimeouts
+/count_NoiseAA:				counts noise trials for pairing targetA-attributeA - across all responsetimeouts
+(and separately for responsetimeouts)
+
+/count_signalAB:			counts signal trials for pairing targetA-attributeB (here: alcoholic drinks-bad) - across all responsetimeouts
+/count_NoiseAB:				counts noise trials for pairing targetA-attributeB - across all responsetimeouts
+(and separately for responsetimeouts)
+
+/count_signalBA:			counts signal trials for pairing targetB-attributeA (here: non-alcoholic drink-good) - across all responsetimeouts
+/count_NoiseBA:				counts noise trials for pairing targetB-attributeA - across all responsetimeouts
+(and separately for responsetimeouts)
+
+/count_signalBB:			counts signal trials for pairing targetB-attributeB (here: non-alcoholic drink-bad) - across all responsetimeouts
+/count_NoiseBB:				counts noise trials for pairing targetB-attributeB - across all responsetimeouts
+(and separately for responsetimeouts)
+
+/hits_AA:					counts hits for pairing targetA-attributeA (here: alcoholic drinks-good) - across all responsetimeouts
+/FA_AA:						counts false alarms for pairing targetA-attributeA (here: alcoholic drinks-good) - across all responsetimeouts
+(and separately for responsetimeouts)
+
+/hits_AB:					counts hits for pairing targetA-attributeB (here: alcoholic drinks-bad) - across all responsetimeouts
+/FA_AB:						counts false alarms for pairing targetA-attributeA (here: alcoholic drinks-bad) - across all responsetimeouts
+(and separately for responsetimeouts)
+
+
+<values>
+/ count_signalAA = 0
+/ count_NoiseAA = 0
+/ count_signalAA1 = 0
+/ count_NoiseAA1 = 0
+/ count_signalAA2 = 0
+/ count_NoiseAA2 = 0
+/ count_signalAA3 = 0
+/ count_NoiseAA3 = 0
+/ count_signalAA4 = 0
+/ count_NoiseAA4 = 0
+
+/ count_signalAB = 0
+/ count_NoiseAB = 0
+/ count_signalAB1 = 0
+/ count_NoiseAB1 = 0
+/ count_signalAB2 = 0
+/ count_NoiseAB2 = 0
+/ count_signalAB3 = 0
+/ count_NoiseAB3 = 0
+/ count_signalAB4 = 0
+/ count_NoiseAB4 = 0
+
+
+/ hits_AA = 0
+/ FA_AA = 0
+/ hits_AA1 = 0
+/ FA_AA1 = 0
+/ hits_AA2 = 0
+/ FA_AA2 = 0
+/ hits_AA3 = 0
+/ FA_AA3 = 0
+/ hits_AA4 = 0
+/ FA_AA4 = 0
+
+/ hits_AB = 0
+/ FA_AB = 0
+/ hits_AB1 = 0
+/ FA_AB1 = 0
+/ hits_AB2 = 0
+/ FA_AB2 = 0
+/ hits_AB3 = 0
+/ FA_AB3 = 0
+/ hits_AB4 = 0
+/ FA_AB4 = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/ propCorrect_AA = return ((values.hits_AA + (values.count_noiseAA - values.fa_AA)) / (values.count_signalAA + values.count_noiseAA))
+/ propCorrect_AB = return ((values.hits_AB + (values.count_noiseAB - values.fa_AB)) / (values.count_signalAB + values.count_noiseAB))
+
+/ rHit_AA = return (values.hits_AA/values.count_signalAA)
+/ rMiss_AA = return (1-expressions.rHit_AA)
+/ rFa_AA = return (values.fa_AA/values.count_noiseAA)
+/ rCr_AA = return (1-expressions.rFa_AA)
+
+/ zHit_AA = {
+	if (expressions.rHit_AA == 0){
+		return zOfP(expressions.rHit_AA + 0.005)		
+	} else if (expressions.rHit_AA == 1){
+		return zOfP(expressions.rHit_AA - 0.005)
+	} else {
+		return zOfP(expressions.rHit_AA)	
+	}
+}
+
+/ zFa_AA = {
+	if (expressions.rFa_AA == 0){
+		return zOfP(expressions.rFa_AA + 0.005)		
+	} else if (expressions.rFa_AA == 1){
+		return zOfP(expressions.rFa_AA - 0.005)
+	} else {
+		return zOfP(expressions.rFa_AA)	
+	}
+}
+/ dPrime_AA = return (expressions.zHit_AA-expressions.zFa_AA)
+/ c_AA = return (-1*((expressions.zHit_AA + expressions.zFa_AA)/2))
+
+/ rHit_AB = return (values.hits_AB/values.count_signalAB)
+/ rMiss_AB = return (1-expressions.rHit_AB)
+/ rFa_AB = return (values.fa_AB/values.count_noiseAB)
+/ rCr_AB = return (1-expressions.rFa_AB)
+
+/ zHit_AB = {
+	if (expressions.rHit_AB == 0){
+		return zOfP(expressions.rHit_AB + 0.005)		
+	} else if (expressions.rHit_AB == 1){
+		return zOfP(expressions.rHit_AB - 0.005)
+	} else {
+		return zOfP(expressions.rHit_AB)	
+	}
+}
+
+/ zFa_AB = {
+	if (expressions.rFa_AB == 0){
+		return zOfP(expressions.rFa_AB + 0.005)		
+	} else if (expressions.rFa_AB == 1){
+		return zOfP(expressions.rFa_AB - 0.005)
+	} else {
+		return zOfP(expressions.rFa_AB)	
+	}
+}
+/ dPrime_AB = return (expressions.zHit_AB-expressions.zFa_AB)
+/ c_AB = return (-1*((expressions.zHit_AB + expressions.zFa_AB)/2))
+
+/ dPrimeDiff = return (expressions.dPrime_AA - expressions.dPrime_AB)
+</expressions>
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+
+<text NoiseA>
+/ items = NoiseA 
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = white 
+</text>
+
+<text TargetA>
+/ items = TargetA 
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = white 
+</text>
+
+
+<text attributeA>
+/ items = attributeA 
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 255, 255) 
+</text>
+
+<text attributeB>
+/ items = attributeB 
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 255, 255) 
+</text>
+
+********************* Reminder Stimuli *********************
+
+<text TargetAremind>
+/ items = ("<%item.targetAlabel.item(1)%>") 
+/ color = white 
+/ position = (30,15) 
+</text>
+
+<text attributeAremind>
+/ items = ("<%item.attributealabel.item(1)%>") 
+/ color = (0, 255, 255) 
+/ position = (70,15) 
+</text>
+
+<text attributeBremind>
+/ items = ("<%item.attributeBlabel.item(1)%>") 
+/ color = (0, 255, 255) 
+/ position = (70, 15) 
+</text>
+
+<text error>
+/ items = ("X") 
+/ position = (50,65) 
+/ color = red 
+</text>
+
+<text correctresp>
+/ items = ("O") 
+/ position = (50,65) 
+/ color = green 
+</text>
+
+<text remind>
+/ items = reminders
+/ select = values.selectReminders
+/ position = (50%, 65%) 
+/ size = (80%, 50%)
+/ txcolor = white 
+/ fontstyle = ("Arial", 2.67%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial TargetA_true>
+/ ontrialbegin = [values.signal = 1]
+/ timeout = values.responsetimeout_target 
+/ validresponse = (" ")
+/ correctresponse = (" ") 
+/ errormessage = true(error, 100) 
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=TargetA] 
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial attributeA_true>
+/ ontrialbegin = [values.signal = 1]
+/ timeout = values.responsetimeout_target 
+/ validresponse = (" ")
+/ correctresponse = (" ") 
+/ errormessage = true(error, 100)
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=attributeA] 
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial attributeB_true>
+/ ontrialbegin = [values.signal = 1]
+/ timeout = values.responsetimeout_target 
+/ validresponse = (" ")
+/ correctresponse = (" ") 
+/ errormessage = true(error, 100)
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=attributeB] 
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial NoiseA_false>
+/ ontrialbegin = [values.signal = 0]
+/ timeout = values.responsetimeout_noise 
+/ validresponse = (" ")
+/ correctresponse = (0) 
+/ errormessage = true(error, 100)
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=NoiseA] 
+/ posttrialpause = parameters.isi
+</trial>
+
+
+<trial attributeB_false>
+/ ontrialbegin = [values.signal = 0]
+/ timeout = values.responsetimeout_noise
+/ validresponse = (" ")
+/ correctresponse = (0) 
+/ errormessage = true(error, 100)
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=attributeB] 
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial attributeA_false>
+/ ontrialbegin = [values.signal = 0]
+/ timeout = values.responsetimeout_noise 
+/ validresponse = (" ")
+/ correctresponse = (0) 
+/ errormessage = true(error, 100)
+/ correctmessage = true(correctresp, 100) 
+/ stimulusFrames = [1=attributeA]
+/ posttrialpause = parameters.isi
+</trial>
+
+<trial reminder>
+/ validresponse = (" ")
+/ correctresponse = (" ") 
+/ stimulusFrames = [1=remind] 
+/ response = correct 
+/ recorddata = false
+/ posttrialpause = 1000
+</trial> 
+
+<trial speedup>
+/ correctresponse = (" ") 
+/ stimulusFrames = [1=speedup] 
+/ response = correct 
+/ recorddata = false
+</trial> 
+
+<trial trainingStart>
+/ ontrialbegin = [
+	values.phase = "training";
+	values.selectReminders = 1;
+]
+/ trialduration = 0
+/ recorddata = false
+</trial>
+
+<trial testStart>
+/ ontrialbegin = [
+	values.phase = "test";
+	values.selectReminders = 3;
+]
+/ trialduration = 0
+/ recorddata = false
+</trial>
+
+<trial testTrialStart>
+/ correctresponse = (" ") 
+/ stimulusFrames = [1=testTrialStart] 
+/ response = correct 
+/ recorddata = false
+/ posttrialpause = 1000
+</trial> 
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+*********************************************************************
+Training Blocks: separate presentation of attributes and targets
+*********************************************************************
+
+Note: this block presents Attribute trials for which attribute A (good) is the correct response 
+with responsetimeout1
+<block attributeA_responsetimeout1>
+/ bgstim = (attributeAremind)
+/ onblockbegin = [
+	values.targettype = "training";
+	values.responsetimeout_target = parameters.responsetimeout1_signal;
+	values.responsetimeout_noise = parameters.responsetimeout1_noise;
+]
+/ trials = [1 = reminder; 2-21 = random(attributeA_true, attributeB_false)] 
+/ onblockend = [
+	values.selectReminders = 2;
+]
+</block>
+
+Note: this block presents Attribute trials for which attribute B (bad) is the correct response 
+with responsetimeout1
+<block attributeB_responsetimeout1>
+/ bgstim = (attributeBremind)
+/ onblockbegin = [
+	values.targettype = "training";
+	values.responsetimeout_target = parameters.responsetimeout1_signal;
+	values.responsetimeout_noise = parameters.responsetimeout1_noise;
+]
+/ trials = [1 = reminder; 2-21 = random(attributeB_true, attributeA_false)] 
+/ onblockend = [
+	values.selectReminders = 2;
+]
+</block>
+
+Note: this block presents TargetA and NoiseA trials
+with responsetimeout1
+<block TargetA_responsetimeout1>
+/ bgstim = (TargetAremind)
+/ onblockbegin = [
+	values.targettype = "training";
+	values.responsetimeout_target = parameters.responsetimeout1_signal;
+	values.responsetimeout_noise = parameters.responsetimeout1_noise;
+]
+/ trials = [1 = reminder; 2-21 = random(TargetA_true, NoiseA_false)] 
+/ onblockend = [
+	values.selectReminders = 2;
+]
+</block>
+
+*********************************************************************
+Test Blocks: simultaneous presentation of attributes and targets
+*********************************************************************
+
+NOTE:
+The following blocks present target and attribute categories simultaneously:
+blocks
+- run 16 'practice' trials; randomly sampled from target (either A or B) and respective noise and attributeA and attributeB trials
+signal : noise = 1 : 1
+- run 60 trials; randomly sampled from target (either A or B) and respective noise and attributeA and attributeB trials
+signal : noise = 1 : 1
+
+Example: 
+signal:noise = 1:1 (minimum number of trials possible: 4)
+/ trials = [1-4 = random(TargetB_true, NoiseB_false, attributeA_true, attributeB_false)]
+signal:noise = 2:1 (minimum number of trials possible: 6)
+/ trials = [1-6 = random(TargetB_true, TargetB_true, NoiseB_false, attributeA_true, attributeA_true, attributeB_false)]
+signal:noise = 4:3 (minimum number of trials possible: 14)
+/ trials = [1-14 = random(TargetB_true, TargetB_true, TargetB_true, TargetB_true, NoiseB_false, NoiseB_false, NoiseB_false, 
+attributeA_true, attributeA_true, attributeA_true, attributeA_true, attributeB_false, attributeB_false, attributeB_false)]
+
+
+****************************************************************************
+responsetimeout2:
+****************************************************************************
+
+Note: this block pairs targetA (bug) with attributeA (good) with responsetimeout2
+<block TargetAattributeA_responsetimeout2>
+/ bgstim = (TargetAremind, attributeAremind)
+/ onblockbegin = [
+	values.targettype = "A";
+	values.pairing = "AA";
+	values.responsetimeout_target = parameters.responsetimeout2_signal;
+	values.responsetimeout_noise = parameters.responsetimeout2_noise;
+]
+/ trials = [
+            1 = reminder;
+			2-17 = random(TargetA_true, NoiseA_false, attributeA_true, attributeB_false);
+			18 = testTrialStart;
+            19-78 = random(TargetA_true, NoiseA_false, attributeA_true, attributeB_false)] 
+
+/ ontrialend = [
+	if (block.TargetAattributeA_responsetimeout2.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1){
+			values.hits_AA += block.TargetAattributeA_responsetimeout2.correct;
+			values.hits_AA2 += block.TargetAattributeA_responsetimeout2.correct;
+			values.count_signalAA += 1;
+			values.count_signalAA2 += 1;
+		} else if (values.signal == 0){
+			values.FA_AA += block.TargetAattributeA_responsetimeout2.error;
+			values.FA_AA2 += block.TargetAattributeA_responsetimeout2.error;
+			values.count_noiseAA += 1;
+			values.count_noiseAA2 += 1;
+		}
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+Note: this block pairs targetA (bug) with attributeB (bad) with responsetimeout2
+<block TargetAattributeB_responsetimeout2>
+/ bgstim = (TargetAremind, attributeBremind)
+/ onblockbegin = [
+	values.targettype = "A";
+	values.pairing = "AB";
+	values.responsetimeout_target = parameters.responsetimeout2_signal;
+	values.responsetimeout_noise = parameters.responsetimeout2_noise;
+]
+/ trials = [1 = reminder;
+			2-17 = random(TargetA_true, NoiseA_false, attributeA_false, attributeB_true);
+			18 = testTrialStart;
+            19-78 = random(TargetA_true, NoiseA_false, attributeA_false, attributeB_true)] 
+
+/ ontrialend = [
+	if (block.TargetAattributeB_responsetimeout2.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1){
+			values.hits_AB += block.TargetAattributeB_responsetimeout2.correct;
+			values.hits_AB2 += block.TargetAattributeB_responsetimeout2.correct;
+			values.count_signalAB += 1;
+			values.count_signalAB2 += 1;
+		} else if (values.signal == 0){
+			values.FA_AB += block.TargetAattributeB_responsetimeout2.error;
+			values.FA_AB2 += block.TargetAattributeB_responsetimeout2.error;
+			values.count_noiseAB += 1;
+			values.count_noiseAB2 += 1;
+		}
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+****************************************************************************
+responsetimeout3:
+****************************************************************************
+
+Note: this block pairs targetA (bug) with attributeA (good) with responsetimeout3
+<block TargetAattributeA_responsetimeout3>
+/ bgstim = (TargetAremind, attributeAremind)
+/ onblockbegin = [
+	values.targettype = "A";
+	values.pairing = "AA";
+	values.responsetimeout_target = parameters.responsetimeout3_signal;
+	values.responsetimeout_noise = parameters.responsetimeout3_noise;
+]
+/ trials = [ 1 = reminder;
+			2-17 = random(TargetA_true, NoiseA_false, attributeA_true, attributeB_false);
+			18 = testTrialStart;
+            19-78 = random(TargetA_true, NoiseA_false, attributeA_true, attributeB_false)] 
+
+/ ontrialend = [
+	if (block.TargetAattributeA_responsetimeout3.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1){
+			values.hits_AA += block.TargetAattributeA_responsetimeout3.correct;
+			values.hits_AA3 += block.TargetAattributeA_responsetimeout3.correct;
+			values.count_signalAA += 1;
+			values.count_signalAA3 += 1;
+		} else if (values.signal == 0){
+			values.FA_AA += block.TargetAattributeA_responsetimeout3.error;
+			values.FA_AA3 += block.TargetAattributeA_responsetimeout3.error;
+			values.count_noiseAA += 1;
+			values.count_noiseAA3 += 1;
+		}
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+Note: this block pairs targetA (bug) with attributeB (bad) with responsetimeout3
+<block TargetAattributeB_responsetimeout3>
+/ bgstim = (TargetAremind, attributeBremind)
+/ onblockbegin = [
+	values.targettype = "A";
+	values.pairing = "AB";
+	values.responsetimeout_target = parameters.responsetimeout3_signal;
+	values.responsetimeout_noise = parameters.responsetimeout3_noise;
+]
+/ trials = [1 = reminder;
+			2-17 = random(TargetA_true, NoiseA_false, attributeA_false, attributeB_true);
+			18 = testTrialStart;
+            19-78 = random(TargetA_true, NoiseA_false, attributeA_false, attributeB_true)] 
+
+/ ontrialend = [
+	if (block.TargetAattributeB_responsetimeout3.trialcount > 18){
+		values.trialtype = "test";
+		if (values.signal == 1){
+			values.hits_AB += block.TargetAattributeB_responsetimeout3.correct;
+			values.hits_AB3 += block.TargetAattributeB_responsetimeout3.correct;
+			values.count_signalAB += 1;
+			values.count_signalAB3 += 1;
+		} else if (values.signal == 0){
+			values.FA_AB += block.TargetAattributeB_responsetimeout3.error;
+			values.FA_AB3 += block.TargetAattributeB_responsetimeout3.error;
+			values.count_noiseAB += 1;
+			values.count_noiseAB3 += 1;
+		}
+	} else {
+		values.trialtype = "practice";
+	}
+]
+/ onblockend = [
+	values.selectReminders = 4;
+]
+</block>
+
+****************************************************************************
+Info Block: 
+****************************************************************************
+
+<block trainingStart>
+/ trials = [1 = trainingStart]
+</block>
+
+<block testStart>
+/ trials = [1 = testStart]
+</block>
+
+<block speedup>
+/ trials = [1 = speedup] 
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT
+**************************************************************************************************************
+**************************************************************************************************************
+Default GNAT Set-Up in this script:
+(1) 3 training blocks: one training block each for targetA, attributeA, attributeB 
+with response timeout of 1000ms (editable under section Editable Values)
+-> block order is determined randomly
+-> run 20 trials each (10 target:10 noise)
+
+(2) 2 test blocks that combine the targets and attributes with a faster response timeout (default: 750ms)
+-> block order is determined randomly
+-> each block runs 16 'practice trials' followed by 60 test trials
+-> signal : noise = 1 : 1
+
+(2) 2 test blocks that combine the targets and attributes with an even faster response timeout (default: 550ms)
+-> block order is determined randomly
+-> each block runs 16 'practice trials' followed by 60 test trials
+-> signal : noise = 1 : 1
+
+<expt alcoholgnat>
+/ blocks = [
+	1 = trainingStart;
+	2-4   = random (attributeA_responsetimeout1, attributeB_responsetimeout1, TargetA_responsetimeout1); 
+	5 = testStart;
+    6-7   = random(TargetAattributeA_responsetimeout2, TargetAattributeB_responsetimeout2);
+    8 = speedup;
+    9-10 = random(TargetAattributeA_responsetimeout3, TargetAattributeB_responsetimeout3)]
+/ preinstructions = (begin1, begin2, begin3)
+
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

@@ -1,0 +1,1778 @@
+<usermanual>														
+___________________________________________________________________________________________________________________	
+
+								*Automated 'Reading Span Task (Arspan) *
+___________________________________________________________________________________________________________________
+
+Inquisit programming for the ARSPAN: David Nitz (dave@gmillisecond.com) for Millisecond Software, LLC.
+last updated:  02-13-2025 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-13-2025 Millisecond Software
+
+Copyright for the ARSPAN: Task Copyright (c) 2005 by Dr. Randall Engle
+http://psychology.gatech.edu/renglelab/
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Automated Reading Span Task (ARSPAN), a measure of working memory. 
+
+Working Memory Span Tasks Reference:
+CONWAY, A.R.A., KANE, M.J.,BUNTING, M.F., D. ZACH HAMBRICK, D.Z., WILHELM, O., & ENGLE, R.W. (2005).
+Working memory span tasks: A methodological review and user’s guide. Psychonomic Bulletin & Review
+2005, 12 (5), 769-786.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION
+___________________________________________________________________________________________________________________	
+Participants are presented a visual sequences of letters ranging from 3-7 letters (default) that need to be 
+recalled at the end. Each letter in the sequence in preceded by a sentence problem ('Andy was stopped by 
+the policeman  because he crossed the yellow heaven') followed by the task to decide whether this sentence 
+made sense. Letter recall is tested by asking participants to select letters from a provided letter matrix.											  
+									
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 20 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'automatedrspan_raw*.iqdat'
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block.
+										
+											
+stimulusitem:						the presented stimuli in order of trial presentation
+response:							the participant's response (scancode of response buttons)
+correct:							accuracy of response: 1 = correct response; 0 = otherwise
+latency: 							the response latency (in ms)
+
+currentsetsize: 					the number of letters to recall for the current problem
+text.letters.currentItem: 			the currently presented letter
+sentenceproblemcount: 				counts the number sentences in a given block
+sentencetimeout: 					duration (in ms) after which the sentence disappears (for test block: calculated for each participant based on average performance during practice)
+text.PracSentenceProblem.currentItem: 	the currently presented practice sentence
+text.SentenceProblem.currentItem: 		the currently presented test sentence
+
+sentenceaccuracy: 					percentage of correctly classified sentences within the current block
+sentencetotalerrors: 				counts number of any errors (speed or accuracy) made during sentence classification within the current block
+sentenceaccerrors: 					counts the number of incorrectly classified sentences within the current block
+sentencespeederrors: 				counts the number of times participant ran out of time when reading the sentence within the current block
+
+rspan:								The RSPAN (reading span) score, uses the traditional 'absolute rspan' scoring method. 
+									It is the sum of all perfectly recalled sets. 
+									So, for example, if an individual recalled correctly 2 letters in a set size of 2,
+									3 letters in a set size of 3, and 3 letters in a set size of 4,
+									their rspan score would be 5 (2 + 3 + 0).
+										
+recalledletters: 					the number of letters recalled of the current problem										
+totalcorrectletters: 				the total number of letters recalled in the correct position.
+totalrecalledsets: 					the number of correctly recalled sets
+
+
+//trial data (summary at the end of each complete ' test trial' stored under trial 'letter_feedback')
+trialCount:							trial counter
+recalledLetters_perTrial:			the number of recalled letters for the current trial only
+recalledLettersACC_perTrial:		proportion correct recalled letters for the current trial only
+correctSentences_perTrial:			the number of correctly categorized sentences for the current trial only
+sentenceACC_perTrial:				proportion correctly categorized sentences for the current trial only
+
+
+(2) Summary data file: 'automatedrspan_summary*.iqdat'
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+rspan:								The rspan score (reading span), uses the traditional 'absolute rspan' scoring method. 
+									It is the sum of all perfectly recalled sets. 
+									So, for example, if an individual recalled correctly 2 letters in a set size of 2,
+									3 letters in a set size of 3, and 3 letters in a set size of 4,
+									their rspan score would be 5 (2 + 3 + 0).
+										
+totalcorrectletters: 				the total number of letters recalled in the correct position.
+sentencetotalerrors: 				counts number of any errors (speed or accuracy) made during sentence classification during the test block
+sentencespeederrors: 				counts the number of times participant ran out of time when reading the sentence during the test block
+sentenceaccerrors: 					counts the number of incorrectly classified sentences during the test block
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+NOTE: by entering 'debug' as the subjectid, the script runs in debug mode and presents the correct responses
+
+1 Practice Session (default):
+	a) Practice of recalling sequences of letters of set sizes 2-3 in ascending order (4 trials)
+	b) Practice of semantic evaluations (15 trials)
+	c) Combined practice of recalling sequence of letters (set size 2 only) and semantic evaluation of sentences: 
+	each letter is preceded by either a sentence that makes sense or one that does not (3 trials).
+	Letter recall is done by picking out letters from a provided letter matrix.
+
+Test Session (default):
+	15 Trials (15 = 3 repetitions of 5 set sizes; order of set sizes is randomly determined): 
+	Recalling sequences of letters (set size 3-7): each letter is preceded preceded by either a sentence 
+	that makes sense or one that does not.
+	Letter recall is done by picking out letters from a provided letter matrix.
+
+Scoring:
+The program reports five values at the conclusion of the experiment: 
+	
+The first, RSPAN score, uses the traditional “absolute rspan” scoring method. 
+It is the sum of all perfectly recalled sets. 
+So, for example, if an individual recalled correctly 2 letters in a set size of 2,
+3 letters in a set size of 3, and 3 letters in a set size of 4,
+their RSPAN score would be 5 (2 + 3 + 0).
+
+Total number correct is the total number of letters recalled in the correct position
+(2 + 3 + 4 = 9 in the above example). 
+	
+Sentence errors are reported as total number of errors, 
+accuracy errors where the subject judged the sentence incorrectly, 
+and speed errors in which the subject ran out of time 
+in attempting to solve a given sentence problem.
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+Letters: T, L, Q, N, F, H, Y, S, P, K, R, J
+sentences: check section Editable Stimuli
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+Instructions can be edited under section Editable Instructions
+
+__________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always 'mess' with the entire code to 
+further customize your experiment.
+
+The parameters you can change are:
+
+/ learninginterval:					duration (in ms) of the letter presentation trials
+
+/ startsentencetimeout:				start duration (in ms) of the sentence presentation trials
+										Note: the duration is adjusted for the test trials based on practice performance
+
+										
+/ debugmode:						0 = testmode => no debug information is presented
+									1 = debugmode => debug information is presented on screen										
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ learninginterval = 1000
+/ startsentencetimeout = 5000
+/ debugmode = 0
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+***************************
+Visual Letters: 
+***************************
+<item letters_visual>
+/ 1 = "T"
+/ 2 = "L"
+/ 3 = "Q"
+/ 4 = "N"
+/ 5 = "F"
+/ 6 = "H"
+/ 7 = "Y"
+/ 8 = "S"
+/ 9 = "P"
+/ 10 = "K"
+/ 11 = "R" 
+/ 12 = "J"
+</item>
+
+<item PracSentenceProblems>
+/ 01 = "Andy was stopped by the policeman because he crossed the yellow heaven."
+/ 02 = "During winter you can get a room at the beach for a very low rate."
+/ 03 = "People in our town are more giving and cheerful at Christmas time."
+/ 04 = "During the week of final spaghetti, I felt like I was losing my mind."
+/ 05 = "After final exams are over, we'll be able to take a well-deserved rest."
+/ 06 = "After a hard day at the office, Bill often stops at the club to relax."
+/ 07 = "No matter how much we talk to him, he is never going to change."
+/ 08 = "The prosecutor's dish was lost because it was not based on fact."
+/ 09 = "Every now and then I catch myself swimming blankly at the wall."
+/ 10 = "We were fifty lawns out at sea before we lost sight of land."
+/ 11 = "Throughout the entire ordeal, the hostages never appeared to lose hope."
+/ 12 = "Paul is afraid of heights and refuses to fly on a plane."
+/ 13 = "The young pencil kept his eyes closed until he was told to look."
+/ 14 = "Most people who laugh are concerned about controlling their weight."
+/ 15 = "When Lori shops she always looks for the lowest flood."
+</item>
+
+<list PracSentenceCorrect>
+/ items = (
+	"FALSE", "TRUE", "TRUE", "FALSE", "TRUE", "TRUE", "TRUE", "FALSE", 
+	"FALSE", "FALSE", "TRUE", "TRUE", "FALSE", "FALSE", "FALSE")
+/ selectionmode = text.PracSentenceProblem.currentIndex
+</list>
+
+
+<item SentenceProblems>
+/ 1 = "When I get up in the morning, the first thing I do is feed my dog."
+/ 2 = "After yelling at the game, I knew I would have a tall voice."
+/ 3 = "Mary was asked to stop at the new mall to pick up several items."
+/ 4 = "When it is cold, my mother always makes me wear a cap on my head."
+/ 5 = "All parents hope their list will grow up to be intelligent."
+/ 6 = "When John and Amy moved to Canada, their wish had a huge garage sale."
+/ 7 = "In the fall, my gift and I love to work together in the yard."
+/ 8 = "At church yesterday morning, Jim's daughter made a terrible plum."
+/ 9 = "Unaware of the hunter, the deer wandered into his shotgun range." 
+/ 10 = "Since it was the last game, it was hard to cope with the loss."
+/ 11 = "Because she gets to knife early, Amy usually gets a good parking spot."
+/ 12 = "The only furniture Steve had in his first bowl was his waterbed."
+/ 13 = "Last year, Mike was given detention for running in the hall."
+/ 14 = "The huge clouds covered the morning slide and the rain began to fall."
+/ 15 = "After one date I knew that Linda's sister simply was not my type."
+/ 16 = "Jason broke his arm when he fell from the tree onto the ground." 
+/ 17 = "Most people agree that Monday is the worst stick of the week."
+/ 18 = "On warm sunny afternoons, I like to walk in the park."
+/ 19 = "With intense determination he overcame all obstacles and won the race."
+/ 20 = "A person should never be discriminated against based on his race."
+/ 21 = "My mother has always told me that it is not polite to shine."
+/ 22 = "The lemonade players decided to play two out of three sets."
+/ 23 = "Raising children requires a lot of dust and the ability to be firm."
+/ 24 = "The gathering crowd turned to look when they heard the gun shot."
+/ 25 = "As soon as I get done taking this envy I am going to go home."
+/ 26 = "Sue opened her purse and found she did not have any money."
+/ 27 = "Jill wanted a garden in her backyard, but the soil was mostly clay."
+/ 28 = "Stacey stopped dating the light when she found out he had a wife."
+/ 29 = "I told the class that they would get a surprise if they were orange."
+/ 30 = "Jim was so tired of studying, he could not read another page."
+/ 31 = "Although Joe is sarcastic at times, he can also be very sweet."
+/ 32 = "Carol will ask her sneaker how much the flight to Mexico will cost."
+/ 33 = "The sugar could not believe he was being offered such a great deal."
+/ 34 = "I took my little purple to the ice cream store to get a cone."
+/ 35 = "Kristen dropped her parents off at the love for their annual vacation."
+/ 36 = "The firefighters sour the kitten that was trapped in the big oak tree."
+/ 37 = "Peter and Jack ruined the family carwash when they burned the turkey."
+/ 38 = "Martha went to the concert, but ate to bring a thick sweater."
+/ 39 = "Sara wanted her mother to read her a window before going to sleep."
+/ 40 = "Our dog Sammy likes to greet new people by joyful on them."
+/ 41 = "Wendy went to check her mail but all she received were cats."
+/ 42 = "Realizing that she was late, Julia rushed to pick up her child from speaker."
+/ 43 = "Paul likes to cry long distances in the park near his house."
+/ 44 = "The sick boy had to stay home from school because he had a phone."
+/ 45 = "The judge gave the boy community sweat for stealing the candy bar."
+/ 46 = "Women fall in jump with their infants at first sight or even sooner."
+/ 47 = "Jason's family likes to visit him in Atlanta during the cherry every year."
+/ 48 = "The doctor told my aunt that she would feel better after getting happy."
+/ 49 = "The printer sprinted when he tried to print out his report last night."
+/ 50 = "Nick's hockey team won their final game this past weekend at the shoes."
+/ 51 = "My mother and father have always wanted to live near the cup."
+/ 52 = "The prom was only three days away, but neither girl had a dress yet."
+/ 53 = "The children entered in a talent contest to win a trip to Disney World."
+/ 54 = "They were worried that all of their luggage would not fit in the car."
+/ 55 = "The seventh graders had to build a volcano for their science class."
+/ 56 = "The college students went to New York in March and it snowed."
+/ 57 = "She had to cancel the appointment because she caught the flu yesterday."
+/ 58 = "Doug helped his family dig in their backyard for their new swimming pool."
+/ 59 = "The dogs were very excited about going for a walk in the park."
+/ 60 = "In the spring, the large birdfeeder outside my window attracts many birds."
+/ 61 = "Before Katie left for the city, she took a self-defense class at the gym."
+/ 62 = "Mary was excited about her new furniture that she had bought on sale."
+/ 63 = "The class did not think the professor's lecture on history was very interesting."
+/ 64 = "Jane forgot to bring her umbrella and got wet in the rain."
+/ 65 = "Dan walked around the streets posting signs and looking for his lost puppy."
+/ 66 = "The couple decided that they wanted to have a picnic in the park."
+/ 67 = "The girls were very excited about moving into their new house next week."
+/ 68 = "Joseph told his mother that he was probably going to fail sixth grade math."
+/ 69 = "We like to eat eggs and bacon for breakfast in the morning."
+/ 70 = "Harry plans to play a lot of golf when he retires from his job."
+/ 71 = "His stereo was playing so loud that he blew out the speakers."
+/ 72 = "It was a clear night, and we could see the stars in the sky."
+/ 73 = "At the party, Randy got out the camera to take some pictures."
+/ 74 = "Catherine dressed up as a scary witch for the Halloween pencil on Friday."
+/ 75 = "Spring is her favorite time of year because flowers begin to bloom."
+/ 76 = "Even though she was in trouble, she managed to go to the dice and shop."
+/ 77 = "After being ill, Suzy hoped to catch up on her work over the weekend."
+/ 78 = "He wrecked his car because he was going too fast in the rain."
+/ 79 = "The tornado came out of nowhere and destroyed our raisin."
+/ 80 = "John wants to be a football player when he gets older."
+/ 81 = "The boys knew they would have to hurry to make it to the apple on time."
+</item>
+
+<item SentenceCorrect>
+/ 1 = "TRUE"
+/ 2 = "FALSE"
+/ 3 = "TRUE"
+/ 4 = "TRUE"
+/ 5 = "FALSE"
+/ 6 = "FALSE"
+/ 7 = "FALSE"
+/ 8 = "FALSE"
+/ 9 = "TRUE"
+/ 10 = "TRUE"
+/ 11 = "FALSE"
+/ 12 = "FALSE"
+/ 13 = "TRUE"
+/ 14 = "FALSE"
+/ 15 = "TRUE"
+/ 16 = "TRUE"
+/ 17 = "FALSE"
+/ 18 = "TRUE"
+/ 19 = "TRUE"
+/ 20 = "TRUE"
+/ 21 = "FALSE"
+/ 22 = "FALSE"
+/ 23 = "FALSE"
+/ 24 = "TRUE"
+/ 25 = "FALSE"
+/ 26 = "TRUE"
+/ 27 = "TRUE"
+/ 28 = "FALSE"
+/ 29 = "FALSE"
+/ 30 = "TRUE"
+/ 31 = "TRUE"
+/ 32 = "FALSE"
+/ 33 = "FALSE"
+/ 34 = "FALSE"
+/ 35 = "FALSE"
+/ 36 = "FALSE"
+/ 37 = "FALSE"
+/ 38 = "FALSE"
+/ 39 = "FALSE"
+/ 40 = "FALSE"
+/ 41 = "FALSE"
+/ 42 = "FALSE"
+/ 43 = "FALSE"
+/ 44 = "FALSE"
+/ 45 = "FALSE"
+/ 46 = "FALSE"
+/ 47 = "FALSE"
+/ 48 = "FALSE"
+/ 49 = "FALSE"
+/ 50 = "FALSE"
+/ 51 = "FALSE"
+/ 52 = "TRUE"
+/ 53 = "TRUE"
+/ 54 = "TRUE"
+/ 55 = "TRUE"
+/ 56 = "TRUE"
+/ 57 = "TRUE"
+/ 58 = "TRUE"
+/ 59 = "TRUE"
+/ 60 = "TRUE"
+/ 61 = "TRUE"
+/ 62 = "TRUE"
+/ 63 = "TRUE"
+/ 64 = "TRUE"
+/ 65 = "TRUE"
+/ 66 = "TRUE"
+/ 67 = "TRUE"
+/ 68 = "TRUE"
+/ 69 = "TRUE"
+/ 70 = "TRUE"
+/ 71 = "TRUE"
+/ 72 = "TRUE"
+/ 73 = "TRUE"
+/ 74 = "FALSE"
+/ 75 = "TRUE"
+/ 76 = "FALSE"
+/ 77 = "TRUE"
+/ 78 = "TRUE"
+/ 79 = "FALSE"
+/ 80 = "TRUE"
+/ 81 = "FALSE"
+</item>
+
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<item instructions>
+/ 1 = "In this task you will try to memorize letters you see on the screen while you also read sentences.~n
+In the next few minutes, you will have some practice to get you familiar with how the task works.~n
+We will begin by practicing the letter part of the task.~n~n~n
+<%expressions.buttoninstruct1%> to begin."
+/ 2 = "For this practice set, letters will appear on the screen one at a time.
+Try to remember each letter in the order presented.~n
+After 2-3 letters have been presented, you will see a screen listing 12 possible letters.
+~n~n
+Your job is to select each letter in the order presented.
+To do this, <%expressions.buttoninstruct2%>.~n
+The letters you select will appear at the bottom of the screen.~n~n~n
+<%expressions.buttoninstruct1%> to continue."
+/ 3 = "When you have selected all the letters, and they are in the correct order, hit the EXIT box at the bottom right of the screen.~n
+If you make a mistake, hit the CLEAR box to start over.~n
+If you forget one of the letters, <%expressions.buttoninstruct3%> the BLANK box to mark the spot for the missing letter.~n
+Remember, it is very important to get the letters in the same order as you saw them.
+~nIf you forget one, use the BLANK box to mark the position.~n
+Do you have any questions so far?~n~n~n
+When you're ready, <%expressions.buttoninstruct1%> to start the letter practice."
+/ 4 = "Now you will practice doing the sentence reading part of the task.~n~n
+A sentence will appear on the screen, like this:~n
+~"I like to run in the park.~"~n
+As soon as you see the sentence, you should read it and determine if it makes sense or not. The above sentence makes sense.~n
+An example of a sentence that does not make sense would be:~n
+~"I like to run in the sky.~"~n
+When you have read the sentence and determined whether it makes sense or not, <%expressions.buttoninstruct1%>.~n~n~n
+<%expressions.buttoninstruct1%> to continue."
+/ 5 = "You will then see ~"This sentence makes sense.~" displayed on the next screen, along with a box marked TRUE and a box marked FALSE.~n
+If the sentence on the previous screen made sense, <%expressions.buttoninstruct3%> on the TRUE box.
+If the sentence did not make sense, <%expressions.buttoninstruct3%> the FALSE box.~n
+After you <%expressions.buttoninstruct3%> one of the boxes, the computer will tell you if you made the right choice.~n~n~n
+<%expressions.buttoninstruct1%> to continue."
+/ 6 = "It is VERY important that you answer the sentence problems correctly.
+It is also important that you try and read the sentences as quickly as you can.~n
+Do you have any questions?~n~n~n
+When you're ready, <%expressions.buttoninstruct1%> to try some practice problems."
+/ 7 = "Now you will practice doing both parts of the task at the same time.~n~n
+In the next practice set, you will be given one sentence to read.
+Once you make your decision about the sentence, a letter will appear on the screen. Try and remember the letter.~n
+In the previous section where you only read the sentences, the computer computed your average time to read the sentences.~n
+If you take longer than your average time, the computer will automatically move you onto the next letter part, thus skipping the True or False part and will count that problem as a sentence error.~n
+Therefore it is VERY important to read the sentences as quickly and as accurately as possible.~n~n~n
+<%expressions.buttoninstruct1%> to continue."
+/ 8 = "After the letter goes away, another sentence will appear, and then another letter.~n
+At the end of each set of letters and sentences, a recall screen will appear.
+<%expressions.buttoninstruct2%> to select the letters you just saw.
+Try your best to get the letters in the correct order.~n
+It is important to work QUICKLY and ACCURATELY on the sentences.
+Make sure you know whether the sentence makes sense or not before moving on to the next screen.
+You will not be told if your answer regarding the sentence is correct.~n
+After the recall screen, you will be given feedback about your performance regarding both the number of letters recalled and the percent correct on the sentence problems.~n
+Do you have any questions?~n~n~n
+<%expressions.buttoninstruct1%> to continue."
+/ 9 = "During the feedback, you will see a number in red in the top right of the screen.
+This indicates your percent correct for the sentence problems for the entire task.~n
+It is VERY important for you to keep this at least at 85%.
+For our purposes, we can only use data where the participant was at least 85% accurate on the sentences.~n
+Therefore, in order for you to be asked to come back for future tasks, you must perform at least at 85% on the sentence problems WHILE doing your best to recall as many letters as possible.~n
+Do you have any questions?~n~n~n
+<%expressions.buttoninstruct1%> to try some practice problems."
+/ 10 = "That is the end of the practice.~n~n
+The real trials will look like the practice trials you just completed.
+First you will get a sentence to read, then a letter to remember.~n
+When you see the recall screen, select the letters in the order presented.
+If you forget a letter, <%expressions.buttoninstruct3%> the BLANK box to mark where it should go.~n
+Some of the sets will have more sentences and letters than others.~n
+It is important that you do your best on both the sentence problems and the letter recall parts of this task.~n
+Remember for the sentences you must work as QUICKLY and ACCURATELY as possible. Also, remember to keep your sentence accuracy at 85% or above.~n
+Do you have any questions?~n~n~n
+If not, <%expressions.buttoninstruct1%> to begin the task."
+/ 11 = "Thank you for your participation."
+</item>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/ buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"tap the screen";} else {"click the mouse button";}
+/ buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"tap the letters you want to select";} else {"use the mouse to select each letter";}
+/ buttoninstruct3 = if (computer.touch && !computer.hasKeyboard) {"tap";} else {"click";}
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+	The following list clements contain the set sizes used for the different study phases. 
+	The set sizes determine how many letters the participant has to remember
+	as well as the number of sentence problems she/he has to solve intermittently.	
+	The task can be extended by modifying these values. The script can handle a maximum 
+	set size of 12, task flow will be adjusted automatically.
+
+**************************************************************************************************************
+	Set Sizes for Letter Practice Phase
+**************************************************************************************************************
+
+Note: 2 repetitions of set sizes 2-3 for Letter only practice; order is sequential
+<list PracLetterSetSize>
+/ items = (2,2,3,3)
+/ selectionmode = sequence
+</list>
+
+**************************************************************************************************************
+	Set Sizes for Letter & Sentence Practice Phase
+**************************************************************************************************************
+
+Note: 3 repetitions of set size 2 for practice of Letter-Sentence Combos
+<list PracBothSetSize>
+/ items = (2,2,2)
+/ selectionmode = sequence
+</list>
+
+**************************************************************************************************************
+	Set Sizes for Letter & Sentence Test Phase
+**************************************************************************************************************
+
+Note: 3 repetitions of set sizes 3-7; order is randomly determined 
+<list TestBothSetSize>
+/ items = (3,3,3,4,4,4,5,5,5,6,6,6,7,7,7)
+</list>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ screencolor = white
+/ txcolor = black
+/ txbgcolor = transparent
+/ fontstyle = ("Arial", 4.0%, true)
+/ inputdevice = mouse
+/ halign = center
+/ valign = center
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum, 
+response, correct, latency, 
+values.currentsetsize, text.letters.currentItem, values.sentenceproblemcount, values.sentencetimeout, 
+text.PracSentenceProblem.currentItem, text.SentenceProblem.currentItem, values.sentenceaccuracy, 
+values.sentencetotalerrors, values.sentenceaccerrors, values.sentencespeederrors, values.rspan,
+values.recalledletters, values.totalcorrectletters, values.totalrecalledsets,
+
+//trial data
+values.trialCount,
+values.recalledLetters_perTrial,
+values.recalledLettersACC_perTrial,
+values.correctSentences_perTrial,
+values.sentenceACC_perTrial)
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+values.rspan, values.totalcorrectletters, values.sentencetotalerrors, values.sentencespeederrors, 
+values.sentenceaccerrors)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+ <values Arspan>
+/ stopblock = 0
+/ currentsetsize = 0
+/ lettercount = 0
+/ correctletters = 0
+/ totalcorrectletters = 0
+/ rspan = 0
+/ totalrecalledsets = 0
+/ recalledletters = ""
+/ recallcount = 0
+/ recalldelay = 0
+/ sentenceaccuracy = 0
+/ sentenceaccerrors = 0
+/ sentencecurrenterrors = 0
+/ sentencetotalerrors = 0
+/ sentencespeederrors = 0
+/ sentenceproblemcount = 0
+/ sentenceerrorswitch = 1
+/ sentencetimeout = 0
+
+/trialCount = 0
+/recalledLetters_perTrial = ""
+/recalledLettersACC_perTrial = ""
+/correctSentences_perTrial = ""
+/sentenceACC_perTrial = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+	Letter String Generation is handled by two list elements:
+	PracLetterlist and TestLetterlist.
+	Letter Practice (Block PracLetter) uses sequential selection.
+	Letter-Sentence Practice (Block PracBoth) and 
+	Letter-Sentence Test (Block TestBoth) use random selection 
+	without replacement for each sequence.
+	Switching between lists according to current study phase
+	is handled dynamically by 'expressions.selectionmode'.
+
+<expressions Arspan>
+/ selectionmode = if(script.currentblock=="PracLetter") PracLetterlist else TestLetterlist;
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block InstrPracLetter>
+/ trials = [1-3=instructions]
+/ recorddata = false
+</block>
+
+<block InstrPracSentence>
+/ trials = [1-3=instructions]
+/ recorddata = false
+</block>
+
+<block InstrPracBoth>
+/ trials = [1-3=instructions]
+/ recorddata = false
+</block>
+
+<block InstrTestBoth>
+/ trials = [1=instructions]
+/ recorddata = false
+</block>
+
+<block InstrFinal>
+/ trials = [1 = score_report; 2=finish]
+/ recorddata = false
+</block>
+
+<trial instructions>
+/ pretrialpause = 250
+/ posttrialpause = 250
+/ stimulustimes = [1=instructions]
+/ validresponse = (lbuttondown)
+/ beginResponseTime = 2000
+/ recorddata = false
+</trial>
+
+<text instructions>
+/ items = instructions
+/ hjustify = left
+/ vjustify = center
+/ fontstyle = ("Arial", 3%, true)
+/ size = (90%, 80%)
+/ position = (50%, 50%)
+/ select = sequence
+/ resetinterval = 0
+</text>
+
+<trial finish>
+/ stimulusFrames = [1 = clearScreen, finish]
+/ timeout = 500
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text LetterFeedback>
+/ items = ("You recalled <%values.correctletters%> out of <%values.lettercount%> letters correctly.")
+/ fontstyle = ("Arial", 3.5%, true)
+/ position = (50%, 45%)
+/ erase = true(white)
+</text>
+
+<text PracSentenceFeedback>
+/ items = ("You were correct on <%trial.prac_solve_sentence.totalcorrectcount%> of <%list.PracSentencelist.itemCount%> trials.
+That is <%trial.prac_solve_sentence.totalpercentcorrect%> percent correct.~n~n~n
+Click the mouse button to continue.")
+/ fontstyle = ("Arial", 2.5%, true)
+/ size = (65%, 50%)
+/ position = (50%, 50%)
+/ vjustify = center
+</text>
+
+<text Letters>
+/ items = letters_visual
+/ fontstyle = ("Arial", 5.0%, true)
+/ erase = true(silver)
+/ select = expressions.selectionmode
+</text>
+
+
+**************************************************************************************************************
+	Empty Item Elements for Storing Presented and Recalled Letter Sequences
+**************************************************************************************************************
+
+<item PresentedLetters>
+</item>
+
+<item RecalledLetters>
+</item>
+
+**************************************************************************************************************
+	Screen Layout Elements for the Letter Recall Grid
+**************************************************************************************************************
+<text F>
+/ items = ("F")
+/ position = (25%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text H>
+/ items = ("H")
+/ position = (50%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text J>
+/ items = ("J")
+/ position = (75%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text K>
+/ items = ("K")
+/ position = (25%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text L>
+/ items = ("L")
+/ position = (50%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text N>
+/ items = ("N")
+/ position = (75%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text P>
+/ items = ("P")
+/ position = (25%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text Q>
+/ items = ("Q")
+/ position = (50%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text R>
+/ items = ("R")
+/ position = (75%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text S>
+/ items = ("S")
+/ position = (25%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text T>
+/ items = ("T")
+/ position = (50%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text Y>
+/ items = ("Y")
+/ position = (75%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text _>
+/ items = ("BLANK")
+/ position = (50%, 72%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clear>
+/ items = ("CLEAR")
+/ position = (18%, 87%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text exit>
+/ items = ("EXIT")
+/ position = (82%, 87%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickF>
+/ items = ("F")
+/ position = (25%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickH>
+/ items = ("H")
+/ position = (50%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickJ>
+/ items = ("J")
+/ position = (75%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickK>
+/ items = ("K")
+/ position = (25%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickL>
+/ items = ("L")
+/ position = (50%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickN>
+/ items = ("N")
+/ position = (75%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickP>
+/ items = ("P")
+/ position = (25%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickQ>
+/ items = ("Q")
+/ position = (50%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickR>
+/ items = ("R")
+/ position = (75%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickS>
+/ items = ("S")
+/ position = (25%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickT>
+/ items = ("T")
+/ position = (50%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text clickY>
+/ items = ("Y")
+/ position = (75%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = silver
+/ erase = false
+</text>
+
+<text click_>
+/ items = ("BLANK")
+/ position = (50%, 72%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickclear>
+/ items = ("CLEAR")
+/ position = (18%, 87%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickexit>
+/ items = ("EXIT")
+/ position = (82%, 87%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text recalledletters>
+/ items = ("<%values.recalledletters%>")
+/ position = (50%, 80%)
+/ txcolor = red
+/ erase = false
+</text>
+
+<text recallprompt>
+/ items = ("Select the letters in the order presented. Use the blank button to fill in forgotten items.")
+/ position = (50%, 5%)
+/ size = (95%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ fontstyle = ("Arial", 2.5%, true)
+/ erase = false
+</text>
+
+**************************************************************************************************************
+	Sentence Problems (Practice Phase)
+**************************************************************************************************************
+*******************************************************************
+
+<text PracSentenceProblem>
+/ items = PracSentenceProblems
+/ size = (75%, 10%)
+/ position = (50%, 42%)
+/ fontstyle = ("Arial", 3.5%, true)
+/ erase = true(silver)
+/ select = PracSentenceList
+</text>
+
+<text PracSentenceAnswer>
+/ items = ("This sentence makes sense.")
+/ fontstyle = ("Arial", 3.5%, true)
+/ position = (50%, 25%)
+/ erase = false
+</text>
+
+**************************************************************************************************************
+	Text and Layout Items used for the Sentence Trials
+**************************************************************************************************************
+
+<text SentenceProblem>
+/ items = SentenceProblems
+/ fontstyle = ("Arial", 3.5%, true)
+/ size = (75%, 10%)
+/ position = (50%, 42%)
+/ erase = true(silver)
+/ select = noreplace
+/ resetinterval = 0
+</text>
+
+<text SentenceAnswer>
+/ items = ("This sentence makes sense.")
+/ fontstyle = ("Arial", 3.5%, true)
+/ position = (50%, 25%)
+/ erase = true(silver)
+</text>
+
+<text SentenceScore>
+/ items = ("<%values.sentenceaccuracy%>%")
+/ fontstyle = ("Arial", 4.0%, true)
+/ position = (85%, 15%)
+/ size = (10%, 10%)
+</text>
+
+<text SentenceFeedback>
+/ items = (
+"You made <%values.sentencecurrenterrors%> sentence error(s) on this set of trials.",
+"You have made a total of 3 or more sentence errors during this set of trials. Please do your best on the sentences.")
+/ select = values.sentenceerrorswitch
+/ position = (50%, 65%)
+/ size = (80%, 30%)
+/ fontstyle = ("Arial", 3.0%, true)
+</text>
+
+<text TRUE>
+/ items = ("TRUE")
+/ position = (31%, 52%)
+/ size = (10%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ fontstyle = ("Arial", 3.0%, true)
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<text FALSE>
+/ items = ("FALSE")
+/ position = (69%, 52%)
+/ size = (10%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ fontstyle = ("Arial", 3.0%, true)
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<text TestSentencePrompt>
+/ items = ("Click the left mouse button to continue.")
+/ fontstyle = ("Arial", 2.7%, true)
+/ position = (50%, 65%)
+/ size = (60%, 10%)
+/ erase = false
+</text>
+
+<text PracSentencePrompt>
+/ items = ("When you have read the sentence,~nclick the left mouse button to continue.")
+/ fontstyle = ("Arial", 2.7%, true)
+/ position = (50%, 65%)
+/ size = (60%, 10%)
+/ erase = true(silver)
+</text>
+
+<text correcttext>
+/ items = ("Correct")
+/ position = (50%, 72%)
+/ fontstyle = ("Arial", 3.0%, true)
+/ txcolor = blue
+/ size = (10%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ erase = true(silver)
+</text>
+
+<text incorrecttext>
+/ items = ("Incorrect")
+/ position = (50%, 72%)
+/ fontstyle = ("Arial", 3.0%, true)
+/ txcolor = blue
+/ size = (10%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ erase = true(silver)
+</text>
+
+
+**************************************************************************************************************
+	General Purpose Screen Layout Items
+**************************************************************************************************************
+
+<shape GrayFrame>
+/ shape = rectangle
+/ color = silver
+/ size = (78.3%, 78%)
+/ erase = false
+</shape>
+
+<shape BlackFrame>
+/ shape = rectangle
+/ color = black
+/ size = (80%, 80%)
+/ position = (50%, 50%)
+/ erase = false
+</shape>
+
+<shape WhiteScreen>
+/ shape = rectangle
+/ color = white
+/ size = (100%, 100%)
+/ position = (50%, 50%)
+/ erase = false
+</shape>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+	Beware: Item Selection differs between the task's Practice and Test Phases!
+	Generally, the single-task practice phases (Blocks PracLetter & PracSentence) rely on 
+	sequential item selection. The phases involving both tasks 
+	(Blocks PracBoth & TestBoth) use random selection without replacement.
+
+<list PracLetterlist>
+/ items = (1,2,3,4,5,6,7,8,9,10,11,12)
+/ selectionmode = sequence
+</list>
+
+<list TestLetterlist>
+/ items = (1,2,3,4,5,6,7,8,9,10,11,12)
+</list>
+
+<list PracSentencelist>
+/ items = (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
+/ selectionmode = sequence
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+	
+**************************************************************************************************************	
+	Initialization Trial for the Different Study Phases
+**************************************************************************************************************
+
+<trial InitSetSize>
+/ ontrialbegin = [
+	values.trialCount += 1;
+	
+	values.currentsetsize=0;
+	values.lettercount=0;
+	values.correctletters=0;
+	values.recallcount=0;
+	values.recalledletters="";
+	if (script.currentblock=="PracLetter") {
+		values.currentsetsize=list.PracLetterSetSize.nextValue;
+	} else if (script.currentblock=="PracBoth") {
+		values.currentsetsize=list.PracBothSetSize.nextValue;
+		list.TestLetterlist.reset();
+	} else if (script.currentblock=="TestBoth") {
+		values.currentsetsize=list.TestBothSetSize.nextValue;
+		list.TestLetterlist.reset();
+	}
+	
+	//Trial Summary Data:
+	values.recalledLetters_perTrial = "";
+	values.recalledLettersACC_perTrial = "";
+	values.sentenceACC_perTrial = "";
+	if (script.currentblock=="PracLetter"){
+		values.correctSentences_perTrial = "";		
+	} else {
+		values.correctSentences_perTrial = 0;		
+	}	
+]
+/ validresponse = (noresponse)
+/ trialduration = 0
+/ ontrialend = [
+	item.PresentedLetters.clearItems();
+	item.RecalledLetters.clearItems();
+]
+/ branch = [
+	if (script.currentblock=="PracLetter") {
+		return trial.show_letter;
+	} else {
+		return trial.show_sentence;
+	}
+]
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+	Letter Trials
+**************************************************************************************************************
+
+<trial show_letter>
+/ ontrialbegin = [
+	values.lettercount+=1;
+]
+/ pretrialpause = 200
+/ stimulusframes = [1=Letters, BlackFrame, GrayFrame, Letters, currentsetsize]
+/ trialduration = parameters.learninginterval
+/ validresponse = (noresponse)
+/ ontrialend = [
+	item.PresentedLetters.items=text.Letters.currentItem;
+]
+/ branch = [
+	if (values.lettercount==values.currentsetsize) {
+		return trial.recall_letter;
+	} else if (script.currentblock=="PracLetter") {
+		return trial.show_letter;
+	} else {
+		return trial.show_sentence;
+	}
+]
+/ recorddata = true
+</trial>
+
+<trial recall_letter>
+/ ontrialbegin = [
+	values.recallcount+=1;
+	if (values.recallcount==1) {
+		values.recalldelay=500;
+	} else {
+		values.recalldelay=0;
+	}
+]
+/ pretrialpause = values.recalldelay
+/ stimulusframes = [1=WhiteScreen, F, H, J, K, L, N, P, Q, R, S, T, Y, _, clear, exit, recalledletters, recallprompt, letterstrings]
+/ validresponse = (F, H, J, K, L, N, P, Q, R, S, T, Y, _, clear, exit)
+/ ontrialend = [
+	if (trial.recall_letter.response!="exit" && trial.recall_letter.response!="clear") {
+		item.RecalledLetters.items=trial.recall_letter.response;
+		values.recalledletters=concat(values.recalledletters, trial.recall_letter.response);
+	} else if (trial.recall_letter.response=="clear") {
+		item.RecalledLetters.clearItems();
+		values.recalledletters="";
+	}
+]
+/ responsemessage = (F, clickF, 150)
+/ responsemessage = (H, clickH, 150)
+/ responsemessage = (J, clickJ, 150)
+/ responsemessage = (K, clickK, 150)
+/ responsemessage = (L, clickL, 150)
+/ responsemessage = (N, clickN, 150)
+/ responsemessage = (P, clickP, 150)
+/ responsemessage = (Q, clickQ, 150)
+/ responsemessage = (R, clickR, 150)
+/ responsemessage = (S, clickS, 150)
+/ responsemessage = (T, clickT, 150)
+/ responsemessage = (Y, clickY, 150)
+/ responsemessage = (clear, clickclear, 150)
+/ responsemessage = (exit, clickexit, 150)
+/ responsemessage = (_, click_, 150)
+/ branch = [
+	if (trial.recall_letter.response=="exit") {
+		return trial.letter_feedback;
+	} else {
+		return trial.recall_letter;
+	}
+]
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+	Recall Feedback:
+	In this trial, the presented letter sequence	is compared 
+	to the letter string the participant has entered. 
+	Feedback is given accordingly. 
+	This trial also handles reporting of sentence reading performance
+	for Letter-Sentence Practice (Block PracBoth) and 
+	Letter-Sentence Test (Block TestBoth).
+**************************************************************************************************************
+
+<trial letter_feedback>
+/ pretrialpause = 500
+/ ontrialbegin = [
+	values.correctletters=0;
+	if (values.sentencecurrenterrors>=3) {
+		values.sentenceerrorswitch=2;
+	} else {
+		values.sentenceerrorswitch=1;
+	}
+	if (item.RecalledLetters.items.1 != "" && item.PresentedLetters.items.1==item.RecalledLetters.items.1) {
+		values.correctletters += 1;
+	}
+	if (item.RecalledLetters.items.2 != "" && item.PresentedLetters.items.2==item.RecalledLetters.items.2) {
+		values.correctletters += 1;
+	}
+	if (item.RecalledLetters.items.3 != "" && item.PresentedLetters.items.3==item.RecalledLetters.items.3) {
+		values.correctletters += 1;
+	}
+	if (item.RecalledLetters.items.4 != "" && item.PresentedLetters.items.4==item.RecalledLetters.items.4) {
+		values.correctletters += 1;
+	}
+	if (item.RecalledLetters.items.5 != "" && item.PresentedLetters.items.5==item.RecalledLetters.items.5) {
+		values.correctletters += 1;
+	}
+	if (item.RecalledLetters.items.6 != "" && item.PresentedLetters.items.6==item.RecalledLetters.items.6) {
+		values.correctletters += 1;
+	}
+	if (item.RecalledLetters.items.7 != "" && item.PresentedLetters.items.7==item.RecalledLetters.items.7) {
+		values.correctletters += 1;
+	}
+	if (item.RecalledLetters.items.8 != "" && item.PresentedLetters.items.8==item.RecalledLetters.items.8) {
+		values.correctletters += 1;
+	}
+	if (item.RecalledLetters.items.9 != "" && item.PresentedLetters.items.9==item.RecalledLetters.items.9) {
+		values.correctletters += 1;
+	}
+	if (item.RecalledLetters.items.10 != "" && item.PresentedLetters.items.10==item.RecalledLetters.items.10) {
+		values.correctletters += 1;
+	}
+	if (item.RecalledLetters.items.11 != "" && item.PresentedLetters.items.11==item.RecalledLetters.items.11) {
+		values.correctletters += 1;
+	}
+	if (item.RecalledLetters.items.12 != "" && item.PresentedLetters.items.12==item.RecalledLetters.items.12) {
+		values.correctletters += 1;
+	}
+	if (values.correctletters==values.currentsetsize) {
+		values.rspan+=values.correctletters;
+		values.totalrecalledsets+=1;
+	}
+	values.totalcorrectletters+=values.correctletters;
+	
+	//end of trial summary variables:
+	values.recalledLetters_perTrial = values.correctletters;
+	values.recalledLettersACC_perTrial = values.recalledLetters_perTrial/values.currentsetsize;
+	if (script.currentblock !="PracLetter"){
+		values.sentenceACC_perTrial = values.correctSentences_perTrial/values.currentsetsize;		
+	}		
+]
+/ stimulusframes = [1=WhiteScreen, LetterFeedback, SentenceFeedback, SentenceScore, scoredebug]
+/ validresponse = (noresponse)
+/ trialduration = 2000
+/ ontrialend = [
+	values.sentencecurrenterrors=0;
+	if (script.currentblock=="PracLetter" && list.PracLetterSetSize.unselectedCount==0) {
+		values.stopblock=1;
+	} else if (script.currentblock=="PracBoth" && list.PracBothSetSize.unselectedCount==0) {
+		values.stopblock=1;
+	} else if (script.currentblock=="TestBoth" && list.TestBothSetSize.unselectedCount==0) {
+		values.stopblock=1;
+	}
+]
+/ branch = [
+	return trial.InitSetSize;
+]
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+	Sentence Trials: 	Sentence Practice Phase
+**************************************************************************************************************
+
+<trial prac_show_sentence>
+/ ontrialbegin = [
+	values.sentenceproblemcount += 1;
+]
+/ pretrialpause = 500
+/ stimulusframes = [1=BlackFrame, GrayFrame, PracSentenceProblem, PracSentencePrompt]
+/ validresponse = (lbuttondown)
+/ branch = [
+	return trial.prac_solve_sentence;
+]
+/ recorddata = true
+</trial>
+
+<trial prac_solve_sentence>
+/ pretrialpause = 200
+/ stimulusframes = [1=BlackFrame, GrayFrame, PracSentenceAnswer, TRUE, FALSE]
+/ validresponse = (TRUE, FALSE)
+/ correctresponse = (list.PracSentenceCorrect.nextValue)
+/ responsemessage = (anyresponse, PracSentenceAnswer, 800)
+/ correctmessage = true(correcttext, 800)
+/ errormessage = true(incorrecttext, 800)
+/ ontrialend = [
+	values.sentenceaccuracy=round(((values.sentenceproblemcount-values.sentencetotalerrors)/values.sentenceproblemcount)*100);
+	values.correctSentences_perTrial += trial.prac_solve_sentence.correct;
+]
+/ branch = [
+	if (trial.prac_show_sentence.trialcount >= list.PracSentencelist.itemCount) {
+		return trial.prac_sentence_feedback;
+	} else {
+		return trial.prac_show_sentence;
+	}
+]
+/ recorddata = true
+</trial>
+
+<trial prac_sentence_feedback>
+/ pretrialpause = 500
+/ stimulusframes = [1=WhiteScreen, PracSentenceFeedback]
+/ validresponse = (lbuttondown)
+/ ontrialend = [
+	values.sentenceACC_perTrial = values.correctSentences_perTrial/values.currentsetsize;
+	values.stopblock=1;
+]
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+	Sentence Trials: 	Test Phase
+**************************************************************************************************************
+
+	The following trials handle presentation of sentence problems
+	and scoring of participants' responses.
+
+<trial show_sentence>
+/ ontrialbegin = [
+	values.sentenceproblemcount += 1;
+]
+/ pretrialpause = 500
+/ stimulusframes = [1=BlackFrame, GrayFrame, SentenceProblem, TestSentencePrompt, sentencetimeout]
+/ validresponse = (lbuttondown)
+/ timeout = values.sentencetimeout+500
+/ ontrialend = [
+	if (trial.show_sentence.response!="lbuttondown") {
+		values.sentencecurrenterrors += 1;
+		values.sentencespeederrors += 1;
+		values.sentencetotalerrors += 1;
+	}
+]
+/ branch = [
+	if (trial.show_sentence.response!="lbuttondown") {
+		return trial.show_letter;
+	} else {
+		return trial.solve_sentence;
+	}
+]
+/ recorddata = true
+</trial>
+
+<trial solve_sentence>
+/ ontrialend = [
+	if (trial.solve_sentence.correct==0) {
+		values.sentencecurrenterrors +=1;
+		values.sentenceaccerrors +=1;
+		values.sentencetotalerrors +=1;
+	}
+]
+/ pretrialpause = 200
+/ stimulusframes = [1=BlackFrame, GrayFrame, SentenceAnswer, TRUE, FALSE, sentencedebug]
+/ validresponse = (TRUE, FALSE)
+/correctresponse = (item.SentenceCorrect.item(text.SentenceProblem.currentItemNumber))
+/ ontrialend = [
+	values.sentenceaccuracy=round(((values.sentenceproblemcount-values.sentencetotalerrors)/values.sentenceproblemcount)*100);
+	values.correctSentences_perTrial += trial.solve_sentence.correct;//compute the number of correct sentences per trial
+]
+/ branch = [
+	return trial.show_letter;
+]
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+ SCORING
+**************************************************************************************************************
+**************************************************************************************************************
+<trial score_report>
+/ stimulusframes = [1=scorereport]
+/ validresponse = (lbuttondown)
+/ recorddata = false
+</trial>
+
+<text scorereport>
+/ items = ("~tResults for Subject #<%script.subjectId%>~n~n
+	rspan Absolute Score:~t<%values.rspan%>
+	rspan Total Correct:~t<%values.totalcorrectletters%>~n~n
+	Reading Errors (Total):~t<%values.sentencetotalerrors%>
+	Speed Errors:~t~t<%values.sentencespeederrors%>
+	Accuracy Errors:~t~t<%values.sentenceaccerrors%>~n~n
+	<%expressions.buttoninstruct1%> to continue
+	")
+/ size = (80%, 80%)
+/ position = (52%, 50%)
+/ hjustify = left
+/ vjustify = center
+</text>
+
+<text finish>
+/ items = ("Thank you for your participation.")
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Block Definitions for Study Phases
+**************************************************************************************************************
+
+<block PracLetter>
+/ onblockbegin = [
+	text.SentenceFeedback.textColor=white;
+	text.SentenceScore.textColor=white;
+	values.stopblock=0;
+]
+/ stop = [values.stopblock==1]
+/ trials = [1=InitSetSize]
+/ onblockend = [
+	values.stopblock=0;
+]
+</block>
+
+<block PracSentence>
+/ onblockbegin = [
+	values.sentenceaccuracy=0;	
+]
+/ stop = [values.stopblock==1]
+/ trials = [1=prac_show_sentence]
+/ onblockend = [
+	values.sentencetimeout=(2.5*trial.prac_show_sentence.totalsdlatency)+trial.prac_show_sentence.totalmeanlatency;
+	values.stopblock=0;
+]
+</block>
+
+<block PracBoth>
+/ onblockbegin = [
+	text.SentenceFeedback.textColor=black;
+	text.SentenceScore.textColor=red;
+	values.sentencecurrenterrors=0;
+	values.sentenceaccuracy=0;
+	values.sentenceaccerrors=0;
+	values.sentencetotalerrors=0;
+	values.sentencespeederrors=0;
+	values.sentenceproblemcount=0;
+	values.lettercount=0;
+	values.correctletters=0;
+	values.currentsetsize=0;
+	values.recallcount=0;
+	values.recalledletters="";
+	values.totalrecalledsets=0;
+	values.totalcorrectletters=0;
+	values.rspan=0;
+]
+/ stop = [values.stopblock==1]
+/ trials = [1=InitSetSize]
+/ onblockend = [
+	values.stopblock=0;
+]
+</block>
+
+<block TestBoth>
+/ onblockbegin = [
+	text.SentenceFeedback.textColor=black;
+	text.SentenceScore.textColor=red;
+	values.sentencecurrenterrors=0;
+	values.sentenceaccuracy=0;
+	values.sentenceaccerrors=0;
+	values.sentencetotalerrors=0;
+	values.sentencespeederrors=0;
+	values.sentenceproblemcount=0;
+	values.lettercount=0;
+	values.correctletters=0;
+	values.currentsetsize=0;
+	values.recallcount=0;
+	values.recalledletters="";
+	values.totalrecalledsets=0;
+	values.totalcorrectletters=0;
+	values.rspan=0;
+]
+/ stop = [values.stopblock==1]
+/ trials = [1=InitSetSize]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt ARSPAN>
+/ onexptbegin = [
+	values.sentencetimeout = parameters.startsentencetimeout;
+]
+/ blocks = [
+	1=InstrPracLetter; 
+	2=PracLetter; 
+	3=InstrPracSentence; 
+	4=PracSentence; 
+	5=InstrPracBoth; 
+	6=PracBoth; 
+	7=InstrTestBoth; 
+	8=TestBoth; 
+	9=InstrFinal;
+]
+</expt>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	On-Screen Debugging Items
+**************************************************************************************************************
+**************************************************************************************************************
+	These items are invisible by default. 
+	Enter 'debug' as subject id to enable them.
+
+<text currentsetsize>
+/ onprepare = [text.currentsetsize.skip = !parameters.debugmode;]
+/ items = (	"Setsize: <%values.currentsetsize%> / Lettercount: <%values.lettercount%>")
+/ fontstyle = ("Arial", 2.5%, true)
+/ txcolor = blue
+/ size = (50%, 5%)
+/ position = (50%, 5%)
+</text>
+
+<text letterstrings>
+/ onprepare = [text.letterstrings.skip = !parameters.debugmode;]
+/ items = ("~tPresented Letters:~t<%item.PresentedLetters.items.1%><%item.PresentedLetters.items.2%><%item.PresentedLetters.items.3%><%item.PresentedLetters.items.4%><%item.PresentedLetters.items.5%><%item.PresentedLetters.items.6%><%item.PresentedLetters.items.7%><%item.PresentedLetters.items.8%><%item.PresentedLetters.items.9%><%item.PresentedLetters.items.10%><%item.PresentedLetters.items.11%><%item.PresentedLetters.items.12%>
+~tRecalled Letters:~t<%item.RecalledLetters.items.1%><%item.RecalledLetters.items.2%><%item.RecalledLetters.items.3%><%item.RecalledLetters.items.4%><%item.RecalledLetters.items.5%><%item.RecalledLetters.items.6%><%item.RecalledLetters.items.7%><%item.RecalledLetters.items.8%><%item.RecalledLetters.items.9%><%item.RecalledLetters.items.10%><%item.RecalledLetters.items.11%><%item.RecalledLetters.items.12%>")
+/ fontstyle = ("Arial", 2.5%, true)
+/ txcolor = blue
+/ size = (55%, 5%)
+/ position = (50%, 87%)
+/ hjustify = left
+/ vjustify = center
+/ erase = false
+</text>
+
+<text sentencedebug>
+/ onprepare = [text.sentencedebug.skip = !parameters.debugmode;]
+/ items = ("Sentence Problem:~n
+<%text.SentenceProblem.currentItem%>~n
+Correct Answer = <%item.SentenceCorrect.item(text.SentenceProblem.currentItemNumber)%>")
+/ size = (50%, 10%)
+/ hjustify = center
+/ position = (50%, 70%)
+/ fontstyle = ("Arial", 2.5%, true)
+/ txcolor = blue
+/ erase = true(silver)
+</text>
+
+<text sentencetimeout>
+/ onprepare = [text.sentencetimeout.skip = !parameters.debugmode;]
+/ items = ("Timeout = <%values.sentencetimeout%> ms~n
+Sentence Problem # <%values.sentenceproblemcount%>")
+/ fontstyle = ("Arial", 2.5%, true)
+/ txcolor = blue
+/ size = (50%, 5%)
+/ position = (50%, 20%)
+/ erase = true(silver)
+</text>
+
+<text scoredebug>
+/ onprepare = [text.scoredebug.skip = !parameters.debugmode;]
+/ items = ("rspan Score:~t~t<% values.rspan%>
+Total Number Correct:~t<%values.totalcorrectletters%>~n~n
+Reading Errors (Total):~t<%values.sentencetotalerrors%>
+Speed Errors:~t~t<%values.sentencespeederrors%>
+Accuracy Errors:~t~t<%values.sentenceaccerrors%>~n")
+/ fontstyle = ("Arial", 2.5%, true)
+/ txcolor = blue
+/ size = (30%, 30%)
+/ hjustify = left
+/ position = (53%, 85%)
+/ erase = true(white)
+</text>
+
+<monkey Arspan>
+/ latencydistribution = normal(800, 200)
+/ percentcorrect = 100
+</monkey>
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

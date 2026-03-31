@@ -1,0 +1,930 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+										Number Vigilance Task
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 09-25-2017
+last updated:  10-04-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-04-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized Number Vigilance Task, a measure of attention and cognitive control.
+The Number Vigilance Task is used as a subtest of 
+the Cognitive Drug Research Computerized Assessment System (COGRAS).
+The Number Vigilance Task is a type of go/no go task with digits.
+
+The implemented procedure is similar to the one published in:
+
+Nicholl, C.G. et al (1995). The the Cognitive Drug Research Computerized Assessment System
+in the evaluation of early dementia- is speed of the essence?
+INTERNATIONAL JOURNAL OF GERIATRIC PSYCHIATRY, VOL. 10: 199-206
+
+Adjustments to z-scores as described by:
+Gregg, A. & Sedikides, C. (2010). Narcissistic Fragility:
+Rethinking Its Links to Explicit and Implicit Self-esteem, Self and Identity, 9:2, 142-161 (p.148)
+
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+Participants view a stream of digits presented in the middle of the screen, one at a time.
+A new digit is presented ~750ms (for a presentation rate of: 80 words/minute).
+Whenever the digit is the same as the target digit (which is presented on the right of the screen
+throughout the task), they have to press the Spacebar. Otherwise they are instructed to not do 
+anything but stay vigilant and wait for the next digit.								  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'numbervigilance_raw*.iqdat'*
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block. 
+																			
+digitType:						1 = target digit (current digit = target digit); 
+								2 = foil digit (current digit <> target digit)
+									
+targetDigit:					the randomly selected target digit that is presented at the right of the screen
+currentDigit:					the currently randomly selected digit that is presented in the center of the screen
+
+response:						the participant's response (scancode of response button)
+								57 => spacebar was pressed; 
+								0 = no response
+										
+responseCategory:				"hit" (pressed spacebar for a target)
+								"miss" (did not press spacebar for a target) = omission error
+								"CR" (did not press spacebar for a nontarget) = correct rejection
+								"FA" (pressed spacebar for a nontarget) = commission error	
+									
+correct:						accuracy of response: 
+								1 = correct response; 
+								0 = otherwise
+									
+latency: 						the response latency (in ms); measured from: onset of center digit
+
+
+(2) Summary data file: 'numbervigilance_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+								
+propCorrect:					overall proportion correct (across all test trials)									
+parameters.nrTestTrials:		the number of test trials run (default: 100)
+parameters.targetRate:			the proportion of targets (signals) during the test (and practice) (default: 25%)
+list.hits.itemCount:			the number of target (signal) trials during the test
+
+HITrate:				hitrate (across test trials that presented a target digit) = pressed spacebar for a target
+MISSrate:				missrate (did not press spacebar for a target)
+FArate:					false alarm rate (across test trials that presented a foil digit) = pressed spacebar for a nontarget
+CRrate:					correct rejection rate (did not press spacebar for a foil)
+
+Note: z-score calculations: adjustments (see Gregg & Sedikides, 2010, p.148)
+If the hit rate / FA rate is 0 => 0.005 is used instead (aka 0.005 is added to the hit/FA rate)
+IF the hit rate / FA rate is 1.0 => 0.995 is used instead (aka 0.005 is subtracted from the hit/FA rate)
+
+z-score of Hit Rate:	z-score of hit rate
+z_FArate:				z-score of false alarm rate
+
+dprime:					d' = sensitivity index calculated as difference btw. z score of hit rate and z-score of false alarm rate
+						=> Range (in this script): 
+						-5.1516586840152740479 <= dprime <= 5.1516586840152740479 (=perfect performance)
+						=> The higher the value, the better signals (=targets) were overall distinguished 
+						from noise (=nontargets) and thus the better participant paid attention
+						(d' = 0: chance performance; negative d-primes: participant treated nontargets as targets and targets as nontargets)
+
+c: 			c-criterion in signal detection:The absolute value of c provides an indication of the strength of
+			the response bias/response style
+			negative: participant more likely to report that signal (go stims) is present (liberal response style);
+			may favor faster responding in speed-accuracy trade-off response paradigms
+			positive: favoring caution (conservative response style)	
+
+
+//Response Times:			
+hitRT:					the mean hit latency (in ms)										
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+Target Digit: is sampled randomly at the start of the script.
+The same target is used for practice and test session.
+
+1. Practice Block: (optional)
+- number of practice trials can be set under section Editable Parameters (default: 20)
+Note: if set to 0, the practice trials are skipped. Instructions automatically adapt.
+- proportion of target trials can be set under section Editable Parameters (default: 25%)
+- order of target and foil trials is random
+- selection of foil digits is random with replacement
+- SOA and digit presentation duration can be set under section Editable Parameters
+(SOA: 1000ms; digit presentation duration: 1000ms)
+
+2. Test Block:
+- number of test trials can be set under section Editable Parameters (default: 100)
+- proportion of target trials can be set under section Editable Parameters (default: 25%)
+- order of target and foil trials is random
+- selection of foil digits is random with replacement
+- SOA and digit presentation duration can be set under section Editable Parameters
+(SOA: 750ms; digit presentation duration: 750ms)
+
+Trial Sequence: 
+* target is presented throughout the blocks to the right on the screen
+* each block starts with the target presented alone for duration SOA
+
+current digit presentation (750ms), response window = SOA = 750ms ->current digit presentation
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+target = randomly determined digit from 0 to 9, presented in black font on the right side of the screen
+current digit = digit from 0 to 9, presented in black font in the center of the screen
+both digits are equal in size (size can be set under section Editable Parameters)
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/digitSOA_practice:					the stimulus onset asynchrony (in ms) during practice trials (default: 1000ms)
+											Note: participants have the entire SOA to respond
+											
+/digitPresentationTime_practice:	the presentation duration (in ms) of the current trial digit (default: 1000ms)
+											Note: if digitPresentationTime_practice > digitSOA_practice, 
+											it's automatically set to digitSOA_practice
+											
+/digitSOA_test:						the stimulus onset asynchrony (in ms) during practice trials (default: 750ms)
+											Note: participants have the entire SOA to respond
+											Note: 1 word/750ms => 80 words/minute
+											
+/digitPresentationTime_test:			the presentation duration (in ms) of the current trial digit (default: 750ms)
+											Note: if digitPresentationTime_practice > digitSOA_practice, 
+											it's automatically set to digitSOA_practice
+											
+/errorFeedbackDuration:				the duration (in ms) of the error feedback during practice (default: 5000ms)
+/readyDuration:						the duration (in ms) of the 'get ready trial' (default: 5000ms)
+
+/nrPracticeTrials:					the number of practice trials run (default: 20)
+											Note: uses the same target: foil rate as the test
+											Note: if set to 0, the practice session is simply skipped
+											
+/nrTestTrials:						the number of test trials run (default: 100)
+
+/targetRate:						the proportion of targets during the test (and practice) (default: 25%)
+											Note: the proportion of targets should result in an integer
+											Example: 100 test trials * 0.25 targets = > 25 targets
+
+/targetDigitSize:					the proportional size of the digits on screen (default: 20%)
+
+Responsekeys:
+/responseKey:						the response key (default: " " -> spacebar)
+
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/digitSOA_practice = 1000
+/digitPresentationTime_practice = 1000
+/digitSOA_test = 750
+/digitPresentationTime_test = 750
+/errorFeedbackDuration = 5000
+/readyDuration = 5000
+
+/nrPracticeTrials = 20
+/nrTestTrials = 100
+/targetRate = 0.25
+
+/targetDigitSize = 20%
+
+/responseKey = " "
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+The errorfeedback presented during practice
+<item errorfeedback>
+/1 = "You MISSED a target!"
+/2 = "This digit is NOT a target. 
+Don't press the SPACEBAR."
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+///////////////////////////////////////////////////////////////////////////////////
+intro
+///////////////////////////////////////////////////////////////////////////////////
+
+<text header>
+/ items = ("Number Vigilance Test")
+/ voiceover = false
+/ position = (35%, 10%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ fontstyle = ("Arial", 6%, true, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text intro>
+/ items = ("Digits will appear, one-by-one, in the middle of the screen at a fast pace.
+
+Press [space] as FAST as possible, if the digit in the middle of the screen is '<%values.targetDigit%>' like the digit you see on the right.
+
+Don't do anything if the digit in the middle is NOT '<%values.targetDigit%>'. Just wait for the next digit to appear.")
+/ voiceover = false
+/ position = (35%, 50%)
+/ size = (55%, 70%)
+/ vjustify = center
+/ hjustify = left
+/ fontstyle = ("Arial", 4.5%, true, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+
+<text continuePractice>
+/ items = ("press [space] to start PRACTICE")
+/ voiceover = false
+/ position = (45%, 95%)
+/ size = (40%, 5%)
+/ vjustify = center
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txbgcolor = black
+/ txcolor = white
+/ erase = false
+</text>
+
+<trial intro>
+/ stimulusframes = [1 = clearScreen, header, intro, wall, targetDigit, continuePractice]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+///////////////////////////////////////////////////////////////////////////////////
+test
+///////////////////////////////////////////////////////////////////////////////////
+
+<text test>
+/ items = ("You have reached the end of practice.<br><br>
+The task will stay the same <br>
+but the digits will be <i>slightly faster</i> from now on.<br><br>
+
+<div style='background-color:lightGray'>
+Digits will appear, one-by-one,<br>
+in the middle of the screen at a fast pace.<br><br>
+Press [space] as FAST as possible,<br>
+if the digit in the middle of the screen is '<%values.targetDigit%>'<br>
+like the digit you see on the right.<br><br>
+
+Don't do anything if the digit in the middle is NOT '<%values.targetDigit%>'.<br>
+Just wait for the next digit to appear.</div>")
+/ position = (35%, 50%)
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text continue>
+/ items = ("press [space] to continue")
+/ voiceover = false
+/ position = (45%, 95%)
+/ size = (40%, 5%)
+/ vjustify = center
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txbgcolor = black
+/ txcolor = white
+/ erase = false
+</text>
+
+<trial teststart>
+/ stimulusframes = [1 = clearScreen, header, test, wall, targetDigit, continue]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+///////////////////////////////////////////////////////////////////////////////////
+get-ready-trials
+///////////////////////////////////////////////////////////////////////////////////
+
+<text getReadyInstructions_practice>
+/ items = ("<center><h2><font color='red'>PRACTICE ROUND:</font></h2><br> Get Ready!<br><br>
+<%expressions.readyInstruct%></center>")
+/ fontstyle = ("Arial", 5.00%, true, false, false, false, 5, 1)
+/ position = (35%, 50%)
+</text>
+
+<text start>
+/ items = ("press [space] to start")
+/ voiceover = false
+/ position = (45%, 95%)
+/ size = (40%, 5%)
+/ vjustify = center
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txbgcolor = black
+/ txcolor = white
+/ erase = false
+</text>
+
+<trial getReady_practice>
+/ stimulusframes = [1 = clearScreen, wall, targetDigit, getReadyInstructions_practice, start]
+/ validresponse = (" ")//used to show both response buttons on touchscreen devices
+/ correctresponse = (" ")
+/ response = correct
+/ recorddata = false
+/ recorddata = false
+/ posttrialpause = parameters.digitSOA_practice
+/ responsemessage = (" ", clearScreen, 0)
+/ responsemessage = (" ", shape.wall, 0)
+/ responsemessage = (" ", text.targetDigit, 0)
+</trial>
+
+<text getReadyInstructions_test>
+/ items = ("<center><h2>Get Ready!</h2><br><br>
+<%expressions.readyInstruct%></center>")
+/ fontstyle = ("Arial", 5.00%, true, false, false, false, 5, 1)
+/ position = (35%, 50%)
+</text>
+
+<trial getReady_test>
+/ stimulusframes = [1 = clearScreen, wall, targetDigit, getReadyInstructions_test, start]
+/ validresponse = (" ")//used to show both response buttons on touchscreen devices
+/ correctresponse = (" ")
+/ response = correct
+/ recorddata = false
+/ recorddata = false
+/ posttrialpause = parameters.digitSOA_test
+/ responsemessage = (" ", clearScreen, 0)
+/ responsemessage = (" ", shape.wall, 0)
+/ responsemessage = (" ", text.targetDigit, 0)
+</trial>
+
+<expressions>
+/readyInstruct = if (computer.touch && !computer.hasKeyboard) {"Place your index finger<br> over the [space] button";} 
+else {"Place your index finger on [space]";}
+</expressions>
+
+///////////////////////////////////////////////////////////////////////////////////
+finish-trial
+///////////////////////////////////////////////////////////////////////////////////
+
+<text finish>
+/ items = ("Thank you!")
+/ voiceover = false
+/ fontstyle = ("Arial", 10%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press [space] to exit>")
+/ voiceover = false
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ position = (50%, 95%)
+/ size = (40%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+values.digitType, values.targetDigit, values.currentDigit,response, values.responseCategory, correct, latency)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed
+expressions.propCorrect, parameters.nrTestTrials, parameters.targetRate, list.hits.itemCount, 
+expressions.HITrate, expressions.MISSrate, expressions.FArate, expressions.CRrate,
+expressions.z_HITrate, expressions.z_FArate, expressions.dprime, expressions.c, expressions.hitRT)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/targetDigit:			the randomly selected target digit that is presented at the right of the screen
+/currentDigit:			the currently randomly selected digit that is presented in the center of the screen
+/digitType:				1 = target trial (current digit = target digit); 2 = foil trial (current digit <> target digit)
+/responseCategory:		"hit" vs. "miss" vs. "CR" vs. "FA"
+/selectErrorFeedback: 	helper variable to select the appropriate error feedback text during practice
+
+<values>
+/targetDigit = 0
+/currentDigit = 0
+/digitType = ""
+/responseCategory = ""
+
+/selectErrorFeedback = 1
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+/foilRate:			calculates the proportion of foils to be be presented given the set proportion of targets
+
+/propCorrect:		overall proportion correct (across all test trials)
+
+/HITrate:			hitrate (across test trials that presented a target digit)
+/FArate:			false alarm rate (across test trials that presented a foil digit)
+
+Note: z-score calculations: adjustments (see Gregg & Sedikides, 2010, p.148)
+If the hit rate / FA rate is 0 => 0.005 is used instead (aka 0.005 is added to the hit/FA rate)
+IF the hit rate / FA rate is 1.0 => 0.995 is used instead (aka 0.005 is subtracted from the hit/FA rate)
+
+/z_HITrate:			z-score of hit rate
+/z_FArate:			z-score of false alarm rate
+/dprime:			d' = sensitivity index calculated as difference btw. z score of hit rate and z-score of false alarm rate
+
+<expressions>
+/foilRate = 1-parameters.targetRate
+
+/propCorrect = list.ACC.mean
+
+/HITrate = list.hits.mean
+/MISSrate = (1-expressions.HITrate)
+/FArate = list.FAs.mean
+/CRrate = (1-expressions.FArate)
+
+/z_HITrate = if (expressions.HITrate == 0){
+	zofp(expressions.HITrate + 0.005);
+} else if (expressions.HITrate == 1){
+	zofp(expressions.HITrate - 0.005);
+} else {
+	zofp(expressions.HITrate);
+}
+
+/z_FArate = if (expressions.FArate == 0){
+	zofp(expressions.FArate + 0.005);
+} else if (expressions.FArate == 1){
+	zofp(expressions.FArate - 0.005);
+} else {
+	zofp(expressions.FArate);	
+}
+
+/dprime = expressions.z_HITrate - expressions.z_FArate
+/c = return (-1*((expressions.z_HITrate + expressions.z_FArate)/2))
+/hitRT = list.hitlatencies.mean
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text targetDigit>
+/ items = ("<%values.targetDigit%>")
+/ position = (90%, 50%)
+/ fontstyle = ("Arial", parameters.targetDigitSize, true, false, false, false, 5, 1)
+/ erase = false
+/ size = (parameters.targetDigitSize, parameters.targetDigitSize)
+</text>
+
+<shape wall>
+/ shape = rectangle
+/ size = (2%, 100%)
+/ color = black
+/ erase = false
+/ position = (75%, 50%)
+</shape>
+
+<text currentDigit>
+/ items = ("<%values.currentDigit%>")
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", parameters.targetDigitSize, true, false, false, false, 5, 1)
+/ erase = false
+/ size = (parameters.targetDigitSize, parameters.targetDigitSize)
+</text>
+
+<text currentDigitEraser>
+/ items = ("")
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", parameters.targetDigitSize, true, false, false, false, 5, 1)
+/ erase = false
+/ size = (parameters.targetDigitSize, parameters.targetDigitSize)
+</text>
+
+<text errormessage>
+/ items = errorfeedback
+/ select = values.selectErrorFeedback
+/ position = (50%, 70%)
+/ txcolor = red
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ size = (45%, 20%)
+/ hjustify = center
+/ vjustify = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+********************************************
+practice
+********************************************
+
+Note: for practice trials only
+1 = target trial; 2 = foil trial
+poolSize and probabilities are set under section Editable Parameters
+<list practice_digitType>
+/ items = (1, 2)
+/ itemprobabilities = (parameters.targetRate, expressions.foilRate)
+/ poolSize = parameters.nrPracticeTrials
+/ resetinterval = 0
+</list>
+
+Note: list controls the selection of the foils during practice trials
+- digits are selected randomly with replacement
+<list practicedigits>
+/items = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+/ replace = true
+/ not = [
+	values.targetDigit;
+]
+</list>
+
+********************************************
+test
+********************************************
+
+1 = target trial; 2 = foil trial
+poolSize and probabilities are set under section Editable Parameters
+<list digitType>
+/ items = (1, 2)
+/ itemprobabilities = (parameters.targetRate, expressions.foilRate)
+/ poolSize = parameters.nrTestTrials
+/ resetinterval = 0
+</list>
+
+Note: list controls the selection of the foils during test trials
+- digits are selected randomly with replacement
+<list digits>
+/items = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+/ replace = true
+/ not = [
+	values.targetDigit;
+]
+</list>
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = otherwise
+<list ACC>
+</list>
+
+Note: list stores 1 = hit response; 0 = miss for each relevant trial
+<list hits>
+</list>
+
+Note: list stores 1 = False Alarm; 0 = correct rejection for each relevant trial
+<list FAs>
+</list>
+
+Note: list stores the latency of hits for each relevant trial
+<list hitlatencies>
+</list>
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+********************************************
+practice
+********************************************
+
+Note: trial.target presents the targetdigit without a 'currentdigit' for parameters.SOA
+<trial target_practice>
+/ stimulusframes = [1 = targetDigit, wall]
+
+/ validresponse = (parameters.responseKey)//for touchscreens: present the inactive response button
+/ isvalidresponse = [
+	return false;
+]
+
+/ trialduration = parameters.digitSOA_practice
+/ recorddata = false
+</trial>
+
+Note: trial.practice presents the target for parameters.SOA and the currentdigit for parameters.testtime
+- participants have parameters.SOA time to respond
+- if an error response is registered, trial.errorfeedback is called
+otherwise trial.practice calls itself (unless the maximum number of practice trials is run)
+
+<trial practice>
+/ ontrialbegin = [
+	text.currentDigit.textColor = black;
+	values.digitType = list.practice_digitType.nextValue;
+	if (values.digitType == 1){
+		values.currentDigit = values.targetDigit;
+	} else {
+		values.currentDigit = list.practicedigits.nextValue;		
+	}
+	
+	trial.practice.insertStimulusTime(text.currentDigitEraser, parameters.digitPresentationTime_practice);
+]
+/ stimulusframes = [1 = targetDigit, wall, currentDigit]
+/ validresponse = (parameters.responseKey, 0)
+/ iscorrectresponse = [
+	return (
+	(values.digitType == 1 && trial.practice.responseText == " ") ||
+	(values.digitType == 2 && trial.practice.response == 0));
+]
+/ beginresponsetime = 0
+/ responseinterrupt = frames
+/ trialduration = parameters.digitSOA_practice;
+/ ontrialend = [
+	trial.practice.resetStimulusFrames();	
+	values.selectErrorFeedback = values.digitType;
+	
+	if (values.digitType == 1){
+		if (trial.practice.correct){
+			values.responseCategory = "hit";
+		} else {
+			values.responseCategory = "miss";
+		}
+	} else {
+		if (trial.practice.correct){
+			values.responseCategory = "CR";
+		} else {
+			values.responseCategory = "FA";
+		}
+	}
+]
+/ branch = [
+	if (trial.practice.error){
+		return trial.errorFeedback;
+	} else if (trial.practice.trialcount < parameters.nrPracticeTrials){	
+		return trial.practice;
+	}
+]
+</trial>
+
+Note: trial.errorFeedback presents the appropriate errorfeedback for parameters.errorFeedbackDuration
+<trial errorFeedback>
+/ ontrialbegin = [
+	text.currentDigit.textColor = red;
+]
+/ stimulusframes = [1 = errormessage, currentDigit]
+
+/ validresponse = (parameters.responseKey)//for touchscreens: present the inactive response button
+/ isvalidresponse = [
+	return false;
+]
+
+/ timeout = parameters.errorFeedbackDuration
+/ recorddata = false
+/ branch = [
+	 if (trial.practice.trialcount < parameters.nrPracticeTrials){	
+		return trial.practice;
+	}
+]
+/ responsemessage = (0, currentDigitEraser, 0)
+</trial>
+
+********************************************
+test
+********************************************
+
+<trial target_test>
+/ stimulusframes = [1 = targetDigit, wall]
+
+/ validresponse = (parameters.responseKey)//for touchscreens: present the inactive response button
+/ isvalidresponse = [
+	return false;
+]
+
+/ trialduration = parameters.digitSOA_test
+/ recorddata = false
+</trial>
+
+Note: trial.test presents the target for parameters.SOA and the currentdigit for parameters.testtime
+- participants have parameters.SOA time to respond
+- trial assesses accuracy and updates summary variables
+- calls itself again (unless maximum number of test trials has been reached)
+
+<trial test>
+/ ontrialbegin = [
+	values.digitType = list.digitType.nextValue;
+	if (values.digitType == 1){
+		values.currentDigit = values.targetDigit;
+	} else {
+		values.currentDigit = list.digits.nextValue;		
+	}
+	
+	trial.test.insertStimulusTime(text.currentDigitEraser, parameters.digitPresentationTime_test);
+]
+/ stimulusframes = [1 = targetDigit, wall, currentDigit]
+/ validresponse = (parameters.responseKey, 0)
+/ iscorrectresponse = [
+	return (
+	(values.digitType == 1 && trial.test.responseText == " ") ||
+	(values.digitType == 2 && trial.test.response == 0));
+]
+/ beginresponsetime = 0
+/ responseinterrupt = frames
+/ trialduration = parameters.digitSOA_test
+/ ontrialend = [
+	trial.test.resetStimulusFrames();
+	
+	if (values.digitType == 1){
+		list.hits.appendItem(trial.test.correct);
+		if (trial.test.correct){
+			list.hitlatencies.appendItem(trial.test.latency);
+			values.responseCategory = "hit";
+		} else {
+			values.responseCategory = "miss";
+		}
+	} else {
+		list.FAs.appendItem(trial.test.error);
+		if (trial.test.correct){
+			values.responseCategory = "CR";
+		} else {
+			values.responseCategory = "FA";
+		}
+	}	
+	
+	list.ACC.appendItem(trial.test.correct);
+]
+/ branch = [
+	if (trial.test.trialcount < parameters.nrTestTrials){
+		return trial.test;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block taskStart>
+/ trials = [1 = intro]
+</block>
+
+
+<block practice>
+/ skip = [
+	parameters.nrPracticeTrials <= 0;
+]
+/ trials = [
+	1 = getReady_practice; 
+	2 = target_practice; 
+	3 = practice;
+]
+</block>
+
+<block NVT>
+/ onblockbegin = [
+	list.digits.reset();
+	list.digitType.reset();
+	text.currentDigit.textColor = black;	
+]
+/ trials = [
+	1 = teststart;
+	2 = getReady_test; 
+	3 = target_test; 
+	4 = test;
+]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt numberVigilance>
+/ onexptbegin = [
+	if (parameters.digitPresentationTime_test > parameters.digitSOA_test){
+		parameters.digitPresentationTime_test = parameters.digitSOA_test;
+	}
+	if (parameters.digitPresentationTime_practice > parameters.digitSOA_practice){
+		parameters.digitPresentationTime_practice = parameters.digitSOA_practice;
+	}	
+	values.targetDigit = list.digits.nextValue;
+]
+/ blocks = [
+	1 = taskStart;
+	2 = practice;
+	3 = NVT;
+	4 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

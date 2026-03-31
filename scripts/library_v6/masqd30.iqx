@@ -1,0 +1,562 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Mood and Anxiety Symptoms Questionnaire -d30  (MASQ-D30)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-11-2024
+last updated:  01-11-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 01-11-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements Millisecond's computerized version of the  Mood and Anxiety Symptoms Questionnaire -D30  
+(MASQ-d30, 30 items, Wardenaar et al, 2010). The MASQ-D30 is an adapted version of the  
+Mood and Anxiety Symptoms Questionnaire (MASQ, 90 items, Clark &Watson, 1991), a self-report survey intended
+to assess the shared and distinct symptoms of anxiety and depression.
+According to Wardenaar et al (2010), the MASQ-D30 'is more suitable for large-scale psychopathology research
+and has a clearer factor structure' than the original MASQ.
+
+****References****
+
+MASQ-D30:
+
+ Wardenaar, K. J., van Veen, T., Giltay, E. J., de Beurs, E., Penninx, B. W. J. H., & Zitman, F. G. (2010). 
+ Development and validation of a 30-item short adaptation of the Mood and Anxiety Symptoms Questionnaire (MASQ). 
+ Psychiatry Research, 179(1), 101–106. 
+ https://doi.org/10.1016/j.psychres.2009.03.005
+ 
+ MASQ:
+
+ Clark, L. A., & Watson, D. (1991). Tripartite Model of Anxiety and Depression: Psychometric Evidence and Taxonomic Implications. 
+ Journal of Abnormal Psychology (1965), 100(3), 316–336. 
+ https://doi.org/10.1037/0021-843X.100.3.316
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+self-report measure consisting of 30 5-point Likert Scale questions on three subscales:
+GD: General Distress Subscale (10 questions)
+AD: Anhedonic Depression Subscale (10 questions)
+AA: Anxious Arousal Subscale (10 questions)
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minute to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'masqd30.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (not at all) - 5 (extremely)
+								R: reversed coded questions
+								postfix _GD: general distress question
+								postfix _AD: anhedonic depression question
+								postfix _AA: anxious arousal question
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'masqd30_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+
+	
+//Higher Values indicate greater anxiety/depression scores
+	
+MASQD30_Total: 			sum of all responses (Range: 30-150)
+
+//Subscales:
+MASQD30_AA: 			Anxious Arousal: q2_AA, q5_AA, q8_AA, q15_AA, q18_AA, q20_AA, q21_AA, q24_AA, q27_AA, q30_AA (Range: 10-50)
+
+MASQD30_AD: 			Anhedonic Depression: q3R_AD, q6R_AD, q9R_AD, q11R_AD, q14R_AD, q16R_AD, q19R_AD, q22R_AD, q26R_AD, q29R_AD (Range: 10-50)
+
+MASQD30_GD: 			General Distress: q1_GD, q4_GD, q7_GD, q10_GD, q12_GD, q13_GD, q17_GD, q23_GD, q25_GD, q28_GD	(Range: 10-50)							
+
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.6.1.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+expressions.MASQD30_Total, expressions.MASQD30_AA, expressions.MASQD30_AD, expressions.MASQD30_GD,
+
+//individual responses
+radioButtons.q1_GD.response,
+radioButtons.q2_AA.response,
+radioButtons.q3R_AD.response,
+radioButtons.q4_GD.response,
+radioButtons.q5_AA.response,
+radioButtons.q6R_AD.response,
+radioButtons.q7_GD.response,
+radioButtons.q8_AA.response,
+radioButtons.q9R_AD.response,
+radioButtons.q10_GD.response,
+radioButtons.q11R_AD.response,
+radioButtons.q12_GD.response,
+radioButtons.q13_GD.response,
+radioButtons.q14R_AD.response,
+radioButtons.q15_AA.response,
+radioButtons.q16R_AD.response,
+radioButtons.q17_GD.response,
+radioButtons.q18_AA.response,
+radioButtons.q19R_AD.response,
+radioButtons.q20_AA.response,
+radioButtons.q21_AA.response,
+radioButtons.q22R_AD.response,
+radioButtons.q23_GD.response,
+radioButtons.q24_AA.response,
+radioButtons.q25_GD.response,
+radioButtons.q26R_AD.response,
+radioButtons.q27_AA.response,
+radioButtons.q28_GD.response,
+radioButtons.q29R_AD.response,
+radioButtons.q30_AA.response)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/ MASQD30_GD = return (radioButtons.q1_GD.response + radioButtons.q4_GD.response + radioButtons.q7_GD.response +
+radioButtons.q10_GD.response + radioButtons.q12_GD.response + radioButtons.q13_GD.response +
+radioButtons.q17_GD.response + radioButtons.q23_GD.response + radioButtons.q25_GD.response +
+radioButtons.q28_GD.response)
+
+/ MASQD30_AD = return (radioButtons.q3R_AD.response + radioButtons.q6R_AD.response + radioButtons.q9R_AD.response +
+radioButtons.q11R_AD.response + radioButtons.q14R_AD.response + radioButtons.q16R_AD.response +
+radioButtons.q19R_AD.response + radioButtons.q22R_AD.response + radioButtons.q26R_AD.response +
+radioButtons.q29R_AD.response)
+
+/ MASQD30_AA = return (radioButtons.q2_AA.response + radioButtons.q5_AA.response + radioButtons.q8_AA.response +
+radioButtons.q15_AA.response + radioButtons.q18_AA.response + radioButtons.q20_AA.response + 
+radioButtons.q21_AA.response + radioButtons.q24_AA.response + radioButtons.q27_AA.response +
+radioButtons.q30_AA.response)
+
+/ MASQD30_Total = return (expressions.MASQD30_AA + expressions.MASQD30_AD + expressions.MASQD30_GD)
+
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radioButtons q1_GD>
+/ caption = "1. Felt confused"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q2_AA>
+/ caption = "2. Startled easily"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q3R_AD>
+/ caption = "3. Felt successful"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q4_GD>
+/ caption = "4. Felt worthless"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q5_AA>
+/ caption = "5. Felt nauseous"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q6R_AD>
+/ caption = "6. Felt really happy"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q7_GD>
+/ caption = "7. Felt irritable"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q8_AA>
+/ caption = "8. Felt dizzy or light-headed"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q9R_AD>
+/ caption = "9. Felt optimistic"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q10_GD>
+/ caption = "10. Felt hopeless"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q11R_AD>
+/ caption = "11. Felt like I was having a lot of fun"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q12_GD>
+/ caption = "12. Blamed myself for a lot of things"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q13_GD>
+/ caption = "13. Felt dissatisfied with everything"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q14R_AD>
+/ caption = "14. Felt like I accomplished a lot"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q15_AA>
+/ caption = "15. Was trembling or shaking"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q16R_AD>
+/ caption = "16. Felt like I had a lot to look forward to"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q17_GD>
+/ caption = "17. Felt pessimistic about the future"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q18_AA>
+/ caption = "18. Had pain in my chest"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q19R_AD>
+/ caption = "19. Felt really talkative"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q20_AA>
+/ caption = "20. Had hot or cold spells"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q21_AA>
+/ caption = "21. Was short of breath"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q22R_AD>
+/ caption = "22. Felt really ‘up’ or lively"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q23_GD>
+/ caption = "23. Felt inferior to others"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q24_AA>
+/ caption = "24. Muscles were tense or sore"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q25_GD>
+/ caption = "25. Had trouble making decisions"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q26R_AD>
+/ caption = "26. Felt like I had a lot of energy"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q27_AA>
+/ caption = "27. Heart was racing or pounding"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q28_GD>
+/ caption = "28. Worried a lot about things"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q29R_AD>
+/ caption = "29. Felt really good about myself"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+<radioButtons q30_AA>
+/ caption = "30. Had trouble swallowing"
+/ options = ("not at all", "a little bit", "moderately", "quite a bit", "extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radioButtons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage MASQD30_1>
+/ caption = "Below is a list of feelings, sensations, problems and experiences that people sometimes have. Please indicate how much in the <b>past
+week</b> you have experienced each of them by selecting the answer choice that applies best to you.<br>"
+/ subcaption = ""
+/ questions = [1= q1_GD, q2_AA, q3R_AD]
+</surveypage>
+
+<surveypage MASQD30_2>
+/ caption = "Below is a list of feelings, sensations, problems and experiences that people sometimes have. Please indicate how much in the <b>past
+week</b> you have experienced each of them by selecting the answer choice that applies best to you.<br>"
+/ subcaption = ""
+/ questions = [1 = q4_GD, q5_AA, q6R_AD]
+</surveypage>
+
+<surveypage MASQD30_3>
+/ caption = "Below is a list of feelings, sensations, problems and experiences that people sometimes have. Please indicate how much in the <b>past
+week</b> you have experienced each of them by selecting the answer choice that applies best to you.<br>"
+/ subcaption = ""
+/ questions = [1 = q7_GD, q8_AA, q9R_AD]
+</surveypage>
+
+<surveypage MASQD30_4>
+/ caption = "Below is a list of feelings, sensations, problems and experiences that people sometimes have. Please indicate how much in the <b>past
+week</b> you have experienced each of them by selecting the answer choice that applies best to you.<br>"
+/ subcaption = ""
+/ questions = [1 = q10_GD, q11R_AD, q12_GD ]
+</surveypage>
+
+<surveypage MASQD30_5>
+/ caption = "Below is a list of feelings, sensations, problems and experiences that people sometimes have. Please indicate how much in the <b>past
+week</b> you have experienced each of them by selecting the answer choice that applies best to you.<br>"
+/ subcaption = ""
+/ questions = [1 = q13_GD, q14R_AD, q15_AA ]
+</surveypage>
+
+<surveypage MASQD30_6>
+/ caption = "Below is a list of feelings, sensations, problems and experiences that people sometimes have. Please indicate how much in the <b>past
+week</b> you have experienced each of them by selecting the answer choice that applies best to you.<br>"
+/ subcaption = ""
+/ questions = [1 = q16R_AD, q17_GD, q18_AA ]
+</surveypage>
+
+<surveypage MASQD30_7>
+/ caption = "Below is a list of feelings, sensations, problems and experiences that people sometimes have. Please indicate how much in the <b>past
+week</b> you have experienced each of them by selecting the answer choice that applies best to you.<br>"
+/ subcaption = ""
+/ questions = [1 = q19R_AD, q20_AA, q21_AA ]
+</surveypage>
+
+<surveypage MASQD30_8>
+/ caption = "Below is a list of feelings, sensations, problems and experiences that people sometimes have. Please indicate how much in the <b>past
+week</b> you have experienced each of them by selecting the answer choice that applies best to you.<br>"
+/ subcaption = ""
+/ questions = [1 = q22R_AD, q23_GD, q24_AA ]
+</surveypage>
+
+<surveypage MASQD30_9>
+/ caption = "Below is a list of feelings, sensations, problems and experiences that people sometimes have. Please indicate how much in the <b>past
+week</b> you have experienced each of them by selecting the answer choice that applies best to you.<br>"
+/ subcaption = ""
+/ questions = [1 = q25_GD, q26R_AD, q27_AA ]
+</surveypage>
+
+<surveypage MASQD30_10>
+/ caption = "Below is a list of feelings, sensations, problems and experiences that people sometimes have. Please indicate how much in the <b>past
+week</b> you have experienced each of them by selecting the answer choice that applies best to you.<br>"
+/ subcaption = ""
+/ questions = [1 = q28_GD, q29R_AD, q30_AA ]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+
+<survey masqd30>
+/ pages = [
+	1 = MASQD30_1;
+	2 = MASQD30_2;
+	3 = MASQD30_3;
+	4 = MASQD30_4;
+	5 = MASQD30_5;
+	6 = MASQD30_6;
+	7 = MASQD30_7;
+	8 = MASQD30_8;
+	9 = MASQD30_9;
+	10 = MASQD30_10;
+]
+/ screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

@@ -1,0 +1,1772 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Road Sign Reaction Time Task
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 9-14-2017
+last updated:  01-19-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 01-19-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized Road Sign Reaction Time Task similarly to the one described in:
+
+Edwards J., Ross , L.A., Wadley, V.G., Clay, O.J., Crowe, M., Roenker, D.L., Ball, K.K. (2006).
+The useful field of view test: Normative data for older adults.
+Archives of Clinical Neuropsychology, 21, 275–286.
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+Participants see sets of three or six traffic signs (sets are sampled from four different signs:
+left arrow, right arrow, bicycle, pedestrian) that are all crossed out by a red cross.
+After a random delay (1000-6000ms, steps of 1000ms), the cross is removed from one of the signs, 
+and participant has to choose amongst 4 different responses:
+- left arrow => move the mouse to the left
+- right arrow => move the mouse to the right
+- bicycle => press left mouse button
+- pedestrian => press right mouse button
+
+Note: by default, the test is run in a blocked design (N=3 vs. N=6, with N=3 always preceding N=6 block).
+To run N=3 and N=6 trials in a randomized mixed design, change parameters.runBlockedDesign under section Editable Parameters.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 7 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________ 
+The default data stored in the data files are:
+
+(1) Raw data file: 'roadsigntest_raw*.iqdat'*
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block. 
+									
+(parameter) runBlockedDesign:		true (1): the test is split into 2 blocks: first block runs N=3; second block runs N=6 (default)
+									false (0): N=3 and N=6 trials are run in a mixed design
+								
+N:									stores the current set size tested
+delay:								stores the currently randomly sampled target delay in ms (1000-6000ms)
+target:								stores the current target image
+distractor1-
+distractor5:						store the current distractor images
+
+response:							the participant's response (recorded mouse response)
+
+responseCategory:					description of response: 
+									"left turn", 
+									"right turn", 
+									"LM-bicycle" (left mouse button), 
+									"RM-pedestrian" (right mouse button)
+			
+correct:							accuracy of response: 1 = correct response made after removal of cross; 0 = otherwise
+propCorrect_practice1:				proportion initially correct responses during practice 1
+
+valid:								1 = valid response
+									0 = invalid response
+
+validrt:							valid response time (in ms); measured from onset of unslashed target
+									-> "early response": response was made too early (during practice session 2)
+									
+latency: 							the response latency (in ms) of the last measured response; measured from: onset of stims
+PrematureResponse:					number of times participant responded before cross was removed during the current trial
+
+
+(2) Summary data file: 'roadsigntest_summary*.iqdat'*
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+(parameter) runBlockedDesign:		true (1): the test is split into 2 blocks: first block runs N=3; second block runs N=6 (default)
+									false (0): N=3 and N=6 trials are run in a mixed design
+								
+propCorrect_practice1:				the final proportion initially correct responses during practice 1	
+aborted:							1 = script was aborted after practice 1; 0 = script was not aborted after practice 1
+								
+Note: the following summary variables are based on correct responses made after onset of target
+The script considers all correct responses made after onset of target including those trials where a premature response was also registered
+
+propCorrect_overall:				proportion correct across all test trials 
+meanRT_overall:						mean latency (in ms) of correct responses across all test trials
+
+propCorrect_3stims:					proportion correct across all test trials with N = 3
+meanRT_3stims:						mean latency (in ms) of correct responses across all test test trials with N = 3
+
+propCorrect_6stims:					proportion correct across all test trials with N = 6
+meanRT_6stims:						mean latency (in ms) of correct responses across all test test trials with N = 6
+
+
+sumPrematureResponses:				the sum of all premature responses (responses before the cross was removed)
+sumPrematureResponses_3signs:  		the sum of all premature responses (responses before the cross was removed) in the 3 sign condition
+sumPrematureResponses_6signs:  		the sum of all premature responses (responses before the cross was removed) in the 6 sign condition
+
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+Note: by default, the test is run in a blocked design (N=3 vs. N=6).
+To run N=3 and N=6 trials in a randomized mixed design, change parameters.runBlockedDesign under 
+section Editable Parameters.
+
+1. block.mousecheck:
+This script requires an external mouse. 
+If no external mouse is attached, participants are asked to quit and come back later.
+
+2. Response Practice:
+- 20 trials that present only 1 sign (5 trials per sign); only correct responses terminate trial
+- order of signs is randomized
+- after the first 20 practice trials, the script checks performance:
+	if performance is below a cut-off value (default: 90%, see editable parameters.practice1MinACC),the block is repeated
+	if performance is still below cut-off after the second block (default; see editable parameters.maxPractice1Blocks),
+	the script aborts.
+
+3. Task Practice:
+- 12 trials that run the test set-up but with only 2 signs and with feedback
+- each of the four signs is presented as a target 3 times and 3 times as a distractor
+- order of targets is randomized
+- signs are randomly assigned to two of 12 possible screen locations
+- delays (of cross removal) are randomly selected from 1000-6000ms (see list.delays)
+
+4. Test: with N = 3
+- 12 trials with sets of 3 signs (no feedback) 
+- each of the four signs is presented 3 times as a target 3 and 6 times as distractors
+- each non-target sign is presented as a distractor twice with each target and never in the same combination:
+Example: target left turn
+presented with:
+1: right turn, bicycle
+2: right turn, pedestrian
+3: pedestrian, bicycle
+- order of trials is randomized
+- signs are randomly assigned to three of 12 possible screen locations
+- delays (of cross removal) are randomly selected from 1000-6000ms (see list.delays)
+
+5. Test: with N = 6
+- 12 trials with sets of 6 signs (no feedback)
+- each target is presented 3 times
+- !!!Distractor Selection (2 signs in each display have to be repeats):
+ - distractor 1-3: sample from the non-target options (without replacement)
+ - distractor 4-5 (repeated signs): sample from all options (without replacement)
+ => it's randomly determined whether the target sign is one of the 'double' signs.
+ => the frequency of each sign is not controlled for the N=6 trials
+- order of trials is randomized
+- signs are randomly assigned to six of 12 possible screen locations
+- delays (of cross removal) are randomly selected from 1000-6000ms (see list.delays)
+
+6. mixed design block (only run if parameters.runBlockedDesign is turned to false)
+- 24 trials: 12 with N=3 and 12 with N = 6, randomized order
+
+Trial Sequence:
+fixation cross (until clicked with mouse)-> pretrialpause (default: 1000ms)
+-> 3 (6) signs appear, all crossed out -> random delay: 1000-6000ms
+-> one cross is removed: target -> waits for response
+(Note: responses are collected from onset of stimuli, a valid response terminates the set-up
+even if the target has been revealed yet. These trials are noted as "premature responses")
+
+
+Screen Location of Signs:
+- screen locations are randomly sampled from 12 possible screen locations (arranged in a 3 rows x 4 columns matrix) 
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+provided by Millisecond Software - can be edited under section Editable Stimuli
+The signs are 4 traffic signs commonly used in the United States but can easily be exchanged.
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+provided by Millisecond Software as html files.
+To edit instructions, edit the html files directly.
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/runBlockedDesign:						true (1): the test is split into 2 blocks: first block runs N=3; second block runs N=6 (default)
+											false (0): N=3 and N=6 trials are run in a mixed design
+
+/minHorizontalChange_px:				any horizontal mouse movements (in pixels) smaller than this value is ignored 
+											and not processed as a response (default: 100 pixels).
+
+/picSize:									the proportional size of the images (default: 20%)
+											Note: if picSize is increased list.xcoordinates/list.ycoordinates need to be updated accordingly
+
+/maxPractice1Blocks:						the maximum number of response practice blocks run if performance is too low (default: 2)
+/practice1MinACC:							the minimum proportion correct that terminates practice 1 (response practice)
+
+/pretrialpause:							the pause (in ms) after pressing the fixation cross and presentation of signs (default: 1000ms)
+/responseReminder:						during practice (response learning) a response reminder is presented after this duration (in ms) (default: 5000ms))
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ runBlockedDesign = true
+/ minHorizontalChange_px = 100
+
+/ picSize = 20%
+
+/ maxPractice1Blocks = 2
+/ practice1MinACC = 0.9
+
+/ pretrialpause = 1000
+/ responseReminder = 5000
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item roadSigns>
+/ 1 = "leftturn.png"
+/ 2 = "leftturn_slash.png"
+/ 3 = "rightturn.png"
+/ 4 = "rightturn_slash.png"
+/ 5 = "bicycle.png"
+/ 6 = "bicycle_slash.png"
+/ 7 = "pedestrian.png"
+/ 8 = "pedestrian_slash.png"
+</item>
+
+<item feedback>
+/ 1 = "Correct!"
+/ 2 = "Wrong Response"
+/ 3 = "Early Response"
+</item>
+
+<expressions>
+/ conditionalFeedback = if (values.feedback == 3){
+	return "Please wait to respond until AFTER the slash is removed";
+} else if (values.feedback == 2){
+	if (values.targetindex == 1){
+		return "Move the mouse to the left";
+	} else if (values.targetindex == 3){
+		return "Move the mouse to the right";
+	} else if (values.targetindex == 5){
+		return "Press the LEFT mouse button";
+	} else if (values.targetindex == 7){
+		return "Press the RIGHT mouse button";
+	} else {
+		return "debugging: something went wrong";
+	}	
+} else {
+	return "";
+}
+</expressions>
+
+<item roadSignFeedback>
+/ 1 = "move the mouse to the left"
+/ 2 = "move the mouse to the right"
+/ 3 = "press the left mouse button"
+/ 4 = "press the right mouse button"
+</item>
+
+
+<item trialStartInstructions>
+/ 1 = "Click on the fixation cross"
+</item>
+
+
+<item continueInstructions>
+/ 1 = "click here to continue"
+</item>
+
+<item mousecheckInstruct>
+/ 1 = "This task requires an external mouse with a left and right response button. 
+~nIf you don't have an external mouse attached to your device, please, attach a mouse before running this task. 
+~nThank you!"
+/ 2 = "I have an external mouse attached: 
+continue"
+/ 3 = "I have no external mouse attached: 
+quit and come back later"
+</item>
+
+<item responseReminderText>
+/ 1 = "Respond as soon as the traffic sign appears!"
+</item>
+
+<picture responseReminder>
+/ items = ("responsereminder.png")
+/ position = (50%, 20%)
+/ size = (40%, 40%)
+</picture>
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+</instruct>
+
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<button exitbutton>
+/ caption = "EXIT"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 80%)
+/ size = (20%, 5%)
+/ valign = center
+/ halign = center
+</button>
+
+
+<htmlpage practice1>
+/ file = "roadsigntest_practice1.htm"
+</htmlpage>
+
+<htmlpage practice2a>
+/ file = "roadsigntest_practice2a.htm"
+</htmlpage>
+
+<htmlpage practice2b>
+/ file = "roadsigntest_practice2b.htm"
+</htmlpage>
+
+<htmlpage testintro1>
+/ file = "roadsigntest_testintro1.htm"
+</htmlpage>
+
+<htmlpage testintro2>
+/ file = "roadsigntest_testintro2.htm"
+</htmlpage>
+
+<htmlpage testintro3>
+/ file = "roadsigntest_testintro3.htm"
+</htmlpage>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list delays>
+/ items = (1000, 2000, 3000, 4000, 5000, 6000)
+/ replace = false
+</list>
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 5.0.9.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+/ inputdevice = mouse
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, parameters.runBlockedDesign,
+values.N, values.delay,  
+values.target, values.targetindex, values.distractor1, values.distractor2, values.distractor3, values.distractor4, values.distractor5,
+response, values.responseCategory, correct, expressions.propCorrect_practice1, values.valid, values.validRT, latency, 
+ values.PrematureResponse)
+ 
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+parameters.runBlockedDesign, expressions.propCorrect_practice1, values.aborted,
+expressions.propCorrect_overall, expressions.meanRT_overall,
+expressions.propCorrect_3stims, expressions.meanRT_3stims,
+expressions.propCorrect_6stims, expressions.meanRT_6stims,
+values.sumPrematureResponses, values.sumPrematureResponses_3stims, values.sumPrematureResponses_6stims)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/countpractice1blocks:	running total of the practice 1 blocks (response practice)
+/N:						stores the current set size
+/delay:					stores the currently randomly sampled delay
+/target:				stores the current target image
+/distractor1-
+/distractor5:			store the current distractor images
+/targetindex:			stores the current itemnumber of the target pic (without cross)
+/distractor1index-
+/distractor5index:		store the current itemnumber of the distractor pics (with crosses)
+/target_x:				horizontal coordinate of the target sign (0%=left -> 100%=right)
+/target_y:				vertical coordinate of the target sign (0%=top -> 100%=bottom)
+/distractor1_x-
+/distractor5_y:			the horizontal/vertical coordinates of the distractors
+
+/validRT:				stores the latency of a response (in ms) AFTER the onset of the target
+						(or: 'early response' if response was made before onset of the target)
+/PrematureResponse:		number of times participant responded before onset of target
+/sumPrematureResponses:	running total of the number of premature responses across all test blocks
+/sumPrematureResponses_3stims:	running total of the number of premature responses across all N=3 trials
+/sumPrematureResponses_6stims:	running total of the number of premature responses across all N=6 trials
+/valid:					1 = valid response with validRT; 0 = otherwise
+/lastTargetTimeStamp:	stores the timestamp (in ms) of the last target onset
+/startTargetTimeStamp:	stores the timestamp of the target at the start of the experiment (helper value)
+/feedback:				helper variable: stores the index of the feedback text to be presented
+
+/response:				description of response: "left turn", "right turn", "LM-bicycle" (right mouse button), "RM-pedestrian" (left mouse button)
+/startX:				stores the horizontal mouse position at start of trial
+/avoid:					helper variable: stores the distractor index that should not be sampled as a distractor for N=6 trials
+
+/aborted:				1 = script was aborted after practice 1; 0 = script was not aborted after practice 1
+
+/debug:					helper debug variable
+
+
+<values>
+/ countpractice1blocks = 0
+/ N = 0
+/ delay = 0
+/ target = 0
+/ distractor1 = 0
+/ distractor2 = 0
+/ distractor3 = 0
+/ distractor4 = 0
+/ distractor5 = 0
+/ targetindex = 1
+/ distractor1index = 0
+/ distractor2index = 0
+/ distractor3index = 0
+/ distractor4index = 0
+/ distractor5index = 0
+/ target_x = 50%
+/ target_y = 50%
+/ distractor1_x = 0
+/ distractor1_y = 0
+/ distractor2_x = 0
+/ distractor2_y = 0
+/ distractor3_x = 0
+/ distractor3_y = 0
+/ distractor4_x = 0
+/ distractor4_y = 0
+/ distractor5_x = 0
+/ distractor5_y = 0
+
+/ validRT = 0
+/ PrematureResponse = 0
+/ sumPrematureResponses = 0
+/ sumPrematureResponses_3stims = 0
+/ sumPrematureResponses_6stims = 0
+/ valid = 0
+/ lastTargetTimeStamp = 0
+/ startTargetTimeStamp = 0
+/ feedback = 0
+
+/ responseCategory = 0
+/ startX = 0
+/ avoid = 0
+
+/ aborted = 0
+
+/ debug = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/slashedtargetIndex:			function to determine the targetindex for the slashed target
+/propCorrect_practice1:			returns the final proportion initially correct responses during practice 1
+
+/propCorrect_overall:			proportion correct across all test trials 
+/meanRT_overall:				mean latency (in ms) of correct initial responses across all test trials
+
+/propCorrect_3stims:			proportion correct across all test trials with N = 3
+/meanRT_3stims:					mean latency (in ms) of correct responses across all test test trials with N = 3
+
+/propCorrect_6stims:			proportion correct across all test trials with N = 6
+/meanRT_6stims:					mean latency (in ms) of correct responses across all test test trials with N = 6
+
+
+<expressions>
+/ slashedtargetIndex = return values.targetindex + 1
+/ propCorrect_practice1 = if (list.practice1_accuracy.itemCount > 0) list.practice1_accuracy.mean else 0
+
+/ propCorrect_overall = return list.accuracy.mean
+/ meanRT_overall = return list.latencies.mean
+
+/ propCorrect_3stims = return list.accuracy_3stims.mean
+/ meanRT_3stims = return list.latencies_3stims.mean
+
+/ propCorrect_6stims = return list.accuracy_6stims.mean
+/ meanRT_6stims = return list.latencies_6stims.mean
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+****************************
+helper Trial
+****************************
+
+<button mouseYes>
+/ caption = "<%item.mousecheckInstruct.items.2%>"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (25%, 65%)
+/ size = (40%, 10%)
+</button>
+
+<button mouseNo>
+/ caption = "<%item.mousecheckInstruct.items.3%>"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (75%, 65%)
+/ size = (40%, 10%)
+</button>
+
+<trial mousecheck>
+/ inputdevice = mouse
+/ stimulusframes = [1 = mousecheckInstruct, mouseYes, mouseNo]
+/ validresponse = (mouseYes, mouseNo)
+/ ontrialend = [
+	if (trial.mousecheck.response == "mouseNo" && !monkey.monkeyMode){
+		script.abort();
+	}
+]
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+<text mousecheckInstruct>
+/ items = mousecheckInstruct
+/ select = 1
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ position = (50%, 30%)
+/ vjustify = center
+/ hjustify = center
+/ size = (85%, 40%)
+</text>
+
+<picture eraser>
+/ items = ("eraser.png")
+/ size = (parameters.picSize, parameters.picSize)
+/ erase = false
+</picture>
+
+<picture feedbackTarget>
+/ items = roadSigns
+/ select = values.targetindex
+/ size = (parameters.picSize, parameters.picSize)
+/ position = (50%, 25%)
+/ erase = false
+</picture>
+
+<picture targetSign>
+/ items = roadSigns
+/ select = values.targetindex
+/ size = (parameters.picSize, parameters.picSize)
+/ hposition = values.target_x
+/ vposition = values.target_y
+/ erase = false
+</picture>
+
+<picture targetSign_slash>
+/ items = roadSigns
+/ select = expressions.slashedtargetIndex
+/ size = (parameters.picSize, parameters.picSize)
+/ hposition = values.target_x
+/ vposition = values.target_y
+/ erase = false
+</picture>
+
+
+<picture distractorSign1>
+/ items = roadSigns
+/ select = values.distractor1index
+/ size = (parameters.picSize, parameters.picSize)
+/ hposition = values.distractor1_x
+/ vposition = values.distractor1_y
+/ erase = false
+</picture>
+
+<picture distractorSign2>
+/ items = roadSigns
+/ select = values.distractor2index
+/ size = (parameters.picSize, parameters.picSize)
+/ hposition = values.distractor2_x
+/ vposition = values.distractor2_y
+/ erase = false
+</picture>
+
+<picture distractorSign3>
+/ items = roadSigns
+/ select = values.distractor3index
+/ size = (parameters.picSize, parameters.picSize)
+/ hposition = values.distractor3_x
+/ vposition = values.distractor3_y
+/ erase = false
+</picture>
+
+<picture distractorSign4>
+/ items = roadSigns
+/ select = values.distractor4index
+/ size = (parameters.picSize, parameters.picSize)
+/ hposition = values.distractor4_x
+/ vposition = values.distractor4_y
+/ erase = false
+</picture>
+
+<picture distractorSign5>
+/ items = roadSigns
+/ select = values.distractor5index
+/ size = (parameters.picSize, parameters.picSize)
+/ hposition = values.distractor5_x
+/ vposition = values.distractor5_y
+/ erase = false
+</picture>
+
+<text fixation>
+/ items = ("+")
+/ fontstyle = ("Arial", 8%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+</text>
+
+<text startInstructions>
+/ items = trialStartInstructions
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 60%)
+/ vjustify = center
+/ hjustify = center
+/ size = (50%, 10%)
+</text>
+
+<text Feedback>
+/ items = feedback
+/ select = values.feedback
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ txcolor = black
+/ position = (50%, 10%)
+/ vjustify = center
+/ hjustify = center
+/ size = (50%, 10%)
+/ txbgcolor = white
+</text>
+
+<text conditionalFeedback>
+/ items = ("<%expressions.conditionalFeedback%>")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/ position = (50%, 40%)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, 10%)
+/ txbgcolor = white
+</text>
+
+<text continue>
+/ items = continueInstructions
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = center
+/ size = (50%, 5%)
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+<text leftturnResponse>
+/ items = roadSignFeedback
+/ select = 1
+/ position = (50%, 90%)
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = red
+/ size = (50%, 5%)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+<text rightturnResponse>
+/ items = roadSignFeedback
+/ select = 2
+/ position = (50%, 90%)
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = red
+/ size = (50%, 5%)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+<text bicycleResponse>
+/ items = roadSignFeedback
+/ select = 3
+/ position = (50%, 90%)
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = red
+/ size = (50%, 5%)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+<text pedestrianResponse>
+/ items = roadSignFeedback
+/ select = 4
+/ position = (50%, 90%)
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = red
+/ size = (50%, 5%)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+<text responseReminderText>
+/ items = responseReminderText
+/ select = 1
+/ position = (50%, 80%)
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ txcolor = red
+/ size = (80%, 10%)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: list controls the selection of the current targetindex
+1 = left arrow
+3 = right arrow
+5 = bicycle
+7 = pedestrian
+(see item.roadSigns)
+<list targets>
+/ items = (1, 3, 5, 7)
+/ poolSize = 12
+/ resetinterval = 0
+</list>
+
+Note: list controls the selection of the distractor for target = left turn arrow for N=2 trials
+Example: if '4' is sampled -> the distractor is: 
+slashed right arrow (4)
+
+<list leftturn_1distractor>
+/ items = (4, 6, 8)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list rightturn_1distractor>
+/ items = (2, 6, 8)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list bicycle_1distractor>
+/ items = (2, 4, 8)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list pedestrian_1distractor>
+/ items = (2, 4, 6)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+
+
+Note: list controls the selection of the 2 distractors for target = left turn arrow for N=3 trials
+Example: if '46' is sampled -> the distractors are: 
+slashed right arrow (4)
+slashed bicycle (6)
+<list leftturn_2distractors>
+/ items = (46, 48, 68)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list rightturn_2distractors>
+/ items = (26, 28, 68)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list bicycle_2distractors>
+/ items = (24, 48, 28)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list pedestrian_2distractors>
+/ items = (24, 46, 26)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+
+Note: the following list is used to select the distractors for N=6 signs
+<list distractors_6signs>
+/ items = (2, 4, 6, 8)
+/ replace = false
+/ not = [
+	values.avoid;
+]
+/ selectionrate = always
+</list>
+
+
+**********************************
+coordinates lists:
+3 rows x 4 columns
+**********************************
+<list xcoordinates>
+/ items = (
+20%, 20%, 20%,
+40%, 40%, 40%,
+60%, 60%, 60%,
+80%, 80%, 80%)
+/ replace = false
+/ selectionrate = always
+</list>
+
+<list ycoordinates>
+/ items = (
+30%, 50%, 80%,
+30%, 50%, 80%,
+30%, 50%, 80%,
+30%, 50%, 80%)
+/ selectionmode = list.xcoordinates.currentIndex
+/ selectionrate = always
+</list>
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list practice1_accuracy>
+</list>
+
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list accuracy>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list accuracy_3stims>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies_3stims>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list accuracy_6stims>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies_6stims>
+</list>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*******************************************
+PRACTICE1 
+*******************************************
+
+<trial practice1_leftturn_init>
+/ stimulusframes = [1 = clearScreen, fixation, startInstructions]
+
+/ validresponse = (fixation)
+/ posttrialpause = parameters.pretrialpause
+/ recorddata = false
+/ branch = [
+	return trial.practice1_leftturn;
+]
+</trial>
+
+
+<trial practice1_leftturn>
+/ ontrialbegin = [
+	values.N = 1;
+	values.targetindex = 1;
+	values.startX = mouse.x;
+	values.responseCategory = "";
+	
+	trial.practice1_leftturn.insertStimulusTime(picture.responseReminder, parameters.responseReminder);	
+	trial.practice1_leftturn.insertStimulusTime(text.responseReminderText, parameters.responseReminder);	
+]
+/ stimulusframes = [1 = targetSign]
+/ validresponse = (lbuttondown, rbuttondown, mousemove)
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ isvalidresponse = [
+if (trial.practice1_leftturn.response == "lbuttondown"){
+	values.responseCategory = "LM-bicycle";
+} else if (trial.practice1_leftturn.response == "rbuttondown"){
+	values.responseCategory = "RM-pedestrian";
+} else if (trial.practice1_leftturn.response == "mousemove"){
+	if (abs(mouse.x-values.startX) > parameters.minHorizontalChange_px){
+		if ((mouse.x-values.startX) > 0){
+			values.responseCategory = "right move";
+		} else {
+			values.responseCategory = "left move";
+		}
+	}
+} else {
+	values.responseCategory = "invalid";
+} 
+
+return(
+(values.responseCategory == "LM-bicycle" || values.responseCategory == "RM-pedestrian" || 
+values.responseCategory == "left move" || values.responseCategory == "right move"));
+]
+/ iscorrectresponse = [
+	return(values.responseCategory == "left move");
+]
+/ ontrialend = [
+	trial.practice1_leftturn.resetStimulusFrames();
+	list.practice1_accuracy.appendItem(trial.practice1_leftturn.correct);
+]
+/ response = correct
+/ correctmessage = true(clearScreen, 0)
+/ errormessage = true(text.leftturnResponse, 0)
+/ posttrialpause = 500
+</trial>
+
+
+<trial practice1_rightturn_init>
+/ stimulusframes = [1 = clearScreen, fixation, startInstructions]
+
+/ validresponse = (fixation)
+/ posttrialpause = parameters.pretrialpause
+/ recorddata = false
+/ branch = [
+	return trial.practice1_rightturn;
+]
+</trial>
+
+
+<trial practice1_rightturn>
+/ ontrialbegin = [
+	values.N = 1;
+	values.targetindex = 3;
+	values.startX = mouse.x;
+	values.responseCategory = "";
+	trial.practice1_rightturn.insertStimulusTime(picture.responseReminder, parameters.responseReminder);
+	trial.practice1_rightturn.insertStimulusTime(text.responseReminderText, parameters.responseReminder);	
+]
+/ stimulusframes = [1 = targetSign]
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ validresponse = (lbuttondown, rbuttondown, mousemove)
+/ isvalidresponse = [
+if (trial.practice1_rightturn.response == "lbuttondown"){
+	values.responseCategory = "LM-bicycle";
+} else if (trial.practice1_rightturn.response == "rbuttondown"){
+	values.responseCategory = "RM-pedestrian";
+} else if (trial.practice1_rightturn.response == "mousemove"){
+	if (abs(mouse.x-values.startX) > parameters.minHorizontalChange_px){
+		if ((mouse.x-values.startX) > 0){
+			values.responseCategory = "right move";
+		} else {
+			values.responseCategory = "left move";
+		}
+	}
+} else {
+	values.responseCategory = "invalid";
+} 
+
+return(
+(values.responseCategory == "LM-bicycle" || values.responseCategory == "RM-pedestrian" || 
+values.responseCategory == "left move" || values.responseCategory == "right move"));
+]
+/ iscorrectresponse = [
+	return (values.responseCategory == "right move");
+]
+/ ontrialend = [
+	trial.practice1_rightturn.resetStimulusFrames();
+	list.practice1_accuracy.appendItem(trial.practice1_rightturn.correct);
+]
+/ response = correct
+/ correctmessage = true(clearScreen, 0)
+/ errormessage = true(text.rightturnResponse, 0)
+/ posttrialpause = 500
+</trial>
+
+<trial practice1_bicycle_init>
+/ stimulusframes = [1 = clearScreen, fixation, startInstructions]
+
+/ validresponse = (fixation)
+/ posttrialpause = parameters.pretrialpause
+/ recorddata = false
+/ branch = [
+	return trial.practice1_bicycle;
+]
+</trial>
+
+
+<trial practice1_bicycle>
+/ ontrialbegin = [
+	values.N = 1;
+	values.targetindex = 5;
+	values.startX = mouse.x;
+	values.responseCategory = "";
+	trial.practice1_bicycle.insertStimulusTime(picture.responseReminder, parameters.responseReminder);	
+	trial.practice1_bicycle.insertStimulusTime(text.responseReminderText, parameters.responseReminder);	
+]
+/ stimulusframes = [1 = targetSign]
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ validresponse = (lbuttondown, rbuttondown, mousemove)
+/ isvalidresponse = [
+if (trial.practice1_bicycle.response == "lbuttondown"){
+	values.responseCategory = "LM-bicycle";
+} else if (trial.practice1_bicycle.response == "rbuttondown"){
+	values.responseCategory = "RM-pedestrian";
+} else if (trial.practice1_bicycle.response == "mousemove"){
+	if (abs(mouse.x-values.startX) > parameters.minHorizontalChange_px){
+		if ((mouse.x-values.startX) > 0){
+			values.responseCategory = "right move";
+		} else {
+			values.responseCategory = "left move";
+		}
+	}
+} else {
+	values.responseCategory = "invalid";
+} 
+
+return (
+(values.responseCategory == "LM-bicycle" || values.responseCategory == "RM-pedestrian" || 
+values.responseCategory == "left move" || values.responseCategory == "right move"));
+]
+/ iscorrectresponse = [
+	return (values.responseCategory == "LM-bicycle");
+]
+/ ontrialend = [
+	trial.practice1_bicycle.resetStimulusFrames();
+	list.practice1_accuracy.appendItem(trial.practice1_bicycle.correct);
+]
+/ response = correct
+/ correctmessage = true(clearScreen, 0)
+/ errormessage = true(text.bicycleResponse, 0)
+/ posttrialpause = 500
+</trial>
+
+
+<trial practice1_pedestrian_init>
+/ stimulusframes = [1 = clearScreen, fixation, startInstructions]
+
+/ validresponse = (fixation)
+/ posttrialpause = parameters.pretrialpause
+/ recorddata = false
+/ branch = [
+	return trial.practice1_pedestrian;
+]
+</trial>
+
+
+<trial practice1_pedestrian>
+/ ontrialbegin = [
+	values.N = 1;
+	values.targetindex = 7;
+	values.startX = mouse.x;
+	values.responseCategory = "";
+	trial.practice1_pedestrian.insertStimulusTime(picture.responseReminder, parameters.responseReminder);
+	trial.practice1_pedestrian.insertStimulusTime(text.responseReminderText, parameters.responseReminder);	
+]
+/ stimulusframes = [1 = targetSign]
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ validresponse = (lbuttondown, rbuttondown, mousemove)
+/ isvalidresponse = [
+if (trial.practice1_pedestrian.response == "lbuttondown"){
+	values.responseCategory = "LM-bicycle";
+} else if (trial.practice1_pedestrian.response == "rbuttondown"){
+	values.responseCategory = "RM-pedestrian";
+} else if (trial.practice1_pedestrian.response == "mousemove"){
+	if (abs(mouse.x-values.startX) > parameters.minHorizontalChange_px){
+		if ((mouse.x-values.startX) > 0){
+			values.responseCategory = "right move";
+		} else {
+			values.responseCategory = "left move";
+		}
+	}
+} else {
+	values.responseCategory = "invalid";
+} 
+
+return(
+(values.responseCategory == "LM-bicycle" || values.responseCategory == "RM-pedestrian" || 
+values.responseCategory == "left move" || values.responseCategory == "right move"));
+]
+/ iscorrectresponse = [
+	return (values.responseCategory == "RM-pedestrian");
+]
+/ ontrialend = [
+	trial.practice1_pedestrian.resetStimulusFrames();
+	list.practice1_accuracy.appendItem(trial.practice1_pedestrian.correct);
+]
+/ response = correct
+/ correctmessage = true(clearScreen, 0)
+/ errormessage = true(text.pedestrianResponse, 0)
+/ posttrialpause = 500
+</trial>
+
+
+
+
+*******************************************
+PRACTICE2 N = 2
+*******************************************
+
+Note: trial.2signs_init
+* resets/initializes crucial trial variables
+* samples the coordinates for the 2 stims + eraser stim (eraser stim erases the slashed target)
+* samples the target stim and the distractor
+* samples the target delay
+* presents a fixation cross for parameters.fixationduration
+then calls trial.2signs
+<trial 2signs_init>
+/ ontrialbegin = [
+	values.N = 2;
+	values.validRT = "";
+	values.delay = list.delays.nextValue;
+	list.delays.reset();
+	list.xcoordinates.reset();
+	list.ycoordinates.reset();
+	values.target_x = list.xcoordinates.nextValue;
+	values.target_y = list.ycoordinates.nextValue;	
+	values.distractor1_x = list.xcoordinates.nextValue;
+	values.distractor1_y = list.ycoordinates.nextValue;
+	picture.eraser.hposition = picture.targetSign.hposition;
+	picture.eraser.vposition = picture.targetSign.vposition;
+	
+	values.targetindex = list.targets.nextValue;
+	if (values.targetindex == 1){
+		values.distractor1index = list.leftturn_1distractor.nextValue;		
+	} else if (values.targetindex == 3){
+		values.distractor1index = list.rightturn_1distractor.nextValue;		
+	} else if (values.targetindex == 5){
+		values.distractor1index = list.bicycle_1distractor.nextValue;		
+	} else if (values.targetindex == 7){
+		values.distractor1index = list.pedestrian_1distractor.nextValue;	
+	} 
+	
+	values.target = item.roadSigns.item(values.targetindex);
+	values.distractor1 = item.roadSigns.item(values.distractor1index);	
+	values.distractor2 = "";	
+	values.distractor3 = "";
+	values.distractor4 = "";
+	values.distractor5 = "";
+	
+	values.PrematureResponse = 0;
+	values.valid = 0;
+	values.responseCategory = "";
+
+]
+/ stimulusframes = [1 = clearScreen, fixation, startInstructions]
+
+/ validresponse = (fixation)
+/ posttrialpause = parameters.pretrialpause
+/ recorddata = false
+/ branch = [
+	return trial.2signs;
+]
+</trial>
+
+Note: trial.2signs
+* presents 2 slashed signs for values.delay; then the target slash is removed
+* collects responses from onset of stims and counts how many responses are made
+prematurely (before the target appears)
+* terminates with a valid response after onset of target
+* updates summary variables
+<trial 2signs>
+/ ontrialbegin = [
+	values.startX = mouse.x;
+
+	trial.2signs.insertStimulusTime(picture.eraser, values.delay);
+	trial.2signs.insertStimulusTime(picture.targetSign, values.delay);
+	
+]
+/ stimulustimes = [0 =clearScreen, targetSign_slash, distractorSign1]
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ validresponse = (lbuttondown, rbuttondown, mousemove)
+/ isvalidresponse = [
+
+if (trial.2signs.response == "lbuttondown"){
+	values.responseCategory = "LM-bicycle";
+} else if (trial.2signs.response == "rbuttondown"){
+	values.responseCategory = "RM-pedestrian";
+} else if (trial.2signs.response == "mousemove"){
+	if (abs(mouse.x-values.startX) > parameters.minHorizontalChange_px){
+		if ((mouse.x-values.startX) > 0){
+			values.responseCategory = "right move";
+		} else {
+			values.responseCategory = "left move";
+		}
+	}
+} else {
+	values.responseCategory = "invalid";
+}
+
+if (values.responseCategory == "LM-bicycle" || values.responseCategory == "RM-pedestrian" || values.responseCategory == "left move" || values.responseCategory == "right move"){
+	if (picture.targetSign.timestamp != values.startTargetTimeStamp){
+		if (values.lastTargetTimeStamp < picture.targetSign.timestamp){
+			values.validRT = script.elapsedTime - picture.targetSign.timestamp;
+			values.valid = 1;
+			values.lastTargetTimeStamp = picture.targetSign.timestamp;
+		} else {
+			values.PrematureResponse += 1;
+			values.validRT = "early response";
+			values.valid = 0;
+		}			
+	} else {
+		values.PrematureResponse += 1;
+		values.validRT = "early response";
+		values.valid = 0;
+	}		
+} else {
+	values.validRT = "invalid response";
+	values.valid = 0;
+}
+
+	return (
+	(values.responseCategory == "LM-bicycle" || values.responseCategory == "RM-pedestrian" || 
+	values.responseCategory == "left move" || values.responseCategory == "right move"));
+]
+/ iscorrectresponse = [
+	return (
+	(values.valid == 1 && values.targetindex == 1 && values.responseCategory == "left move") ||
+	(values.valid == 1 && values.targetindex == 3 && values.responseCategory == "right move") ||
+	(values.valid == 1 && values.targetindex == 5 && values.responseCategory == "LM-bicycle") ||	
+	(values.valid == 1 && values.targetindex == 7 && values.responseCategory == "RM-pedestrian"));	
+]
+/ ontrialend = [
+	trial.2signs.resetStimulusFrames();
+	
+	if (trial.2signs.correct){
+		values.feedback = 1;
+	} else if (values.validRT == "early response"){
+		values.feedback = 3;
+	} else {
+		values.feedback = 2;
+	}	
+]
+/ branch = [
+	if (trial.2signs.correct){
+		return trial.correctfeedback;
+	} else {
+		return trial.errorfeedback;		
+	}
+
+]
+</trial>
+
+<trial errorfeedback>
+/ ontrialbegin = [
+	if (values.feedback == 2){
+		picture.feedbackTarget.skip = false;
+	} else {
+		picture.feedbackTarget.skip = true;
+	}
+]
+/ stimulusframes = [1 = clearScreen, feedback, conditionalFeedback, feedbackTarget, continue]
+/ validresponse = (continue)
+/ recorddata = false
+</trial>
+
+
+<trial correctfeedback>
+/ stimulusframes = [1 = clearScreen, feedback]
+/ trialduration = 500
+/ recorddata = false
+</trial>
+
+*******************************************
+N = 3
+*******************************************
+
+Note: trial.3signs_init
+* resets/initializes crucial trial variables
+* samples the coordinates for the 3 stims + eraser stim (eraser stim erases the slashed target)
+* samples the target stim and the 2 distractors
+* samples the target delay
+* presents a fixation cross for parameters.fixationduration
+then calls trial.3signs
+<trial 3signs_init>
+/ ontrialbegin = [
+	values.N = 3;
+	values.validRT = "";
+	values.delay = list.delays.nextValue;
+	list.delays.reset();
+	list.xcoordinates.reset();
+	list.ycoordinates.reset();
+	values.target_x = list.xcoordinates.nextValue;
+	values.target_y = list.ycoordinates.nextValue;	
+	values.distractor1_x = list.xcoordinates.nextValue;
+	values.distractor1_y = list.ycoordinates.nextValue;
+	values.distractor2_x = list.xcoordinates.nextValue;
+	values.distractor2_y = list.ycoordinates.nextValue;
+	picture.eraser.hposition = picture.targetSign.hposition;
+	picture.eraser.vposition = picture.targetSign.vposition;
+	
+	values.targetindex = list.targets.nextValue;
+	if (values.targetindex == 1){
+		values.distractor1index = subString(list.leftturn_2distractors.nextValue, 0, 1);
+		values.distractor2index = subString(list.leftturn_2distractors.currentValue, 1, 1);		
+	} else if (values.targetindex == 3){
+		values.distractor1index = subString(list.rightturn_2distractors.nextValue, 0, 1);
+		values.distractor2index = subString(list.rightturn_2distractors.currentValue, 1, 1);		
+	} else if (values.targetindex == 5){
+		values.distractor1index = subString(list.bicycle_2distractors.nextValue, 0, 1);
+		values.distractor2index = subString(list.bicycle_2distractors.currentValue, 1, 1);		
+	} else if (values.targetindex == 7){
+		values.distractor1index = subString(list.pedestrian_2distractors.nextValue, 0, 1);
+		values.distractor2index = subString(list.pedestrian_2distractors.currentValue, 1, 1);		
+	} 
+	
+	values.target = item.roadSigns.item(values.targetindex);
+	values.distractor1 = item.roadSigns.item(values.distractor1index);	
+	values.distractor2 = item.roadSigns.item(values.distractor2index);	
+	values.distractor3 = "";
+	values.distractor4 = "";
+	values.distractor5 = "";
+	
+	values.PrematureResponse = 0;
+	values.valid = 0;
+	values.responseCategory = "";
+
+]
+/ stimulusframes = [1 = clearScreen, fixation, startInstructions]
+/ validresponse = (fixation)
+/ posttrialpause = parameters.pretrialpause
+/ recorddata = false
+/ branch = [
+	trial.3signs;
+]
+</trial>
+
+
+
+Note: trial.3signs
+* presents 3 slashed signs for values.delay; then the target slash is removed
+* collects responses from onset of stims and counts how many responses are made
+prematurely (before the target appears)
+* terminates with a valid response after onset of target
+* updates summary variables
+<trial 3signs>
+/ ontrialbegin = [
+	values.startX = mouse.x;
+	trial.3signs.insertStimulusTime(picture.eraser, values.delay);
+	trial.3signs.insertStimulusTime(picture.targetSign, values.delay);
+]
+/ stimulustimes = [0 =clearScreen, targetSign_slash, distractorSign1, distractorSign2]
+/ beginresponsetime = 0
+/ validresponse = (lbuttondown, rbuttondown, mousemove)
+/ isvalidresponse = [
+if (trial.3signs.response == "lbuttondown"){
+	values.responseCategory = "LM-bicycle";
+} else if (trial.3signs.response == "rbuttondown"){
+	values.responseCategory = "RM-pedestrian";
+} else if (trial.3signs.response == "mousemove"){
+	if (abs(mouse.x-values.startX) > parameters.minHorizontalChange_px){
+		if ((mouse.x-values.startX) > 0){
+			values.responseCategory = "right move";
+		} else {
+			values.responseCategory = "left move";
+		}
+	}
+} else {
+	values.responseCategory = "invalid";
+}
+
+if (values.responseCategory == "LM-bicycle" || values.responseCategory == "RM-pedestrian" || values.responseCategory == "left move" || values.responseCategory == "right move"){
+
+		if (picture.targetSign.timestamp != values.startTargetTimeStamp){
+		if (values.lastTargetTimeStamp < picture.targetSign.timestamp){
+			values.validRT = script.elapsedTime - picture.targetSign.timestamp;
+			values.valid = 1;
+			values.lastTargetTimeStamp = picture.targetSign.timestamp;
+		} else {
+			values.PrematureResponse += 1;
+		}			
+	} else {
+		values.PrematureResponse += 1;
+	}	
+}
+
+return (values.valid == 1);
+]
+/ iscorrectresponse = [
+	(values.targetindex == 1 && values.responseCategory == "left move") ||
+	(values.targetindex == 3 && values.responseCategory == "right move") ||
+	(values.targetindex == 5 && values.responseCategory == "LM-bicycle") ||	
+	(values.targetindex == 7 && values.responseCategory == "RM-pedestrian")	
+]
+/ ontrialend = [
+	trial.3signs.resetStimulusFrames();
+		
+	list.accuracy_3stims.appendItem(trial.3signs.correct);
+	list.accuracy.appendItem(trial.3signs.correct);
+	if (trial.3signs.correct){
+		list.latencies_3stims.appendItem(values.validRT);
+		list.latencies.appendItem(values.validRT);
+	}		
+
+	values.sumPrematureResponses_3stims += values.PrematureResponse;
+	values.sumPrematureResponses += values.PrematureResponse;	
+]
+</trial>
+
+*******************************************
+N = 6
+*******************************************
+
+Note: trial.6signs_init
+* resets/initializes crucial trial variables
+* samples the coordinates for the 6 stims + eraser stim (eraser stim erases the slashed target)
+* samples the target stim and the 5 distractors
+* samples the target delay
+* presents a fixation cross for parameters.fixationduration then calls trial.6signs
+<trial 6signs_init>
+/ ontrialbegin = [
+	values.N = 6;
+	values.validRT = "";
+	values.delay = list.delays.nextValue;
+	list.delays.reset();
+	list.xcoordinates.reset();
+	list.ycoordinates.reset();
+	values.target_x = list.xcoordinates.nextValue;
+	values.target_y = list.ycoordinates.nextValue;	
+	values.distractor1_x = list.xcoordinates.nextValue;
+	values.distractor1_y = list.ycoordinates.nextValue;
+	values.distractor2_x = list.xcoordinates.nextValue;
+	values.distractor2_y = list.ycoordinates.nextValue;
+	values.distractor3_x = list.xcoordinates.nextValue;
+	values.distractor3_y = list.ycoordinates.nextValue;	
+	values.distractor4_x = list.xcoordinates.nextValue;
+	values.distractor4_y = list.ycoordinates.nextValue;	
+	values.distractor5_x = list.xcoordinates.nextValue;
+	values.distractor5_y = list.ycoordinates.nextValue;	
+	
+	picture.eraser.hposition = picture.targetSign.hposition;
+	picture.eraser.vposition = picture.targetSign.vposition;
+	
+	values.targetindex = list.targets.nextValue;
+	values.avoid = values.targetindex + 1;
+	list.distractors_6signs.reset();
+	values.distractor1index = list.distractors_6signs.nextValue;
+	values.distractor2index = list.distractors_6signs.nextValue;
+	values.distractor3index = list.distractors_6signs.nextValue;
+	list.distractors_6signs.reset();
+	values.avoid = 0;
+	values.distractor4index = list.distractors_6signs.nextValue;
+	values.distractor5index = list.distractors_6signs.nextValue;
+	
+	values.target = item.roadSigns.item(values.targetindex);
+	values.distractor1 = item.roadSigns.item(values.distractor1index);	
+	values.distractor2 = item.roadSigns.item(values.distractor2index);
+	values.distractor3 = item.roadSigns.item(values.distractor3index);	
+	values.distractor4 = item.roadSigns.item(values.distractor4index);
+	values.distractor5 = item.roadSigns.item(values.distractor5index);
+	
+	values.PrematureResponse = 0;
+	values.valid = 0;
+	values.responseCategory = "";
+
+]
+/ stimulusframes = [1 = clearScreen, fixation, startInstructions]
+/ validresponse = (fixation)
+/ posttrialpause = parameters.pretrialpause
+/ recorddata = false
+/ branch = [
+	return trial.6signs;
+]
+</trial>
+
+Note: trial.6signs
+* presents 6 slashed signs for values.delay; then the target slash is removed
+* collects responses from onset of stims and counts how many responses are made
+prematurely (before the target appears)
+* terminates with a valid response after onset of target
+* updates summary variables
+<trial 6signs>
+/ ontrialbegin = [
+	values.startX = mouse.x;
+	trial.6signs.insertStimulusTime(picture.eraser, values.delay);
+	trial.6signs.insertStimulusTime(picture.targetSign, values.delay);
+]
+/ stimulustimes = [0 =clearScreen, targetSign_slash, distractorSign1, distractorSign2, distractorSign3, distractorSign4, distractorSign5]
+/ beginresponsetime = 0
+/ validresponse = (lbuttondown, rbuttondown, mousemove)
+/ isvalidresponse = [
+
+if (trial.6signs.response == "lbuttondown"){
+	values.responseCategory = "LM-bicycle";
+} else if (trial.6signs.response == "rbuttondown"){
+	values.responseCategory = "RM-pedestrian";
+} else if (trial.6signs.response == "mousemove"){
+	if (abs(mouse.x-values.startX) > parameters.minHorizontalChange_px){
+		if ((mouse.x-values.startX) > 0){
+			values.responseCategory = "right move";
+		} else {
+			values.responseCategory = "left move";
+		}
+	}
+} else {
+	values.responseCategory = "invalid";
+}
+
+if (values.responseCategory == "LM-bicycle" || values.responseCategory == "RM-pedestrian" || values.responseCategory == "left move" || values.responseCategory == "right move"){
+	if (picture.targetSign.timestamp != values.startTargetTimeStamp){
+		if (values.lastTargetTimeStamp < picture.targetSign.timestamp){
+			values.validRT = script.elapsedTime - picture.targetSign.timestamp;
+			values.valid = 1;
+			values.lastTargetTimeStamp = picture.targetSign.timestamp;
+		} else {
+			values.PrematureResponse += 1;
+		}			
+	} else {
+		values.PrematureResponse += 1;
+	}		
+}
+
+	return (values.valid == 1);
+]
+/ iscorrectresponse = [
+	return (values.targetindex == 1 && values.responseCategory == "left move") ||
+	(values.targetindex == 3 && values.responseCategory == "right move") ||
+	(values.targetindex == 5 && values.responseCategory == "LM-bicycle") ||	
+	(values.targetindex == 7 && values.responseCategory == "RM-pedestrian");
+]
+/ ontrialend = [
+	trial.6signs.resetStimulusFrames();
+	
+	
+	list.accuracy_6stims.appendItem(trial.6signs.correct);
+	list.accuracy.appendItem(trial.6signs.correct);
+	if (trial.6signs.correct){
+		list.latencies_6stims.appendItem(values.validRT);
+		list.latencies.appendItem(values.validRT);
+	}
+
+	values.sumPrematureResponses_6stims += values.PrematureResponse;
+	values.sumPrematureResponses += values.PrematureResponse;	
+]
+</trial>
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block mousecheck>
+/ trials = [1 =mousecheck]
+/ postinstructions = (practice1)
+</block>
+
+
+<block practice1>
+/ onblockbegin = [
+	values.target_x = 50%;
+	values.target_y = 50%;
+	values.countpractice1blocks += 1;
+	list.practice1_accuracy.reset();
+]
+/ trials = [1-20 = noreplace(practice1_leftturn_init, practice1_rightturn_init, practice1_bicycle_init, practice1_pedestrian_init)]
+/ branch = [
+	if (values.countpractice1blocks < parameters.maxPractice1Blocks){
+		if (list.practice1_accuracy.mean < parameters.practice1MinACC){
+			return block.practice1;
+		}
+	} else {
+		if (!monkey.monkeyMode){
+			return block.prematureEnd;
+		}
+	}
+	return null;
+]
+</block>
+
+<block prematureEnd>
+/ onblockbegin = [
+	values.aborted = 1;
+]
+/ trials = [1 = finish]
+/ onblockend = [
+	script.abort();
+]
+</block>
+
+
+<block practice2>
+/ preinstructions = (practice2a, practice2b)
+/ trials = [1-12 = 2signs_init]
+/ postinstructions = (testintro1)
+</block>
+
+
+<block 3stims>
+/ preinstructions = (testintro2)
+/ skip = [
+	return (parameters.runBlockedDesign == false);
+]
+/ trials = [1-12 = 3signs_init]
+</block>
+
+<block 6stims>
+/ preinstructions = (testintro3)
+/ skip = [
+	return (parameters.runBlockedDesign == false);
+]
+/ trials = [1-12 = 6signs_init]
+</block>
+
+<block mixedDesign>
+/ skip = [
+	return (parameters.runBlockedDesign == true);
+]
+/ trials = [1-24 = noreplace(3signs_init, 6signs_init)]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt roadSign>
+/ onexptbegin = [
+	values.startTargetTimeStamp = picture.targetSign.timestamp;
+	values.lastTargetTimeStamp = 0;
+]
+/ blocks = [
+	1 = mouseCheck; 
+	2 = practice1;
+	3 = practice2;
+	4 = 3stims;
+	5 = 6stims;
+	6 = mixedDesign;
+	7 = finish;
+]
+</expt>
+
+<monkey>
+/ latencydistribution = normal(200, 50)
+</monkey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

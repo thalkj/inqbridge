@@ -1,0 +1,428 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*RT-18 RISK TAKING QUESTIONNAIRE*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-24-2014
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the RT-18 Risk Taking Questionnaire as described in:
+
+de Haan, L., Kuipers, E., Kuerten, Y., van Laar, M., Olivier, B,. & Verster, J.C. (2011).
+The RT-18: a new screening tool to assess young adult risk-taking behavior. 
+International Journal of General Medicine, 4, 575–584.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+18 yes/no questions about risk taking behavior.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'rt18.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		 with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale: yes (1) - no (0)
+									R = automatically reversed scored questions
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'rt18_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+TotalScore:						the sum of all responses. The response that suggests risk taking gets a point.								
+									
+Factor1_RiskTakingBehavior:		the sum of all scores of questions that load on factor 1: q4, q5, q6, q7, q14, q15, q16, q17, q18
+								=> Range: 0-9: the higher the score, the higher the reported risk taking behavior
+
+Factor2_RiskAssessment:			the sum of all scores of questions that load on factor 2: q1, q2R, q3, q8, q9R, q10R, q11R, q12, q13
+								=> Range: 0-9: the higher the score, the more participant reported to do things without thinking about consequences
+
+								
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________								
+	
+18 questions with yes/no questions: most yes-responses are suggesting of risk taking and are scored as a 1;
+for a few questions the the no-response is suggesting of risk taking is scored as a 1
+
+=> 1 = response suggests risk taking
+=> 0 = response does not suggest risk taking
+
+Summary variables:
+/TotalScore:					the sum of all responses. The response that suggests risk taking gets a point.								
+									
+/Factor1_RiskTakingBehavior:	the sum of all scores of questions that load on factor 1: q4, q5, q6, q7, q14, q15, q16, q17, q18
+									=> Range: 0-9: the higher the score, the higher the reported risk taking behavior
+
+/Factor2_RiskAssessment:		the sum of all scores of questions that load on factor 2: q1, q2R, q3, q8, q9R, q10R, q11R, q12, q13
+									=> Range: 0-9: the higher the score, the more participant reported to do things without thinking about consequences
+
+	
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please answer the following questions <br>" //the instructions that appear at the top of each surveypage
+</parameters>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit "6.5.2.0" or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data: RT18.iqx
+********************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed
+expressions.TotalScore, expressions.factor1_risktakingbehavior, expressions.factor2_riskassessment)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/TotalScore:						the sum of all individual 18 scores.
+									In general the response that suggests risk taking gets a point
+
+
+/Factor1_RiskTakingBehavior:		the sum of all scores of questions that load on factor 1
+/Factor2_RiskAssessment:			the sum of all scores of questions that load on factor 2
+
+<expressions>
+/TotalScore = radiobuttons.q1.response + radiobuttons.q2R.response + radiobuttons.q3.response + 
+radiobuttons.q8.response + radiobuttons.q9R.response + radiobuttons.q10R.response + radiobuttons.q11R.response + 
+radiobuttons.q12.response + radiobuttons.q13.response + radiobuttons.q4.response + radiobuttons.q5.response + radiobuttons.q6.response + 
+radiobuttons.q7.response + radiobuttons.q14.response +  radiobuttons.q15.response + radiobuttons.q16.response  +
++ radiobuttons.q17.response + radiobuttons.q18.response 
+/Factor1_RiskTakingBehavior = radiobuttons.q4.response + radiobuttons.q5.response + radiobuttons.q6.response + 
+radiobuttons.q7.response + radiobuttons.q14.response +  radiobuttons.q15.response + radiobuttons.q16.response  +
++ radiobuttons.q17.response + radiobuttons.q18.response 
+/Factor2_RiskAssessment = radiobuttons.q1.response + radiobuttons.q2R.response + radiobuttons.q3.response + 
+radiobuttons.q8.response + radiobuttons.q9R.response + radiobuttons.q10R.response + radiobuttons.q11R.response + 
+radiobuttons.q12.response + radiobuttons.q13.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes: 
+* by default all questions are required to be answered. To change /required = false
+* the response that suggests risk taking = 1 (in most cases it's the affirmative "yes"; for some
+questions it's the no-response => reversed scored)
+
+<radiobuttons q1>
+/caption = "1. Do you often get into a jam because you do things without thinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+*Reversed scoring
+<radiobuttons q2R>
+/caption = "2. Do you usually think carefully before doing anything?"
+/ options = ("Yes", "No")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Do you mostly speak before thinking things out?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. Do you enjoy taking risks?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. Would you enjoy parachute jumping?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Do you welcome new and exciting experiences and sensations, even if they are a little frightening and unconventional?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. I often try new things just for fun or thrills, even if most people think it is a waste of time."
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. I often spend money until I run out of cash or get into debt from using too much credit."
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+* Reversed Scoring
+<radiobuttons q9R>
+/caption = "9. I like to think about things for a long time before I make a decision."
+/ options = ("Yes", "No")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+* Reversed Scoring
+<radiobuttons q10R>
+/caption = "10. I usually think about all the facts in detail before I make a decision."
+/ options = ("Yes", "No")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+* Reversed Scoring
+<radiobuttons q11R>
+/caption = "11. I enjoy saving money more than spending it on entertainment or thrills."
+/ options = ("Yes", "No")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. I often follow my instincts, hunches, or intuition without thinking through all the details."
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. I often do things on impulse."
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "14. I enjoy getting into new situations where you can’t predict how things will turn out."
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. I sometimes like to do things that are a little frightening."
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "16. I sometimes do 'crazy' things just for fun."
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. I prefer friends who are excitingly unpredictable."
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "18. I like 'wild' uninhibited parties."
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<caption end>
+/ caption = "- END OF SURVEY -"
+/ position = (45%, 93%)
+/ fontstyle = ("Arial", 2%, false, true, false, false, 5, 1)
+/ txcolor = gray
+</caption>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage RT18_1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1, q2R, q3]
+</surveypage>
+
+<surveypage RT18_2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage RT18_3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7, q8, q9R]
+</surveypage>
+
+<surveypage RT18_4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10R, q11R, q12]
+</surveypage>
+
+<surveypage RT18_5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage RT18_6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q16, q17, q18, end]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey RT18>
+/pages = [
+	1 = RT18_1; 
+	2 = RT18_2; 
+	3 = RT18_3;
+	4 = RT18_4;
+	5 = RT18_5;
+	6 = RT18_6;
+]
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Submit"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

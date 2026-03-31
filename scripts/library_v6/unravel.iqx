@@ -1,0 +1,3309 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+										UNRAVEL
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-25-2017
+last updated:  03-02-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 03-02-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the UNRAVEL paradigm, a test of placekeeping ability: the ability to perform the steps
+of a complex task in a prescribed order without skipping or repeating steps.
+Each letter in the acronym UNRAVEL stands for one of seven distinct categorization tasks that need to be performed
+in repeated sequences without external reminders of the target task at any one point - even after distractor tasks. 
+Each of the tasks has designated response keys. The use of a particular response key is thus indicative of
+of the task being performed. 
+
+This task requires the use of a keyboard. If the script cannot find a keyboard, an alert is given and the script
+is automatically terminated.
+
+Reference:
+
+Altmann, E. M., Trafton, J. G., & Hambrick, D. Z. (2014). Momentary
+interruptions can derail the train of thought. Journal of Experimental
+Psychology: General, 143, 215–226
+
+
+Millisecond Software thanks Dr. Eric Altmann for his collaboration on this script!
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+On each trial participants see a character inside a box and another character outside of it (above or below the box).
+The characters are presented in opposite corners (e.g. if one is presented on the left side of the box,
+the other is presented on the right side of the box).
+One of the characters is a letter (default letters used: A, B, V, U) and the other a digit (default digits: 1, 2, 8, 9). 
+One of the characters is colorful (red or yellow), the other is white. 
+One of the characters is formatted (underlined or italicized) and the other one isn't.
+
+Participants are asked to work through seven 2FC tasks in sequence without prompts telling them which 
+task to perfrom on any given trial other than the acronym 'UNRAVEL' as a sequence guide:
+1. U: is the formatted character underlined (press U) or italicized (press I)
+2. N: is the letter near (press N) or far (press F) the start of the alphabet 
+3. R: is the colorful character red (press R) or yellow (press Y)?
+4. A: is the character outside the box above it (press A) or below it (press B)?
+5. V: is the letter a vowel (press V) or a consonant (press C)?
+6. E: is the digit even (press E) or odd (press O)
+7. L: is the digit less than 5 (press L) or more than 5 (press M)?
+Because each task uses unique response keys, the choice of response key on any given trial indicates 
+the type of task (and its place in the UNRAVEL sequence) performed.
+On average, every 6 trials a distractor task (interruption) is presented: twice participants are asked to
+enter a displayed code into a textbox. Only if the code is entered correctly, is the participant returned
+to the current place in the UNRAVEL trial sequence.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 30 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'unravel_raw*.iqdat'*
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block. 
+										
+testBlockCount:					counts the number of UNRAVEL test blocks run
+
+trialcount:						counts the unravel trials in each block (demo, practice, testblocks)
+									Note: during practice and test, the same unravel trial can be called several times
+									due to errors made (practice) or help menu calls (test).
+									The actual trialcount is only updated for each new trial.
+									Only UNRAVEL test trials with testTrialCode < 3 (baseline and post-interruption trials) 
+									are considered for summary data.
+
+testTrialCode:					1 = baseline UNRAVEL test trial (unravel trials that follows an unravel trial OR is the first trial in a block)
+								2 = post-interruption UNRAVEL test trial (after code-interruption)
+								3 = 'invalid' unravel test trial (no UNRAVEL response: participant pressed Tab-key to see RULES)
+								4 = code-interruption during testing
+								"" (empty) for demo trials and practice trials
+
+///Stimulus Make-Up Variables:								
+U:								1 = underlined character; 2 = italic character
+N:								1 = letter is near the end of the alphabet; 2 = otherwise
+R:								1 = character is red; 2 = character is yellow
+A:								1 = character is above the box; 2 = character is below the box
+V:								1 = letter is a vowel; 2 = letter is a consonant
+E:								1 = digit is even; 2 = digit is odd
+L:								1 = digit < 5; 2 = digit > 5									
+									
+letter:							stores the sampled letter for the current trial (letter needs to be in accordance with V and N)
+digit:							stores the sampled digit for the current trial (digit needs to be in accordance with E and L)
+inside:							stores the actual character (letter or digit) that is selected to be presented inside the box
+outside:						stores the actual character (letter or digit) that is selected to be presented outside the box
+
+location:						1 = character is presented to the left inside box/to the right outside box
+								2 = character is presented to the right inside box/to the left outside box
+								
+locationColorChar:				1 = colored character is inside character; 
+								2 = colored character is outside character
+								
+locationFormattedChar:			1 = formatted (underlined/italicized) character is inside character; 
+								2 = formatted (underlined/italicized) character is outside character
+
+inside_x:						stores the x-coordinate of the inside character 
+inside_y:						stores the y-coordinate of the inside character	(inside character is always at y = 50%)						
+outside_x:						stores the x-coordinate of the outside character
+outside_y:						stores the y-coordinate of the outside character (needs to be in accordance with A)
+
+
+desc_insideChar:				stores a description of the inside character (Example: 'inside: right, yellow, underlined B')
+desc_outsideChar:				stores a description of the outside character (Example: 'outside: left, above, white, 9')
+
+///Interruption-related Variables:
+
+code:							the code of the current Interruption Trial
+interruption:					1 = an interruption should be run after this unravel trial; 0 = no interruption will be run
+counter_uninterruptedTrials: 	counts the number of consecutive trials run without an interruption
+uninterruptedTrials:			stores the current number of trials that should be run in between interruptions
+countBlockInterruptions:		counts the number of interruptions run in a block
+
+DV-Variables:																																		
+response:						the participant's response: scancode of response button (or entered code for interruption trials)
+responseKeyLabel:				the interpreted key response (Example: 22 = U)								
+								
+latency: 						the response latency (in ms)
+								UNRAVEL Trials: measured from onset of trial until response key is hit
+								Interruption Trials: measured from onset of trial until the Return button is hit
+								
+correct:						the correctness of the response (1 = correct (no sequence error and no nonsequence error); 0 = otherwise)
+
+performedTask_ACC:				1 = currently performed task is performed correctly (regardless of sequence); 
+								0 = otherwise
+								
+blockACC:						proportion of trials in a block where response was correct AND in sequence (per block)								
+								
+lastTask:						stores the preceding task that participant performed (U, N, R, A, V, E, L)
+expectedTask:					the expected task based on the last Task performed
+currentTask:					stores the currently performed task (U, N, R, A, V, E, L) based on response key used
+		
+wrongTask:						1 = the currently performed task is out of sequence with the preceding task (regardless of accuracy); 
+								0 = otherwise
+								
+errorType:						0 = correct response (sequence correct & task performance correct)
+								1 = sequence Error (correct): wrong task (out of sequence) was performed BUT the task was performed correctly
+								2 = sequence Error (incorrect): wrong task was performed AND it was performed incorrectly
+								3 = insequence Error: in sequence task was performed BUT the task was performed incorrectly
+								
+sequenceError:					1 = sequence Error; 
+								0 = otherwise -> NOTE: errorType = 1 and 2
+								
+nonsequenceError:				1 = nonsequence Error; 
+								0 = otherwise -> NOTE: errorType = 3	
+								
+performedTaskSequence:			stores the performed tasks in sequence (per block)
+IntLag:							time (in ms) between interruption onset and first passcode key
+
+showRule:						0 = unravel test trial without a rule call; 
+								1 = unravel test trial with at least one rule call
+								
+InvKey:  						cumulative sum of invalid keystrokes on UNRAVEL test trials (neither trial response nor help)								
+
+
+
+(2) Summary data file: 'unravel_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+ACCA1:							proportion correct (response correct AND in sequence) of all UNRAVEL test trials in block 1
+ACCA2:							proportion correct (response correct AND in sequence) of all UNRAVEL test trials in block 2
+ACCA3:							proportion correct (response correct AND in sequence) of all UNRAVEL test trials in block 3
+ACCA4:							proportion correct (response correct AND in sequence) of all UNRAVEL test trials in block 4
+
+Pass   							0=failed accuracy check (default: less than 3 test blocks with UNRAVEL performance >= 0.7), 1=passed accuracy check
+BlkAcc  						number of ok (=blocks with UNRAVEL performance >= 0.7) test blocks
+totalTrialcount:				the number of all test UNRAVEL trials run
+okTrials:						number of ok test trials (ok = trials from blocks with block performance >= 70% correct)
+
+ACC1:							proportion correct (response correct AND in sequence) of ok UNRAVEL test trials in block 1
+ACC2:							proportion correct (response correct AND in sequence) of ok UNRAVEL test trials in block 2
+ACC3:							proportion correct (response correct AND in sequence) of ok UNRAVEL test trials in block 3
+ACC4:							proportion correct (response correct AND in sequence) of ok UNRAVEL test trials in block 4
+
+P1Acc:  						number of ALL post-interruption UNRAVEL trials without sequence errors (regardless of task performance)
+									(Note: trials where participant made a correct response (errorType = 0) or a nonsequence Error (errorType = 3))
+
+PracEr:  						number of incorrect (but valid) keystrokes during practice (regardless of type of error)
+									Note: does not count using keys other than the response keys
+InvKey:  						number of invalid keystrokes on All UNRAVEL test trials (neither trial response nor help)
+IntroT:  						time for introduction (tutorial + practice) (in seconds)
+TestT:							time for test blocks (in s)
+TotalT:							total time for session in s (IntroT + TestT)
+
+SErrA:							proportion of All UNRAVEL test trials with sequence errors
+NErrA   						proportion of All UNRAVEL test trials with nonsequence errors
+	
+SErr:    						proportion of ok UNRAVEL trials with sequence errors (ok = trials from blocks with block performance >= 70% correct)
+NErr:    						proportion of ok UNRAVEL trials with nonsequence errors (ok = trials from blocks with block performance >= 70% correct)
+PSErr:   						proportion of ok UNRAVEL post-interruption trials with sequence errors (ok = trials from blocks with block performance >= 70% correct)
+BSErr:   						proportion of ok UNRAVEL baseline trials with sequence errors (ok = trials from blocks with block performance >= 70% correct)
+
+RTA:							mean correct latency (in ms) of All UNRAVEL test trials
+RT:								mean correct latency (in ms) of ok UNRAVEL test trials
+PRT:							mean correct latency (in ms) of ok UNRAVEL post-interruption test trials
+BRT:							mean correct latency (in ms) of ok UNRAVEL baseline test trials
+
+IntLag:							mean lag time (in ms) between onset of interruption and input of first char
+									(Note: if interruption trial repeats due to errors, only the lag from the first interruption trial is measured)
+Helps:					   		number of (ok) test trials on which the rule list was displayed at least once
+HelpP:							proportion of correct ok test trials on which the rule list was displayed at least once
+
+IntErr:  						mean number of entered passcodes that contained some error (in ok blocks, across code1/code2 trials)
+								=> interpreted as: mean number of entered passcodes PER INTERRUPTION that contained some error (in ok blocks)
+
+IntErr_1:  						mean number of entered passcodes that contained some error (in ok blocks, code1 trials only)
+								=> interpreted as: mean number of entered passcodes PER INTERRUPTION that contained some error (in ok blocks)
+
+IntErr_2:  						mean number of entered passcodes that contained some error (in ok blocks, code2 trials only)
+								=> interpreted as: mean number of entered passcodes PER INTERRUPTION that contained some error (in ok blocks)
+																
+IntDur:							mean interruption duration (seconds) (in ok blocks)
+
+
+PER BLOCK PERFORMANCE:
+
+OK1:							1 = block performance >= 70%correct; 0 = otherwise
+trials1:						number of test trials block1					
+SErr1:							proportion of UNRAVEL trials with sequence errors in block1
+NErr1:							proportion of UNRAVEL trials with nonsequence errors in block1:
+PSErr1:							proportion of UNRAVEL post-interruption trials with sequence errors in block1
+BSErr1:							proportion of UNRAVEL baseline trials with sequence errors in block1
+RT1:							mean correct latencies of UNRAVEL test trials in block1
+PRT1:							mean correct latencies of UNRAVEL post-interruption test trials in block1
+BRT1:							mean correct latencies of UNRAVEL baseline test trials in block1
+IntLag1:						mean time (in ms) between interruption onset and first passcode key in block1					
+Helps1:							number of UNRAVEL test trials on which the rule list was displayed at least once in block1
+HelpP1:							proportion of correct ok UNRAVEL test trials on which the rule list was displayed at least once in block1
+
+mean number of entered passcodes that contained some error
+interpreted as: mean number of entered passcodes PER INTERRUPTION that contained some error in block1
+IntErr1 (collects errors across code1/code2) /IntErr1_1 (collects errors for code1) /IntErr1_2 (collects errors for code2)
+				
+IntDur1:						mean interruption duration (seconds) in block1
+
+(same for block2-4)
+
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+1. Demo Tutorial: Participants learn about the meaning of the acronym UNRAVEL while working through each task in sequence.
+During the tutorial, participants are told the correct responses to the task at hand (and only those responses advance the tutorial).
+
+2. Practice: 16 practice trials with 2 semi-randomly placed interruptions (by default, interruptions occur randomly after 3, 6, or 7 trials)
+In this script, the average number of trials before an interruption = 5.3333 (see list.uninterruptedPracticeTrials under section Editable Lists for more detail)
+During practice, errorfeedback in the form of a white flash is provided for incorrect responses and participants have to correct the incorrect response
+before advancing.
+
+3. Test: 4 blocks with ~66 test trials per block 
+- there is no errorfeedback during the test trials
+- each block starts with the U task but participants are never reminded of their place in the UNRAVEL sequence 
+(they can, however, view the rules during each trial by pressing the Tab-key)
+- Accuracy is based on: 
+a) Did the participant stay in sequence (being in sequence is based on the last performed task)? AND
+b) was the selected response key correct given the current stimuli (irrespective of sequence standing)?
+- at the end of each block: performance feedback and -if appropriate- reminder to a) be faster or b) be more accurate
+
+
+- 10 randomly placed interruptions per block.
+Note: in this script, the sampling process to sample the number of unravel trials before an interruptions is determined as follows:
+
+N = B + floor(-ln(U(0, 1))/R) (see expressions.generateNextInterruption)
+
+N = number of trials before an interruption occurs
+B = 3 (see parameters.MinTestRun)
+R = .288 is the rate parameter for the exponential distribution, 
+U(0, 1) is a random sample from a uniform distribution bounded by 0 and 1.
+
+The average number of trials before an interruption as calculated with this equation is ~6.
+
+- interruption task: 2 code trials - each trial presents a 14 letter code that needs to be entered correctly into a textbox
+if the code was entered incorrectly, the trial gets repeated (the code stays the same) before it moves on
+See list.lengthInterruptCode and list.interruptCode for more detail and to change the length/nature of the code.
+Example code: 'icvafuobermyln'
+
+UNRAVEL trial sequence: 
+overview: (START) unravel trials -> interruption 1 -> unravel trials -> interruption 2->..........->unravel trials-> interruption 10 -> unravel trials (END)
+
+in more detail:
+unravel prep (prepares the stims) -> unravel test trial (presents the stims and waits for response) ->
+{optional if Tab is pressed: -> help: rules are presented until the finger is lifted off the tab key -> return to unravel test trial (presents the stims and waits for response) ->}
+-> randomly, on average after every 6 unravel trials: interruption -> {if incorrect code is entered: another interruption trial until the correct code is entered} ->
+-> unravel test trial -> etc. until end is reached
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+1. Unravel trials: 
+each trial
+- randomly (with replacement) samples whether the trial is a U or an I trial
+- randomly (with replacement) samples whether the trial is a N or a F trial
+- randomly (with replacement) samples whether the trial is a R or a Y trial
+- randomly (with replacement) samples whether the trial is a A or a B trial
+- randomly (with replacement) samples whether the trial is a V or a C trial
+- randomly (with replacement) samples whether the trial is a E or a O trial
+- randomly (with replacement) samples whether the trial is a L or a M trial
+
+letter selection: based on the selected value for the N-task AND the selected value for the V-task, a specific letter is selected
+(Example: the letter needs to be at the start of the alphabet and needs to be a consonant: B is selected)
+digit selection: based on the selected value for the E-task AND the selected value for the L-task, a specific digit is selected
+(Example: the digit needs to be odd and greater than 5: 9 is selected)
+
+Letter/Digit Location: the nature of the character inside the box is selected randomly (with replacement):
+If the letter is selected to be inside the box, the digit is placed outside the box.
+If the character inside the box is randomly (with replacement) selected to be to the left of the box, 
+the character outside the box is placed on the right.
+
+Placement of Formatted Character: it is randomly (with replacement) decided whether the formatted character is the inside
+or the outside character.
+
+Placement of Colored Character: it is randomly (with replacement) decided whether the colorful character is the inside
+or the outside character.
+
+!!!Note: ALL random selections are done independently of each other
+
+2. Interruption Code:
+The code to enter is assembled based on a randomly sampled length of characters (default: always 4) and a random 
+assortment of characters (default: letters used in UNRAVEL) -> Example code: 'lura'
+The length as well as the character selection can be manipulated under section Editable Lists:
+list.lengthInterruptCode (stores the lengths) and list.interruptCode (stores the pool of possible characters)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+- follow the original UNRAVEL tutorial generously provided by Dr. Eric Altmann
+- can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+response key assignments: scancodes and corresponding labels
+
+/key_underlined = "U"
+/key_italic = "I"
+/key_near = "N"
+/key_far = "F"
+/key_red = "R"
+/key_yellow = "Y"
+/key_above = "A"
+/key_below = "B"
+/key_vowel = "V"
+/key_consonant = "C"
+/key_even = "E"
+/key_odd = "O"
+/key_less = "L"
+/key_more = "M"
+
+/charSize:							the size of the presented characters in canvas height percentage (default: 12%)
+
+/minProportionCorrect:				sets the minimum proportion correct that a participant has to obtain in a testblocks to pass (default: 0.7)
+/minNr_passedBlocks:				the minimum number of passed Testblocks that needs to be obtained to pass Accuracy check (default: 3)
+
+/MinRunlength:						minimum number of trials to run before the next interruption (default: 3; Minimum: 1)
+/testtrialRuns:         			1 + number of interruptions in the test block (default:11 => 10 interruptions)
+
+/debugmode:							1 = script runs in debugmode and presents a text stimulus that contains the 
+									expected task and correct response key
+									
+									0 = no debug stim is presented
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/key_underlined = "U"
+/key_italic = "I"
+/key_near = "N"
+/key_far = "F"
+/key_red = "R"
+/key_yellow = "Y"
+/key_above = "A"
+/key_below = "B"
+/key_vowel = "V"
+/key_consonant = "C"
+/key_even = "E"
+/key_odd = "O"
+/key_less = "L"
+/key_more = "M"
+
+/charSize = 12%
+
+/minProportionCorrect = 0.7
+/minNr_passedBlocks = 3
+
+/MinRunlength = 3
+/testtrialRuns = 11
+
+/debugmode = 0
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+<item instructions>
+/1 = "In this task you'll see a series of stimuli like the one below. Each stimulus has a letter and a digit in different positions, and has different kinds of formatting. Your task is to apply one of a set of simple rules to each stimulus.
+
+There are seven rules, and you apply them in a particular order. To remember the order, you have to remember one word: UNRAVEL. Each letter of UNRAVEL is the first letter of one of the rules. In the next few minutes you'll get to see how this works.
+
+Press Space to continue."
+/2 = "The first rule is the Underline-Italic rule. The 'U' in this rule in the 'U' in UNRAVEL. To apply this rule, decide whether a character is underlined (press U) or italicized (press I). In the stimulus below, a character is Underlined, so please press the U key."
+/3 = "The second rule is the Near-Far rule (The 'N', here, is the 'N' in UNRAVEL). To apply this rule, decide whether the letter in the stimulus is near to the start of the alphabet (press N for Near) or far from the start of the alphabet (press F for Far). The only letters you'll see are <%list.vowels_near.item(1)%>, <%list.consonants_near.item(1)%>, <%list.vowels_far.item(1)%>, or <%list.consonants_far.item(1)%>. Of these A and B are Neear and U and V are far. The letter below is Far, so please press F."
+/4 = "The third rule is the Red-Yellow rule (We are now up to UNR). To apply this rule, decide whether a character is printed in red (press R) or yellow (press Y). In the stimulus below, a character is Red, so please press R."
+/5 = "The fourth rule is the Above-Below rule (making it UNRA). To apply this rule, decide whether a character is above (press A)  or below (press B) the box on the screen. In the stimulus below, a character is Above the box, so please press A."
+/6 = "The fifth rule is the Vowel-Consonant rule (UNRAV). To apply this rule, decide whether the letter is a vowel (press V) or a consonant (press C). The letter below is a Consonant, so please press C."
+/7 = "The sixth rule is the Even-Odd rule (UNRAVE). To apply this rule, decide whether the digit is even (press E) or odd (press O). The digit below is Odd, so press O."
+/8 = "Finally, the seventh rule is the Less-More rule (UNRAVEL). To apply this rule, decide whether the digit is less (press L) or more than 5. You'll never see 5 itself. The digit below is less than 5, so please press L."
+/9 = "Good! Now you'll get a chance to practice for a bit, without the computer giving you the answers. Please continue to apply the rules in the same order:
+~n~n~n~n~n~n~n~n~n~nWhen you reach Less-More, start over with Underline-Italic, and keep going.
+
+During the practice phase the computer will require correct answers (if you make a mistake, the screen will flash and you can try again). The list of rules above will be visible on the screen.
+
+Start the practice phase with Underline-Italic, then continue with the sequence.
+Press Space to begin."
+/10 = "Good!
+
+From now on, every few trials you'll be prompted to type in some strings of random letters, sort of like software license codes. An example is below. Just type the code and hit the Return key. If you typed the code incorrectly, the screen will flash and you'll have another chance."
+/11 = "Good! After this interruption the regular stimuli will resume. At this point, please try to remember where you left off in the UNRAVEL sequence and pick up from there.
+
+Press Spacebar to continue."
+/12 = "Good! You're done with practice.
+
+The rest of the task will be the same, except that the computer won't prevent you from making mistakes.
+
+Also, the list of rules won't be visible on the screen, but you can show it whenever you want by pressing down on the 'Tab' key. To see how this works press 'Tab' now and hold for a second, then release."
+/13 = "There will be 4 blocks of trials, and each should take 5 to 10 minutes to finish.
+
+Please work through each block as quickly and accurately as you can. Again, try to keep your place in the UNRAVEL sequence, and after each set of 'license codes' try to pick up in the sequence where you left off. After each block you'll be shown your speed and accuracy so you can tell how you're doing.
+
+Continue if you are ready."
+</item>
+
+
+<item rules>
+/1 = "Underline - Italic
+Near to - Far from start of alphabet
+Red - Yellow
+Above - Below the box
+Vowel - Consonant
+Even - Odd
+Less - More than 5"
+</item>
+
+<item otherInstructions>
+/1 = "Please, type in the following code: <%values.code%>"
+/2 = "Press 'Tab' again to see the rules again, or press Space to continue"
+/3 = "
+Block Accuracy: <%expressions.blockACC*100%>% correct 
+Average Response Time (of correct responses): <%expressions.medianRT_block%>ms"
+</item>
+
+
+<text keyboardTest_Fail>
+/ items = ("This task requires the use of an external keyboard.")
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+</text>
+
+<button exitbutton>
+/ caption = "EXIT"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 80%)
+/ size = (20%, 5%)
+/ valign = center
+/ halign = center
+</button>
+
+****************************************************************************************************
+general instruction expressions:
+****************************************************************************************************
+<expressions>
+/warning = if (expressions.blockACC > 0.9 && values.testBlockCount < 4){
+	"Please, respond faster";
+} else if (expressions.blockACC < parameters.minProportionCorrect && values.testBlockCount < 4){
+	"Please, be more accurate";
+}
+/blockend = if (values.testBlockCount < 4){
+"Get ready for another round.
+	
+Start the next phase with Underline-Italic, then continue with the sequence. 
+Please work through each block as quickly and accurately as you can. 
+Again, try to keep your place in the UNRAVEL sequence, and after each set of 'license codes' try to pick up in the sequence where you left off.
+	
+~n~nPress Space to start."
+} else {
+	"You have completed the task. Thank you!"
+}
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************
+Sampling List to sample number of unravel
+trials before interruption
+*************************************************
+
+Note: sampling process to sample the number of unravel trials before an interruptions occurs during practice
+By default, each of the 3 numbers are sampled once during a block for a total of
+2 interruptions. The average number of trials before an interruption = 5.3333 (16 total practice trials)
+
+There are 3 numbers because each starts with a sequence of unravel trials and ends with a sequence of unravel trials
+for a total of 2 interruptions:
+=> (START) unravel trials -> interruption 1 -> unravel trials -> interruption 2-> unravel trials (END)
+
+changing the number of items in this list will automatically change the number of interruptions during practice:
+number of interruptions during practice = number of items - 1
+
+<list uninterruptedPracticeTrials>
+/items = (3, 6, 7)
+/ replace = false
+/ resetinterval = 0
+/ selectionrate = always
+</list>
+
+
+Note: sampling process to sample the number of unravel trials before an interruptions occurs
+By default, each of the 11 numbers are sampled once during a block for a total of
+10 interruptions. The average number of trials before an interruption = 6 (66 total test trials)
+
+There are 11 numbers because each starts with a sequence of unravel trials and ends with a sequence of unravel trials
+for a total of 10 interruptions
+=> (START) unravel trials -> interruption 1 -> unravel trials -> interruption->..........unravel trials-> interruption 10 -> unravel trials (END)
+
+changing the number of items in this list will automatically change the number of interruptions during a test block:
+number of interruptions during a test block = number of items - 1
+
+<list uninterruptedTrials>
+/items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+/ replace = false
+/ resetinterval = 0
+/ selectionrate = always
+</list>
+
+*******************************************
+Lists to create interruption code
+*******************************************
+
+Note: list samples the length of the interruption code. By default, the interruption code always has
+14 characters. Change or add values to the item list to manipulate the length of the code.
+By default, the items are sampled randomly with replacement.
+<list lengthInterruptCode>
+/ items = (14)
+/ replace = true
+</list>
+
+Note: list contains items that are used to randomly create interruption codes
+By default the items are selected randomly without replacement.
+Change the item list to manipulate the characters used for code generation.
+<list interruptCode>
+/items = ("u", "n", "r", "a", "v", "e", "l", "i", "f", "y", "b", "c", "o", "m")
+/ replace = false
+/ selectionrate = always
+</list>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = black
+/ txcolor = white
+/ screencolor = black
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+
+values.testBlockCount, values.trialcount, values.testTrialCode,
+
+values.U, values.N, values.R, values.A, values.V, values.E, values.L,
+values.letter, values.digit, values.inside, values.outside,
+values.location, values.locationColorChar, values.locationFormattedChar,
+values.inside_x, values.inside_y, values.outside_x, values.outside_y,
+values.desc_insideChar, values.desc_outsideChar, 
+values.code, values.interruption, values.counter_uninterruptedTrials, values.uninterruptedTrials, values.countBlockInterruptions,
+
+ response, values.responseKeyLabel, 
+latency, correct, values.performedTask_ACC, expressions.blockACC,values.lastTask, expressions.expectedTask,values.currentTask,
+ values.wrongTask, values.errorType, values.sequenceError, values.nonsequenceError,
+
+values.performedTaskSequence, values.IntLag, values.showRule,values.InvKey)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, list.interruptions.mean
+values.ACCA1, values.ACCA2, values.ACCA3, values.ACCA4,
+values.Pass, values.BlkAcc, 
+values.ACC1, values.ACC2, values.ACC3, values.ACC4,
+values.totalTrialcount, values.okTrials, values.P1Acc, values.PracEr, values.InvKey,
+expressions.IntroT, expressions.TestT, expressions.totalT,
+expressions.SErrA, expressions.NErrA, 
+expressions.SErr, expressions.NErr, expressions.PSErr, expressions.BSErr,
+expressions.RTA, expressions.RT, expressions.PRT, expressions.BRT, 
+expressions.IntLag, values.Helps, expressions.HelpP, 
+expressions.IntErr, expressions.IntErr_1, expressions.IntErr_2, expressions.IntDur,
+
+values.OK1, values.trials1, values.SErr1,values.NErr1,values.PSErr1,values.BSErr1,
+values.RT1,values.PRT1,values.BRT1,values.IntLag1,values.Helps1,values.HelpP1,
+values.IntErr1, values.IntErr1_1, values.IntErr1_2,
+values.IntDur1,
+
+values.OK2, values.trials2, values.SErr2,values.NErr2,values.PSErr2,values.BSErr2,
+values.RT2,values.PRT2,values.BRT2,values.IntLag2,values.Helps2,values.HelpP2,
+values.IntErr2, values.IntErr2_1, values.IntErr2_2,
+values.IntDur2,
+
+values.OK3, values.trials3, values.SErr3,values.NErr3,values.PSErr3,values.BSErr3,
+values.RT3,values.PRT3,values.BRT3,values.IntLag3,values.Helps3,values.HelpP3,
+values.IntErr3, values.IntErr3_1, values.IntErr3_2,
+values.IntDur3,
+
+values.OK4, values.trials4, values.SErr4,values.NErr4,values.PSErr4,values.BSErr4,
+values.RT4,values.PRT4,values.BRT4,values.IntLag4,values.Helps4,values.HelpP4,
+values.IntErr4, values.IntErr4_1, values.IntErr4_2,
+values.IntDur4)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/testBlockCount:			counts the number of UNRAVEL blocks run
+/trialcount:			counts the unravel trials in each block 
+
+/totalTrialcount:		counts all test trials
+/okTrials:				counts all ok test trials (ok = trials from blocks with performance >= 70% correct)
+/okTrials_baseline:		counts all ok baseline test trials (ok = trials from blocks with performance >= 70% correct)
+/okTrials_interrupt:	counts all ok post-interruption test trials (ok = trials from blocks with performance >= 70% correct)	
+
+/interruption:			1 = an interruption should be run next; 0 = no interruption
+/countBlockInterruptions:	counts the number of interruptions run in a block
+/counter_uninterruptedTrials: counts the number of consecutive trials run without an interruption
+/uninterruptedTrials:	stores the current number of trials that should be run in between interruptions
+
+/selectInstruction:		helper variable to select the appropriate instruction text
+
+/U:						1= underlined; 2= italic
+/N:						1 = near the end of the alphabet; 2 = near the end
+/R:						1 = red; 2 = yellow
+/A:						1 = above; 2 = below
+/V:						1 = vowel; 2 = consonant
+/E:						1 = even digit; 2 = odd digit
+/L:						1 = digit < 5; 2 = digit > 5
+/letter:				stores the sampled letter for the current trial (letter needs to be in accordance with values.V and values.N)
+/digit:					stores the sampled digit for the current trial (digit needs to be in accordance with values.E and values.L)
+/insideChar:			1 = the inside char is the letter; 2 = the inside char is the digit
+/inside:				stores the character (letter or digit) that is selected to be presented inside the box
+/outside:				stores the character (letter or digit) that is selected to be presented outside the box
+/location:				1 = character is presented to the left inside box (to the right outside box); 
+						2 = character is presented to the right inside box (to the left outside box)
+/outside_y:				stores the y-coordinate of the outside character (needs to be in accordance with values.A)
+/outside_x:				stores the x-coordinate of the outside character
+/inside_x:				stores the x-coordinate of the inside character (inside character is always at y = 50%)
+
+/locationColorChar:		1 = colored character is inside character; 2 = colored character is outside character
+/locationFormattedChar:	1 = formatted (underlined/italicized) character is inside character; 2 = formatted (underlined/italicized) character is outside character
+
+
+/insideColor:			stores the label of the inside color (red/yellow/white)
+/outsideColor:			stores the label of the outside color (red/yellow/white)
+/desc_insideChar:		stores a description of the inside character (Example: white underlined 4)
+/desc_outsideChar:		stores a description of the outside character (Example: red X)
+
+
+/lastTask:				stores the preceding task that participant performed (U, N, R, A, V, E, L)
+/currentTask::			stores the currently performed task (U, N, R, A, V, E, L)			
+/performedTask_ACC:		1 = currently performed task is performed correctly (regardless of sequence); 0 = otherwise
+/performedTaskSequence:	stores the performed tasks in sequence (per block)
+/wrongTask:				1 = the currently performed task is out of sequence with the preceding task (regardless of accuracy); 0 = otherwise
+
+/errorType:				0 = correct response
+						1 = sequence Error (correct): wrong task (out of sequence) was performed BUT the task was performed correctly
+						2 = sequence Error (incorrect): wrong task was performed AND it was performed incorrectly
+						3 = insequence Error: in sequence task was performed BUT the task was performed incorrectly
+
+/sequenceError:			1 = sequence Error; 0 = otherwise NOTE: errorType = 1 and 2
+/nonsequenceError:		1 = nonsequence Error; 0 = otherwise NOTE: errorType = 3							
+/correct:				1 = the task is in sequence with the preceding task AND it was performed correctly; 0 = otherwise
+
+/code:					interruption code to enter
+/lengthInterruptCode:	the length of the current interruption code
+
+/showRule:				0 = trial without a rule call; 1 = trial with at least one rule call
+
+/testTrialCode:			1 = baseline UNRAVEL test trial (unravel trials that follows an unravel trial OR is the first trial in a block)
+						2 = post-interruption UNRAVEL test trial (after code-interruption)
+						3 = 'invalid' unravel test trial (no UNRAVEL response: participant pressed Tab-key to see RULES)
+						4 = code-interruption during testing
+						(demo trials and practice trials are not coded)
+						
+/validResponse:			helper variable: 1 = response during test trial is a valid response key; 0 = otherwise
+/blockOK				helper variable: 1 = the performance of the block was at or above 70%correct; 0 = otherwise
+
+/Pass=0   				0=failed accuracy check, 1=passed accuracy check 
+/BlkAcc=0  				number of ok test blocks
+/P1Acc= 0  				number of post-interruption trials without sequence errors
+						(Note: includes trials where participant made an insequence Error)
+						
+/PracEr=0  				number of incorrect keystrokes during practice (over 16 trials)						
+/InvKey=0  				number of invalid keystrokes on test trials (neither trial response nor help)
+
+/ACCA1:					proportion correct (response correct AND in sequence) of all test trials in block 1
+/ACCA2:					proportion correct (response correct AND in sequence) of all test trials in block 2
+/ACCA3:					proportion correct (response correct AND in sequence) of all test trials in block 3
+/ACCA4:					proportion correct (response correct AND in sequence) of all test trials in block 4
+
+/ACC1:					proportion correct (response correct AND in sequence) of ok test trials in block 1
+/ACC2:					proportion correct (response correct AND in sequence) of ok test trials in block 2
+/ACC3:					proportion correct (response correct AND in sequence) of ok test trials in block 3
+/ACC4:					proportion correct (response correct AND in sequence) of ok test trials in block 4
+
+/trials1:				number of ok test trials in block 1 (ok = block performance >= 70% correct)
+/trials2:				number of ok test trials in block 2 (ok = block performance >= 70% correct)
+/trials3:				number of ok test trials in block 3 (ok = block performance >= 70% correct)
+/trials4:				number of ok test trials in block 4 (ok = block performance >= 70% correct)
+
+/SErr:    				proportion of ok trials with sequence errors (ok = block performance >= 70% correct)
+/SErrA:					proportion of all test trials with sequence errors
+/NErr:					proportion of ok trials with nonsequence errors (ok = block performance >= 70% correct)
+/NErrA:					proportion of all test trials with nonsequence errors
+/PSErr:					proportion of ok post-interruption trials with sequence errors (ok = block performance >= 70% correct)
+/BSErr:					proportion of ok baseline trials with sequence errors
+
+and for all blocks:
+/SErr1 = 0
+/SErr2 = 0
+/SErr3 = 0
+/SErr4 = 0
+
+/NErr1 = 0
+/NErr2 = 0
+/NErr3 = 0
+/NErr4 = 0
+
+/PSErr1 = 0
+/PSErr2 = 0
+/PSErr3 = 0
+/PSErr4 = 0
+
+/BSErr1 = 0
+/BSErr2 = 0
+/BSErr3 = 0
+/BSErr4 = 0
+
+/sumRT:						sums up all latencies of correct responses in ok test trials
+/sumRTA:					sums up all latencies of correct responses in All test trials
+/correctTrials:				counts all correct responses in ok test trials
+/correctTrialsA:			counts all correct responses in All test trials
+
+mean correct latencies of ok test trials per block:
+/RT1 = "not ok block"
+/RT2 = "not ok block"
+/RT3 = "not ok block"
+/RT4 = "not ok block"
+
+/sumRTP:					sums up all latencies of correct responses in ok post-interruption test trials
+/sumRTB:					sums up all latencies of correct responses in ok baseline test trials
+/correctTrialsP:			counts all correct responses in ok post-interruption test trials
+/correctTrialsB:			counts all correct responses in ok baseline test trials
+
+mean correct latencies of ok post-interruption test trials per block:
+/PRT1 = "not ok block"
+/PRT2 = "not ok block"
+/PRT3 = "not ok block"
+/PRT4 = "not ok block"
+
+mean correct latencies of ok baseline test trials per block:
+/BRT1 = "not ok block"
+/BRT2 = "not ok block"
+/BRT3 = "not ok block"
+/BRT4 = "not ok block"
+
+
+/IntLag:					time (in ms) between interruption onset and first passcode key (in ok trials)
+/sumIntLag:					sums up all intLag times (in ok trials)			
+/countIntLag:				counts number of times intLag times were measured (in ok trials)
+/IntLag1:					mean time (in ms) between interruption onset and first passcode key in block 1 (in ok trials)
+/IntLag2 = ""
+/IntLag3 = ""
+/IntLag4 = ""
+
+/Helps:					   number of (ok) test trials on which the rule list was displayed at least once	
+/blockHelps:			   number of test trials on which the rule list was displayed at least once in a block
+number of (ok) test trials on which the rule list was displayed at least once per block
+/Helps1
+/Helps2
+/Helps3 
+/Helps4
+
+/sumHelpP:					sums the number of correct trials during which the rule list was displayed at least once
+proportion of correct ok test trials on which the rule list was displayed at least once by block
+/HelpP1
+/HelpP2
+/HelpP3
+/HelpP4	
+
+/IntErr:  					sums up all counts (mean of what though?) of entered passcodes that contained some error (in ok blocks)
+							interpreted as: sum of the counts of entered passcodes PER INTERRUPTION that contained some error (in ok blocks)						
+/count_CodeErrors:			counts number of entered passcodes PER INTERRUPTION that contained some error
+
+mean number of entered passcodes that contained some error (in ok blocks)
+interpreted as: mean number of entered passcodes PER INTERRUPTION that contained some error (in ok blocks) per block
+/IntErr1 ="not ok block"
+/IntErr2 ="not ok block"
+/IntErr3 ="not ok block"
+/IntErr4 ="not ok block"					
+
+/IntDuration:				stores the duration of the current Interruption 
+/Sum_IntDur:				sums up all interruption durations (in s) (in ok trials)
+mean interruption duration (seconds) (in ok blocks) per block:
+/IntDur1 = "not ok block"
+/IntDur2 = "not ok block"
+/IntDur3 = "not ok block"
+/IntDur4 = "not ok block"
+					
+<values>
+/correctResponse = 0
+/correctKey = 0
+/demoEndTime = 0
+/practiceEndTime = 0
+
+/testBlockCount = 0
+/trialcount = 0
+/totalTrialcount = 0
+/okTrials = 0
+/okTrials_baseline= 0
+/okTrials_interrupt= 0
+/interruption = 0
+/countBlockInterruptions = 0
+/counter_uninterruptedTrials = 0
+/uninterruptedTrials = 0
+
+/selectInstruction = 0
+
+/U = 0
+/N = 0
+/R = 0
+/A = 0
+/V = 0
+/E = 0
+/L = 0
+/letter = 0
+/digit = 0
+/insideChar = 0
+/inside = 0
+/outside = 0
+/location = 0
+/outside_y = 0
+/outside_x = 0
+/inside_x = 0
+/inside_y = 0
+/locationColorChar = 0
+/locationFormattedChar = 0
+
+/insideColor = ""
+/outsideColor = ""
+/desc_insideChar = ""
+/desc_outsideChar = ""
+/desc_insideCharPrep = ""
+/desc_outsideCharPrep = ""
+/lastTask = ""
+/currentTask = "L"
+/performedTask_ACC = 0
+/performedTaskSequence = ""
+/wrongTask = 0
+/errorType = 0
+/sequenceError = 0
+/nonsequenceError = 0
+/ACC = 0
+/responseKeyLabel = 0
+/code = ""
+/lengthInterruptCode = ""
+
+/showRule = 0
+
+/testTrialCode = ""
+/validResponse = 0
+/blockOK = 0
+
+/repeat = 0
+
+/Pass=0
+/BlkAcc=0
+/P1Acc= 0 
+/PracEr=0
+/InvKey=0 
+
+/ACC1 = ""
+/ACC2 = ""
+/ACC3 = ""
+/ACC4 = ""
+
+/ACCA1 = ""
+/ACCA2 = ""
+/ACCA3 = ""
+/ACCA4 = ""
+
+/trials1 = "not ok block"
+/trials2 = "not ok block"
+/trials3 = "not ok block"
+/trials4 = "not ok block"
+
+/SErr = 0
+/SErrA = 0
+/NErr = 0
+/NErrA = 0
+/PSErr = 0
+/BSErr = 0
+
+/SErr1 = "not ok block"
+/SErr2 = "not ok block"
+/SErr3 = "not ok block"
+/SErr4 = "not ok block"
+
+/NErr1 = "not ok block"
+/NErr2 = "not ok block"
+/NErr3 = "not ok block"
+/NErr4 = "not ok block"
+
+/PSErr1 = "not ok block"
+/PSErr2 = "not ok block"
+/PSErr3 = "not ok block"
+/PSErr4 = "not ok block"
+
+/BSErr1 = "not ok block"
+/BSErr2 = "not ok block"
+/BSErr3 = "not ok block"
+/BSErr4 = "not ok block"
+
+/sumRT = 0
+/sumRTA = 0
+/correctTrials = 0
+/correctTrialsA = 0
+
+/RT1 = "not ok block"
+/RT2 = "not ok block"
+/RT3 = "not ok block"
+/RT4 = "not ok block"
+
+/sumRTP = 0
+/sumRTB = 0
+/correctTrialsP = 0
+/correctTrialsB = 0
+
+/PRT1 = "not ok block"
+/PRT2 = "not ok block"
+/PRT3 = "not ok block"
+/PRT4 = "not ok block"
+
+/BRT1 = "not ok block"
+/BRT2 = "not ok block"
+/BRT3 = "not ok block"
+/BRT4 = "not ok block"
+
+/IntLag = ""
+/sumIntLag = ""
+/countIntLag = ""
+/IntLag1 = "not ok block"
+/IntLag2 = "not ok block"
+/IntLag3 = "not ok block"
+/IntLag4 = "not ok block"
+    	
+/Helps = 0
+/blockHelps = 0
+/Helps1 = "not ok block"
+/Helps2 = "not ok block"
+/Helps3 = "not ok block"
+/Helps4 = "not ok block"
+
+/sumHelpP = 0
+/HelpP1 = "not ok block"
+/HelpP2 = "not ok block"
+/HelpP3 = "not ok block"
+/HelpP4 = "not ok block"
+
+
+/IntErr = 0
+/IntErr_1 = 0
+/IntErr_2 = 0
+/count_CodeErrors = 0
+/count_CodeErrors_1 = 0
+/count_CodeErrors_2 = 0
+/IntErr1 ="not ok block"
+/IntErr2 ="not ok block"
+/IntErr3 ="not ok block"
+/IntErr4 ="not ok block"
+/IntErr1_1 ="not ok block"
+/IntErr2_1 ="not ok block"
+/IntErr3_1 ="not ok block"
+/IntErr4_1 ="not ok block"
+/IntErr1_2 ="not ok block"
+/IntErr2_2 ="not ok block"
+/IntErr3_2 ="not ok block"
+/IntErr4_2 ="not ok block"
+
+
+
+/IntDuration = 0
+/Sum_IntDur = 0
+/IntDur1 = "not ok block"
+/IntDur2 = "not ok block"
+/IntDur3 = "not ok block"
+/IntDur4 = "not ok block"
+
+
+/OK1 = 0
+/OK2 = 0
+/OK3 = 0
+/OK4 = 0
+</values>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+/blockACC:			proportion of trials in a block where response was correct AND in sequence (per block)
+
+/ IntroT:  			time for introduction (tutorial + practice) (in seconds)
+/ TestT:			time for test blocks (in s)
+/ TotalT:			total time
+
+/SErr:    			proportion of all test trials with sequence errors
+/NErr:    			proportion of all test trials with nonsequence errors 
+/SErr:    			proportion of ok test trials with sequence errors
+/NErr:    			proportion of ok test trials with nonsequence errors 
+/PSErr:   			proportion of ok test post-interruption trials with sequence errors
+/BSErr:   			proportion of ok test baseline trials with sequence errors
+
+/RTA:				mean correct latency (in ms) of All test trials
+/RT:				mean correct latency (in ms) of ok test trials
+/PRT:				mean correct latency (in ms) of ok post-interruption test trials
+/BRT:				mean correct latency (in ms) of ok baseline test trials
+
+/IntLag:			mean lag time (in ms) between onset of interruption and input of first char
+
+/HelpP:				proportion of correct ok test trials on which the rule list was displayed at least once
+
+
+/IntErr:  			mean number of entered passcodes that contained some error (in ok blocks)
+					interpreted as: mean number of entered passcodes PER INTERRUPTION that contained some error (in ok blocks)
+
+/IntDur:			mean interruption duration (seconds) (in ok blocks)
+
+/generateInterruptionCode:			function that generates the interruption code
+
+
+<expressions>
+/blockACC = list.blockAccuracy.mean
+
+/IntroT = values.practiceEndTime/1000
+/TestT = script.elapsedTime/1000 - expressions.IntroT
+/TotalT = script.elapsedTime/1000
+
+/SErrA = values.SErrA/values.totalTrialcount
+/NErrA = values.NErrA/values.totalTrialcount
+
+/SErr = values.SErr/values.okTrials
+/NErr = values.NErr/values.okTrials
+/PSErr = values.PSErr/values.okTrials_interrupt
+/BSErr = values.BSErr/values.okTrials_baseline
+
+/RTA = values.sumRTA/values.correctTrialsA
+/RT = values.sumRT/values.correctTrials
+/PRT = values.sumRTP/values.correctTrialsP
+/BRT = values.sumRTB/values.correctTrialsB
+
+/IntLag = values.sumIntLag/values.countIntLag
+/HelpP = values.sumHelpP/values.correctTrials
+/IntErr = values.IntErr/values.okTrials_interrupt
+/IntErr_1 = values.IntErr_1/values.okTrials_interrupt
+/IntErr_2 = values.IntErr_2/values.okTrials_interrupt
+/IntDur = values.Sum_IntDur/values.okTrials_interrupt
+
+/medianRT_block = list.blockRT.median
+
+/generateInterruptionCode = {
+	if (length(values.code) < values.lengthInterruptCode){
+		values.code = concat(values.code, list.interruptCode.nextValue);
+	}
+	if (length(values.code) < values.lengthInterruptCode){
+		expressions.generateInterruptionCode;
+	}
+}
+
+/expectedTask = {
+	if (values.lastTask == "U"){
+		"N";
+	} else if (values.lastTask == "N"){
+		"R";
+	} else if (values.lastTask == "R"){
+		"A";
+	} else if (values.lastTask == "A"){
+		"V";
+	} else if (values.lastTask == "V"){
+		"E";
+	} else if (values.lastTask == "E"){
+		"L";
+	} else if (values.lastTask == "L"){
+		"U";
+	}
+}
+
+/expected_correctResponse = {
+	if (expressions.expectedTask == "U"){
+		if (values.U == 1){
+			parameters.key_underlined;
+		} else {
+			parameters.key_italic;
+		}
+	} else if (expressions.expectedTask == "N"){
+		if (values.N == 1){
+			parameters.key_near;
+		} else {
+			parameters.key_far;
+		}
+	}  else if (expressions.expectedTask == "R"){
+		if (values.R == 1){
+			parameters.key_red;
+		} else {
+			parameters.key_yellow;
+		}
+	}  else if (expressions.expectedTask == "A"){
+		if (values.A == 1){
+			parameters.key_above;
+		} else {
+			parameters.key_below;
+		}
+	}  else if (expressions.expectedTask == "V"){
+		if (values.V == 1){
+			parameters.key_vowel;
+		} else {
+			parameters.key_consonant;
+		}
+	}  else if (expressions.expectedTask == "E"){
+		if (values.E == 1){
+			parameters.key_even;
+		} else {
+			parameters.key_odd;
+		}
+	}  else if (expressions.expectedTask == "L"){
+		if (values.L == 1){
+			parameters.key_less;
+		} else {
+			parameters.key_more;
+		}
+	}
+}
+/generateNextInterruption = {
+	//original (per communication with Dr. Altmann): N = B + floor(-ln(U(0, 1))/R) 
+	var B = parameters.MinRunlength;
+	var R = 0.288; //rate parameter for the exponential distribution
+	var N = B + floor(-ln(rand(0, 1))/R);
+	return N;
+}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial keyboardtest_Fail>
+/ inputdevice = mouse
+/ stimulusframes = [1 = keyboardTest_Fail, exitbutton]
+/ validresponse = (exitbutton)
+/ ontrialend = [
+	values.responseKeyLabel = "";
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+*****************************
+Demo
+*****************************
+<shape practiceBox>
+/ shape = rectangle
+/ color = white
+/ position = (50%, 70%)
+/ size = (40%, 20%)
+</shape>
+
+<shape practiceBoxInner>
+/ shape = rectangle
+/ color = black
+/ position = (50%, 70%)
+/ size = (38%, 18%)
+</shape>
+
+<text instruction>
+/ items = instructions
+/ select = values.selectInstruction
+/ size = (90%, 80%)
+/ halign = left
+/ valign = top
+/ position = (0%, 10%)
+/ hjustify = left
+/ resetinterval = 0
+</text>
+
+<text rules>
+/ items = rules
+/ select = 1
+/ position = (30%, 20%)
+/ halign = left
+/ valign = top
+/ erase = false
+</text>
+
+
+<text practiceEndInstruction>
+/ items = instructions
+/ select = values.selectInstruction
+/ size = (90%, 80%)
+/ halign = left
+/ valign = top
+/ position = (0%, 10%)
+/ hjustify = left
+/ erase = false
+</text>
+
+<text practiceEndInstruction_continue>
+/ items = otherInstructions
+/ select = 2
+/ size = (90%, 5%)
+/ halign = left
+/ valign = top
+/ position = (0%, 80%)
+/ hjustify = left
+/ erase = false
+</text>
+
+*****************************
+Practice & Test Feedback
+*****************************
+
+<shape errorFeedback>
+/ shape = rectangle
+/ color = white
+/ position = (50%, 70%)
+/ size = (80%, 50%)
+</shape>
+
+<text interruptionText>
+/ items = otherInstructions
+/ select = 1
+/ position = (50%, 40%)
+</text>
+
+<text blockFeedback>
+/ items = otherInstructions
+/ select = 3
+/ position = (50%, 50%)
+/ txcolor = white
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (80%, 30%)
+</text>
+
+<text warning>
+/ items = ("<%expressions.warning%>")
+/ position = (50%, 80%)
+/ txcolor = red
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ size = (80%, 20%)
+</text>
+
+<text blockEnd>
+/ items = ("<%expressions.blockend%>")
+/ position = (50%, 50%)
+/ txcolor = white
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (80%, 30%)
+/ hjustify = left
+</text>
+
+*****************************
+Trial Stimuli
+*****************************
+<shape outsideBox>
+/ shape = rectangle
+/ color = white
+/ position = (50%, 50%)
+/ size = (40%, 20%)
+</shape>
+
+<shape innerBox>
+/ shape = rectangle
+/ color = black
+/ position = (50%, 50%)
+/ size = (38%, 18%)
+</shape>
+
+underlined inside character:
+<text insideChar_U>
+/items = ("<%values.inside%>")
+/ vposition = values.inside_y
+/ hposition = values.inside_x
+/ fontstyle = ("Arial", parameters.charSize, false, false, false, false, 5, 1)
+/ size = (parameters.charSize, parameters.charSize)
+/ txbgcolor = transparent
+</text>
+
+<shape underlinebar_insideCharU>
+/ shape = rectangle
+/ size = (parameters.charSize/2, 0.5%)
+/ vposition = values.inside_y + parameters.charSize/2
+/ hposition = values.inside_x
+/ color = white
+</shape>
+
+italicized inside character:
+<text insideChar_I>
+/items = ("<%values.inside%>")
+/ vposition = values.inside_y
+/ hposition = values.inside_x
+/ fontstyle = ("Arial", parameters.charSize, false, true, false, false, 5, 1)
+/ size = (parameters.charSize, parameters.charSize)
+</text>
+
+unformatted inside character:
+<text insideChar>
+/items = ("<%values.inside%>")
+/ vposition = values.inside_y
+/ hposition = values.inside_x
+/ fontstyle = ("Arial", parameters.charSize, false, false, false, false, 5, 1)
+/ size = (parameters.charSize, parameters.charSize)
+</text>
+
+underlined outside character:
+<text outsideChar_U>
+/items = ("<%values.outside%>")
+/ vposition = values.outside_y
+/ hposition = values.outside_x
+/ fontstyle = ("Arial", parameters.charSize, false, false, false, false, 5, 1)
+/ size = (parameters.charSize, parameters.charSize)
+/ txbgcolor = transparent
+</text>
+
+<shape underlinebar_outsideCharU>
+/ shape = rectangle
+/ size = (parameters.charSize/2, 0.5%)
+/ vposition = values.outside_y + parameters.charSize/2
+/ hposition = values.outside_x
+/ color = white
+</shape>
+
+italicize outside character:
+<text outsideChar_I>
+/items = ("<%values.outside%>")
+/ vposition = values.outside_y
+/ hposition = values.outside_x
+/ fontstyle = ("Arial", parameters.charSize, false, true, false, false, 5, 1)
+/ size = (parameters.charSize, parameters.charSize)
+</text>
+
+unformatted outside character:
+<text outsideChar>
+/items = ("<%values.outside%>")
+/ vposition = values.outside_y
+/ hposition = values.outside_x
+/ fontstyle = ("Arial", parameters.charSize, false, false, false, false, 5, 1)
+/ size = (parameters.charSize, parameters.charSize)
+</text>
+
+************debug
+<text debug>
+/ onprepare = [text.debug.skip = !parameters.debugmode;]
+/ items = ("Current Task: <%expressions.expectedTask%>; Correct Response: <%expressions.expected_correctResponse%>")
+/ position = (50%, 95%)
+/ txcolor = blue
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+</text>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+************************************
+Sampling Lists for DEMO Trials
+************************************
+
+Note: selects values.U (demo trial 2) - values.L (demo trial 8) for demo trials
+(demo trial 1 selected at random)
+<list demoSequence>
+/items = (1, 2, 1, 1, 2, 2, 1)
+/ selectionmode = sequence
+</list>
+
+
+************************************
+Sampling Lists for UNRAVEL 
+
+by default: all lists sample
+randomly with replacement
+************************************
+
+1 = underlined; 2 = italic
+<list u>
+/items = (1, 2)
+/ replace = true
+</list>
+
+1 = near the start of alphabet; 2 = near the end of alphabet
+<list n>
+/items = (1, 2)
+/ replace = true
+</list>
+
+1 = red; 2 = yellow
+<list r>
+/items = (1, 2)
+/ replace = true
+</list>
+
+1 = above; 2 = below
+<list a>
+/items = (1, 2)
+/ replace = true
+</list>
+
+1 = vowel; 2 = consonant
+<list v>
+/items = (1, 2)
+/ replace = true
+</list>
+
+1 = even; 2 = odd
+<list e>
+/items = (1, 2)
+/ replace = true
+</list>
+
+1 = less than 5; 2 = more than 5
+<list l>
+/items = (1, 2)
+/ replace = true
+</list>
+
+
+************************************
+Digit and Letter Sampling Lists
+************************************
+<list vowels_near>
+/items = ("A")
+/ replace = true
+</list>
+
+<list vowels_far>
+/items = ("U")
+/ replace = true
+</list>
+
+<list consonants_near>
+/items = ("B")
+/ replace = true
+</list>
+
+<list consonants_far>
+/items = ("V")
+/ replace = true
+</list>
+
+<list even_less>
+/items = (2)
+/replace = true
+</list>
+
+<list even_more>
+/items = (8)
+/replace = true
+</list>
+
+<list odd_less>
+/items = (1)
+/replace = true
+</list>
+
+<list odd_more>
+/items = (9)
+/replace = true
+</list>
+
+
+************************************
+Sampling Lists for
+- formatted inside character
+- formatted outside character
+************************************
+
+1 = letter; 2 = digit
+<list insideChar>
+/items = (1, 2)
+/replace = true
+</list>
+
+
+1 = left; 2 = right
+<list insideLocation>
+/items = (1, 2)
+/replace = true
+</list>
+
+1 = inside; 2 = outside
+<list locationColorChar>
+/items = (1, 2)
+/replace = true
+</list>
+
+1 = inside; 2 = outside
+<list locationFormattedChar>
+/items = (1, 2)
+/replace = true
+</list>
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response for the performed task (regardless of sequence error); 0 = incorrect task response 
+resets at beginning of each block
+<list performedTaskAccuracy>
+</list>
+
+1 = sequence Error in baseline trial; 0 = otherwise
+resets at beginning of each block
+<list sequenceErrors_baseline>
+</list>
+
+1 = sequence Error in post Interruption trial; 0 = otherwise
+resets at beginning of each block
+<list sequenceErrors_postInterruption>
+</list>
+
+
+*****************
+original
+*****************
+
+/stores the number of trials that ran before each interruption
+<list interruptions>
+</list>
+
+1 = test trial with sequence error; 0 = test trial without sequence error
+RESETS at beginning of each test block
+<list SErr>
+</list>
+
+1 = test trial with nonsequence error; 0 = test trial without nonsequence error
+RESETS at beginning of each test block
+<list NErr>
+</list>
+
+
+1 = sequence Error in baseline trial; 0 = otherwise
+resets at beginning of each block
+<list PSErr>
+</list>
+
+1 = sequence Error in post Interruption trial; 0 = otherwise
+resets at beginning of each block
+<list BSErr>
+</list>
+
+
+1 = response for the current task was correct AND the task was in sequence relative to the preceding task
+0 = otherwise
+<list blockAccuracy>
+</list>
+
+
+stores the response latencies of correct responses per block
+<list blockRT>
+</list>
+
+
+stores the response latencies of correct responses in post-interruption test trials per block
+<list blockRT_PS>
+</list>
+
+stores the response latencies of correct responses in baseline test trials per block
+<list blockRT_BS>
+</list>
+
+stores the lag in start of interruption trial and first entered character
+RESETS at the start of each block
+<list IntLag>
+</list>
+
+1 = correct response with at least one Help call; 0 = correct response with no Help call
+RESETS at the start of each block
+<list HelpP>
+</list>
+
+stores the number of code Errors made per interruptions in test trials
+RESETS at the start of each block
+<list codeErrors>
+</list>
+
+stores the number of code Errors during the first interruption trial made per interruptions in test trials
+RESETS at the start of each block
+<list codeErrors_1>
+</list>
+
+stores the number of code Errors during the second interruption trial made per interruptions in test trials
+RESETS at the start of each block
+<list codeErrors_2>
+</list>
+
+stores the interruption durations (in s) in test trials
+RESETS at the start of each block
+<list IntDuration>
+</list>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEMO TRIALS
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: 
+trial.demo is set up as trial.unravel_prep/trial.unravel* with the difference that
+trial.demo
+-changes its current sequence value (based on its trialcount) to a specific value as sampled by list.demoSequence
+For example: for trialcount == 1 -> values.U needs to be underlined (1) (as dictated by the screen instructions)
+- only correct responses are considered valid responses
+
+*for a commented trial.unravel_prep/trial.unravel, check section TEST TRIALS
+
+
+<trial demo>
+/ ontrialbegin = [
+	values.selectInstruction += 1;
+	values.trialcount += 1;
+	values.performedTask_ACC = 0;
+	values.lastTask = values.currentTask;
+	
+	values.desc_insideChar = "inside: ";
+	values.desc_outsideChar = "outside: ";
+
+	values.U = list.u.nextValue; 
+	values.N = list.n.nextValue; 
+	values.R = list.r.nextValue; 
+	values.A = list.a.nextValue; 
+	values.V = list.v.nextValue; 
+	values.E = list.e.nextValue; 
+	values.L = list.l.nextValue; 
+	
+	if (values.trialcount == 2){
+		values.U = list.demoSequence.nextValue;
+	} else if (values.trialcount == 3){
+		values.N = list.demoSequence.nextValue;
+	} else if (values.trialcount == 4){
+		values.R = list.demoSequence.nextValue;
+	} else if (values.trialcount == 5){
+		values.A = list.demoSequence.nextValue;
+	} else if (values.trialcount == 6){
+		values.V = list.demoSequence.nextValue;
+	} else if (values.trialcount == 7){
+		values.E = list.demoSequence.nextValue;
+	} else if (values.trialcount == 8){
+		values.L = list.demoSequence.nextValue;
+	}
+	
+	if (values.N == 1){
+		if (values.V == 1){
+			values.letter = list.vowels_near.nextValue;
+		} else {
+			values.letter = list.consonants_near.nextValue;
+		}
+	} else {
+		if (values.V == 1){
+			values.letter = list.vowels_far.nextValue;
+		} else {
+			values.letter = list.consonants_far.nextValue;
+		}
+	}
+		
+	if (values.E == 1){
+		if (values.L == 1){
+			values.digit = list.even_less.nextValue;
+		} else {
+			values.digit = list.even_more.nextValue;
+		}
+	} else {
+		if (values.L == 1){
+			values.digit = list.odd_less.nextValue;
+		} else {
+			values.digit = list.odd_more.nextValue;
+		}
+	}
+	
+	values.insideChar = list.insideChar.nextValue;
+	if (values.insideChar == 1){
+		values.inside = values.letter;
+		values.outside = values.digit;
+	} else {
+		values.inside = values.digit;
+		values.outside = values.letter;
+	}
+
+	values.location = list.insideLocation.nextValue;
+	if (values.location == 1){
+		values.desc_insideChar=concat(values.desc_insideChar, "left, ");
+		values.desc_outsideChar=concat(values.desc_outsideChar, "right, ");		
+		values.inside_x = 40%;
+		values.outside_x = 60%;
+	} else {
+		values.inside_x = 60%;
+		values.outside_x = 40%;
+		values.desc_insideChar=concat(values.desc_insideChar, "right, ");
+		values.desc_outsideChar=concat(values.desc_outsideChar, "left, ");			
+	}
+		
+	if (values.A == 1){
+		values.outside_y = 51%;
+		values.desc_outsideChar=concat(values.desc_outsideChar, "above, ");	
+	} else {
+		values.outside_y = 87%;
+		values.desc_outsideChar=concat(values.desc_outsideChar, "below, ");			
+	}
+
+	text.insideChar_U.textColor = white;
+	text.outsideChar_U.textColor = white;
+	shape.underlinebar_outsideCharU.color = white;
+	shape.underlinebar_insideCharU.color = white;
+	
+	text.insideChar_I.textColor = white;
+	text.outsideChar_I.textColor = white;
+	
+	text.insideChar.textColor = white;
+	text.outsideChar.textColor = white;	
+	values.insideColor = "white";
+	values.outsideColor = "white";	
+	values.locationColorChar = list.locationColorChar.nextValue;
+	if (values.locationColorChar == 1){
+		if (values.R == 1){
+			text.insideChar_U.textColor = red;
+			shape.underlinebar_insideCharU.color = red;
+			text.insideChar_I.textColor = red;
+			text.insideChar.textColor = red;	
+			values.insideColor = "red";
+			values.desc_insideChar = concat(values.desc_insideChar, "red, ");
+			values.desc_outsideChar = concat(values.desc_outsideChar, "white, ");			
+		} else {
+			text.insideChar_U.textColor = yellow;
+			shape.underlinebar_insideCharU.color = yellow;
+			text.insideChar_I.textColor = yellow;
+			text.insideChar.textColor = yellow;	
+			values.insideColor = "yellow";
+			values.desc_insideChar = concat(values.desc_insideChar, "yellow, ");
+			values.desc_outsideChar = concat(values.desc_outsideChar, "white, ");			
+		}
+	} else {
+		if (values.R == 1){
+			text.outsideChar_U.textColor = red;
+			shape.underlinebar_outsideCharU.color = red;
+			text.outsideChar_I.textColor = red;	
+			text.outsideChar.textColor = red;
+			values.outsideColor = "red";
+			values.desc_outsideChar = concat(values.desc_outsideChar, "red, ");
+			values.desc_insideChar = concat(values.desc_insideChar, "white, ");			
+		} else {
+			text.outsideChar_U.textColor = yellow;
+			shape.underlinebar_outsideCharU.color = yellow;
+			text.outsideChar_I.textColor = yellow;	
+			text.outsideChar.textColor = yellow;
+			values.outsideColor = "yellow";
+			values.desc_outsideChar = concat(values.desc_outsideChar, "yellow, ");
+			values.desc_insideChar = concat(values.desc_insideChar, "white, ");				
+		}		
+	}
+	
+	values.locationFormattedChar = list.locationFormattedChar.nextValue; 
+	if (values.U == 1){
+		if (values.locationFormattedChar == 1){
+			trial.demo.insertStimulusFrame(text.insideChar_U, 1);
+			trial.demo.insertStimulusFrame(shape.underlinebar_insideCharU, 1);			
+			trial.demo.insertStimulusFrame(text.outsideChar, 1);	
+			values.desc_insideChar = concat(values.desc_insideChar, " underlined ");
+			values.desc_outsideChar = concat(values.desc_outsideChar, " ");			
+		} else {
+			trial.demo.insertStimulusFrame(text.outsideChar_U, 1);
+			trial.demo.insertStimulusFrame(shape.underlinebar_outsideCharU, 1);			
+			trial.demo.insertStimulusFrame(text.insideChar, 1);	
+			values.desc_insideChar = concat(values.desc_insideChar, " ");
+			values.desc_outsideChar = concat(values.desc_outsideChar, " underlined ");				
+		}
+		
+	} else {
+		if (values.locationFormattedChar == 1){
+			trial.demo.insertStimulusFrame(text.insideChar_I, 1);
+			trial.demo.insertStimulusFrame(text.outsideChar, 1);
+			values.desc_insideChar = concat(values.desc_insideChar, " italic ");
+			values.desc_outsideChar = concat(values.desc_outsideChar, " ");			
+		} else {
+			trial.demo.insertStimulusFrame(text.outsideChar_I, 1);
+			trial.demo.insertStimulusFrame(text.insideChar, 1);
+			values.desc_insideChar = concat(values.desc_insideChar, " ");
+			values.desc_outsideChar = concat(values.desc_outsideChar, " italic ");			
+		}
+	}	
+
+	values.desc_insideChar = concat(values.desc_insideChar, values.inside);	
+	values.desc_outsideChar = concat(values.desc_outsideChar, values.outside);
+]
+/ stimulusframes = [1 = instruction, practiceBox, practiceBoxInner]
+/ validresponse = (parameters.key_above, parameters.key_below, parameters.key_consonant,
+parameters.key_even, parameters.key_far, parameters.key_italic, ,parameters.key_less,
+parameters.key_more, parameters.key_near , parameters.key_odd,
+parameters.key_red, parameters.key_underlined, parameters.key_yellow, parameters.key_vowel,
+parameters.key_red, parameters.key_yellow, parameters.key_above, parameters.key_below, parameters.key_vowel, parameters.key_consonant,
+parameters.key_even, parameters.key_odd, parameters.key_less, parameters.key_more, " ")
+/ iscorrectresponse = [
+	return(
+	(values.trialcount == 1 && trial.demo.responseText == " ") ||
+	(values.trialcount == 2 && trial.demo.responseText == parameters.key_underlined) ||	
+	(values.trialcount == 3 && trial.demo.responseText == parameters.key_far) ||	
+	(values.trialcount == 4 && trial.demo.responseText == parameters.key_red) ||	
+	(values.trialcount == 5 && trial.demo.responseText == parameters.key_above) ||	
+	(values.trialcount == 6 && trial.demo.responseText == parameters.key_consonant) ||		
+	(values.trialcount == 7 && trial.demo.responseText == parameters.key_odd) ||
+	(values.trialcount == 8 && trial.demo.responseText == parameters.key_less));	
+]
+/ ontrialend = [
+	trial.demo.resetStimulusFrames();
+	values.lastTask = "NA";
+	values.currentTask = "NA";
+	values.responseKeyLabel = trial.demo.responseText;
+]
+/ response = correct
+</trial>
+
+Note:
+trial.instructions
+- is a general instruction presenting trial
+- it presents the next instructions in the sequence and waits for Spacebar input
+<trial demoEndinstructions>
+/ ontrialbegin = [
+	values.selectInstruction +=1;
+]
+/ stimulusframes = [1 = instruction, rules]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	PRACTICE TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: sets up the practice UNRAVEL trials
+- trial.unravelPractice_prep generates the stimulus to be presented for the current practice trial;
+it calls trial.unravelPractice which presents the stimulus and evaluates input
+- practice 'prep' is written as a separate trial for the practice session to allow for errorfeedback to
+be flashed onto the screen without causing the current problem to change by re-calling trial.unravelPractice
+
+*for a commented trial.unravel_prep/trial.unravel, check section TEST TRIALS
+
+
+<trial unravelPractice_prep>
+/ ontrialbegin = [
+	values.trialcount += 1;	
+	values.counter_uninterruptedTrials += 1;	
+	values.performedTask_ACC = 0;
+	values.lastTask = values.currentTask;
+	values.wrongTask = 0;
+	values.errorType = "";
+	values.sequenceError = 0;
+	values.nonsequenceError = 0;
+	
+	values.desc_insideChar = "inside: ";
+	values.desc_outsideChar = "outside: ";
+	
+	values.code = "";
+
+	values.U = list.u.nextValue; 
+	values.N = list.n.nextValue; 
+	values.R = list.r.nextValue; 
+	values.A = list.a.nextValue; 
+	values.V = list.v.nextValue; 
+	values.E = list.e.nextValue; 
+	values.L = list.l.nextValue; 
+	
+	if (values.N == 1){
+		if (values.V == 1){
+			values.letter = list.vowels_near.nextValue;
+		} else {
+			values.letter = list.consonants_near.nextValue;
+		}
+	} else {
+		if (values.V == 1){
+			values.letter = list.vowels_far.nextValue;
+		} else {
+			values.letter = list.consonants_far.nextValue;
+		}
+	}
+		
+	if (values.E == 1){
+		if (values.L == 1){
+			values.digit = list.even_less.nextValue;
+		} else {
+			values.digit = list.even_more.nextValue;
+		}
+	} else {
+		if (values.L == 1){
+			values.digit = list.odd_less.nextValue;
+		} else {
+			values.digit = list.odd_more.nextValue;
+		}
+	}
+	
+	text.insideChar_U.textColor = white;
+	shape.underlinebar_insideCharU.color = white;
+	text.outsideChar_U.textColor = white;
+	shape.underlinebar_outsideCharU.color = white;
+	text.insideChar_I.textColor = white;
+	text.outsideChar_I.textColor = white;
+	text.insideChar.textColor = white;
+	text.outsideChar.textColor = white;	
+	values.insideColor = "white";
+	values.outsideColor = "white";
+	
+	values.insideChar = list.insideChar.nextValue;
+	if (values.insideChar == 1){
+		values.inside = values.letter;
+		values.outside = values.digit;
+	} else {
+		values.inside = values.digit;
+		values.outside = values.letter;
+	}
+
+	values.location = list.insideLocation.nextValue;
+	if (values.location == 1){
+		values.desc_insideChar=concat(values.desc_insideChar, "left, ");
+		values.desc_outsideChar=concat(values.desc_outsideChar, "right, ");		
+		values.inside_x = 40%;
+		values.outside_x = 60%;
+	} else {
+		values.inside_x = 60%;
+		values.outside_x = 40%;
+		values.desc_insideChar=concat(values.desc_insideChar, "right, ");
+		values.desc_outsideChar=concat(values.desc_outsideChar, "left, ");			
+	}
+		
+	if (values.A == 1){
+		values.outside_y = 51%;
+		values.desc_outsideChar=concat(values.desc_outsideChar, "above, ");	
+	} else {
+		values.outside_y = 87%;
+		values.desc_outsideChar=concat(values.desc_outsideChar, "below, ");			
+	}
+
+	text.insideChar_U.textColor = white;
+	shape.underlinebar_insideCharU.color = white;
+	text.outsideChar_U.textColor = white;
+	shape.underlinebar_outsideCharU.color = white;
+	text.insideChar_I.textColor = white;
+	text.outsideChar_I.textColor = white;
+	text.insideChar.textColor = white;
+	text.outsideChar.textColor = white;	
+	values.insideColor = "white";
+	values.outsideColor = "white";	
+	values.locationColorChar = list.locationColorChar.nextValue;
+	if (values.locationColorChar == 1){
+		if (values.R == 1){
+			text.insideChar_U.textColor = red;
+			shape.underlinebar_insideCharU.color = red;
+			text.insideChar_I.textColor = red;
+			text.insideChar.textColor = red;	
+			values.insideColor = "red";
+			values.desc_insideChar = concat(values.desc_insideChar, "red, ");
+			values.desc_outsideChar = concat(values.desc_outsideChar, "white, ");			
+		} else {
+			text.insideChar_U.textColor = yellow;
+			shape.underlinebar_insideCharU.color = yellow;
+			text.insideChar_I.textColor = yellow;
+			text.insideChar.textColor = yellow;	
+			values.insideColor = "yellow";
+			values.desc_insideChar = concat(values.desc_insideChar, "yellow, ");
+			values.desc_outsideChar = concat(values.desc_outsideChar, "white, ");			
+		}
+	} else {
+		if (values.R == 1){
+			text.outsideChar_U.textColor = red;
+			shape.underlinebar_outsideCharU.color = red;
+			text.outsideChar_I.textColor = red;	
+			text.outsideChar.textColor = red;
+			values.outsideColor = "red";
+			values.desc_outsideChar = concat(values.desc_outsideChar, "red, ");
+			values.desc_insideChar = concat(values.desc_insideChar, "white, ");			
+		} else {
+			text.outsideChar_U.textColor = yellow;
+			shape.underlinebar_outsideCharU.color = yellow;
+			text.outsideChar_I.textColor = yellow;	
+			text.outsideChar.textColor = yellow;
+			values.outsideColor = "yellow";
+			values.desc_outsideChar = concat(values.desc_outsideChar, "yellow, ");
+			values.desc_insideChar = concat(values.desc_insideChar, "white, ");				
+		}		
+	}
+	
+	values.locationFormattedChar = list.locationFormattedChar.nextValue; 
+	
+	values.desc_insideCharPrep = values.desc_insideChar;
+	values.desc_outsideCharPrep = values.desc_outsideChar;
+]
+/ trialduration = 0
+/ branch = [
+	trial.unravelPractice;
+]
+/ recorddata = false
+</trial>
+
+<trial unravelPractice>
+/ ontrialbegin = [
+	values.ACC = 0;
+	values.currentTask = "";
+ 
+	if (values.U == 1){
+		if (values.locationFormattedChar == 1){
+			trial.unravelPractice.insertStimulusFrame(text.insideChar_U, 1);
+			trial.unravelPractice.insertStimulusFrame(shape.underlinebar_insideCharU, 1);			
+			trial.unravelPractice.insertStimulusFrame(text.outsideChar, 1);	
+			values.desc_insideChar = concat(values.desc_insideCharPrep, " underlined ");
+			values.desc_outsideChar = concat(values.desc_outsideCharPrep, " ");			
+		} else {
+			trial.unravelPractice.insertStimulusFrame(text.outsideChar_U, 1);
+			trial.unravelPractice.insertStimulusFrame(shape.underlinebar_outsideCharU, 1);			
+			trial.unravelPractice.insertStimulusFrame(text.insideChar, 1);	
+			values.desc_insideChar = concat(values.desc_insideCharPrep, " ");
+			values.desc_outsideChar = concat(values.desc_outsideCharPrep, " underlined ");				
+		}
+		
+	} else {
+		if (values.locationFormattedChar == 1){
+			trial.unravelPractice.insertStimulusFrame(text.insideChar_I, 1);
+			trial.unravelPractice.insertStimulusFrame(text.outsideChar, 1);
+			values.desc_insideChar = concat(values.desc_insideCharPrep, " italic ");
+			values.desc_outsideChar = concat(values.desc_outsideCharPrep, " ");			
+		} else {
+			trial.unravelPractice.insertStimulusFrame(text.outsideChar_I, 1);
+			trial.unravelPractice.insertStimulusFrame(text.insideChar, 1);
+			values.desc_insideChar = concat(values.desc_insideCharPrep, " ");
+			values.desc_outsideChar = concat(values.desc_outsideCharPrep, " italic ");			
+		}
+	}	
+
+	values.desc_insideChar = concat(values.desc_insideChar, values.inside);	
+	values.desc_outsideChar = concat(values.desc_outsideChar, values.outside);
+]
+/ stimulusframes = [1 = practiceBox, practiceBoxInner, rules, debug]
+/ validresponse = (parameters.key_above, parameters.key_below, parameters.key_consonant,
+parameters.key_even, parameters.key_far, parameters.key_italic, ,parameters.key_less,
+parameters.key_more, parameters.key_near , parameters.key_odd,
+parameters.key_red, parameters.key_underlined, parameters.key_yellow, parameters.key_vowel,
+parameters.key_red, parameters.key_yellow, parameters.key_above, parameters.key_below, parameters.key_vowel, parameters.key_consonant,
+parameters.key_even, parameters.key_odd, parameters.key_less, parameters.key_more)
+/ iscorrectresponse = [
+	values.wrongTask = 0;
+	if (trial.unravelPractice.responseText == parameters.key_underlined || trial.unravelPractice.responseText == parameters.key_italic){
+		values.currentTask = "U";
+		if ((values.U == 1 && trial.unravelPractice.responseText == parameters.key_underlined) || (values.U == 2 && trial.unravelPractice.responseText == parameters.key_italic)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "L"){
+			values.wrongTask = 1;
+		}
+	} else if (trial.unravelPractice.responseText == parameters.key_near || trial.unravelPractice.responseText == parameters.key_far){
+		values.currentTask = "N";
+		if ((values.N == 1 && trial.unravelPractice.responseText == parameters.key_near) || (values.N == 2 && trial.unravelPractice.responseText == parameters.key_far)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "U"){
+			values.wrongTask = 1;
+		}
+	} else if (trial.unravelPractice.responseText == parameters.key_red || trial.unravelPractice.responseText == parameters.key_yellow){
+		values.currentTask = "R";
+		if ((values.R == 1 && trial.unravelPractice.responseText == parameters.key_red) || (values.R == 2 && trial.unravelPractice.responseText == parameters.key_yellow)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "N"){
+			values.wrongTask = 1;
+		}
+	} else if (trial.unravelPractice.responseText == parameters.key_above || trial.unravelPractice.responseText == parameters.key_below){
+		values.currentTask = "A";
+		if ((values.A == 1 && trial.unravelPractice.responseText == parameters.key_above) || (values.A == 2 && trial.unravelPractice.responseText == parameters.key_below)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "R"){
+			values.wrongTask = 1;
+		}
+	} else if (trial.unravelPractice.responseText == parameters.key_vowel || trial.unravelPractice.responseText == parameters.key_consonant){
+		values.currentTask = "V";
+		if ((values.V == 1 && trial.unravelPractice.responseText == parameters.key_vowel) || (values.V == 2 && trial.unravelPractice.responseText == parameters.key_consonant)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "A"){
+			values.wrongTask = 1;
+		}
+	} else if (trial.unravelPractice.responseText == parameters.key_even || trial.unravelPractice.responseText == parameters.key_odd){
+		values.currentTask = "E";
+		if ((values.E == 1 && trial.unravelPractice.responseText == parameters.key_even) || (values.E == 2 && trial.unravelPractice.responseText == parameters.key_odd)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "V"){
+			values.wrongTask = 1;
+		}
+	} else if (trial.unravelPractice.responseText == parameters.key_less || trial.unravelPractice.responseText == parameters.key_more){
+		values.currentTask = "L";
+		if ((values.L == 1 && trial.unravelPractice.responseText == parameters.key_less) || (values.L == 2 && trial.unravelPractice.responseText == parameters.key_more)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "E"){
+			values.wrongTask = 1;
+		}
+	}
+	
+	if (values.wrongTask == 0 && values.performedTask_ACC == 1){
+		values.ACC = 1;
+	} else {
+		values.ACC = 0;
+	}
+	
+	values.ACC == 1;
+]
+/ errormessage = true(shape.errorFeedback, 100)
+/ ontrialend = [
+	trial.unravelPractice.resetStimulusFrames();
+	values.responseKeyLabel = trial.unravelPractice.responseText;
+	
+	if (values.wrongTask == 1){
+		values.sequenceError = 1;
+		if (values.performedTask_ACC == 1){
+			values.errorType = 1;
+		} else {
+			values.errorType = 2;
+		}
+	} else {
+		if (values.performedTask_ACC == 1){
+			values.errorType = 0;
+		} else {
+			values.errorType = 3;
+			values.nonsequenceError = 1;
+		}			
+	}
+	
+	values.performedTaskSequence = concat(values.performedTaskSequence, values.currentTask);
+	list.blockAccuracy.insertItem(values.ACC, 1);
+		
+	if (values.counter_uninterruptedTrials >= values.uninterruptedTrials && values.countBlockInterruptions < (list.uninterruptedPracticeTrials.itemCount - 1)){
+		values.interruption = 1;
+	} else {
+		values.interruption = 0;
+	}
+]
+/ branch = [
+	if (trial.unravelPractice.error){
+		values.PracEr += 1;
+		return trial.unravelPractice;
+	} else if (values.interruption == 1){
+		values.countBlockInterruptions += 1;
+		values.repeat = 0;
+		return openended.interruptPractice_1;
+	} else if (values.counter_uninterruptedTrials < values.uninterruptedTrials){
+		return trial.unravelPractice_prep;
+	} else {
+		values.selectInstruction += 1;
+		text.practiceEndInstruction_continue.textColor = black;
+		return trial.practiceEnd;
+	}
+]
+</trial>
+
+*******************************
+practice interruptions
+*******************************
+
+Note: openended.interruptPractice
+* for the first practice interruption trial, explanatory instructions will be presented (item.instructions.item(10) -> dynamically inserted)
+* randomly generates a code based on the selected code length
+* awaits input
+-> correct: calls trial.interruptPractice_2
+-> incorrect: a white shape is flashed onto the screen, and a new openended.interruptPractice_1 is called (with the same code).
+
+<openended interruptPractice_1>
+/ buttonlabel = "Return"
+/ position = (50%, 70%)
+/ ontrialbegin = [
+
+	//check whether a new code has to be generated (repeat trials do not not generate a new code):
+	if (values.repeat == 0){
+		values.code = "";
+		values.lengthInterruptCode = list.lengthInterruptCode.nextValue;
+		list.interruptCode.reset();
+		expressions.generateInterruptionCode;		
+	}
+	
+	if (openended.interruptPractice_1.count == 0){
+		values.selectInstruction = 10;
+		openended.interruptPractice_1.insertStimulusFrame(text.instruction, 1);
+	}
+]
+/ stimulusframes = [1 = clearScreen; 2= interruptionText]
+/ iscorrectresponse = [
+	return ((openended.interruptPractice_1.response == values.code && !monkey.monkeyMode) || monkey.monkeyMode);
+]
+/ charlimit = 20
+/ ontrialend = [
+	openended.interruptPractice_1.resetStimulusFrames();
+]
+/ branch = [
+	if (openended.interruptPractice_1.correct){
+		values.repeat = 0; //reset the repeat variable
+		return openended.interruptPractice_2;
+	
+	} else {
+		values.repeat = 1; //the interruption trial should be repeated
+		return openended.interruptPractice_1;
+	}
+]
+/ errormessage = true(shape.errorFeedback, 100)
+</openended>
+
+//presents the second code:
+-> correct: for the first practice interruption, it calls trial.interruptPracticeFeedback before the sequence is continued;
+for the second practice interruption, the regular UNRAVEL sequence is continued
+-> incorrect: a white shape is flashed onto the screen, and a new openended.interruptPractice is called.
+<openended interruptPractice_2>
+/ buttonlabel = "Return"
+/ position = (50%, 70%)
+/ ontrialbegin = [
+
+	//check whether a new code has to be generated (repeat trials do not not generate a new code):
+	if (values.repeat == 0){
+		values.code = "";
+		values.lengthInterruptCode = list.lengthInterruptCode.nextValue;
+		list.interruptCode.reset();
+		expressions.generateInterruptionCode;		
+	}
+	
+	if (openended.interruptPractice_2.count == 0){
+		values.selectInstruction = 10;
+		openended.interruptPractice_2.insertStimulusFrame(text.instruction, 1);
+	}
+]
+/ stimulusframes = [1 = clearScreen; 2= interruptionText]
+/ iscorrectresponse = [
+	return ((openended.interruptPractice_2.response == values.code && !monkey.monkeyMode) || monkey.monkeyMode);
+]
+/ charlimit = 20
+/ ontrialend = [
+	openended.interruptPractice_2.resetStimulusFrames();
+	
+	if (openended.interruptPractice_2.correct){
+		values.uninterruptedTrials = list.uninterruptedPracticeTrials.nextValue;
+		values.counter_uninterruptedTrials = 0;		
+	}
+]
+/ branch = [
+	if (openended.interruptPractice_2.correct){
+		values.repeat = 0; //reset the repeat variable
+		if (values.countBlockInterruptions == 1){
+			return trial.interruptPracticeFeedback;
+		} else {
+			return trial.unravelPractice_prep;				
+		}
+	
+	} else {
+		values.repeat = 1; //the interruption trial should be repeated
+		return openended.interruptPractice_2;
+	}
+]
+/ errormessage = true(shape.errorFeedback, 100)
+</openended>
+
+
+Note: trial.interruptPracticeFeedback
+- is presented after the successful completion of the first interruption
+- it presents further explanatory instructions/feedback (item.instructions.item(11))
+- then continues with UNRAVEL sequence
+<trial interruptPracticeFeedback>
+/ ontrialbegin = [
+	values.selectInstruction = 11;
+]
+/ stimulusframes = [1 = instruction]
+/ validresponse = (" ")
+/ recorddata = false
+/ branch = [
+	return trial.unravelPractice_prep;
+]
+</trial>
+
+***************************
+Practice End
+***************************
+
+Note: trial.practiceEnd
+- presents instruction item.instructions.item(12)
+- valid input for the first run through this trial (there will be at least 2) is only the 'Tab' key (scancode: 15)
+which will result in calling trial.showRulesDemo
+- for the second run of this trial, text.practiceEndInstructions_continue will be presented in white and
+the Spacebar is also evaluated as valid input
+- once the Spacebar key is pressed trial.instruction is called. At this point trial.instruction will
+present the last instructions from item.instructions before the test run starts in earnest.
+<trial practiceEnd>
+/ ontrialbegin = [
+	values.selectInstruction = 12;
+	text.rules.vposition = 45%;
+]
+/ stimulusframes = [1 = practiceEndInstruction, practiceEndInstruction_continue]
+/ validresponse = (15, " ")
+/ isvalidresponse = [
+	if (trial.practiceEnd.count == 0) {
+		return (trial.practiceEnd.response == 15);
+	} else {
+		return (trial.practiceEnd.response == 15 || trial.practiceEnd.responseText == " ");
+	}
+]
+/ branch = [
+	if (trial.practiceEnd.response == 15){
+		return trial.showRulesDemo;
+	} else {
+		return trial.instructions;
+	}	
+]
+/ recorddata = false
+</trial>
+
+Note:
+- as long as the Tab key is pressed down the rules will presented on screen
+- once the finger is lifted off the Tab key, the rules disappear and
+text.practiceEndInstructions_continue is set to be presented in white
+for all further trial.practiceEnd,
+<trial showRulesDemo>
+/ stimulusframes = [1 = rules]
+/ validresponse = (-15)
+/ branch = [
+	text.practiceEndInstruction_continue.textColor = white;
+	return trial.practiceEnd;
+]
+/ recorddata = false
+</trial>
+
+
+Note:
+trial.instructions
+- is a general instruction presenting trial
+- it presents the next instructions in the sequence and waits for Spacebar input
+<trial instructions>
+/ ontrialbegin = [
+	values.selectInstruction +=1;
+]
+/ stimulusframes = [1 = instruction]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TEST TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: trial.unravel_prep/trial.unravel
+- assembles and presents the current stimuli
+- evaluates input
+- updates summary variables
+- calls interruption trial if appropriate
+
+=> for a detailed, commented version of trial.unravel see below
+
+<trial unravel_prep>
+/ ontrialbegin = [
+
+	//resets and updates relevant trial variables
+	values.trialcount += 1;	
+	values.counter_uninterruptedTrials += 1;//updates the number of uninterrupted Trials		
+	values.performedTask_ACC = 0;
+	values.lastTask = values.currentTask;
+	values.wrongTask = 0;
+	values.errorType = "";
+	values.sequenceError = 0;
+	values.nonsequenceError = 0;
+	
+	values.IntLag = "";
+	values.showRule = 0;
+	values.count_CodeErrors = 0;
+	values.IntDuration = 0;
+	
+	values.desc_insideChar = "inside: ";//variable that will contain the description of the inside Char for data file
+	values.desc_outsideChar = "outside: ";//variable that will contain the description of the inside Char for data file
+	
+	values.code = "";
+
+	//samples the composition of the presented stimuli	
+	values.U = list.u.nextValue; //1=underlined; 2 = italic
+	values.N = list.n.nextValue; //1 = near; 2 = far	-> start of alphabet
+	values.R = list.r.nextValue; //1 = red; 2 = yellow
+	values.A = list.a.nextValue; //1 = above; 2 = below
+	values.V = list.v.nextValue; //1 = vowel; 2 = consonant
+	values.E = list.e.nextValue; //1 = even; 2 = odd	
+	values.L = list.l.nextValue; //1 = <5; 2 = >5	
+		
+	//letter selection: based on selected composition variables (values.N and values.V)****
+	if (values.N == 1){//letter should be near the start of the alphabet
+		if (values.V == 1){ //letter should be a vowel near the start of the alphabet
+			values.letter = list.vowels_near.nextValue;
+		} else { //letter should be a consonant near the start of the alphabet
+			values.letter = list.consonants_near.nextValue;
+		}
+	} else {//letter should be far from the start of the alphabet
+		if (values.V == 1){//letter should be a vowel far from the start of the alphabet
+			values.letter = list.vowels_far.nextValue;
+		} else {//letter should be a consonant far from the start of the alphabet
+			values.letter = list.consonants_far.nextValue;
+		}
+	}	
+				
+	//digit selection: based on selected composition variables (values.E and values.L)
+	if (values.E == 1){//digit should be even
+		if (values.L == 1){//even digit < 5
+			values.digit = list.even_less.nextValue;
+		} else {//even digit > 5
+			values.digit = list.even_more.nextValue;
+		}
+	} else {//digit should be odd
+		if (values.L == 1){//odd digit < 5
+			values.digit = list.odd_less.nextValue;
+		} else {//odd digit > 5
+			values.digit = list.odd_more.nextValue;
+		}
+	}	
+	
+	values.insideChar = list.insideChar.nextValue; //1 = letter; 2 = digit
+	if (values.insideChar == 1){//the character inside the box should be the letter
+		values.inside = values.letter;//inside character is set to be the letter
+		values.outside = values.digit;//outside character is set to be the digit
+	} else {//the character inside the box should be the digit
+		values.inside = values.digit;//inside character is set to be the digit
+		values.outside = values.letter;//outside character is set to be the letter
+	}	
+	
+	values.location = list.insideLocation.nextValue;//****1 = left inside (right outside); 2 = right inside (left outside)
+	if (values.location == 1){//inside character is assigned the left side; outside character is assigned the right side
+		values.desc_insideChar=concat(values.desc_insideChar, "left, ");
+		values.desc_outsideChar=concat(values.desc_outsideChar, "right, ");		
+		values.inside_x = 40%;
+		values.outside_x = 60%;
+	} else {//inside character is assigned the right side; outside character is assigned the left side
+		values.inside_x = 60%;
+		values.outside_x = 40%;
+		values.desc_insideChar=concat(values.desc_insideChar, "right, ");
+		values.desc_outsideChar=concat(values.desc_outsideChar, "left, ");			
+	}
+			
+	if (values.A == 1){
+		values.outside_y = 30%;//outside character's y-coordinate if above the box
+		values.desc_outsideChar=concat(values.desc_outsideChar, "above, ");	
+	} else {
+		values.outside_y = 70%;//outside character's y-coordinate if below the box
+		values.desc_outsideChar=concat(values.desc_outsideChar, "below, ");			
+	}
+
+	
+	//COLOR SETTINGS:
+		
+	//reset all possible text stimuli to a default white color: color updating is done in the next step
+	text.insideChar_U.textColor = white;
+	shape.underlinebar_insideCharU.color = white;
+	text.outsideChar_U.textColor = white;
+	shape.underlinebar_outsideCharU.color = white;
+	text.insideChar_I.textColor = white;
+	text.outsideChar_I.textColor = white;
+	text.insideChar.textColor = white;
+	text.outsideChar.textColor = white;	
+	values.insideColor = "white";//used to assemble the description of the variables inside/outside stored in the data file
+	values.outsideColor = "white";	
+		
+	values.locationColorChar = list.locationColorChar.nextValue;//1 = inside; 2 = outside
+	if (values.locationColorChar == 1){//inside one is the colored one
+		if (values.R == 1){//inside character is supposed to be red; so all possible inside character text elements are set to be red
+			text.insideChar_U.textColor = red;
+			shape.underlinebar_insideCharU.color = red;
+			text.insideChar_I.textColor = red;
+			text.insideChar.textColor = red;	
+			values.insideColor = "red";
+			values.desc_insideChar = concat(values.desc_insideChar, "red, ");
+			values.desc_outsideChar = concat(values.desc_outsideChar, "white, ");			
+		} else {//inside character is supposed to be yellow; so all possible inside character text elements are set to be yellow
+			text.insideChar_U.textColor = yellow;
+			shape.underlinebar_insideCharU.color = yellow;
+			text.insideChar_I.textColor = yellow;
+			text.insideChar.textColor = yellow;	
+			values.insideColor = "yellow";
+			values.desc_insideChar = concat(values.desc_insideChar, "yellow, ");
+			values.desc_outsideChar = concat(values.desc_outsideChar, "white, ");			
+		}
+	} else {//outside one is the colored one
+		if (values.R == 1){//outside character is supposed to be red, so all possible outside character text elements are set to be red
+			text.outsideChar_U.textColor = red;
+			shape.underlinebar_outsideCharU.color = red;
+			text.outsideChar_I.textColor = red;	
+			text.outsideChar.textColor = red;
+			values.outsideColor = "red";
+			values.desc_outsideChar = concat(values.desc_outsideChar, "red, ");
+			values.desc_insideChar = concat(values.desc_insideChar, "white, ");			
+		} else {//outside character is supposed to be yellow, so all possible outside character text elements are set to be yellow
+			text.outsideChar_U.textColor = yellow;
+			shape.underlinebar_outsideCharU.color = yellow;
+			text.outsideChar_I.textColor = yellow;	
+			text.outsideChar.textColor = yellow;
+			values.outsideColor = "yellow";
+			values.desc_outsideChar = concat(values.desc_outsideChar, "yellow, ");
+			values.desc_insideChar = concat(values.desc_insideChar, "white, ");				
+		}		
+	}
+
+	//FORMATTING SETTINGS (UNDERLINED/ITALIC)
+	//because the underlined/italicized characters depend on using entirely different text stimuli (unlike the color)
+	//the various text stimuli are inserted into the trial dynamically
+	//the description of the presented stimuli to be stored in the data files is started	
+
+	values.locationFormattedChar = list.locationFormattedChar.nextValue; //1 = inside character is formatted; 2 = outside	character is formatted
+	
+	values.desc_insideCharPrep = values.desc_insideChar;
+	values.desc_outsideCharPrep = values.desc_outsideChar;
+]
+/ trialduration = 0
+/ branch = [
+	return trial.unravel;
+]
+/ recorddata = false
+</trial>
+
+<trial unravel>
+/ ontrialbegin = [
+	values.ACC = 0;
+	values.currentTask = "";
+
+	if (values.U == 1){//the formatted character should be underlined
+		if (values.locationFormattedChar == 1){//the underlined characters is inside
+			trial.unravel.insertStimulusFrame(text.insideChar_U, 1);//insert the inside, underlined character
+			trial.unravel.insertStimulusFrame(shape.underlinebar_insideCharU, 1);//insert the underline		
+			trial.unravel.insertStimulusFrame(text.outsideChar, 1);	//insert the outside, non-formatted character
+			values.desc_insideChar = concat(values.desc_insideCharPrep, " underlined ");
+			values.desc_outsideChar = concat(values.desc_outsideCharPrep, " ");			
+		} else {//the underlined character is outside
+			trial.unravel.insertStimulusFrame(text.outsideChar_U, 1);//insert the outside, underlined character
+			trial.unravel.insertStimulusFrame(shape.underlinebar_outsideCharU, 1);//insert the outside, underline	
+			trial.unravel.insertStimulusFrame(text.insideChar, 1);	//insert the inside, non-formatted character
+			values.desc_insideChar = concat(values.desc_insideCharPrep, " ");
+			values.desc_outsideChar = concat(values.desc_outsideCharPrep, " underlined ");				
+		}
+				
+	} else {//the formatted character should be italic
+		if (values.locationFormattedChar == 1){//the italic character is inside
+			trial.unravel.insertStimulusFrame(text.insideChar_I, 1);//insert the inside, italic character
+			trial.unravel.insertStimulusFrame(text.outsideChar, 1);//insert the outside, unformatted character
+			values.desc_insideChar = concat(values.desc_insideCharPrep, " italic ");
+			values.desc_outsideChar = concat(values.desc_outsideCharPrep, " ");			
+		} else {//the italic character is outside
+			trial.unravel.insertStimulusFrame(text.outsideChar_I, 1);//insert the outside, italic character
+			trial.unravel.insertStimulusFrame(text.insideChar, 1);//insert the inside, un-formatted character
+			values.desc_insideChar = concat(values.desc_insideCharPrep, " ");
+			values.desc_outsideChar = concat(values.desc_outsideCharPrep, " italic ");			
+		}
+	}	
+
+	//the description of the text stimuli (for the data file) is finalized in this step:
+	values.desc_insideChar = concat(values.desc_insideChar, values.inside);	
+	values.desc_outsideChar = concat(values.desc_outsideChar, values.outside);
+]
+/ stimulusframes = [1 = clearScreen, outsideBox, innerBox, debug]
+//in order to count invalid key responses (other than trial responses and the Tab key)
+//any key responses are initially valid. They are then  further evaluated by 'isvalidresponse'
+//which counts the invalidkeyresponses and only allows valid key responses (trial responses + Tab key)
+//to advance the trial
+/ validresponse = (anyresponse)
+/ isvalidresponse = [
+
+if (
+(trial.unravel.responseText == parameters.key_underlined) || 
+(trial.unravel.responseText == parameters.key_italic) || 
+(trial.unravel.responseText == parameters.key_near) || 
+(trial.unravel.responseText == parameters.key_far) ||
+(trial.unravel.responseText == parameters.key_red) || 
+(trial.unravel.responseText == parameters.key_yellow) || 
+(trial.unravel.responseText == parameters.key_above) || 
+(trial.unravel.responseText == parameters.key_below) || 
+(trial.unravel.responseText == parameters.key_vowel) || 
+(trial.unravel.responseText == parameters.key_consonant) ||
+(trial.unravel.responseText == parameters.key_odd) || 
+(trial.unravel.responseText == parameters.key_even) || 
+(trial.unravel.responseText == parameters.key_less) || 
+(trial.unravel.responseText == parameters.key_more) || 
+(trial.unravel.response == 15)){
+	values.validResponse = 1;
+} else {
+	values.validResponse = 0;
+	values.InvKey += 1;
+}
+
+return(values.validResponse == 1);
+]
+//check the accuracy of the valid responses:
+/ iscorrectresponse = [
+if (trial.unravel.response != 15){//check for all valid responses other than pressing the Tab key (scancode 15)
+	//check what task was performed based on the response key used:
+	if (trial.unravel.responseText == parameters.key_underlined || trial.unravel.responseText == parameters.key_italic){
+		values.currentTask = "U";
+		//check if the U-response was correct given values.U (values.performedTask_AA => 1)
+		if ((values.U == 1 && trial.unravel.responseText == parameters.key_underlined) || (values.U == 2 && trial.unravel.responseText == parameters.key_italic)){
+			values.performedTask_ACC = 1;
+		}
+		//check if the response classifies as a sequence error based on the task performed last
+		if (values.lastTask != "L"){
+			values.wrongTask = 1;
+		}
+	//do all these checks for all possible UNRAVEL responses
+	} else if (trial.unravel.responseText == parameters.key_near || trial.unravel.responseText == parameters.key_far){
+		values.currentTask = "N";
+		if ((values.N == 1 && trial.unravel.responseText == parameters.key_near) || (values.N == 2 && trial.unravel.responseText == parameters.key_far)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "U"){
+			values.wrongTask = 1;
+		}
+	} else if (trial.unravel.responseText == parameters.key_red || trial.unravel.responseText == parameters.key_yellow){
+		values.currentTask = "R";
+		if ((values.R == 1 && trial.unravel.responseText == parameters.key_red) || (values.R == 2 && trial.unravel.responseText == parameters.key_yellow)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "N"){
+			values.wrongTask = 1;
+		}
+	} else if (trial.unravel.responseText == parameters.key_above || trial.unravel.responseText == parameters.key_below){
+		values.currentTask = "A";
+		if ((values.A == 1 && trial.unravel.responseText == parameters.key_above) || (values.A == 2 && trial.unravel.responseText == parameters.key_below)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "R"){
+			values.wrongTask = 1;
+		}
+	} else if (trial.unravel.responseText == parameters.key_vowel || trial.unravel.responseText == parameters.key_consonant){
+		values.currentTask = "V";
+		if ((values.V == 1 && trial.unravel.responseText == parameters.key_vowel) || (values.V == 2 && trial.unravel.responseText == parameters.key_consonant)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "A"){
+			values.wrongTask = 1;
+		}
+	} else if (trial.unravel.responseText == parameters.key_even || trial.unravel.responseText == parameters.key_odd){
+		values.currentTask = "E";
+		if ((values.E == 1 && trial.unravel.responseText == parameters.key_even) || (values.E == 2 && trial.unravel.responseText == parameters.key_odd)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "V"){
+			values.wrongTask = 1;
+		}
+	} else if (trial.unravel.responseText == parameters.key_less || trial.unravel.responseText == parameters.key_more){
+		values.currentTask = "L";
+		if ((values.L == 1 && trial.unravel.responseText == parameters.key_less) || (values.L == 2 && trial.unravel.responseText == parameters.key_more)){
+			values.performedTask_ACC = 1;
+		}
+		if (values.lastTask != "E"){
+			values.wrongTask = 1;
+		}
+	}
+	
+	//if the task response was correct AND if the response was in sequence, then the trial response is considered 'correct'
+	if (values.wrongTask == 0 && values.performedTask_ACC == 1){
+		values.ACC = 1;
+	} else {
+		values.ACC = 0;
+	}		
+}
+	return (values.ACC == 1);
+]
+/ontrialend =[
+	trial.unravel.resetStimulusFrames();
+	values.responseKeyLabel = trial.unravel.responseText;	
+
+	if (trial.unravel.response != 15){//update summary variables if the response was any other valid response than pressing the 'Tab' key
+	
+		//classify the error made
+		if (values.wrongTask == 1){
+			values.sequenceError = 1;
+			if (values.performedTask_ACC == 1){
+				values.errorType = 1;
+			} else {
+				values.errorType = 2;
+			}
+		} else {
+			if (values.performedTask_ACC == 1){
+				values.errorType = 0;
+			} else {
+				values.errorType = 3;
+				values.nonsequenceError = 1;
+			}			
+		}
+		
+		list.SErr.insertItem(values.sequenceError, 1);
+		list.NErr.insertItem(values.nonsequenceError, 1);
+		
+	
+		if (values.counter_uninterruptedTrials == 1 && values.trialcount > 1){//check if the current trial followed an interruption
+			list.PSErr.insertItem(values.sequenceError, 1);
+		} else {
+			list.BSErr.insertItem(values.sequenceError, 1);
+		}
+				
+		
+		values.performedTaskSequence = concat(values.performedTaskSequence, values.currentTask);//keep track of the sequence of performed tasks
+		list.performedTaskAccuracy.insertItem(values.performedTask_ACC, 1);//store accuracy measures in their appropriate tasks
+		list.blockAccuracy.insertItem(values.ACC, 1);
+	
+		//check if an interruption is in order
+		//(a. the number of uninterrupted trials has reached its Max AND b. fewer than 10 interruptions have occurred)
+		if (values.counter_uninterruptedTrials >= values.uninterruptedTrials && values.countBlockInterruptions < (parameters.testtrialRuns - 1)){
+			values.interruption = 1;//this trial needs to be followed by an interruption
+		} else {
+			values.interruption = 0;//this trial does not require an interruption
+		}	
+
+				
+		if (values.counter_uninterruptedTrials == 1 && values.trialcount != 1){
+			values.testTrialCode = 2;
+		} else {
+			values.testTrialCode = 1;
+		}		
+	} else {
+		values.testTrialCode = 3;
+	}
+	
+	//counts all post-interrupt UNRAVEL trials that were performed in sequence (regardless of task performance)
+	if ((values.errorType == 0 || values.errorType == 3) && values.testTrialCode == 2){
+			values.P1Acc += 1;
+	}
+	
+	//sorts latency of correct trial responses in their respective latency block lists
+	if (values.ACC == 1){
+		list.blockRT.insertItem(trial.unravel.latency, 1);	
+		list.HelpP.insertItem(values.showRule, 1);
+		if (values.testTrialCode == 1){
+			list.blockRT_BS.insertItem(trial.unravel.latency, 1);
+		} else if (values.testTrialCode == 2){
+			list.blockRT_PS.insertItem(trial.unravel.latency, 1);
+		}
+	}
+]
+/ branch = [
+	if (trial.unravel.response == 15){//in the case the Tab key was pressed, show the rules
+		return trial.showRules;
+	} else if (values.interruption == 1){//this trial needs to be followed by an interruption
+		values.countBlockInterruptions += 1;
+		values.repeat = 0;
+		return openended.interrupt_1;
+	} else if (values.counter_uninterruptedTrials < values.uninterruptedTrials){//the limit of uninterrupted trials has not been reached yet
+		return trial.unravel_prep;
+	}
+	//else: if values.interruption = 0 AND the number of values.counter_uninterrupedTrial >= 10: Block ends
+]
+</trial>
+
+
+
+Note: openended.interrupt_1
+* samples a code
+* evaluates input
+* if correct -> openended.interrupt_2
+* if incorrect -> another openended.interrupt_1
+<openended interrupt_1>
+/ buttonlabel = "Return"
+/ ontrialbegin = [
+
+	//check if a new code should be created (repeated trials do not generate new codes):
+	if (values.repeat == 0){
+		values.code = "";
+		values.lengthInterruptCode = list.lengthInterruptCode.nextValue;
+		list.interruptCode.reset();
+		expressions.generateInterruptionCode;
+		values.testTrialCode = 4;		
+	}
+
+]
+/ stimulusframes = [1 = interruptionText]
+/ iscorrectresponse = [
+	return(
+	(openended.interrupt_1.response == values.code && !monkey.monkeyMode) || monkey.monkeyMode);
+]
+/ charlimit = 20
+/ ontrialend = [
+
+	values.IntDuration += (openended.interrupt_1.latency/1000);
+
+	if (values.IntLag == ""){
+		values.IntLag = openended.interrupt_1.firstcharlatency;
+		list.intLag.insertItem(values.IntLag, 1);
+	}		
+
+	if (openended.interrupt_1.correct){
+		list.codeErrors.appendItem(values.count_CodeErrors);
+		list.codeErrors_1.appendItem(values.count_CodeErrors_1);
+	} else {
+		values.count_CodeErrors += 1;
+		values.count_CodeErrors_1 += 1;
+	}
+]
+/ branch = [
+	if (openended.interrupt_1.correct){
+		values.repeat = 0; //reset values.repeat
+		return openended.interrupt_2;
+	} else {
+		values.repeat = 1; //the next interruption trial is a repeat
+		return openended.interrupt_1;
+	}
+]
+</openended>
+
+//presents code2:
+* if correct -> samples the next values.uninterruptedTrials, resets values.counter_uninterruptedTrials and resumes sequence
+by calling trial.unravel_prep
+* if incorrect -> another openended.interrupt_2
+<openended interrupt_2>
+/ buttonlabel = "Return"
+/ ontrialbegin = [
+	values.code = "";
+	values.lengthInterruptCode = list.lengthInterruptCode.nextValue;
+	list.interruptCode.reset();
+	expressions.generateInterruptionCode;
+	values.testTrialCode = 4;
+]
+/ stimulusframes = [1 = interruptionText]
+/ iscorrectresponse = [
+	return(
+	(openended.interrupt_2.response == values.code && !monkey.monkeyMode) || monkey.monkeyMode);
+]
+/ charlimit = 20
+/ ontrialend = [
+	values.IntDuration += (openended.interrupt_2.latency/1000);
+
+	if (openended.interrupt_2.correct){
+		values.uninterruptedTrials = expressions.generateNextInterruption;
+		list.interruptions.appendItem(values.uninterruptedTrials);
+		values.counter_uninterruptedTrials = 0;	
+		list.codeErrors.appendItem(values.count_CodeErrors);
+		list.codeErrors_2.appendItem(values.count_CodeErrors_2);		
+		list.IntDuration.appendItem(values.IntDuration);
+	} else {
+		values.count_CodeErrors += 1;
+		values.count_CodeErrors_2 += 1;
+	}
+]
+/ branch = [
+	if (openended.interrupt_2.correct){
+		values.repeat = 0; //reset values.repeat
+		return trial.unravel_prep;
+	} else {
+		values.repeat = 1; //the next interruption trial is a repeat
+		return openended.interrupt_2;
+	}
+]
+</openended>
+
+Note:
+- as long as the Tab key is pressed down the rules will be presented on screen
+- once the finger is lifted off the Tab key, the rules disappear and
+text.practiceEndInstructions_continue is set to be presented in white
+for all further trial.practiceEnd,
+- the first time the showRules trial is called during a test trial 
+the counter values.blockHelps is increased by 1
+(any subsequent calls on the same trial are ignored)
+<trial showRules>
+/ ontrialbegin = [
+	if (values.showRule == 0){
+		values.blockHelps += 1;
+	}
+]
+/ stimulusframes = [1 = clearScreen, rules]
+/ validresponse = (-15)
+/ ontrialend = [
+	values.showRule = 1;
+]
+/ branch = [
+	return trial.unravel;
+]
+/ recorddata = false
+</trial>
+
+Note: provides performance feedback at the end of each test block
+<trial blockFeedback>
+/ stimulusframes = [1 = blockFeedback, warning]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+Note: presents transition page to next block (or thanks participants for their participation)
+<trial blockEnd>
+/ stimulusframes = [1 = blockEnd]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block keyboardTest>
+/ skip = [
+	computer.hasKeyboard;
+]
+/ trials = [1 = keyboardTest_Fail]
+/ ontrialend = [
+	script.abort(false);
+]
+</block>
+
+
+Note:
+- Participants learn about the meaning of the acronym UNRAVEL while working through each task in sequence.
+During the tutorial, participants are told the correct responses to the task at hand (and only those responses advance the tutorial)
+<block DEMO>
+/ onblockbegin = [
+	values.performedTaskSequence = "";	
+	values.trialcount = 0;	
+	values.currentTask = "E";
+	values.inside_y = 70%;
+	values.selectInstruction = 0;
+]
+/ trials = [1-8 = demo; 9 = demoEndinstructions]
+/ onblockend = [
+	values.demoEndTime = script.elapsedTime;
+]
+</block>
+
+Note: runs 16 practice trials with 2 semi-randomly placed interruptions (by default, interruptions occur after 3, 6, or 7 trials)
+During practice, errorfeedback in the form of a white flash is provided for incorrect responses and participants have to correct the incorrect response
+before advancing.
+<block PRACTICE>
+/ onblockbegin = [
+	values.performedTaskSequence = "";	
+	values.counter_uninterruptedTrials = 0;
+	values.countBlockInterruptions = 0;
+	values.trialcount = 0;	
+	values.uninterruptedTrials = list.uninterruptedPracticeTrials.nextValue;	
+	values.currentTask = "L";
+	values.inside_y = 70%;
+	text.rules.vposition = 10%;
+	values.selectInstruction = 9;
+]
+/ trials = [1 = trial.unravelPractice_prep]
+/ onblockend = [
+	values.practiceEndTime = script.elapsedTime;
+]
+</block>
+
+
+Note:
+- resets appropriate lists and variables before each run
+- updates testBlockCount and samples the first values.uninterruptedTrials
+- calls trial.unravel_prep which will call trial.unravel (and so on) until ~66 trial.unravel_prep trials have run
+(interruption trials are called by trial.unravel)
+- updates summary variables after each run (default: summary variables are provided for 4 runs)
+<block UNRAVEL>
+/ onblockbegin = [
+	list.blockAccuracy.reset();
+	list.blockRT.reset();
+	list.blockRT_PS.reset();
+	list.blockRT_BS.reset();
+	list.IntLag.reset();
+	list.SErr.reset();
+	list.NErr.reset();
+	list.PSErr.reset();
+	list.BSErr.reset();
+	values.blockHelps = 0;
+	list.HelpP.reset();
+	list.codeErrors.reset();
+	list.codeErrors_1.reset();	
+	list.codeErrors_2.reset();	
+	list.IntDuration.reset();
+	
+	values.performedTaskSequence = "";	
+	values.counter_uninterruptedTrials = 0;
+	values.countBlockInterruptions = 0;
+	values.trialcount = 0;	
+	
+	values.testBlockCount += 1;	
+	values.uninterruptedTrials = expressions.generateNextInterruption;
+	list.interruptions.appendItem(values.uninterruptedTrials);
+	values.currentTask = "L";	
+	values.inside_y = 50%;
+]
+/ trials = [1 = unravel_prep; 2 = blockFeedback; 3 = blockEnd]
+/ onblockend = [
+	if (expressions.blockACC >= parameters.minProportionCorrect){
+		values.blockOK = 1;
+		values.BlkAcc += 1;
+	} else {
+		values.blockOK = 0;
+	}
+
+	values.totalTrialcount += values.trialcount;
+	values.SErrA += (list.SErr.mean*list.SErr.itemCount);
+	values.NErrA += (list.NErr.mean*list.NErr.itemCount);
+	values.correctTrialsA += list.blockRT.itemCount;
+	values.sumRTA += (list.blockRT.mean*list.blockRT.itemCount);
+	
+	if (values.testBlockCount == 1){
+		values.ACCA1 = expressions.blockACC;
+	} else if (values.testBlockCount == 2){
+		values.ACCA2 = expressions.blockACC;
+	} else if (values.testBlockCount == 3){
+		values.ACCA3 = expressions.blockACC;
+	} else if (values.testBlockCount == 4){
+		values.ACCA4 = expressions.blockACC;
+	}
+	
+	//summary variables depending on 'blockOK'
+	if (values.blockOK == 1){
+		values.okTrials += values.trialcount;
+		values.okTrials_baseline += list.BSErr.itemCount;
+		values.okTrials_interrupt += list.PSErr.itemCount;
+		
+		values.SErr += (list.SErr.mean*list.SErr.itemCount);
+		values.NErr += (list.NErr.mean*list.NErr.itemCount);
+		values.PSErr += (list.PSErr.mean*list.PSErr.itemCount);
+		values.BSErr += (list.BSErr.mean*list.BSErr.itemCount);	
+		
+		if (list.blockRT.itemCount > 0){
+			values.correctTrials += list.blockRT.itemCount;
+			values.sumRT += (list.blockRT.mean * list.blockRT.itemCount);			
+		}
+
+		if (list.blockRT_PS.itemCount > 0){
+			values.correctTrialsP += list.blockRT_PS.itemCount;
+			values.sumRTP += (list.blockRT_PS.mean * list.blockRT_PS.itemCount);			
+		}
+		
+		if (list.blockRT_BS.itemCount > 0){
+			values.correctTrialsB += list.blockRT_BS.itemCount;
+			values.sumRTB += (list.blockRT_BS.mean * list.blockRT_BS.itemCount);			
+		}
+
+		if (list.IntLag.itemCount > 0){
+			values.countIntLag += list.IntLag.itemCount;
+			values.sumIntLag += (list.IntLag.mean * list.IntLag.itemCount);			
+		}
+
+		
+		if (list.HelpP.itemCount > 0){
+			values.Helps += values.blockHelps;		
+			values.sumHelpP += (list.HelpP.mean * list.HelpP.itemCount);			
+		}
+
+		if (list.codeErrors.itemCount > 0){
+			values.IntErr += (list.codeErrors.mean * list.codeErrors.itemCount);			
+		}
+		
+		if (list.codeErrors_1.itemCount > 0){
+			values.IntErr_1 += (list.codeErrors_1.mean * list.codeErrors_1.itemCount);			
+		}	
+	
+		if (list.codeErrors_2.itemCount > 0){
+			values.IntErr_2 += (list.codeErrors_2.mean * list.codeErrors_2.itemCount);			
+		}		
+
+		if (list.IntDuration.itemCount > 0){
+			values.Sum_IntDur += (list.IntDuration.mean*list.IntDuration.itemCount);			
+		}
+ 
+		if (values.testBlockCount == 1){
+			values.OK1 = 1;		
+		} else if (values.testBlockCount == 2){
+			values.OK2 = 1;	
+		} else if (values.testBlockCount == 3){
+			values.OK3 = 1;						
+		} else if (values.testBlockCount == 4){
+			values.OK4 = 1;		
+		}
+	} else {//block performance was not 'ok':
+		if (values.testBlockCount == 1){
+			values.OK1 = 0;		
+		} else if (values.testBlockCount == 2){
+			values.OK2 = 0;	
+		} else if (values.testBlockCount == 3){
+			values.OK3 = 0;						
+		} else if (values.testBlockCount == 4){
+			values.OK4 = 0;		
+		}		
+	}
+
+	//for all blocks regardless of values.blockOK:
+	if (values.testBlockCount == 1){
+		values.trials1 = values.trialcount;			
+		values.ACC1 = expressions.blockACC;
+		values.SErr1 = list.SErr.mean;
+		values.NErr1 = list.NErr.mean;
+		values.PSErr1 = list.PSErr.mean;
+		values.BSErr1 = list.BSErr.mean;
+		values.RT1 = list.blockRT.mean;
+		values.PRT1 = list.blockRT_PS.mean;
+		values.BRT1 = list.blockRT_BS.mean;
+		values.IntLag1 = list.IntLag.mean;
+		values.Helps1 = values.blockHelps;
+		values.HelpP1 = list.HelpP.mean;
+		values.IntErr1 = list.codeErrors.mean;
+		values.IntErr1_1 = list.codeErrors_1.mean;			
+		values.IntErr1_2 = list.codeErrors_2.mean;			
+		values.IntDur1 = list.IntDuration.mean;
+			
+		
+	} else if (values.testBlockCount == 2){
+		values.trials2 = values.trialcount;		
+		values.ACC2 = expressions.blockACC;
+		values.SErr2 = list.SErr.mean;
+		values.NErr2 = list.NErr.mean;
+		values.PSErr2 = list.PSErr.mean;
+		values.BSErr2 = list.BSErr.mean;
+		values.RT2 = list.blockRT.mean;
+		values.PRT2 = list.blockRT_PS.mean;
+		values.BRT2 = list.blockRT_BS.mean;	
+		values.IntLag2 = list.IntLag.mean;
+		values.Helps2 = values.blockHelps;
+		values.HelpP2 = list.HelpP.mean;
+		values.IntErr2 = list.codeErrors.mean;
+		values.IntErr2_1 = list.codeErrors_1.mean;			
+		values.IntErr2_2 = list.codeErrors_2.mean;				
+		values.IntDur2 = list.IntDuration.mean;			
+	
+	} else if (values.testBlockCount == 3){
+		values.trials3 = values.trialcount;		
+		values.ACC3 = expressions.blockACC;
+		values.SErr3 = list.SErr.mean;
+		values.NErr3 = list.NErr.mean;
+		values.PSErr3 = list.PSErr.mean;
+		values.BSErr3 = list.BSErr.mean;
+		values.RT3 = list.blockRT.mean;
+		values.PRT3 = list.blockRT_PS.mean;
+		values.BRT3 = list.blockRT_BS.mean;	
+		values.IntLag3 = list.IntLag.mean;
+		values.Helps3 = values.blockHelps;
+		values.HelpP3 = list.HelpP.mean;
+		values.IntErr3 = list.codeErrors.mean;
+		values.IntErr3_1 = list.codeErrors_1.mean;			
+		values.IntErr3_2 = list.codeErrors_2.mean;				
+		values.IntDur3 = list.IntDuration.mean;			
+			
+		
+	} else if (values.testBlockCount == 4){
+		values.trials4 = values.trialcount;		
+		values.ACC4 = expressions.blockACC;
+		values.SErr4 = list.SErr.mean;
+		values.NErr4 = list.NErr.mean;
+		values.PSErr4 = list.PSErr.mean;
+		values.BSErr4 = list.BSErr.mean;
+		values.RT4 = list.blockRT.mean;
+		values.PRT4 = list.blockRT_PS.mean;
+		values.BRT4 = list.blockRT_BS.mean;	
+		values.IntLag4 = list.IntLag.mean;
+		values.Helps4 = values.blockHelps;
+		values.HelpP4 = list.HelpP.mean;
+		values.IntErr4 = list.codeErrors.mean;
+		values.IntErr4_1 = list.codeErrors_1.mean;			
+		values.IntErr4_2 = list.codeErrors_2.mean;				
+		values.IntDur4 = list.IntDuration.mean;			
+	}			
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt a>
+/ onexptbegin = [
+	if (parameters.MinRunlength < 1){
+		parameters.MinRunlength = 1;
+	}
+]
+
+/ blocks = [
+	1 = keyboardTest;
+	2 = DEMO; 
+	3 = PRACTICE; 
+	4-7 = UNRAVEL;
+]
+/ onexptend = [
+	if (values.BlkAcc < parameters.minNr_passedBlocks){
+		values.Pass = 0;
+	} else {
+		values.Pass = 1;
+	}
+]
+</expt>
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

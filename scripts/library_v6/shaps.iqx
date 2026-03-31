@@ -1,0 +1,467 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*The Snaith Hamilton Pleasure Scale (SHAPS)*
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 03-06-2018
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized version of the Snaith Hamilton Pleasure Scale (SHAPS) as described in:
+
+Snaith RP, Hamilton M, Morley S, Humayan A, Hargreaves D, Trigwell P. (1995). A scale  
+for the assessment of hedonic tone the Snaith-Hamilton Pleasure Scale. Br J Psychiatry.Jul;167(1):99-103 
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+14 4-point Likert scale items (when scored the scale gets simplified into binary categories); self-report
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'shaps.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								4 = strongly disagree, 3 = disagree, 2 = agree, 1 = strongly agree
+								'D' => questions with a slightly different scale
+								1 = "Definitely Agree", 2 = "Agree", 3 = "Disagree", 4 = "Strongly Disagree"
+								
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'shaps_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+SHAPS_TotalScore:				the total score based on all simplified question scores (Range: 0-14)
+								strongly disagree/disagree => 1 point
+								strongly agree/agree => 0 point
+								(the lower the score the more pleasure experienced)
+									
+q1:								the simplified score for question 1
+								strongly disagree/disagree => 1 point
+								strongly agree/agree => 0 point
+									
+radiobuttons.q1.response:		question 1 raw response: 
+								4 = strongly disagree, 
+								3 = disagree, 
+								2 = agree, 
+								1 = strongly agree
+(same for the remaining questions)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+see section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "This questionnaire is designed to measure your ability to experience pleasure in the LAST FEW DAYS. It is important to read each statement very carefully. 
+
+Tick one of the boxes to indicate how much you agree or disagree with each statement.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+
+<page end>
+Thank you!
+</page>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.SHAPS_TotalScore,
+values.q1, radiobuttons.q1.response,
+values.q2, radiobuttons.q2_D.response,
+values.q3, radiobuttons.q3.response,
+values.q4, radiobuttons.q4_D.response,
+values.q5, radiobuttons.q5_D.response,
+values.q6, radiobuttons.q6.response,
+values.q7, radiobuttons.q7_D.response,
+values.q8, radiobuttons.q8.response,
+values.q9, radiobuttons.q9_D.response,
+values.q10, radiobuttons.q10.response,
+values.q11, radiobuttons.q11.response,
+values.q12, radiobuttons.q12_D.response,
+values.q13, radiobuttons.q13.response,
+values.q14, radiobuttons.q14_D.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<values>
+/q1 = ""
+/q2 = ""
+/q3 = ""
+/q4 = ""
+/q5 = ""
+/q6 = ""
+/q7 = ""
+/q8 = ""
+/q9 = ""
+/q10 = ""
+/q11 = ""
+/q12 = ""
+/q13 = ""
+/q14 = ""
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/SHAPS_TotalScore = values.q1 + values.q2 + values.q3 + values.q4 + values.q5 + values.q6 + values.q7 + values.q8 +
+values.q9 + values.q10 + values.q11 + values.q12 + values.q13 + values.q14
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. I would enjoy my favourite television or radio programme."
+/ options = ("Strongly disagree", "Disagree", "Agree", "Strongly agree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_D>
+/caption = "2. I would enjoy being with my family or close friends."
+/ options = ("Definitely Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. I would find pleasure in my hobbies and pastimes."
+/ options = ("Strongly disagree", "Disagree", "Agree", "Strongly agree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_D>
+/caption = "4. I would be able to enjoy my favourite meal."
+/ options = ("Definitely Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_D>
+/caption = "5. I would enjoy a warm bath or refreshing shower."
+/ options = ("Definitely Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. I would find pleasure in the scent of flowers or the smell of a fresh sea breeze or freshly baked bread."
+/ options = ("Strongly disagree", "Disagree", "Agree", "Strongly agree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_D>
+/caption = "7. I would enjoy seeing other people's smiling faces."
+/ options = ("Definitely Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. I would enjoy looking smart when I have made an effort with my appearance."
+/ options = ("Strongly disagree", "Disagree", "Agree", "Strongly agree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_D>
+/caption = "9. I would enjoy reading a book, magazine or newspaper."
+/ options = ("Definitely Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. I would enjoy a cup of tea or coffee or my favourite drink."
+/ options = ("Strongly disagree", "Disagree", "Agree", "Strongly agree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. I would find pleasure in small things, e.g. bright sunny day, a telephone call from a friend."
+/ options = ("Strongly disagree", "Disagree", "Agree", "Strongly agree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12_D>
+/caption = "12. I would be able to enjoy a beautiful landscape or view."
+/ options = ("Definitely Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. I would get pleasure from helping others."
+/ options = ("Strongly disagree", "Disagree", "Agree", "Strongly agree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14_D>
+/caption = "14. I would feel pleasure when I receive praise from other people."
+/ options = ("Definitely Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage shaps1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1, q2_D, q3]
+</surveypage>
+
+<surveypage shaps2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4_D, q5_D, q6]
+</surveypage>
+
+<surveypage shaps3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7_D, q8, q9_D]
+</surveypage>
+
+<surveypage shaps4>
+/caption ="<%parameters.pageinstructions%>"
+/ txcolor = (0, 0, 0)
+/questions = [1 = q10, q11, q12_D]
+</surveypage>
+
+<surveypage shaps5>
+/caption ="<%parameters.pageinstructions%>"
+/ txcolor = (0, 0, 0)
+/questions = [1 = q13, q14_D]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey shaps>
+/pages = [
+	1 = shaps1; 
+	2 = shaps2; 
+	3 = shaps3; 
+	4 = shaps4;
+	5 = shaps5;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+/ onblockend = [
+	if (radiobuttons.q1.response < 3){
+		values.q1 = 0;
+	} else {
+		values.q1 = 1;
+	}
+	if (radiobuttons.q2_D.response < 3){
+		values.q2 = 0;
+	} else {
+		values.q2 = 1;
+	}	
+	if (radiobuttons.q3.response < 3){
+		values.q3 = 0;
+	} else {
+		values.q3 = 1;
+	}	
+	if (radiobuttons.q4_D.response < 3){
+		values.q4 = 0;
+	} else {
+		values.q4 = 1;
+	}	
+	if (radiobuttons.q5_D.response < 3){
+		values.q5 = 0;
+	} else {
+		values.q5 = 1;
+	}	
+	if (radiobuttons.q6.response < 3){
+		values.q6 = 0;
+	} else {
+		values.q6 = 1;
+	}	
+	if (radiobuttons.q7_D.response < 3){
+		values.q7 = 0;
+	} else {
+		values.q7 = 1;
+	}		
+	if (radiobuttons.q8.response < 3){
+		values.q8 = 0;
+	} else {
+		values.q8 = 1;
+	}	
+	if (radiobuttons.q9_D.response < 3){
+		values.q9 = 0;
+	} else {
+		values.q9 = 1;
+	}	
+	if (radiobuttons.q10.response < 3){
+		values.q10 = 0;
+	} else {
+		values.q10 = 1;
+	}
+	if (radiobuttons.q11.response < 3){
+		values.q11 = 0;
+	} else {
+		values.q11 = 1;
+	}
+	if (radiobuttons.q12_D.response < 3){
+		values.q12 = 0;
+	} else {
+		values.q12 = 1;
+	}	
+	if (radiobuttons.q13.response < 3){
+		values.q13 = 0;
+	} else {
+		values.q13 = 1;
+	}	
+	if (radiobuttons.q14_D.response < 3){
+		values.q14 = 0;
+	} else {
+		values.q14 = 1;
+	}	
+]
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

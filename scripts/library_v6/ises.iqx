@@ -1,0 +1,810 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									Iowa Sleep Experiences Survey (ISES)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-30-2018
+last updated:  02-23-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-23-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized version of the Iowa Sleep Experiences Survey (ISES) by:
+
+Watson, D. (2001). Dissociations of the night: Individual differences in sleep-related experiences and their 
+relation to dissociation and schizotypy. Journal of Abnormal Psychology, 110, 526-535.
+
+For more information: https://www.ocf.berkeley.edu/~jfkihlstrom/ConsciousnessWeb/SleepDreams/ISES.htm
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+24 7-point Likert questions, self-report
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________ 
+The default data stored in the data files are:
+
+(1) Raw data file: 'ises.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 0 (never) - 6 (regularly)
+									no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'ises_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 					Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+GeneralSleepExperiencesScale:  sum of #1, #2, #6, #7, #12, #15, #16, #17, #18, #19, #20, #21, #22, #23, #24
+LucidDreaming:					sum of #8, #9, #10
+_______________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+see /caption and /subcaption under section SURVEYPAGES
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+expressions.GeneralSleepExperiencesScale, expressions.LucidDreaming)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/GeneralSleepExperiencesScale = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q6.response + radiobuttons.q7.response + 
+radiobuttons.q12.response + radiobuttons.q15.response + radiobuttons.q16.response + radiobuttons.q17.response + 
+radiobuttons.q18.response + radiobuttons.q19.response + radiobuttons.q20.response + radiobuttons.q21.response + 
+radiobuttons.q22.response + radiobuttons.q23.response + radiobuttons.q24.response
+
+/LucidDreaming = radiobuttons.q8.response + radiobuttons.q9.response + radiobuttons.q10.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. Upon awakening during the night, I am unsure whether I actually experienced something or only dreamed about it."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Lying in bed, I sense the presence of someone who actually isn't there."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. As I lie in bed, I realize that I am unable to move."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. My legs twitch or tremble as I lie in bed."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. My body suddenly jerks violently as I begin to fall asleep."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q6>
+/caption = "6. I experience intense, dreamlike images as I BEGIN TO FALL ASLEEP."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. I experience intense, dreamlike images as I BEGIN TO AWAKEN."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. I am aware that I am dreaming, even as I dream."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. I am able to control or direct the content of my dreams."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. I am able to wake myself out of dreams that I find unpleasant or disturbing."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. I have spells of sudden, overpowering sleepiness during the day."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. While awake, I experience a sudden weakness in my body muscles during states of strong emotion such as anger or excitement."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. I walk in my sleep."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "14. I talk in my sleep."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. I remember my dreams."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q16>
+/caption = "16. I have a dream that is so vivid it influences how I feel the following day."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. I have nightmares."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "18. I have dreamed that I was falling."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. I have dreamed that I was flying."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20>
+/caption = "20. I have dreamed that I woke up (that is, waking up was part of the dream experience)."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21>
+/caption = "21. I have recurring dreams."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "22. I have dreamed about something that later actually happened."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23>
+/caption = "23. I have died in a dream."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q24>
+/caption = "24. A dream helped me to solve a current problem or concern."
+/ options = (
+"Never", 
+"Rarely", 
+"Infrequently", 
+"Occasionally", 
+"Frequently",
+"Very~nFrequently",
+"Regularly"
+)
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage ISES1>
+/ caption ="The purpose of this survey is to examine the prevalence of various sleep- and dream-related  phenomena in the general population. 
+
+Please answer the following questions honestly and accurately. 
+
+Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = several times a week
+~n~n"
+/ questions = [1 = q1]
+</surveypage>
+
+<surveypage ISES2>
+/ caption ="Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = everal times a week
+~n~n"
+/ questions = [1 = q2, q3]
+</surveypage>
+
+<surveypage ISES3>
+/ caption ="Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = everal times a week
+~n~n"
+/ questions = [1 = q4, q5]
+</surveypage>
+
+<surveypage ISES4>
+/ caption ="Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = everal times a week
+~n~n"
+/ questions = [1 = q6, q7]
+</surveypage>
+
+<surveypage ISES5>
+/ caption ="Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = everal times a week
+~n~n"
+/ questions = [1 = q8, q9]
+</surveypage>
+
+<surveypage ISES6>
+/ caption ="Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = everal times a week
+~n~n"
+/ questions = [1 = q10, q11]
+</surveypage>
+
+<surveypage ISES7>
+/ caption ="Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = everal times a week
+~n~n"
+/ questions = [1 = q12, q13]
+</surveypage>
+
+<surveypage ISES8>
+/ caption ="Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = everal times a week
+~n~n"
+/ questions = [1 = q14, q15]
+</surveypage>
+
+<surveypage ISES9>
+/ caption ="Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = everal times a week
+~n~n"
+/ questions = [1 = q16, q17]
+</surveypage>
+
+<surveypage ISES10>
+/ caption ="Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = everal times a week
+~n~n"
+/ questions = [1 = q18, q19]
+</surveypage>
+
+<surveypage ISES11>
+/ caption ="Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = everal times a week
+~n~n"
+/ questions = [1 = q20, q21]
+</surveypage>
+
+<surveypage ISES12>
+/ caption ="Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = everal times a week
+~n~n"
+/ questions = [1 = q22, q23]
+</surveypage>
+
+<surveypage ISES13>
+/ caption ="Read each statement carefully, then indicate how FREQUENTLY you have experienced this phenomenon.
+
+Use the following scale to record your responses:"
+/ subcaption = 
+"
+Never
+Rarely = less than once a year
+Infrequently = once or twice a year 
+Occasionally = several times a year
+Frequently = once or twice a month
+Very Frequently = several times a month
+Regularly = everal times a week
+~n~n"
+/ questions = [1 = q24]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey ISES>
+/pages = [
+	1 = ISES1;
+	2 = ISES2;
+	3 = ISES3;
+	4 = ISES4;
+	5 = ISES5;
+	6 = ISES6;
+	7 = ISES7;
+	8 = ISES8;
+	9 = ISES9;
+	10 = ISES10;
+	11 = ISES11;
+	12 = ISES12;
+	13 = ISES13;
+]
+/screencapture = false
+
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

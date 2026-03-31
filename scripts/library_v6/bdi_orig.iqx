@@ -1,0 +1,559 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									BECK'S DEPRESSION INVENTORY (BDI)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 07-29-2014
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Beck's Depression Inventory (BDI) introduced in:
+
+Beck, AT, Ward, CH, Mendeson, M, Mock, J. & Erbaugh, J. (1961). An Inventory for Measuring Depression. 
+Archives of General Psychiatry,6 , 561-571.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+21-question multiple-choice self-report inventory 
+
+Note: by default, all questions require a response. To change, go to section QUESTIONS
+and follow instructions
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'bdi_orig.iqdat' 
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values: 0-3 with additional letters to reference response subcategories)
+q*_latency:						how much time the participant spent on the surveypage with this particular question
+								(the last time this particular surveypage was visited)
+
+(2) Summary data file: 'bdi_orig_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+q1-
+q21:							the numeric score (minus the letter suffix) for each question
+
+totalscore_bdi:					the sum of all numeric scores (range: 0-63)
+assessment:						According to: http://en.wikipedia.org/wiki/Beck_Depression_Inventory
+									0–9: indicates minimal depression;
+									10–18: indicates mild depression;
+									19–29: indicates moderate depression; 
+									30–63: indicates severe depression. 
+									Higher total scores indicate more severe depressive symptoms.
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+no instructions published in Beck et al (1961). The provided instructions can be easily edited
+under section Editable Parameters.
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please select the answers to each of the 21 questions that describe best how you feel at the moment."
+</parameters>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.q1, expressions.q2, expressions.q3, expressions.q4, expressions.q5, expressions.q6, expressions.q7,
+expressions.q8, expressions.q9, expressions.q10, expressions.q11, expressions.q12, expressions.q13, expressions.q14,
+expressions.q15, expressions.q16, expressions.q17, expressions.q18, expressions.q19, expressions.q20, expressions.q21,
+expressions.totalscore_bdi, expressions.assessment)
+</summarydata>
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/q1-
+/q21:				the numeric score (minus the letter suffix) for each question
+
+/totalscore_BDI:	the sum of all numeric scores (range 0-63)
+/assessment:		According to: http://en.wikipedia.org/wiki/Beck_Depression_Inventory
+					0–9: indicates minimal depression;
+					10–18: indicates mild depression;
+					19–29: indicates moderate depression; 
+					0–63: indicates severe depression. 
+					Higher total scores indicate more severe depressive symptoms.
+
+
+<expressions>
+/q1 = subString(radiobuttons.q1_mood.response, 0, 1)
+/q2 = subString(radiobuttons.q2_pessimism.response, 0, 1)
+/q3 = subString(radiobuttons.q3_senseoffailure.response, 0, 1)
+/q4 = subString(radiobuttons.q4_lackofsatisfaction.response, 0, 1)
+/q5 = subString(radiobuttons.q5_guiltyfeeling.response, 0, 1)
+/q6 = subString(radiobuttons.q6_senseofpunishment.response, 0, 1)
+/q7 = subString(radiobuttons.q7_selfhate.response, 0, 1)
+/q8 = subString(radiobuttons.q8_selfaccusations.response, 0, 1)
+/q9 = subString(radiobuttons.q9_selfpunitivewishes.response, 0, 1)
+/q10 = subString(radiobuttons.q10_cryingspells.response, 0, 1)
+/q11 = subString(radiobuttons.q11_irritability.response, 0, 1)
+/q12 = subString(radiobuttons.q12_socialwithdrawal.response, 0, 1)
+/q13 = subString(radiobuttons.q13_indecisiveness.response, 0, 1)
+/q14 = subString(radiobuttons.q14_bodyimage.response, 0, 1)
+/q15 = subString(radiobuttons.q15_workinhibition.response, 0, 1)
+/q16 = subString(radiobuttons.q16_sleepdisturbances.response, 0, 1)
+/q17 = subString(radiobuttons.q17_fatigability.response, 0, 1)
+/q18 = subString(radiobuttons.q18_lossofappetite.response, 0, 1)
+/q19 = subString(radiobuttons.q19_weightloss.response, 0, 1)
+/q20 = subString(radiobuttons.q20_somaticpreoccupation.response, 0, 1)
+/q21 = subString(radiobuttons.q21_lossoflibido.response, 0, 1)
+
+/totalscore_BDI = expressions.q1 + expressions.q2 + expressions.q3 + expressions.q4 + expressions.q5 +
+expressions.q6 + expressions.q7 + expressions.q8 + expressions.q9 + expressions.q10 + expressions.q11 +
+expressions.q12 + expressions.q13 + expressions.q14 + expressions.q15 + expressions.q16 + expressions.q17 +
+expressions.q18 + expressions.q19 + expressions.q20 + expressions.q21
+
+/assessment = if (expressions.totalscore_bdi <= 9) "minimal"
+else if (expressions.totalscore_bdi <= 18) "mild"
+else if (expressions.totalscore_bdi <= 29) "moderate"
+else "severe"
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_Mood>
+/caption = "1. Mood"
+/ options = ("I do not feel sad", 
+"I feel blue or sad", 
+"I am blue or sad all the time and I can't snap out of it", 
+"I am so sad or unhappy that it is very painful", 
+"I am so sad or unhappy that I can't stand it")
+/ optionvalues = ("0", "1", "2a", "2b", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q2_Pessimism>
+/caption = "2. Pessimism"
+/ options = ("I am not particularly pessimistic or discouraged about the future", 
+"I feel discouraged about the future", 
+"I feel like I have nothing to look forward to", 
+"I feel that I won't ever get over my troubles", 
+"I feel that the future is hopeless and that things cannot improve")
+/ optionvalues = ("0", "1", "2a", "2b", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q3_SenseOfFailure>
+/caption = "3. Sense of Failure"
+/ options = ("I do not feel like a failure", 
+"I feel I have failed more than the average person", 
+"I feel I have accomplish very little that is worthwhile or that means anything", 
+"As I look back on my life all I can see is a lot of failures", 
+"I feel I am a complete failure as a person (parent, husband, wife)")
+/ optionvalues = ("0", "1", "2a", "2b", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q4_LackOfSatisfaction>
+/caption = "4. Lack of Satisfaction"
+/ options = ("I am not particularly dissatisfied", 
+"I feel bored most of the time", 
+"I don't enjoy things the way I used to",
+"I don't get satisfaction out of anything any more", 
+"I am dissatisfied with everything")
+/ optionvalues = ("0", "1a", "1b", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q5_GuiltyFeeling>
+/caption = "5. Guilty Feeling"
+/ options = ("I don't feel particularly guilty", 
+"I feel bad or unworthy a good part of the time", 
+"I feel quite guilty", 
+"I feel bad or unworthy practically all the time now", 
+"I feel as though I am very bad or worthless")
+/ optionvalues = ("0", "1", "2a", "2b", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q6_SenseOfPunishment>
+/caption = "6. Sense of Punishment"
+/ options = ("I don't feel I am being punished", 
+"I have a feeling that something bad may happen to me", 
+"I feel I am being punished or will be punished", 
+"I feel I deserve to be punished", 
+"I want to be punished")
+/ optionvalues = ("0", "1", "2", "3a", "3b")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q7_SelfHate>
+/caption = "7. Self Hate"
+/ options = ("I don't feel disappointed in myself", 
+"I am disappointed in myself", 
+"I don't like myself", 
+"I am disgusted with myself", 
+"I hate myself")
+/ optionvalues = ("0", "1a", "1b", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q8_SelfAccusations>
+/caption = "8. Self Accusations"
+/ options = ("I don't feel I am any worse than anybody else", 
+"I am very critical of myself for any weaknesses or mistakes", 
+"I blame myself for everything that goes wrong", 
+"I feel I have many bad faults")
+/ optionvalues = ("0", "1", "2a", "2b")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q9_SelfPunitiveWishes>
+/caption = "9. Self-punitive Wishes"
+/ options = ("I don't have any thoughts of harming myself", 
+"I have thoughts of harming myself but I would not carry them out", 
+"I feel I would be better off dead", 
+"I have definite plans of committing suicide"
+"I feel my family would be better off if I were dead",
+"I would kill myself if I could")
+/ optionvalues = ("0", "1", "2a", "2b", "2c", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q10_CryingSpells>
+/caption = "10. Crying Spells"
+/ options = ("I don't cry anymore than usual", 
+"I cry more now than I used to", 
+"I cry all the time now. I can't stop it", 
+"I used to be able to cry but now I can't cry at all even though I want to")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q11_Irritability>
+/caption = "11. Irritability"
+/ options = ("I am no more irritated now than I ever am", 
+"I get annoyed or irritated more easily than I used to", 
+"I feel irritated all the time", 
+"I don't get irritated at all at the things that used to irritate me")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q12_SocialWithdrawal>
+/caption = "12. Social Withdrawal"
+/ options = ("I have not lost interest in other people", 
+"I am less interested in other people now than I used to be", 
+"I have lost most of my interest in other people and have little feeling for them ", 
+"I have lost all my interest in other people and don't care about them at all")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q13_Indecisiveness>
+/caption = "13. Indecisiveness"
+/ options = ("I make decisions about as well as ever", 
+"I am less sure of myself now and try to put off making decisions", 
+"I can't make decisions any more without help", 
+"I can't make any decisions at all any more")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q14_BodyImage>
+/caption = "14. Body Image"
+/ options = ("I don't feel I look any worse than I used to", 
+"I am worried that I am looking old or unattractive", 
+"I feel that there are permanent changes in my appearance and they make me look unattractive", 
+"I feel that I am ugly or repulsive looking")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q15_WorkInhibition>
+/caption = "15. Work Inhibition"
+/ options = ("I can work about as well as before", 
+"It takes extra effort to get started at doing something", 
+"I don't work as well as I used to", 
+"I have to push myself very hard to do anything",
+"I can't do any work at all")
+/ optionvalues = ("0", "1a", "1b", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q16_SleepDisturbances>
+/caption = "16. Sleep Disturbances"
+/ options = ("I can sleep as well as usual", 
+"I wake up more tired in the morning than I used to", 
+"I wake up 1-2 hours earlier than usual and find it hard to get back to sleep", 
+"I wake up early every day and can't get more than 5 hours sleep")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q17_Fatigability>
+/caption = "17. Fatigability"
+/ options = ("I don't get any more tired than usual", 
+"I get tired more easily than I used to", 
+"I get tired from doing anything", 
+"I get too tired to do anything")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q18_LossOfAppetite>
+/caption = "18. Loss of Appetite"
+/ options = ("My appetite is no worse than usual", 
+"My appetite is not as good as it used to be", 
+"My appetite is much worse now", 
+"I have no appetite at all any more")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q19_WeightLoss>
+/caption = "19. Weight Loss"
+/ options = ("I haven't lost much weight, if any, lately", 
+"I have lost more than 5 pounds", 
+"I have lost more than 10 pounds", 
+"I have lost more than 15 pounds")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q20_SomaticPreoccupation>
+/caption = "20. Somatic Preoccupation"
+/ options = ("I am no more concerned about my health than usual", 
+"I am concerned about aches and pains or upset stomach or constipation or other unpleasant feelings in my body",
+"I am so concerned with how I feel or what I feel that it's hard to think of much else", 
+"I am completely absorbed in what I feel")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q21_LossOfLibido>
+/caption = "21. Loss of Libido"
+/ options = ("I have not noticed any recent change in my interest in sex", 
+"I am less interested in sex than I used to be", 
+"I much less interested in sex now", 
+"I have lost interest in sex completely")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+<surveypage BDI1>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = " "
+/questions = [1 = q1_mood, q2_pessimism]
+</surveypage>
+
+<surveypage BDI2>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = " "
+/questions = [1 = q3_senseoffailure, q4_lackofsatisfaction]
+</surveypage>
+
+<surveypage BDI3>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = " "
+/questions = [1 = q5_guiltyfeeling, q6_senseofpunishment]
+</surveypage>
+
+<surveypage BDI4>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = " "
+/questions = [1 = q7_selfhate, q8_selfaccusations]
+</surveypage>
+
+<surveypage BDI5>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = " "
+/questions = [1 = q9_selfpunitivewishes, q10_cryingspells]
+</surveypage>
+
+<surveypage BDI6>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = " "
+/questions = [1 = q11_irritability, q12_socialwithdrawal]
+</surveypage>
+
+<surveypage BDI7>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = " "
+/questions = [1 = q13_indecisiveness, q14_bodyimage]
+</surveypage>
+
+<surveypage BDI8>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = " "
+/questions = [1 = q15_workinhibition, q16_sleepdisturbances]
+</surveypage>
+
+<surveypage BDI9>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = " "
+/questions = [1 = q17_fatigability, q18_lossofappetite]
+</surveypage>
+
+<surveypage BDI10>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = " "
+/questions = [1 = q19_weightloss, q20_somaticpreoccupation]
+</surveypage>
+
+<surveypage BDI11>
+/caption ="<%parameters.pageinstructions%>"
+/subcaption = " "
+/questions = [1 = q21_lossoflibido]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+
+<survey BDI_orig>
+/pages = [
+	1 = BDI1; 
+	2 = BDI2; 
+	3 = BDI3; 
+	4 = BDI4; 
+	5 = BDI5; 
+	6 = BDI6;
+	7 = BDI7;
+	8 = BDI8;
+	9 = BDI9;
+	10 = BDI10;
+	11 = BDI11;
+	
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

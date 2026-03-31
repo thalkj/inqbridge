@@ -1,0 +1,1383 @@
+<usermanual>														  
+___________________________________________________________________________________________________________________	
+
+											*Running Memory Span Task*
+___________________________________________________________________________________________________________________	
+
+Script Author: David Nitz (dave@millisecond.com) for Millisecond Software, LLC
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Running Memory Span Task, a measure of working memory. 
+
+The implemented procedure is based on:
+
+Broadway, J. M., & Engle, R. W. (2010). Validating Running Memory Span: Measurement 
+	of working memory capacity and links with fluid intelligence. Behavior Research Methods, 
+	42 (2), 563-570.
+
+Task Copyright (c) 2010 by Jim Broadway and Randall Engle (http://psychology.gatech.edu/renglelab/)
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION
+___________________________________________________________________________________________________________________	
+Participants are presented a series of letters of varying length (3-8) and when prompted have to report
+the last N items (3-6) of the list (they do not know N until they are prompted).
+The N items are called the 'targets' of the series; the remaining items are the 'distractors'.
+Together targets and distractors make up the 'input'.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 8 minutes to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'runningspan_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.
+																		
+recalltrial:					counts the number of recall trials run 
+response:						the participant's response (selected response button; 0 = no response)
+correct:						the correctness of the response (1 = correct; 0 = incorrect)
+latency: 						the response latency (in ms)
+
+(parameter) inputrate:			rate at which letters are presented
+nTargets:						number of targets presented
+nDistractors:					number of distractors presented
+nInputs:						number of presented letters (targets + distractors)
+text.letter.currentItem:		the currently presented letter
+recalledletters:				the targets of the current set that participant recalled
+
+runspantotal:					sum of all correctly recalled targets
+runspanscore:					sum of all correctly recalled targets of sets with at least 1 distractor
+
+(2) Summary data file: 'runningspan_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+runspantotal:					sum of all correctly recalled targets
+runspanscore:					sum of all correctly recalled targets of sets with at least 1 distractor
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+
+(A) 1 Practice Phase:
+* 1 level of N targets (2) x 4 numbers of distractors (0, 1, 2, 3)
+- order of number of distractors randomized
+
+(B) 1 Test Phase:
+* 4 levels of N targets (3, 4, 5, 6) x 3 numbers of distractors (0, 1, 2)
+- level of N tested in blocked design, order of N is randomized
+- order of number of distractors randomized within each block
+
+default timings: fixation(500ms) -> blank(500ms) -> letter(300ms) -> blank(200ms)
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+see section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+see section Editable Instructions
+	
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to further customize your experiment.
+
+The parameters you can change are:
+
+	Inputrate can be set to either 2500 or 500. The resulting stimulus timings are
+	2500ms: 	fixation(500) -> blank(500) -> letter(300) -> blank(2200)
+	500ms: 		fixation(500) -> blank(500) -> letter(300) -> blank(200)
+	
+	showScoreReport:	true (1): a score report is presented at the end of the task (spacebar is needed to continue)
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ inputrate = 500
+/ showScoreReport = true
+
+/debugmode = 0
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text Letter>
+/ items = ("F","P","Q","J","H","K","T","S","N","R","Y","L")
+/ select = noreplace
+/ erase = true(silver)
+</text>
+
+<item TargetLabels>
+/ 1 = "ONE"
+/ 2 = "TWO"
+/ 3 = "THREE"
+/ 4 = "FOUR"
+/ 5 = "FIVE"
+/ 6 = "SIX"
+/ 7 = "SEVEN"
+/ 8 = "EIGHT"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Navigation Messages:
+<item navigation>
+/ 1 = "<%expressions.buttoninstruct2%> to begin instructions and practice."
+/ 2 = "<%expressions.buttoninstruct2%> to continue with the instructions."
+/ 3 = "<%expressions.buttoninstruct2%> for next page or right-click for previous page."
+/ 4 = "<%expressions.buttoninstruct2%> for next page or right-click for previous page."
+/ 5 = "<%expressions.buttoninstruct2%> for next page or right-click for previous page."
+/ 6 = "<%expressions.buttoninstruct2%> to begin practice or right-click for previous page."
+/ 7 = "<%expressions.buttoninstruct2%> to continue to the real trials."
+/ 8 = "<%expressions.buttoninstruct2%> to begin."
+/ 9 = " "
+</item>
+
+<item instructions>
+/ 1 = "Welcome to the Running Memory Span experiment 
+(c) Jim Broadway and Randall Engle, 2010."
+/ 2 = "In this task, you will see letters one after the other. The length 
+of each series of letters will be different and unpredictable each time. 
+~rYour job will be to remember a certain number of the most recent 
+letters in the same order as presented."
+/ 3 = "For example, you might see a series of FIVE letters, but you will 
+need to recall the LAST TWO. 
+~rOther times, you might see a series of four letters, but your job will still 
+be to remember the LAST TWO letters in the same order as presented.
+~rYou will get a chance to practice the task before the real trials."
+/ 4 = "For example, you could see this list, one letter at a time:
+~rJ Q S R K
+~rThe LAST TWO letters in the order presented are R K.
+~rAfter the end of each list of letters you will see a screen containing 
+possible letters. <%expressions.buttoninstruct1%> the box for each letter that you remember in the 
+order it was presented. The letters will appear at the bottom of the 
+screen as you select them."
+/ 5 = "<%expressions.buttoninstruct1%> NEXT when you have selected the letters in the correct order.
+~r~r~r~rIf you forget one or more letters, click BLANK to leave a spot for each missing letter. 
+It is very important to give the letters in the presented order!~r
+~r~r<%expressions.buttoninstruct1%> CLEAR if you make a mistake and want to start over.~r~r"
+/ 6 = "After this screen, you will get four practice trials. The length of 
+each sequence of letters will be unpredictable.
+~rDo your best to remember the LAST TWO letters from each list in the 
+order presented.
+~r~rReady?"
+/ 7 = "That is the end of practice. In the following blocks of real trials, 
+sometimes you will need to remember DIFFERENT numbers of letters.
+~rSometimes, you will need to remember the last 4 letters, or sometimes 
+the last 5 letters, and so on.
+~rYou will always be told at the start of a block of trials how many of the 
+last letters you will need to remember during that block.
+~rDo you have any questions?"
+/ 8 = "In this block of trials you will need to remember the LAST <%expressions.targetlabel%> 
+letters from each list in the order presented.
+~rReady?"
+/ 9 = "END!
+~rCongratulations! You completed this task."
+</item>
+
+<text scorereport>
+/ items = ("Results for Subject #<%script.subjectId%>~r
+Partial Recall Trials Total = <%values.runspanscore%>
+All Trials Total = <%values.runspantotal%>")
+/ fontstyle = ("Arial", 2.5%)
+/ txcolor = white
+/ txbgcolor = blue
+/ size = (80%, 80%)
+/ position = (50%, 50%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text InstructionsLabel>
+/ items = ("Instructions")
+/ fontstyle = ("Arial", 2.5%)
+/ txcolor = white
+/ txbgcolor = transparent
+/ size = (15%, 6%)
+/ hjustify = left
+/ vjustify = center
+/ halign = left
+/ valign = top
+/ position = (2.5%, 94%)
+/ erase = false
+</text>
+
+<text PracticeLabel>
+/ items = ("Practice")
+/ fontstyle = ("Arial", 2.5%)
+/ txcolor = white
+/ size = (15%, 6%)
+/ hjustify = left
+/ vjustify = center
+/ halign = left
+/ valign = top
+/ position = (20%, 94%)
+/ erase = false
+</text>
+
+<text ReminderLabel>
+/ items = ("Reminder")
+/ fontstyle = ("Arial", 2.5%)
+/ txcolor = white
+/ size = (15%, 6%)
+/ hjustify = left
+/ vjustify = center
+/ halign = left
+/ valign = top
+/ position = (35%, 94%)
+/ erase = false
+</text>
+
+<text TestLabel>
+/ items = ("Real Task")
+/ fontstyle = ("Arial", 2.5%)
+/ txcolor = white
+/ size = (15%, 6%)
+/ hjustify = left
+/ vjustify = center
+/ halign = left
+/ valign = top
+/ position = (50%, 94%)
+/ erase = false
+</text>
+
+<text LetterFeedback>
+/ items = ("You recalled <%values.correctletters%> out of <%values.nTargets%> letters correctly.")
+/ fontstyle = ("Arial", 3.5%, true)
+/ position = (50%, 50%)
+/ erase = true(silver)
+</text>
+
+<text recallprompt>
+/ items = ("Pick only the LAST <%expressions.targetlabel%> letters in the order presented.
+Use the blank button for each letter you forget.")
+/ position = (50%, 5%)
+/ size = (95%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ fontstyle = ("Arial", 2.5%, true)
+/ erase = false
+</text>
+
+<text _>
+/ items = ("BLANK")
+/ position = (50%, 73%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<text clear>
+/ items = ("CLEAR")
+/ position = (18%, 87%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<text exit>
+/ items = ("NEXT")
+/ position = (82%, 87%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<text click_>
+/ items = ("BLANK")
+/ position = (50%, 73%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickclear>
+/ items = ("CLEAR")
+/ position = (18%, 87%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickexit>
+/ items = ("NEXT")
+/ position = (82%, 87%)
+/ size = (13%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<button exitbutton>
+/ caption = "exit"
+/ position = (50%, 75%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (20%, 5%)
+</button>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"Tap";} else {"Click";}
+/buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"Tap your screen";} else {"Left-click the mouse";}
+</expressions>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvassize = (100%,100%)
+/ canvasaspectratio = (4,3)
+/ screencolor = white
+/ txcolor = black
+/ txbgcolor = silver
+/ fontstyle = ("Arial", 4.0%, true)
+/ inputdevice = mouse
+/ minimumversion = "6.5.2.0"
+/ halign = center
+/ valign = center
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum, 
+values.recalltrial, response, correct, latency, 
+parameters.inputrate, values.nTargets, values.nDistractors, values.nInputs, 
+text.letter.currentItem, values.recalledletters, values.runspantotal, values.runspanscore)
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+values.runspantotal, values.runspanscore)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values taskparams>
+/ stimduration = 300
+/ feedbackduration = 2000
+/ lettercount = 0
+/ nDistractors = 0
+/ nTargets = 0
+/ nInputs = 0
+/ runspanscore = 0
+/ runspantotal = 0
+/ stopblock = 0
+/ recalledletters = ""
+/ correctletters = 0
+/ recallcount = 0
+/ recalldelay = 0
+/ instructions = 0
+/ progressbar = 0%
+/ recalltrial = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/ targetlabel = item.TargetLabels.item(values.nTargets)
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text instructions>
+/ items = instructions
+/ txcolor = white
+/ txbgcolor = transparent
+/ hjustify = center
+/ vjustify = center
+/ fontstyle = ("Arial", 2.5%)
+/ size = (90%, 90%)
+/ position = (50%, 50%)
+/ select = values.instructions
+/ resetinterval = 0
+/ erase = false
+</text>
+
+<text navigation>
+/ items = navigation
+/ txcolor = white
+/ txbgcolor = transparent
+/ halign = left
+/ valign = top
+/ hjustify = left
+/ vjustify = center
+/ fontstyle = ("Arial", 2.5%)
+/ size = (75%, 5%)
+/ position = (2.5%, 88.5%)
+/ select = values.instructions
+/ resetinterval = 0
+/ erase = false
+</text>
+
+<trial instructions>
+/ ontrialbegin = [
+	if(values.instructions==5){
+		text._.textColor=black; 
+		text._.textBgColor=white;
+		text.clear.textColor=black; 
+		text.clear.textBgColor=white;
+		text.exit.textColor=black; 
+		text.exit.textBgColor=white;
+		text._.hposition=50%; 
+		text._.vposition=42%;
+		text.clear.hposition=50%; 
+		text.clear.vposition=57%;
+		text.exit.hposition=50%; 
+		text.exit.vposition=27%;
+	} else {
+		text._.textColor=blue; 
+		text._.textBgColor=blue;
+		text.clear.textColor=blue; 
+		text.clear.textBgColor=blue;
+		text.exit.textColor=blue; 
+		text.exit.textBgColor=blue;
+		text._.hposition=text.click_.hposition; 
+		text._.vposition=text.click_.vposition;
+		text.clear.hposition=text.clickclear.hposition; 
+		text.clear.vposition=text.clickclear.vposition;
+		text.exit.hposition=text.clickexit.hposition; 
+		text.exit.vposition=text.clickexit.vposition;
+	}
+]
+/ stimulusframes = [1=BlueScreen, _, clear, exit, instructions, navigation, StatusBar, ProgressBar, 
+	InstructionsLabel, PracticeLabel, ReminderLabel, TestLabel]
+/ validresponse = (lbuttondown, rbuttondown)
+/ monkeyresponse = ("lbuttondown","lbuttondown","lbuttondown","rbuttondown") 
+/ beginResponseTime = 0
+/ ontrialend = [
+	if(trial.instructions.response=="lbuttondown"){
+		values.instructions+=1; 
+		values.progressbar+=3%;
+	} else if(trial.instructions.response=="rbuttondown" && values.instructions>1){
+		values.instructions-=1; 
+		values.progressbar-=3%;
+	}
+	if(values.instructions>6){
+		values.stopblock=1;
+	}
+]
+/ branch = [return trial.instructions;]
+/ recorddata = true
+</trial>
+
+<trial reminder>
+/ stimulusframes = [1=BlueScreen, instructions, navigation, StatusBar, ProgressBar, 
+	InstructionsLabel, PracticeLabel, ReminderLabel, TestLabel]
+/ validresponse = (lbuttondown)
+/ recorddata = true
+</trial>
+/ ontrialbegin = [
+	if (parameters.showScoreReport == true){
+		button.exit.caption = "continue";
+	}
+]
+<trial end>
+/ stimulusframes = [1=BlueScreen, instructions]
+/ timeout = 1000
+/ recorddata = true
+</trial>
+
+
+/ ontrialbegin = [
+	if (parameters.showScoreReport == true){
+		button.exit.caption = "submit";
+	}
+]
+<trial score_report>
+
+/ showmousecursor = true
+/ skip = [
+	parameters.showScoreReport == false;
+]
+/ stimulusframes = [1=Bluescreen, scorereport, navigation2]
+/ validresponse = (lButtonDown, rButtonDown)
+/ recorddata = true
+</trial>
+
+<text navigation2>
+/ items = ("left-click to continue")
+/ txcolor = white
+/ txbgcolor = transparent
+/ halign = left
+/ valign = top
+/ hjustify = left
+/ vjustify = center
+/ fontstyle = ("Arial", 2.5%)
+/ size = (75%, 5%)
+/ position = (2.5%, 88.5%)
+/ resetinterval = 0
+/ erase = false
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text FixationCross>
+/ items = ("+")
+/ fontstyle = ("Arial", 5.0%, true)
+/ erase = true(silver)
+/ select = noreplace
+</text>
+
+**************************************************************************************************************
+	Empty Item Elements for Storing Presented and Recalled Letter Sequences
+**************************************************************************************************************
+
+<item InputLetters>
+</item>
+
+<item TargetLetters>
+</item>
+
+<item RecalledLetters>
+</item>
+
+**************************************************************************************************************
+	Screen Layout Elements for the Letter Recall Grid
+**************************************************************************************************************
+
+<text F>
+/ items = ("F")
+/ txbgcolor = white
+/ position = (25%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text H>
+/ items = ("H")
+/ txbgcolor = white
+/ position = (50%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text J>
+/ items = ("J")
+/ txbgcolor = white
+/ position = (75%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text K>
+/ items = ("K")
+/ txbgcolor = white
+/ position = (25%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text L>
+/ items = ("L")
+/ txbgcolor = white
+/ position = (50%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text N>
+/ items = ("N")
+/ txbgcolor = white
+/ position = (75%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text P>
+/ items = ("P")
+/ txbgcolor = white
+/ position = (25%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text Q>
+/ items = ("Q")
+/ txbgcolor = white
+/ position = (50%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text R>
+/ items = ("R")
+/ txbgcolor = white
+/ position = (75%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text S>
+/ items = ("S")
+/ txbgcolor = white
+/ position = (25%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text T>
+/ items = ("T")
+/ txbgcolor = white
+/ position = (50%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text Y>
+/ items = ("Y")
+/ txbgcolor = white
+/ position = (75%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+
+
+<text clickF>
+/ items = ("F")
+/ position = (25%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickH>
+/ items = ("H")
+/ position = (50%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickJ>
+/ items = ("J")
+/ position = (75%, 18%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickK>
+/ items = ("K")
+/ position = (25%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickL>
+/ items = ("L")
+/ position = (50%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickN>
+/ items = ("N")
+/ position = (75%, 33%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickP>
+/ items = ("P")
+/ position = (25%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickQ>
+/ items = ("Q")
+/ position = (50%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickR>
+/ items = ("R")
+/ position = (75%, 48%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickS>
+/ items = ("S")
+/ position = (25%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickT>
+/ items = ("T")
+/ position = (50%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text clickY>
+/ items = ("Y")
+/ position = (75%, 63%)
+/ size = (5%, 6%)
+/ hjustify = center
+/ vjustify = center
+/ txcolor = white
+/ txbgcolor = black
+/ erase = false
+</text>
+
+<text recalledletters>
+/ items = ("<%values.recalledletters%>")
+/ position = (50%, 80%)
+/ txcolor = blue
+/ erase = false
+</text>
+
+**************************************************************************************************************
+	Layout Items
+**************************************************************************************************************
+
+<shape StatusBar>
+/ shape = rectangle
+/ color = silver
+/ size = (100%, 6%)
+/ valign = top
+/ halign = left
+/ position = (0%, 94%)
+/ erase = false
+</shape>
+
+<shape ProgressBar>
+/ shape = rectangle
+/ color = grey
+/ size = (values.progressbar, 6%)
+/ halign = left
+/ valign = top
+/ position = (0%, 94%)
+/ erase = false
+</shape>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	General Purpose Screen Layout Items
+**************************************************************************************************************
+**************************************************************************************************************
+
+<shape GrayFrame>
+/ shape = rectangle
+/ color = silver
+/ size = (78.3%, 78%)
+/ erase = false
+</shape>
+
+<shape BlackFrame>
+/ shape = rectangle
+/ color = black
+/ size = (80%, 80%)
+/ position = (50%, 50%)
+/ erase = false
+</shape>
+
+<shape BlankScreen>
+/ shape = rectangle
+/ color = silver
+/ size = (100%, 100%)
+/ halign = left
+/ valign = top
+/ position = (0%, 0%)
+/ erase = false
+</shape>
+
+<shape BlueScreen>
+/ shape = rectangle
+/ color = blue
+/ size = (100%, 100%)
+/ halign = left
+/ valign = top
+/ position = (0%, 0%)
+/ erase = false
+</shape>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Practice Block: Number of Targets & Distractors
+**************************************************************************************************************
+
+<list nTargetsPrac>
+/ items = (2)
+/ resetinterval = 0
+</list>
+
+<list nDistractorsPrac>
+/ items = (0,1,2,3)
+/ resetinterval = 0
+</list>
+
+**************************************************************************************************************
+	Test Block: Number of Targets & Distractors
+**************************************************************************************************************
+
+<list nTargetsTest>
+/ items = (3,4,5,6)
+/ resetinterval = 0
+</list>
+
+<list nDistractorsTest>
+/ items = (0,1,2)
+/ resetinterval = 0
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Get Number Of Targets:
+	Determine number of target items and display reminder message
+**************************************************************************************************************
+
+<trial getTargets>
+/ ontrialbegin = [
+	list.nDistractorsPrac.resetSelection(); 
+	list.nDistractorsTest.resetSelection();
+	if(script.currentblock=="practice"){
+		values.nTargets=list.nTargetsPrac.nextValue;
+	}  else if(script.currentblock=="test"){
+		values.nTargets=list.nTargetsTest.nextValue;
+	}
+]
+/ stimulusframes = [1=BlueScreen, instructions, navigation, StatusBar, ProgressBar, 
+	InstructionsLabel, PracticeLabel, ReminderLabel, TestLabel]
+/ inputdevice = mouse
+/ validresponse = (lbuttondown)
+/ branch = [return trial.getDistractors;]
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+	Get Number Of Distractors
+	Determine number of distractor items and display fixation cross
+**************************************************************************************************************
+
+<trial getDistractors>
+/ ontrialbegin = [
+	values.nInputs=0; 
+	values.lettercount=0; 
+	values.correctletters=0; 
+	values.recallcount=0; 
+	values.recalledletters=""; 
+	values.recalltrial+=1;
+	if(script.currentblock=="practice"){
+		values.nDistractors=list.nDistractorsPrac.nextValue;
+	} else if(script.currentblock=="test"){
+		values.nDistractors=list.nDistractorsTest.nextValue;
+	}
+	
+	values.nInputs=values.nDistractors+values.nTargets;
+]
+/ stimulusframes = [1=BlankScreen, BlackFrame, GrayFrame, FixationCross]
+/ validresponse = (noresponse)
+/ trialduration = 1000
+/ ontrialend = [
+	item.InputLetters.clearItems(); 
+	item.TargetLetters.clearItems(); 
+	item.RecalledLetters.clearItems(); 
+	text.Letter.resetSelection();
+]
+/ branch = [
+	return trial.show_letter;
+]	
+/ posttrialpause = 500
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+	Display Trial
+	Display single letter according to values.stimduration and parameters.inputrate
+**************************************************************************************************************
+
+<trial show_letter>
+/ ontrialbegin = [
+	values.lettercount+=1;
+]
+/ stimulusframes = [1=BlankScreen, BlackFrame, GrayFrame, Letter]
+/ validresponse = (noresponse)
+/ trialduration = parameters.inputrate
+/ ontrialend= [
+	item.InputLetters.items=text.Letter.currentItem;
+	if(values.lettercount>values.nDistractors){
+		item.TargetLetters.items=text.Letter.currentItem;
+	}
+]
+/ branch = [
+	if(values.lettercount>=values.nInputs){
+		return  trial.recall_letter;
+	} else {
+		return trial.show_letter;
+	}
+]
+/ posttrialpause = parameters.inputrate - values.stimduration
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+	Recall Trial
+	Collect subject's responses
+**************************************************************************************************************
+
+<trial recall_letter>
+/ inputdevice = mouse
+/ pretrialpause = values.recalldelay
+/ ontrialbegin = [
+	values.recallcount+=1;
+	if(values.recallcount==1){
+		values.recalldelay=500;
+	} else {
+		values.recalldelay=0;
+	}
+]
+/ stimulusframes = [1=BlankScreen, F, H, J, K, L, N, P, Q, R, S, T, Y, _, clear, exit, 
+	recalledletters, recallprompt, letterstrings]
+/ validresponse = (F, H, J, K, L, N, P, Q, R, S, T, Y, _, clear, exit)
+/ monkeyresponse = ("F", "H", "J", "K", "exit")
+/ ontrialend = [
+	if(trial.recall_letter.response!="exit" && trial.recall_letter.response!="clear"){
+		item.RecalledLetters.items=trial.recall_letter.response; 
+		values.recalledletters=concat(values.recalledletters, trial.recall_letter.response);
+	} else if(trial.recall_letter.response=="clear"){
+		item.RecalledLetters.clearItems(); 
+		values.recalledletters="";
+	}
+]
+/ responsemessage = (F, clickF, 150)
+/ responsemessage = (H, clickH, 150)
+/ responsemessage = (J, clickJ, 150)
+/ responsemessage = (K, clickK, 150)
+/ responsemessage = (L, clickL, 150)
+/ responsemessage = (N, clickN, 150)
+/ responsemessage = (P, clickP, 150)
+/ responsemessage = (Q, clickQ, 150)
+/ responsemessage = (R, clickR, 150)
+/ responsemessage = (S, clickS, 150)
+/ responsemessage = (T, clickT, 150)
+/ responsemessage = (Y, clickY, 150)
+/ responsemessage = (clear, clickclear, 150)
+/ responsemessage = (exit, clickexit, 150)
+/ responsemessage = (_, click_, 150)
+/ branch = [
+	if(trial.recall_letter.response=="exit"){
+		return trial.letter_feedback;
+	} else {
+		return trial.recall_letter;
+	}
+]
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+	Feedback Trial
+	Provide response feeback and handle scoring
+**************************************************************************************************************
+
+<trial letter_feedback>
+/ pretrialpause = 500
+/ ontrialbegin = [
+	values.correctletters=0;
+	if(item.RecalledLetters.items.1 != ""){
+		if (item.TargetLetters.items.1==item.RecalledLetters.items.1){
+			values.correctletters+=1; 
+		}
+	}
+	if (item.RecalledLetters.items.2 != ""){
+		if (item.TargetLetters.items.2==item.RecalledLetters.items.2){
+			values.correctletters+=1;
+		}
+	}		
+	if(item.RecalledLetters.items.3 != ""){
+		if (item.TargetLetters.items.3==item.RecalledLetters.items.3){
+			values.correctletters+=1;
+		}
+	}
+	if(item.RecalledLetters.items.4 != ""){
+		if (item.TargetLetters.items.4==item.RecalledLetters.items.4){
+			values.correctletters+=1; 
+		}
+	}
+	if(item.RecalledLetters.items.5 != ""){
+		if (item.TargetLetters.items.5==item.RecalledLetters.items.5){
+			values.correctletters+=1; 
+		}
+	}
+	if(item.RecalledLetters.items.6 != ""){
+		if (item.TargetLetters.items.6==item.RecalledLetters.items.6){
+			values.correctletters+=1; 
+		}
+	}
+	if(item.RecalledLetters.items.7 != ""){
+		if (item.TargetLetters.items.7==item.RecalledLetters.items.7){
+			values.correctletters+=1;
+		}
+	}
+	if(item.RecalledLetters.items.8 != ""){
+		if (item.TargetLetters.items.8==item.RecalledLetters.items.8){
+			values.correctletters+=1; 
+		}
+	}
+	if(item.RecalledLetters.items.9 != ""){
+		if (item.TargetLetters.items.9==item.RecalledLetters.items.9){
+			values.correctletters+=1; 
+		}
+	}
+	if(item.RecalledLetters.items.10 != ""){
+		if (item.TargetLetters.items.10==item.RecalledLetters.items.10){
+			values.correctletters+=1; 
+		}
+	}
+	if(item.RecalledLetters.items.11 != ""){
+		if (item.TargetLetters.items.11==item.RecalledLetters.items.11){
+			values.correctletters+=1; 
+		}
+	}
+	if(item.RecalledLetters.items.12 != ""){
+		if (item.TargetLetters.items.12==item.RecalledLetters.items.12){
+			values.correctletters+=1;
+		}
+	}
+
+	if(values.nDistractors!=0){
+		values.runspanscore=values.runspanscore+values.correctletters;
+	}
+	values.runspantotal=values.runspantotal+values.correctletters;
+]
+/ stimulusframes = [1=BlankScreen, LetterFeedback]
+/ validresponse = (noresponse)
+/ trialduration = values.feedbackduration
+/ ontrialend = [
+	if(script.currentblock=="practice" && list.nTargetsPrac.unselectedCount==0 && list.nDistractorsPrac.unselectedCount==0){
+		values.stopblock=1;
+	} else if(script.currentblock=="test" && list.nTargetsTest.unselectedCount==0 && list.nDistractorsTest.unselectedCount==0){
+		values.stopblock=1;
+	}
+]
+/ branch = [
+	if(script.currentblock=="practice"){
+		if (list.nDistractorsPrac.unselectedCount==0){
+			return trial.getTargets;
+		} else if (list.nDistractorsPrac.unselectedCount!=0){
+			return trial.getDistractors;
+		}
+	} else if(script.currentblock=="test"){
+		if (list.nDistractorsTest.unselectedCount==0){
+			return trial.getTargets;
+		} else if(list.nDistractorsTest.unselectedCount!=0){
+			return trial.getDistractors;
+		}
+	}
+]
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block instructions>
+/ stop = [values.stopblock==1]
+/ onblockbegin = [
+	values.instructions=1;
+	text.InstructionsLabel.textColor=black;
+]
+/ trials = [1=instructions]
+/ onblockend = [
+	text.InstructionsLabel.textColor=white;
+	values.stopblock=0;
+]
+</block>
+
+<block practice>
+/ stop = [values.stopblock==1]
+/ onblockbegin = [
+	values.instructions=8;
+	text._.textColor=black; 
+	text._.textBgColor=white;
+	text.clear.textColor=black; 
+	text.clear.textBgColor=white;
+	text.exit.textColor=black; 
+	text.exit.textBgColor=white; 
+	values.recalltrial=0;
+	text.PracticeLabel.textColor=black;
+]
+/ trials = [1=getTargets]
+/ onblockend = [
+	text.PracticeLabel.textColor=white;
+	values.stopblock=0;
+]
+</block>
+
+<block reminder>
+/ onblockbegin = [values.instructions=7]
+/ onblockbegin = [text.ReminderLabel.textColor=black]
+/ onblockend = [text.ReminderLabel.textColor=white]
+/ trials = [1=reminder]
+</block>
+
+<block test>
+/ stop = [values.stopblock==1]
+/ onblockbegin = [
+	values.instructions=8;
+	values.lettercount=0; 
+	values.correctletters=0; 
+	values.nInputs=0;
+	values.recallcount=0; 
+	values.recalledletters=""; 
+	values.runspantotal=0; 
+	values.runspanscore=0;
+	values.recalltrial=0;
+	text._.textColor=black; 
+	text._.textBgColor=white;
+	text.clear.textColor=black; 
+	text.clear.textBgColor=white;
+	text.exit.textColor=black; 
+	text.exit.textBgColor=white;
+	text.TestLabel.textColor=black;
+]
+/ trials = [1=getTargets]
+/ onblockend = [
+	text.TestLabel.textColor=white;
+]
+</block>
+
+<block end>
+/ onblockbegin = [
+	values.instructions=9;
+]
+/ trials = [
+	1=score_report;
+	2 = end;
+]
+/ onblockend = [
+	values.stopblock=0;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt RunSPAN>
+/ blocks = [
+	1=instructions; 
+	2=practice; 
+	3=reminder; 
+	4=test; 
+	5=end;
+]
+</expt>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Debug Stuff
+**************************************************************************************************************
+**************************************************************************************************************
+<text letterstrings>
+/ onprepare = [text.letterstrings.skip = !parameters.debugmode;]
+/ items = ("~tInput Letters:~t~t<%item.InputLetters.items.1%><%item.InputLetters.items.2%><%item.InputLetters.items.3%><%item.InputLetters.items.4%><%item.InputLetters.items.5%><%item.InputLetters.items.6%><%item.InputLetters.items.7%><%item.InputLetters.items.8%><%item.InputLetters.items.9%><%item.InputLetters.items.10%><%item.InputLetters.items.11%><%item.InputLetters.items.12%>
+~tTarget Letters:~t~t<%item.TargetLetters.items.1%><%item.TargetLetters.items.2%><%item.TargetLetters.items.3%><%item.TargetLetters.items.4%><%item.TargetLetters.items.5%><%item.TargetLetters.items.6%><%item.TargetLetters.items.7%><%item.TargetLetters.items.8%><%item.TargetLetters.items.9%><%item.TargetLetters.items.10%><%item.TargetLetters.items.11%><%item.TargetLetters.items.12%>
+~tRecalled Letters:~t<%item.RecalledLetters.items.1%><%item.RecalledLetters.items.2%><%item.RecalledLetters.items.3%><%item.RecalledLetters.items.4%><%item.RecalledLetters.items.5%><%item.RecalledLetters.items.6%><%item.RecalledLetters.items.7%><%item.RecalledLetters.items.8%><%item.RecalledLetters.items.9%><%item.RecalledLetters.items.10%><%item.RecalledLetters.items.11%><%item.RecalledLetters.items.12%>")
+/ fontstyle = ("Arial", 2.5%, true)
+/ txcolor = black
+/ txbgcolor = transparent
+/ size = (55%, 25%)
+/ position = (50%, 87%)
+/ hjustify = left
+/ vjustify = center
+/ erase = false
+</text>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

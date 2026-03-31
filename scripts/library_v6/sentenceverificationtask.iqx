@@ -1,0 +1,2221 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+									*SENTENCE VERIFICATION TASK*
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 07-29-2016
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Sentence Verification Task, a speeded-reasoning task 
+using speed and accuracy to study the interplay of 'naive' intuitions 
+(e.g. the 'sun moves around the earth') and contradictory scientific knowledge 
+(e.g. 'the earth moves around the sun').
+
+The implemented procedure is based on:
+
+Shtulman, A. & Valcarcel, J. (2012). Scientific knowledge suppresses but does not supplant 
+earlier intuitions. Cognition, 124, 209–215.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION
+___________________________________________________________________________________________________________________	
+Participants are presented a variety of statements across several knowledge domains and have to decide 
+as fast as possible if these statements are true or false by selecting 'E' for true and 'I' for false.
+Some of these statements differ in whether  they are would be judged as 'true' according to a 'naive' 
+or a 'scientific' understanding/theory of the subject matter.
+  
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 15 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'sentenceverificationtask_raw*.iqdat'*
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.	
+																				
+domain:							domain name tested
+stimConcept:					concept tested
+
+naiveCorrect:					1 = true by naive theory; 
+								0 = otherwise
+
+scientificCorrect:				1 = true by scientific theory; 
+								0 = otherwise
+
+truthConsistency: 				1 = naive understanding and scientific theory are consistent (= would evoke the same response); 
+								0 = otherwise (=potential conflict if scientific knowledge has been learned)
+																	
+stimulusitem:					the presented stimuli in order of trial presentation
+								here: the statement
+
+response:						the participant's response (scancode of responsekey)- built-in variable
+								18 = E (true)
+								23 = I (false)
+									
+responseCat:					the interpreted key response-custom variable
+								1 = participant indicated 'true'; 
+								0 = participant indicated 'false'
+									
+correct:						the correctness of the response 
+								1 = response correct by scientific theory; 
+								0 = incorrect otherwise
+											
+latency: 						the response latency (in ms); measured from onset of statement
+
+
+(2) Summary data file: 'sentenceverificationtask_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+Summary Data: correct = correct response according to scientific theory
+
+propCorrect:					overall proportion correct responses
+meanRT:							overall mean latency (in ms) of correct responses
+SD:								overall standard deviation (in ms) of latencies to correct responses
+
+///consistent = naive intuition and scientific knowledge result in same response
+propCorrect_truthConsistent:	proportion correct responses of consistent statements 
+meanRT_truthConsistent:			mean latency (in ms) of correct responses of consistent statements 
+SD_truthConsistent:				standard deviation (in ms) of latencies to correct responses of consistent statements
+
+///inconsistent = naive intuition and scientific knowledge result in different response
+propCorrect_truthInconsistent:	proportion correct responses of inconsistent statements 
+meanRT_truthInconsistent:		mean latency (in ms) of correct responses of inconsistent statements 
+SD_truthInconsistent:			standard deviation (in ms) of latencies to correct responses of inconsistent statements
+
+RTDiff:		the difference btw. "mean corrRT Inconsistent" - "mean corrRT Consistent" (in ms)
+			positive value: it took longer to correctly categorize Inconsistent statements
+			=> evidence of conflict btw. naive intuition and scientific knowledge
+										
+			0: there was no advantage of Consistent statements
+			=> no evidence of conflict btw. naive intuition and scientific knowledge
+										
+			negative value: it took longer to correctly categorize Consistent statements
+			Within the given framework, there is no satisfactory explanation for this
+			behavior
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+10 domain blocks with 20 trials: 200 trials total
+- order of blocks randomized
+- each block tests one subject matter domain with 5 concepts x 4 questions per concept (see STIMULI below)
+(domain is announced in the instructions presented before each block)
+- order of questions within a block randomized
+- half the questions are truth-consistent (same response for naive and scientific theory) 
+- by default, task is untimed
+
+Note: if fewer than 10 blocks should be run, go to section EXPERIMENT and follow instructions
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+
+taken from the published supplemental material of Shtulman & Valcarcel (2012):
+10 domains with 5 concepts. Each concept is tested with 4 questions:
+- one question is true across scientific and naive theory 
+- one question is false across scientific and naive theory
+- one question is true by the naive theory but false by the scientific theory
+- one question is false by the naive theory but true by the scientific theory
+
+Items can be viewed and edited under section STIMULI below
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+Instructions are not original; they are provided by Millisecond Software and can be edited under section
+Editable Instructions.
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/trueResponsekey:			the label for the 'true' responsekey (default: E); left response key
+/falseResponsekey:			the label for the 'false' responsekey (default: I); right response key
+
+/fontsize:					the fontsize of the statements in canvas height percentage (default: 5%)
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/trueResponsekey = "E"
+/falseResponsekey = "I"
+
+/fontsize = 5%
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+*********************************************
+Domain 1
+*********************************************
+
+<item domain1>
+/1 = "Astronomy"
+</item>
+
+<item domain1_concepts>
+/1 = "Planet"
+/2 = "Planet"
+/3 = "Planet"
+/4 = "Planet"
+/5 = "Star"
+/6 = "Star"
+/7 = "Star"
+/8 = "Star"
+/9 = "Solar system"
+/10 = "Solar system"
+/11 = "Solar system"
+/12 = "Solar system"
+/13 = "Lunar phase"
+/14 = "Lunar phase"
+/15 = "Lunar phase"
+/16 = "Lunar phase"
+/17 = "Season"
+/18 = "Season"
+/19 = "Season"
+/20 = "Season"
+</item>
+
+<item domain1_stims>
+/1 = "Planets are more massive than moons."
+/2 = "Asteroids are more massive than planets."
+/3 = "Planets are more massive than stars."
+/4 = "Stars are more massive than planets."
+/5 = "The sun produces light."
+/6 = "The sun produces sound."
+/7 = "The moon produces light."
+/8 = "The sun produces gravity"
+/9 = "The moon revolves around the earth."
+/10 = "The sun revolves around the moon."
+/11 = "The sun revolves around the earth."
+/12 = "The earth revolves around the sun."
+/13 = "Phases of the moon are caused by changes in illumination."
+/14 = "Phases of the moon are caused by clouds."
+/15 = "Phases of the moon are caused by the earth's shadow."
+/16 = "Phases of the moon are caused by the moon's orbit."
+/17 = "A change in overall sunlight causes the seasons."
+/18 = "The earth's rotation causes the seasons."
+/19 = "The earth's distance from the sun causes the seasons."
+/20 = "The earth's tilt causes the seasons."
+</item>
+
+1 = true according to T1 (naive theory)
+0 = false according to T1 (naive theory)
+<item domain1_T1>
+/1 = "1"
+/2 = "0"
+/3 = "1"
+/4 = "0"
+/5 = "1"
+/6 = "0"
+/7 = "1"
+/8 = "0"
+/9 = "1"
+/10 = "0"
+/11 = "1"
+/12 = "0"
+/13 = "1"
+/14 = "0"
+/15 = "1"
+/16 = "0"
+/17 = "1"
+/18 = "0"
+/19 = "1"
+/20 = "0"
+</item>
+
+1 = true according to T2 (scientific theory)
+0 = false according to T2 (scientific theory)
+<item domain1_T2>
+/1 = "1"
+/2 = "0"
+/3 = "0"
+/4 = "1"
+/5 = "1"
+/6 = "0"
+/7 = "0"
+/8 = "1"
+/9 = "1"
+/10 = "0"
+/11 = "0"
+/12 = "1"
+/13 = "1"
+/14 = "0"
+/15 = "0"
+/16 = "1"
+/17 = "1"
+/18 = "0"
+/19 = "0"
+/20 = "1"
+</item>
+
+*********************************************
+Domain 2
+*********************************************
+
+<item domain2>
+/1 = "Evolution"
+</item>
+
+<item domain2_concepts>
+/1 = "Common ancestry"
+/2 = "Common ancestry"
+/3 = "Common ancestry"
+/4 = "Common ancestry"
+/5 = "Phylogeny"
+/6 = "Phylogeny"
+/7 = "Phylogeny"
+/8 = "Phylogeny"
+/9 = "Variation"
+/10 = "Variation"
+/11 = "Variation"
+/12 = "Variation"
+/13 = "Selection"
+/14 = "Selection"
+/15 = "Selection"
+/16 = "Selection"
+/17 = "Adaptation"
+/18 = "Adaptation"
+/19 = "Adaptation"
+/20 = "Adaptation"
+</item>
+
+<item domain2_stims>
+/1 = "Humans are more closely related to apes than monkeys."
+/2 = "Whales are more closely related to plants than fish."
+/3 = "Apes are more closely related to monkeys than humans."
+/4 = "Whales are more closely related to humans than fish."
+/5 = "Humans are descended from tree-dwelling creatures."
+/6 = "Humans are descended from plants."
+/7 = "Humans are descended from chimpanzees."
+/8 = "Humans are descended from sea-dwelling creatures."
+/9 = "Evolution requires differential survival."
+/10 = "Evolution requires climate stability."
+/11 = "Evolution requires long periods of time."
+/12 = "Evolution requires within-species variation."
+/13 = "Most organisms are adapted to their environment."
+/14 = "Most organisms live in temperate climates."
+/15 = "Most organisms have plenty to eat."
+/16 = "Most organisms die before leaving offspring."
+/17 = "Biological species evolve."
+/18 = "Inanimate objects evolve."
+/19 = "Individual organisms evolve."
+/20 = "Computer viruses evolve."
+</item>
+
+1 = true according to T1 (naive theory)
+0 = false according to T1 (naive theory)
+<item domain2_T1>
+/1 = "1"
+/2 = "0"
+/3 = "1"
+/4 = "0"
+/5 = "1"
+/6 = "0"
+/7 = "1"
+/8 = "0"
+/9 = "1"
+/10 = "0"
+/11 = "1"
+/12 = "0"
+/13 = "1"
+/14 = "0"
+/15 = "1"
+/16 = "0"
+/17 = "1"
+/18 = "0"
+/19 = "1"
+/20 = "0"
+</item>
+
+1 = true according to T2 (scientific theory)
+0 = false according to T2 (scientific theory)
+<item domain2_T2>
+/1 = "1"
+/2 = "0"
+/3 = "0"
+/4 = "1"
+/5 = "1"
+/6 = "0"
+/7 = "0"
+/8 = "1"
+/9 = "1"
+/10 = "0"
+/11 = "0"
+/12 = "1"
+/13 = "1"
+/14 = "0"
+/15 = "0"
+/16 = "1"
+/17 = "1"
+/18 = "0"
+/19 = "0"
+/20 = "1"
+</item>
+
+*********************************************
+Domain 3
+*********************************************
+
+<item domain3>
+/1 = "Fractions"
+</item>
+
+<item domain3_concepts>
+/1 = "Addition"
+/2 = "Addition"
+/3 = "Addition"
+/4 = "Addition"
+/5 = "Division"
+/6 = "Division"
+/7 = "Division"
+/8 = "Division"
+/9 = "Conversion"
+/10 = "Conversion"
+/11 = "Conversion"
+/12 = "Conversion"
+/13 = "Ordering"
+/14 = "Ordering"
+/15 = "Ordering"
+/16 = "Ordering"
+/17 = "Infinite density"
+/18 = "Infinite density"
+/19 = "Infinite density"
+/20 = "Infinite density"
+</item>
+
+<item domain3_stims>
+/1 = "All decimals are expressible as fractions."
+/2 = "All fractions are expressible as integers."
+/3 = "All fractions are expressible as decimals."
+/4 = "All integers are expressible as fractions."
+/5 = "4 divided by 2/1 is 2."
+/6 = "8 divided by 2/1 is 3."
+/7 = "8 divided by 1/2 is 4."
+/8 = "4 divided by 1/2 is 8."
+/9 = "All decimals are expressible as fractions."
+/10 = "All fractions are expressible as integers."
+/11 = "All fractions are expressible as decimals."
+/12 = "All integers are expressible as fractions."
+/13 = "12/13 is greater than 1/13."
+/14 = "1/17 is greater than 16/17."
+/15 = "1/17 is greater than 1/9."
+/16 = "1/13 is greater than 1/30."
+/17 = "There are numbers between 1 and 3."
+/18 = "There are numbers between 10 and 10."
+/19 = "There are numbers between 1/10 and 10/100."
+/20 = "There are numbers between 1/3 and 1/2."
+</item>
+
+1 = true according to T1 (naive theory)
+0 = false according to T1 (naive theory)
+<item domain3_T1>
+/1 = "1"
+/2 = "0"
+/3 = "1"
+/4 = "0"
+/5 = "1"
+/6 = "0"
+/7 = "1"
+/8 = "0"
+/9 = "1"
+/10 = "0"
+/11 = "1"
+/12 = "0"
+/13 = "1"
+/14 = "0"
+/15 = "1"
+/16 = "0"
+/17 = "1"
+/18 = "0"
+/19 = "1"
+/20 = "0"
+</item>
+
+1 = true according to T2 (scientific theory)
+0 = false according to T2 (scientific theory)
+<item domain3_T2>
+/1 = "1"
+/2 = "0"
+/3 = "0"
+/4 = "1"
+/5 = "1"
+/6 = "0"
+/7 = "0"
+/8 = "1"
+/9 = "1"
+/10 = "0"
+/11 = "0"
+/12 = "1"
+/13 = "1"
+/14 = "0"
+/15 = "0"
+/16 = "1"
+/17 = "1"
+/18 = "0"
+/19 = "0"
+/20 = "1"
+</item>
+
+*********************************************
+Domain 4
+*********************************************
+
+<item domain4>
+/1 = "Genetics"
+</item>
+
+<item domain4_concepts>
+/1 = "Heritability"
+/2 = "Heritability"
+/3 = "Heritability"
+/4 = "Heritability"
+/5 = "Chromosome"
+/6 = "Chromosome"
+/7 = "Chromosome"
+/8 = "Chromosome"
+/9 = "Dominance"
+/10 = "Dominance"
+/11 = "Dominance"
+/12 = "Dominance"
+/13 = "Expression"
+/14 = "Expression"
+/15 = "Expression"
+/16 = "Expression"
+/17 = "Mutation"
+/18 = "Mutation"
+/19 = "Mutation"
+/20 = "Mutation"
+</item>
+
+<item domain4_stims>
+/1 = "Hair color is heritable."
+/2 = "Pierced ears are heritable."
+/3 = "Immunity to chickenpox is heritable."
+/4 = "Intelligence is heritable."
+/5 = "Humans have more chromosomes than mosquitoes."
+/6 = "Men have more chromosomes than women."
+/7 = "Adults have more chromosomes than children."
+/8 = "Skin cells have more chromosomes than egg cells."
+/9 = "Two brown-eyed parents could have a brown-eyed baby."
+/10 = "Two blue-eyed parents could have a brown-eyed baby."
+/11 = "A blue-eyed baby must have two blue-eyed parents."
+/12 = "Two brown-eyed parents could have a blue-eyed baby."
+/13 = "Genes that code for eye color can be found in the eye."
+/14 = "Genes that code for eye color can be found in hair."
+/15 = "Genes that code for eye color can be found in tears."
+/16 = "Genes that code for eye color can be found in the liver."
+/17 = "Radiation can change one's genome."
+/18 = "Sunscreen can change one's genome."
+/19 = "Exercise can change one's genome."
+/20 = "Viruses can change one's genome."
+</item>
+
+1 = true according to T1 (naive theory)
+0 = false according to T1 (naive theory)
+<item domain4_T1>
+/1 = "1"
+/2 = "0"
+/3 = "1"
+/4 = "0"
+/5 = "1"
+/6 = "0"
+/7 = "1"
+/8 = "0"
+/9 = "1"
+/10 = "0"
+/11 = "1"
+/12 = "0"
+/13 = "1"
+/14 = "0"
+/15 = "1"
+/16 = "0"
+/17 = "1"
+/18 = "0"
+/19 = "1"
+/20 = "0"
+</item>
+
+1 = true according to T2 (scientific theory)
+0 = false according to T2 (scientific theory)
+<item domain4_T2>
+/1 = "1"
+/2 = "0"
+/3 = "0"
+/4 = "1"
+/5 = "1"
+/6 = "0"
+/7 = "0"
+/8 = "1"
+/9 = "1"
+/10 = "0"
+/11 = "0"
+/12 = "1"
+/13 = "1"
+/14 = "0"
+/15 = "0"
+/16 = "1"
+/17 = "1"
+/18 = "0"
+/19 = "0"
+/20 = "1"
+</item>
+
+*********************************************
+Domain 5
+*********************************************
+
+<item domain5>
+/1 = "Germs"
+</item>
+
+<item domain5_concepts>
+/1 = "Contagion"
+/2 = "Contagion"
+/3 = "Contagion"
+/4 = "Contagion"
+/5 = "Contamination"
+/6 = "Contamination"
+/7 = "Contamination"
+/8 = "Contamination"
+/9 = "Infection"
+/10 = "Infection"
+/11 = "Infection"
+/12 = "Infection"
+/13 = "Sterilization"
+/14 = "Sterilization"
+/15 = "Sterilization"
+/16 = "Sterilization"
+/17 = "Microbe"
+/18 = "Microbe"
+/19 = "Microbe"
+/20 = "Microbe"
+</item>
+
+<item domain5_stims>
+/1 = "Being sneezed on can make a person sick."
+/2 = "Being happy can make a person sick."
+/3 = "Urine contains germs."
+/4 = "Being depressed can make a person sick."
+/5 = "Rotting meat contains germs."
+/6 = "Sunshine contains germs."
+/7 = "Urine contains germs."
+/8 = "Dish sponges contain germs."
+/9 = "Germs enter the body through cuts."
+/10 = "Germs enter the body through the hair."
+/11 = "Germs enter the body through the skin."
+/12 = "Germs enter the body through the eyes."
+/13 = "Alcohol kills germs."
+/14 = "Kindness kills germs."
+/15 = "Water kills germs."
+/16 = "Heat kills germs."
+/17 = "Germs have a shape."
+/18 = "Germs have feelings."
+/19 = "Germs have an odor."
+/20 = "Germs have DNA."
+</item>
+
+1 = true according to T1 (naive theory)
+0 = false according to T1 (naive theory)
+<item domain5_T1>
+/1 = "1"
+/2 = "0"
+/3 = "1"
+/4 = "0"
+/5 = "1"
+/6 = "0"
+/7 = "1"
+/8 = "0"
+/9 = "1"
+/10 = "0"
+/11 = "1"
+/12 = "0"
+/13 = "1"
+/14 = "0"
+/15 = "1"
+/16 = "0"
+/17 = "1"
+/18 = "0"
+/19 = "1"
+/20 = "0"
+</item>
+
+1 = true according to T2 (scientific theory)
+0 = false according to T2 (scientific theory)
+<item domain5_T2>
+/1 = "1"
+/2 = "0"
+/3 = "0"
+/4 = "1"
+/5 = "1"
+/6 = "0"
+/7 = "0"
+/8 = "1"
+/9 = "1"
+/10 = "0"
+/11 = "0"
+/12 = "1"
+/13 = "1"
+/14 = "0"
+/15 = "0"
+/16 = "1"
+/17 = "1"
+/18 = "0"
+/19 = "0"
+/20 = "1"
+</item>
+
+*********************************************
+Domain 6
+*********************************************
+
+<item domain6>
+/1 = "Matter"
+</item>
+
+<item domain6_concepts>
+/1 = "Mass"
+/2 = "Mass"
+/3 = "Mass"
+/4 = "Mass"
+/5 = "Weight"
+/6 = "Weight"
+/7 = "Weight"
+/8 = "Weight"
+/9 = "Density"
+/10 = "Density"
+/11 = "Density"
+/12 = "Density"
+/13 = "Divisibility"
+/14 = "Divisibility"
+/15 = "Divisibility"
+/16 = "Divisibility"
+/17 = "Atom"
+/18 = "Atom"
+/19 = "Atom"
+/20 = "Atom"
+</item>
+
+<item domain6_stims>
+/1 = "Rocks are composed of matter."
+/2 = "Numbers are composed of matter."
+/3 = "Fire is composed of matter."
+/4 = "Air is composed of matter."
+/5 = "A liter of water weighs more than a liter of air."
+/6 = "A pound of steal weighs more than a ton of steal."
+/7 = "A pound of steal weighs more than a pound of feathers."
+/8 = "A liter of water weighs more than a liter of ice."
+/9 = "Steal is denser than foam."
+/10 = "Foam is denser than brick."
+/11 = "Ice is denser than water."
+/12 = "A cold penny is denser than a hot penny."
+/13 = "A log can be cut in half."
+/14 = "An idea can be cut in half."
+/15 = "A shadow can be cut in half."
+/16 = "A grain of sand can be cut in half."
+/17 = "Atoms are the constituents of matter."
+/18 = "Atoms are visible to the naked eye."
+/19 = "Atoms are weightless."
+/20 = "Atoms are mostly empty space."
+</item>
+
+1 = true according to T1 (naive theory)
+0 = false according to T1 (naive theory)
+<item domain6_T1>
+/1 = "1"
+/2 = "0"
+/3 = "1"
+/4 = "0"
+/5 = "1"
+/6 = "0"
+/7 = "1"
+/8 = "0"
+/9 = "1"
+/10 = "0"
+/11 = "1"
+/12 = "0"
+/13 = "1"
+/14 = "0"
+/15 = "1"
+/16 = "0"
+/17 = "1"
+/18 = "0"
+/19 = "1"
+/20 = "0"
+</item>
+
+1 = true according to T2 (scientific theory)
+0 = false according to T2 (scientific theory)
+<item domain6_T2>
+/1 = "1"
+/2 = "0"
+/3 = "0"
+/4 = "1"
+/5 = "1"
+/6 = "0"
+/7 = "0"
+/8 = "1"
+/9 = "1"
+/10 = "0"
+/11 = "0"
+/12 = "1"
+/13 = "1"
+/14 = "0"
+/15 = "0"
+/16 = "1"
+/17 = "1"
+/18 = "0"
+/19 = "0"
+/20 = "1"
+</item>
+
+*********************************************
+Domain 7
+*********************************************
+
+<item domain7>
+/1 = "Mechanics"
+</item>
+
+<item domain7_concepts>
+/1 = "Force"
+/2 = "Force"
+/3 = "Force"
+/4 = "Force"
+/5 = "Velocity"
+/6 = "Velocity"
+/7 = "Velocity"
+/8 = "Velocity"
+/9 = "Acceleration"
+/10 = "Acceleration"
+/11 = "Acceleration"
+/12 = "Acceleration"
+/13 = "Momentum"
+/14 = "Momentum"
+/15 = "Momentum"
+/16 = "Momentum"
+/17 = "Gravity"
+/18 = "Gravity"
+/19 = "Gravity"
+/20 = "Gravity"
+</item>
+
+
+<item domain7_stims>
+/1 = "Forces can be strong or weak."
+/2 = "Forces can be male or female."
+/3 = "Forces can be straight or curved."
+/4 = "Forces can be balanced or unbalanced."
+/5 = "A moving bullet loses speed."
+/6 = "A moving bullet loses weight."
+/7 = "A moving bullet loses force."
+/8 = "A moving bullet loses height."
+/9 = "Constant acceleration requires constant force."
+/10 = "Constant speed requires constant acceleration."
+/11 = "Constant motion requires constant force."
+/12 = "Constant force can yield constant rest."
+/13 = "Momentum can be transferred from one object to another."
+/14 = "Color can be transferred from one object to another."
+/15 = "Forces can be transferred from one object to another."
+/16 = "Energy can be transferred from one object to another."
+/17 = "Anvils fall through air faster than feathers."
+/18 = "Bright objects fall through air faster than dark objects."
+/19 = "Heavy balls fall through air faster than light balls."
+/20 = "Pointy objects fall through air faster than flat objects."
+</item>
+
+1 = true according to T1 (naive theory)
+0 = false according to T1 (naive theory)
+<item domain7_T1>
+/1 = "1"
+/2 = "0"
+/3 = "1"
+/4 = "0"
+/5 = "1"
+/6 = "0"
+/7 = "1"
+/8 = "0"
+/9 = "1"
+/10 = "0"
+/11 = "1"
+/12 = "0"
+/13 = "1"
+/14 = "0"
+/15 = "1"
+/16 = "0"
+/17 = "1"
+/18 = "0"
+/19 = "1"
+/20 = "0"
+</item>
+
+1 = true according to T2 (scientific theory)
+0 = false according to T2 (scientific theory)
+<item domain7_T2>
+/1 = "1"
+/2 = "0"
+/3 = "0"
+/4 = "1"
+/5 = "1"
+/6 = "0"
+/7 = "0"
+/8 = "1"
+/9 = "1"
+/10 = "0"
+/11 = "0"
+/12 = "1"
+/13 = "1"
+/14 = "0"
+/15 = "0"
+/16 = "1"
+/17 = "1"
+/18 = "0"
+/19 = "0"
+/20 = "1"
+</item>
+
+*********************************************
+Domain 8
+*********************************************
+
+<item domain8>
+/1 = "Physiology"
+</item>
+
+<item domain8_concepts>
+/1 = "Life"
+/2 = "Life"
+/3 = "Life"
+/4 = "Life"
+/5 = "Death"
+/6 = "Death"
+/7 = "Death"
+/8 = "Death"
+/9 = "Reproduction"
+/10 = "Reproduction"
+/11 = "Reproduction"
+/12 = "Reproduction"
+/13 = "Metabolism"
+/14 = "Metabolism"
+/15 = "Metabolism"
+/16 = "Metabolism"
+/17 = "Kinship"
+/18 = "Kinship"
+/19 = "Kinship"
+/20 = "Kinship"
+</item>
+
+<item domain8_stims>
+/1 = "Fish are alive."
+/2 = "Rocks are alive."
+/3 = "The sun is alive."
+/4 = "Coral is alive."
+/5 = "Turtles can die."
+/6 = "Screwdrivers can die."
+/7 = "Clouds can die."
+/8 = "Mushrooms can die."
+/9 = "Tigers can reproduce."
+/10 = "Chairs can reproduce."
+/11 = "Caterpillars can reproduce."
+/12 = "Ferns can reproduce"
+/13 = "People turn food into energy."
+/14 = "Rocks turn food into energy."
+/15 = "Plants turn food into energy."
+/16 = "Bacteria turn food into energy."
+/17 = "A baby can be a niece or a nephew."
+/18 = "A baby can be a mother or a father."
+/19 = "A baby can be identical to an older sibling."
+/20 = "A baby can be an uncle or an aunt."
+</item>
+
+1 = true according to T1 (naive theory)
+0 = false according to T1 (naive theory)
+<item domain8_T1>
+/1 = "1"
+/2 = "0"
+/3 = "1"
+/4 = "0"
+/5 = "1"
+/6 = "0"
+/7 = "1"
+/8 = "0"
+/9 = "1"
+/10 = "0"
+/11 = "1"
+/12 = "0"
+/13 = "1"
+/14 = "0"
+/15 = "1"
+/16 = "0"
+/17 = "1"
+/18 = "0"
+/19 = "1"
+/20 = "0"
+</item>
+
+1 = true according to T2 (scientific theory)
+0 = false according to T2 (scientific theory)
+<item domain8_T2>
+/1 = "1"
+/2 = "0"
+/3 = "0"
+/4 = "1"
+/5 = "1"
+/6 = "0"
+/7 = "0"
+/8 = "1"
+/9 = "1"
+/10 = "0"
+/11 = "0"
+/12 = "1"
+/13 = "1"
+/14 = "0"
+/15 = "0"
+/16 = "1"
+/17 = "1"
+/18 = "0"
+/19 = "0"
+/20 = "1"
+</item>
+
+*********************************************
+Domain 9
+*********************************************
+
+<item domain9>
+/1 = "Thermodynamics"
+</item>
+
+<item domain9_concepts>
+/1 = "Heat"
+/2 = "Heat"
+/3 = "Heat"
+/4 = "Heat"
+/5 = "Heat source"
+/6 = "Heat source"
+/7 = "Heat source"
+/8 = "Heat source"
+/9 = "Heat transfer"
+/10 = "Heat transfer"
+/11 = "Heat transfer"
+/12 = "Heat transfer"
+/13 = "Temperature"
+/14 = "Temperature"
+/15 = "Temperature"
+/16 = "Temperature"
+/17 = "Thermal expansion"
+/18 = "Thermal expansion"
+/19 = "Thermal expansion"
+/20 = "Thermal expansion"
+</item>
+
+<item domain9_stims>
+/1 = "The sun has heat."
+/2 = "Gravity has heat."
+/3 = "Atoms have heat."
+/4 = "Ice has heat."
+/5 = "Ovens produce heat."
+/6 = "Rain produces heat."
+/7 = "Coats produce heat."
+/8 = "Pressure produces heat."
+/9 = "Water transfers heat to ice."
+/10 = "Cold objects transfer heat to warm objects."
+/11 = "Water transfers heat to steam."
+/12 = "Cold objects transfer heat to even colder objects."
+/13 = "Ice has a lower temperature than water."
+/14 = "Steam has a lower temperature than ice."
+/15 = "Two cups of ice have a lower temperature than one."
+/16 = "Boiling water has a lower temperature than steam."
+/17 = "Heat increases an object's temperature."
+/18 = "Heat increases an object's color."
+/19 = "Heat increases an object's weight."
+/20 = "Heat increases an object's size."
+</item>
+
+1 = true according to T1 (naive theory)
+0 = false according to T1 (naive theory)
+<item domain9_T1>
+/1 = "1"
+/2 = "0"
+/3 = "1"
+/4 = "0"
+/5 = "1"
+/6 = "0"
+/7 = "1"
+/8 = "0"
+/9 = "1"
+/10 = "0"
+/11 = "1"
+/12 = "0"
+/13 = "1"
+/14 = "0"
+/15 = "1"
+/16 = "0"
+/17 = "1"
+/18 = "0"
+/19 = "1"
+/20 = "0"
+</item>
+
+1 = true according to T2 (scientific theory)
+0 = false according to T2 (scientific theory)
+<item domain9_T2>
+/1 = "1"
+/2 = "0"
+/3 = "0"
+/4 = "1"
+/5 = "1"
+/6 = "0"
+/7 = "0"
+/8 = "1"
+/9 = "1"
+/10 = "0"
+/11 = "0"
+/12 = "1"
+/13 = "1"
+/14 = "0"
+/15 = "0"
+/16 = "1"
+/17 = "1"
+/18 = "0"
+/19 = "0"
+/20 = "1"
+</item>
+
+*********************************************
+Domain 10
+*********************************************
+
+<item domain10>
+/1 = "Waves"
+</item>
+
+<item domain10_concepts>
+/1 = "Light"
+/2 = "Light"
+/3 = "Light"
+/4 = "Light"
+/5 = "Color"
+/6 = "Color"
+/7 = "Color"
+/8 = "Color"
+/9 = "Sound"
+/10 = "Sound"
+/11 = "Sound"
+/12 = "Sound"
+/13 = "Propagation"
+/14 = "Propagation"
+/15 = "Propagation"
+/16 = "Propagation"
+/17 = "Reflection"
+/18 = "Reflection"
+/19 = "Reflection"
+/20 = "Reflection"
+</item>
+
+<item domain10_stims>
+/1 = "Rainbows contain all colors of light."
+/2 = "Shadows contain all colors of light."
+/3 = "Black objects reflect all colors of light."
+/4 = "White light contains all colors of light."
+/5 = "Red objects reflect red light."
+/6 = "Red objects reflect blue light."
+/7 = "Red objects absorb red light."
+/8 = "Red objects absorb blue light."
+/9 = "Sounds can be loud or quiet."
+/10 = "Sounds can be dead or alive."
+/11 = "Sounds can be near or far."
+/12 = "Sounds can be direct or reflected."
+/13 = "Sound travels through air."
+/14 = "Sound travels through foam."
+/15 = "Sound travels through a vacuum."
+/16 = "Sound travels through metal."
+/17 = "Mirrors reflect light."
+/18 = "Foam reflects sound."
+/19 = "Prisms reflect light."
+/20 = "Mirrors reflect sound."
+</item>
+
+1 = true according to T1 (naive theory)
+0 = false according to T1 (naive theory)
+<item domain10_T1>
+/1 = "1"
+/2 = "0"
+/3 = "1"
+/4 = "0"
+/5 = "1"
+/6 = "0"
+/7 = "1"
+/8 = "0"
+/9 = "1"
+/10 = "0"
+/11 = "1"
+/12 = "0"
+/13 = "1"
+/14 = "0"
+/15 = "1"
+/16 = "0"
+/17 = "1"
+/18 = "0"
+/19 = "1"
+/20 = "0"
+</item>
+
+1 = true according to T2 (scientific theory)
+0 = false according to T2 (scientific theory)
+<item domain10_T2>
+/1 = "1"
+/2 = "0"
+/3 = "0"
+/4 = "1"
+/5 = "1"
+/6 = "0"
+/7 = "0"
+/8 = "1"
+/9 = "1"
+/10 = "0"
+/11 = "0"
+/12 = "1"
+/13 = "1"
+/14 = "0"
+/15 = "0"
+/16 = "1"
+/17 = "1"
+/18 = "0"
+/19 = "0"
+/20 = "1"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text header>
+/ items = ("Statement Verifications")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (80%, 8%)
+/ vjustify = center
+/ txbgcolor = blue
+/ txcolor = white
+/ position = (50%, 10%)
+</text>
+
+
+<item instructions>
+/1 = "In this task you are asked to evaluate the truthfulness of statements, such as 'A virus is a living organism'.
+
+The statements will come from 10 different knowledge domains and the task will take about 15 minutes.
+
+
+
+
+Press the Spacebar to learn about your first domain."
+/2 = "The next 20 statements come from the domain: 
+
+
+
+<%expressions.buttoninstruct1%>
+
+
+Respond as fast as you can.
+
+
+
+
+Press the Spacebar to start."
+</item>
+
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+
+<text true>
+/items = ("TRUE")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = green
+/ position = (15%, 5%)
+/ size = (20%, 5%)
+/ vjustify = center
+/ erase = false
+</text>
+
+<text false>
+/items = ("FALSE")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = red
+/ position = (85%, 5%)
+/ size = (20%, 5%)
+/ vjustify = center
+/ erase = false
+</text>
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/items = ("Get Ready:
+~n<%expressions.buttoninstruct2%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"Tap the left key ('E') if the statement is true.~nTap the the right key ('I') if the presented statement is false.";} else {"Press the left 'E' key if the presented statement is true.~nPress the right 'I' key if the statement is false.";}
+/buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"Place your index fingers over the left and right response buttons";} else {"Place your index fingers on the left 'E' and right 'I' key.";}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INCLUDE
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+values.domain, values.stimConcept, values.naiveCorrect, values.scientificCorrect, values.truthConsistency, 
+stimulusitem, response, values.responseCat, correct, latency)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.propCorrect, expressions.meanRT, expressions.SD,
+expressions.propCorrect_truthConsistent, expressions.meanRT_truthConsistent, expressions.SD_truthConsistent,
+expressions.propCorrect_truthInconsistent, expressions.meanRT_truthInconsistent, expressions.SD_truthInconsistent,
+expressions.RTDiff)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/ domain:				domain name tested
+/ stimConcept:			stimulus concept
+/ naiveCorrect:			1 = true by naive understanding; 0 = otherwise
+/ scientificCorrect:	1 = true by scientific understanding; 0 = otherwise
+/ response:				1 = true; 0 = false
+/ truthConsistency: 	1 = naive understanding and scientific understanding are consistent; 0 = otherwise
+
+<values>
+/ domain = 0
+/ stimConcept = 0
+/ naiveCorrect = 0
+/ scientificCorrect = 0
+/ responseCat = 0
+/ truthConsistency = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: correct = correct according to scientific theory
+
+/propCorrect:					overall proportion correct responses
+/meanRT:						overall mean latency (in ms) of correct responses
+/SD:							overall standard deviation (in ms) of latencies to correct responses
+
+/propCorrect_truthConsistent:	proportion correct responses of truth consistent statements 
+/meanRT_truthConsistent:		mean latency (in ms) of correct responses of truth consistent statements 
+/SD_truthConsistent:			standard deviation (in ms) of latencies to correct responses of truth consistent statements
+
+/propCorrect_truthInconsistent:	proportion correct responses of truth inconsistent statements 
+/meanRT_truthInconsistent:		mean latency (in ms) of correct responses of truth inconsistent statements 
+/SD_truthInconsistent:			standard deviation (in ms) of latencies to correct responses of truth inconsistent statements
+
+
+<expressions>
+/propCorrect = list.accuracy.mean
+/meanRT = list.latencies.mean
+/SD = list.latencies.standarddeviation
+
+/propCorrect_truthConsistent = list.accuracy_truthConsistent.mean
+/meanRT_truthConsistent = list.latencies_truthConsistent.mean
+/SD_truthConsistent = list.latencies_truthConsistent.standarddeviation
+
+/propCorrect_truthInconsistent = list.accuracy_truthInconsistent.mean
+/meanRT_truthInconsistent = list.latencies_truthInconsistent.mean
+/SD_truthInconsistent = list.latencies_truthInconsistent.standarddeviation
+
+/RTDiff = expressions.meanRT_truthInconsistent - expressions.meanRT_truthConsistent
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text testInstructions>
+/items = instructions
+/ select = 1
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (90%, 60%)
+/ vjustify = center
+/ hjustify = left
+</text>
+
+<text blockInstructions>
+/items = instructions
+/ select = 2
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (90%, 60%)
+/ vjustify = center
+/ hjustify = left
+</text>
+
+<text domain>
+/items = ("<%values.domain%>")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ position = (50%, 30%)
+/ size = (90%, 5%)
+/ vjustify = center
+/ hjustify = center
+/ txcolor = blue
+</text>
+
+
+Note: trial.domain presents the domain label at the start of each block
+<trial blockInstructions>
+/ stimulusframes = [1 = blockInstructions, domain, true, false]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+Note: trial.domain presents the domain label at the start of each block
+<trial intro>
+/ stimulusframes = [1 = header, testInstructions]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+*************************************
+General Helper Instruction Trials/Blocks
+*************************************
+
+This trial is used when participants are asked to place their fingers on specific response
+buttons. On the touchscreen, this trial presents the (inactive) response buttons to the participants.
+<trial getReady>
+/ stimulusframes = [1 = getReady]
+/ trialduration = 5000
+/ validresponse = (parameters.trueResponsekey, parameters.falseResponsekey)
+/ beginresponsetime = 5000
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text domain1_stim>
+/items = domain1_stims
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (90%, 40%)
+/ vjustify = center
+</text>
+
+<text domain2_stim>
+/items = domain2_stims
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (90%, 40%)
+/ vjustify = center
+</text>
+
+<text domain3_stim>
+/items = domain3_stims
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (90%, 40%)
+/ vjustify = center
+</text>
+
+<text domain4_stim>
+/items = domain4_stims
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (90%, 40%)
+/ vjustify = center
+</text>
+
+<text domain5_stim>
+/items = domain5_stims
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (90%, 40%)
+/ vjustify = center
+</text>
+
+<text domain6_stim>
+/items = domain6_stims
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (90%, 40%)
+/ vjustify = center
+</text>
+
+<text domain7_stim>
+/items = domain7_stims
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (90%, 40%)
+/ vjustify = center
+</text>
+
+<text domain8_stim>
+/items = domain8_stims
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (90%, 40%)
+/ vjustify = center
+</text>
+
+<text domain9_stim>
+/items = domain9_stims
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (90%, 40%)
+/ vjustify = center
+</text>
+
+<text domain10_stim>
+/items = domain10_stims
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (90%, 40%)
+/ vjustify = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+<list accuracy>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+<list accuracy_truthConsistent>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies_truthConsistent>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+<list accuracy_truthInconsistent>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies_truthInconsistent>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: trial.domain1
+- presents a randomly selected statement for domain 1 and waits for response 
+- evaluates the accuracy of the response: if the response equals the response under the scientific theory, the response is scored as 'correct'
+- evaluates truth consistency of the statement and stores accuracy/latency in corresponding summary lists
+<trial domain1>
+/ stimulusframes = [1 = domain1_stim, true, false]
+/ validresponse = (parameters.trueResponsekey, parameters.falseResponsekey)
+/ iscorrectresponse = [
+	values.stimConcept = item.domain1_concepts.item(text.domain1_stim.currentItemNumber);
+	values.naiveCorrect = item.domain1_T1.item(text.domain1_stim.currentItemNumber);
+	values.scientificCorrect = item.domain1_T2.item(text.domain1_stim.currentItemNumber);
+	if (trial.domain1.responseText == parameters.trueResponsekey){
+		values.responseCat = 1;
+	} else {
+		values.responseCat = 0;
+	}
+
+	return (values.responseCat == values.scientificCorrect);
+]
+/ ontrialend = [
+	if (values.naiveCorrect == values.scientificCorrect){
+		values.truthConsistency = 1;
+	} else {
+		values.truthConsistency = 0;
+	}
+	
+	list.accuracy.appendItem(trial.domain1.correct);	
+	if (values.truthConsistency == 1){
+		list.accuracy_truthConsistent.appendItem(trial.domain1.correct);		
+	} else {
+		list.accuracy_truthInconsistent.appendItem(trial.domain1.correct);
+	}		
+	if (trial.domain1.correct){
+		list.latencies.appendItem(trial.domain1.latency);
+		if (values.truthConsistency == 1){
+			list.latencies_truthConsistent.appendItem(trial.domain1.latency);		
+		} else {
+			list.latencies_truthInconsistent.appendItem(trial.domain1.latency);		
+		}
+	}	
+]
+</trial>
+
+<trial domain2>
+/ stimulusframes = [1 = domain2_stim, true, false]
+/ validresponse = (parameters.trueResponsekey, parameters.falseResponsekey)
+/ iscorrectresponse = [
+	values.stimConcept = item.domain2_concepts.item(text.domain2_stim.currentItemNumber);
+	values.naiveCorrect = item.domain2_T1.item(text.domain2_stim.currentItemNumber);
+	values.scientificCorrect = item.domain2_T2.item(text.domain2_stim.currentItemNumber);
+	if (trial.domain2.responseText == parameters.trueResponsekey){
+		values.responseCat = 1;
+	} else {
+		values.responseCat = 0;
+	}
+
+	return (values.responseCat == values.scientificCorrect);
+]
+/ ontrialend = [
+	if (values.naiveCorrect == values.scientificCorrect){
+		values.truthConsistency = 1;
+	} else {
+		values.truthConsistency = 0;
+	}
+	
+	list.accuracy.appendItem(trial.domain2.correct);	
+	if (values.truthConsistency == 1){
+		list.accuracy_truthConsistent.appendItem(trial.domain2.correct);		
+	} else {
+		list.accuracy_truthInconsistent.appendItem(trial.domain2.correct);
+	}		
+	if (trial.domain2.correct){
+		list.latencies.appendItem(trial.domain2.latency);
+		if (values.truthConsistency == 1){
+			list.latencies_truthConsistent.appendItem(trial.domain2.latency);		
+		} else {
+			list.latencies_truthInconsistent.appendItem(trial.domain2.latency);		
+		}
+	}	
+]
+</trial>
+
+<trial domain3>
+/ stimulusframes = [1 = domain3_stim, true, false]
+/ validresponse = (parameters.trueResponsekey, parameters.falseResponsekey)
+/ iscorrectresponse = [
+	values.stimConcept = item.domain3_concepts.item(text.domain3_stim.currentItemNumber);
+	values.naiveCorrect = item.domain3_T1.item(text.domain3_stim.currentItemNumber);
+	values.scientificCorrect = item.domain3_T2.item(text.domain3_stim.currentItemNumber);
+	if (trial.domain3.responseText == parameters.trueResponsekey){
+		values.responseCat = 1;
+	} else {
+		values.responseCat = 0;
+	}
+
+	return (values.responseCat == values.scientificCorrect);
+]
+/ ontrialend = [
+	if (values.naiveCorrect == values.scientificCorrect){
+		values.truthConsistency = 1;
+	} else {
+		values.truthConsistency = 0;
+	}
+	
+	list.accuracy.appendItem(trial.domain3.correct);	
+	if (values.truthConsistency == 1){
+		list.accuracy_truthConsistent.appendItem(trial.domain3.correct);		
+	} else {
+		list.accuracy_truthInconsistent.appendItem(trial.domain3.correct);
+	}		
+	if (trial.domain3.correct){
+		list.latencies.appendItem(trial.domain3.latency);
+		if (values.truthConsistency == 1){
+			list.latencies_truthConsistent.appendItem(trial.domain3.latency);		
+		} else {
+			list.latencies_truthInconsistent.appendItem(trial.domain3.latency);		
+		}
+	}
+]
+</trial>
+
+<trial domain4>
+/ stimulusframes = [1 = domain4_stim, true, false]
+/ validresponse = (parameters.trueResponsekey, parameters.falseResponsekey)
+/ iscorrectresponse = [
+	values.stimConcept = item.domain4_concepts.item(text.domain4_stim.currentItemNumber);
+	values.naiveCorrect = item.domain4_T1.item(text.domain4_stim.currentItemNumber);
+	values.scientificCorrect = item.domain4_T2.item(text.domain4_stim.currentItemNumber);
+	if (trial.domain4.responseText == parameters.trueResponsekey){
+		values.responseCat = 1;
+	} else {
+		values.responseCat = 0;
+	}
+
+	return (values.responseCat == values.scientificCorrect);
+]
+/ ontrialend = [
+	if (values.naiveCorrect == values.scientificCorrect){
+		values.truthConsistency = 1;
+	} else {
+		values.truthConsistency = 0;
+	}
+	
+	list.accuracy.appendItem(trial.domain4.correct);	
+	if (values.truthConsistency == 1){
+		list.accuracy_truthConsistent.appendItem(trial.domain4.correct);		
+	} else {
+		list.accuracy_truthInconsistent.appendItem(trial.domain4.correct);
+	}		
+	if (trial.domain4.correct){
+		list.latencies.appendItem(trial.domain4.latency);
+		if (values.truthConsistency == 1){
+			list.latencies_truthConsistent.appendItem(trial.domain4.latency);		
+		} else {
+			list.latencies_truthInconsistent.appendItem(trial.domain4.latency);		
+		}
+	}	
+]
+</trial>
+
+<trial domain5>
+/ stimulusframes = [1 = domain5_stim, true, false]
+/ validresponse = (parameters.trueResponsekey, parameters.falseResponsekey)
+/ iscorrectresponse = [
+	values.stimConcept = item.domain5_concepts.item(text.domain5_stim.currentItemNumber);
+	values.naiveCorrect = item.domain5_T1.item(text.domain5_stim.currentItemNumber);
+	values.scientificCorrect = item.domain5_T2.item(text.domain5_stim.currentItemNumber);
+	if (trial.domain5.responseText == parameters.trueResponsekey){
+		values.responseCat = 1;
+	} else {
+		values.responseCat = 0;
+	}
+
+	return (values.responseCat == values.scientificCorrect);
+]
+/ ontrialend = [
+	if (values.naiveCorrect == values.scientificCorrect){
+		values.truthConsistency = 1;
+	} else {
+		values.truthConsistency = 0;
+	}
+	
+	list.accuracy.appendItem(trial.domain5.correct);	
+	if (values.truthConsistency == 1){
+		list.accuracy_truthConsistent.appendItem(trial.domain5.correct);		
+	} else {
+		list.accuracy_truthInconsistent.appendItem(trial.domain5.correct);
+	}		
+	if (trial.domain5.correct){
+		list.latencies.appendItem(trial.domain5.latency);
+		if (values.truthConsistency == 1){
+			list.latencies_truthConsistent.appendItem(trial.domain5.latency);		
+		} else {
+			list.latencies_truthInconsistent.appendItem(trial.domain5.latency);		
+		}
+	}	
+]
+</trial>
+
+<trial domain6>
+/ stimulusframes = [1 = domain6_stim, true, false]
+/ validresponse = (parameters.trueResponsekey, parameters.falseResponsekey)
+/ iscorrectresponse = [
+	values.stimConcept = item.domain6_concepts.item(text.domain6_stim.currentItemNumber);
+	values.naiveCorrect = item.domain6_T1.item(text.domain6_stim.currentItemNumber);
+	values.scientificCorrect = item.domain6_T2.item(text.domain6_stim.currentItemNumber);
+	if (trial.domain6.responseText == parameters.trueResponsekey){
+		values.responseCat = 1;
+	} else {
+		values.responseCat = 0;
+	}
+
+	return (values.responseCat == values.scientificCorrect);
+]
+/ ontrialend = [
+	if (values.naiveCorrect == values.scientificCorrect){
+		values.truthConsistency = 1;
+	} else {
+		values.truthConsistency = 0;
+	}
+	
+	list.accuracy.appendItem(trial.domain6.correct);	
+	if (values.truthConsistency == 1){
+		list.accuracy_truthConsistent.appendItem(trial.domain6.correct);		
+	} else {
+		list.accuracy_truthInconsistent.appendItem(trial.domain6.correct);
+	}		
+	if (trial.domain6.correct){
+		list.latencies.appendItem(trial.domain6.latency);
+		if (values.truthConsistency == 1){
+			list.latencies_truthConsistent.appendItem(trial.domain6.latency);		
+		} else {
+			list.latencies_truthInconsistent.appendItem(trial.domain6.latency);		
+		}
+	}	
+]
+</trial>
+
+<trial domain7>
+/ stimulusframes = [1 = domain7_stim, true, false]
+/ validresponse = (parameters.trueResponsekey, parameters.falseResponsekey)
+/ iscorrectresponse = [
+	values.stimConcept = item.domain7_concepts.item(text.domain7_stim.currentItemNumber);
+	values.naiveCorrect = item.domain7_T1.item(text.domain7_stim.currentItemNumber);
+	values.scientificCorrect = item.domain7_T2.item(text.domain7_stim.currentItemNumber);
+	if (trial.domain7.responseText == parameters.trueResponsekey){
+		values.responseCat = 1;
+	} else {
+		values.responseCat = 0;
+	}
+
+	return (values.responseCat == values.scientificCorrect);
+]
+/ ontrialend = [
+	if (values.naiveCorrect == values.scientificCorrect){
+		values.truthConsistency = 1;
+	} else {
+		values.truthConsistency = 0;
+	}
+	
+	list.accuracy.appendItem(trial.domain7.correct);	
+	if (values.truthConsistency == 1){
+		list.accuracy_truthConsistent.appendItem(trial.domain7.correct);		
+	} else {
+		list.accuracy_truthInconsistent.appendItem(trial.domain7.correct);
+	}		
+	if (trial.domain7.correct){
+		list.latencies.appendItem(trial.domain7.latency);
+		if (values.truthConsistency == 1){
+			list.latencies_truthConsistent.appendItem(trial.domain7.latency);		
+		} else {
+			list.latencies_truthInconsistent.appendItem(trial.domain7.latency);		
+		}
+	}	
+]
+</trial>
+
+<trial domain8>
+/ stimulusframes = [1 = domain8_stim, true, false]
+/ validresponse = (parameters.trueResponsekey, parameters.falseResponsekey)
+/ iscorrectresponse = [
+	values.stimConcept = item.domain8_concepts.item(text.domain8_stim.currentItemNumber);
+	values.naiveCorrect = item.domain8_T1.item(text.domain8_stim.currentItemNumber);
+	values.scientificCorrect = item.domain8_T2.item(text.domain8_stim.currentItemNumber);
+	if (trial.domain8.responseText == parameters.trueResponsekey){
+		values.responseCat = 1;
+	} else {
+		values.responseCat = 0;
+	}
+
+	return (values.responseCat == values.scientificCorrect);
+]
+/ ontrialend = [
+	if (values.naiveCorrect == values.scientificCorrect){
+		values.truthConsistency = 1;
+	} else {
+		values.truthConsistency = 0;
+	}
+	
+	list.accuracy.appendItem(trial.domain8.correct);	
+	if (values.truthConsistency == 1){
+		list.accuracy_truthConsistent.appendItem(trial.domain8.correct);		
+	} else {
+		list.accuracy_truthInconsistent.appendItem(trial.domain8.correct);
+	}		
+	if (trial.domain8.correct){
+		list.latencies.appendItem(trial.domain8.latency);
+		if (values.truthConsistency == 1){
+			list.latencies_truthConsistent.appendItem(trial.domain8.latency);		
+		} else {
+			list.latencies_truthInconsistent.appendItem(trial.domain8.latency);		
+		}
+	}	
+]
+</trial>
+
+<trial domain9>
+/ stimulusframes = [1 = domain9_stim, true, false]
+/ validresponse = (parameters.trueResponsekey, parameters.falseResponsekey)
+/ iscorrectresponse = [
+	values.stimConcept = item.domain9_concepts.item(text.domain9_stim.currentItemNumber);
+	values.naiveCorrect = item.domain9_T1.item(text.domain9_stim.currentItemNumber);
+	values.scientificCorrect = item.domain9_T2.item(text.domain9_stim.currentItemNumber);
+	if (trial.domain9.responseText == parameters.trueResponsekey){
+		values.responseCat = 1;
+	} else {
+		values.responseCat = 0;
+	}
+
+	return (values.responseCat == values.scientificCorrect);
+]
+/ ontrialend = [
+	if (values.naiveCorrect == values.scientificCorrect){
+		values.truthConsistency = 1;
+	} else {
+		values.truthConsistency = 0;
+	}
+	
+	list.accuracy.appendItem(trial.domain9.correct);	
+	if (values.truthConsistency == 1){
+		list.accuracy_truthConsistent.appendItem(trial.domain9.correct);		
+	} else {
+		list.accuracy_truthInconsistent.appendItem(trial.domain9.correct);
+	}		
+	if (trial.domain9.correct){
+		list.latencies.appendItem(trial.domain9.latency);
+		if (values.truthConsistency == 1){
+			list.latencies_truthConsistent.appendItem(trial.domain9.latency);		
+		} else {
+			list.latencies_truthInconsistent.appendItem(trial.domain9.latency);		
+		}
+	}	
+]
+</trial>
+
+<trial domain10>
+/ stimulusframes = [1 = domain10_stim, true, false]
+/ validresponse = (parameters.trueResponsekey, parameters.falseResponsekey)
+/ iscorrectresponse = [
+	values.stimConcept = item.domain10_concepts.item(text.domain10_stim.currentItemNumber);
+	values.naiveCorrect = item.domain10_T1.item(text.domain10_stim.currentItemNumber);
+	values.scientificCorrect = item.domain10_T2.item(text.domain10_stim.currentItemNumber);
+	if (trial.domain10.responseText == parameters.trueResponsekey){
+		values.responseCat = 1;
+	} else {
+		values.responseCat = 0;
+	}
+
+	return (values.responseCat == values.scientificCorrect);
+]
+/ ontrialend = [
+	if (values.naiveCorrect == values.scientificCorrect){
+		values.truthConsistency = 1;
+	} else {
+		values.truthConsistency = 0;
+	}
+	
+	list.accuracy.appendItem(trial.domain10.correct);	
+	if (values.truthConsistency == 1){
+		list.accuracy_truthConsistent.appendItem(trial.domain10.correct);		
+	} else {
+		list.accuracy_truthInconsistent.appendItem(trial.domain10.correct);
+	}		
+	if (trial.domain10.correct){
+		list.latencies.appendItem(trial.domain10.latency);
+		if (values.truthConsistency == 1){
+			list.latencies_truthConsistent.appendItem(trial.domain10.latency);		
+		} else {
+			list.latencies_truthInconsistent.appendItem(trial.domain10.latency);		
+		}
+	}	
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block intro>
+/ trials = [1 = intro]
+</block>
+
+
+<block domain1>
+/ onblockbegin = [
+	values.domain = item.domain1.item(1);
+]
+/ trials = [
+	1 = blockInstructions; 
+	2 = getReady; 
+	3-22 = domain1;
+]
+</block>
+
+<block domain2>
+/ onblockbegin = [
+	values.domain = item.domain2.item(1);
+]
+/ trials = [
+	1 = blockInstructions; 
+	2 = getReady; 
+	3-22 = domain2;
+]
+</block>
+
+<block domain3>
+/ onblockbegin = [
+	values.domain = item.domain3.item(1);
+]
+/ trials = [
+	1 = blockInstructions; 
+	2 = getReady; 
+	3-22 = domain3;
+]
+</block>
+
+<block domain4>
+/ onblockbegin = [
+	values.domain = item.domain4.item(1);
+]
+/ trials = [
+	1 = blockInstructions; 
+	2 = getReady; 
+	3-22 = domain4;
+]
+</block>
+
+<block domain5>
+/ onblockbegin = [
+	values.domain = item.domain5.item(1);
+]
+/ trials = [
+	1 = blockInstructions; 
+	2 = getReady; 
+	3-22 = domain5;
+]
+</block>
+
+<block domain6>
+/ onblockbegin = [
+	values.domain = item.domain6.item(1);
+]
+/ trials = [
+	1 = blockInstructions; 
+	2 = getReady; 
+	3-22 = domain6;
+]
+</block>
+
+<block domain7>
+/ onblockbegin = [
+	values.domain = item.domain7.item(1);
+]
+/ trials = [
+	1 = blockInstructions; 
+	2 = getReady; 
+	3-22 = domain7;
+]
+</block>
+
+<block domain8>
+/ onblockbegin = [
+	values.domain = item.domain8.item(1);
+]
+/ trials = [
+	1 = blockInstructions; 
+	2 = getReady; 
+	3-22 = domain8;
+]
+</block>
+
+<block domain9>
+/ onblockbegin = [
+	values.domain = item.domain9.item(1);
+]
+/ trials = [
+	1 = blockInstructions; 
+	2 = getReady; 
+	3-22 = domain9;
+]
+</block>
+
+<block domain10>
+/ onblockbegin = [
+	values.domain = item.domain10.item(1);
+]
+/ trials = [
+	1 = blockInstructions; 
+	2 = getReady; 
+	3-22 = domain10;
+]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: by default, this set-up runs 10 blocks in randomized order.
+change /blocks = 
+to change the number of blocks or the order of blocks that should be run
+and than adapt the blocknumber of the "finish" block accordingly
+
+<expt svt>
+/ blocks = [
+	1 = intro;
+	2-11 = noreplace(domain1, domain2, domain3, domain4, domain5, domain6, domain7, domain8, domain9, domain10);
+	12 = finish;
+]
+</expt>
+
+<monkey>
+/ latencydistribution = normal(4000, 500)
+</monkey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

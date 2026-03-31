@@ -1,0 +1,426 @@
+﻿<usermanual>							
+___________________________________________________________________________________________________________________	
+
+									Cognitive Flexibility Inventory (CFI)
+___________________________________________________________________________________________________________________	
+							
+							
+Script Author: David Nitz (dave@millisecond.com) for Millisecond Software, LLC
+Date: 05-05-2020
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © this implementation 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of the short form of the Cognitive Flexibility Inventory (CFI) 
+as described in:
+
+Dennis J. P., Vander Wal J. S. (2010). The cognitive flexibility inventory: instrument development and estimates 
+of reliability and validity. Cognitive Therapy Research, 34, 241–253.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+											  
+The cognitive flexibility inventory (CFI) was developed to be a brief self-report measure of the type of cognitive 
+flexibility necessary  for individuals to successfully challenge and replace maladaptive thoughts with more 
+balanced and adaptive thinking.
+
+Participants are asked to answer 20 7-point Likert-type questions with the following anchors:
+"Strongly disagree", "Disagree", "Somewhat disagree", "Neutral", "Somewhat agree", "Agree" and "Strongly agree".
+
+Scoring: 
+- Add up the scores for the items for the Alternatives scale (items 1, 3, 5, 6, 8, 10, 12, 13, 14, 16, 18, 19, and 20) 
+- Add up the scores for the Control scale (items 2, 4, 7, 9, 11, 15, and 17). 
+
+Items 2, 4, 7, 9, 11, & 17 are reverse-scored. 
+Higher scores on both scales are indicative of greater flexibility.
+
+- A total score for the CFI is calculated by summing up all items.
+
+There are currently no established cutoff scores for high, moderate, and low flexibility for the CFI total score or the subscale scores
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'cfi_survey*.iqdat' 
+
+date, time, group, subject:		date and time script was run with the current group/subjectnumber 
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 1 (strongly disagree) - 7 (strongly agree)
+									R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'cfi_summary*.iqdat'
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)
+									
+cfi_alternatives			sum of responses for the 13 items comprising the Alternatives sub-scale
+cfi_control					sum of responses for the 7 items comprising the Control sub-scale
+cfi_total					sum of responses to all 20 7-point questions
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+can be edited under section Editable Parameters.
+The original instructions are:
+"Please use the scale below to indicate the extent to which you agree or disagree with the following statements."
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<parameters>
+/pageinstructions = "Please use the scale below to indicate the extent to which you agree or disagree with the following statements."
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, expressions.cfi_alternatives, expressions.cfi_control, expressions.cfi_total)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/ cfi_alternatives = sum of responses to the 13 7-point likert questions comprising the Alternatives sub-scale
+/ cfi_control = sum of responses to the 7 7-point likert questions comprising the Control sub-scale
+/ cfi_total = sum of responses to all 20 7-point likert questions
+
+<expressions>
+/ cfi_alternatives = (radiobuttons.q1.response + radiobuttons.q3.response + radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q8.response 
++ radiobuttons.q10.response + radiobuttons.q12.response + radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q16.response 
++ radiobuttons.q18.response + radiobuttons.q19.response + radiobuttons.q20.response)
+
+/ cfi_control = (radiobuttons.q2R.response + radiobuttons.q4R.response + radiobuttons.q7R.response + radiobuttons.q9R.response + radiobuttons.q11R.response 
++ radiobuttons.q15.response + radiobuttons.q17R.response)
+
+/ cfi_total = (radiobuttons.q1.response + radiobuttons.q2R.response + radiobuttons.q3.response + radiobuttons.q4R.response + radiobuttons.q5.response 
++ radiobuttons.q6.response + radiobuttons.q7R.response + radiobuttons.q8.response + radiobuttons.q9R.response + radiobuttons.q10.response 
++ radiobuttons.q11R.response + radiobuttons.q12.response + radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q15.response 
++ radiobuttons.q16.response + radiobuttons.q17R.response + radiobuttons.q18.response + radiobuttons.q19.response + radiobuttons.q20.response)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/ caption = "I am good at ~"sizing up~" situations."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+// reverse scored
+<radiobuttons q2R>
+/ caption = "I have a hard time making decisions when faced with difficult situations."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q3>
+/ caption = "I consider multiple options before making a decision."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+// reverse scored
+<radiobuttons q4R>
+/ caption = "When I encounter difficult situations, I feel like I am losing control."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q5>
+/ caption = "I like to look at difficult situations from many different angles."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q6>
+/ caption = "I seek additional information not immediately available before attributing causes to behavior."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+// reverse scored
+<radiobuttons q7R>
+/ caption = "When encountering difficult situations, I become so stressed that I can not think of a way to resolve the situation."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q8>
+/ caption = "I try to think about things from another person's point of view."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+// reverse scored
+<radiobuttons q9R>
+/ caption = "I find it troublesome that there are so many different ways to deal with difficult situations."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q10>
+/ caption = "I am good at putting myself in others' shoes."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+// reverse scored
+<radiobuttons q11R>
+/ caption = "When I encounter difficult situations, I just don't know what to do."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q12>
+/ caption = "It is important to look at difficult situations from many angles."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q13>
+/ caption = "When in difficult situations, I consider multiple options before deciding how to behave."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q14>
+/ caption = "I often look at a situation from different viewpoints."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q15>
+/ caption = "I am capable of overcoming the difficulties in life that I face."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q16>
+/ caption = "I consider all the available facts and information when attributing causes to behavior."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+// reverse scored
+<radiobuttons q17R>
+/ caption = "I feel I have no power to change things in difficult situations."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q18>
+/ caption = "When I encounter difficult situations, I stop and try to think of several ways to resolve it."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q19>
+/ caption = "I can think of more than one way to resolve a difficult situation I'm confronted with."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q20>
+/ caption = "I consider multiple options before responding to difficult situations."
+/ options = ("1~nStrongly~ndisagree", "2~nDisagree", "3~nSomewhat~ndisagree","4~nNeutral", "5~nSomewhat~nagree", "6~nAgree", "7~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+<surveypage cfi1>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q1; 2=q2R; 3=q3]
+</surveypage>
+
+<surveypage cfi2>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q4R; 2=q5; 3=q6]
+</surveypage>
+
+<surveypage cfi3>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q7R; 2=q8; 3=q9R]
+</surveypage>
+
+<surveypage cfi4>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q10; 2=q11R; 3=q12]
+</surveypage>
+
+<surveypage cfi5>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q13; 2=q14; 3=q15]
+</surveypage>
+
+<surveypage cfi6>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q16; 2=q17R; 3=q18]
+</surveypage>
+
+<surveypage cfi7>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q19; 2=q20]
+</surveypage>
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to retain a digital copy of the filled in questionnaire pages, set /screencapture = true
+(only works for Inquisit Lab)
+<survey cfi>
+/ pages = [
+	1=cfi1; 
+	2=cfi2; 
+	3=cfi3;
+	4=cfi4;
+	5=cfi5;
+	6=cfi6;
+	7=cfi7;
+	]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = true
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Finish - Thank you!"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

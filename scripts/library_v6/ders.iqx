@@ -1,0 +1,678 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Difficulties in Emotion Regulation Scale (DERS)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 07-25-2017
+last updated:  06-06-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 06-06-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized version of the Difficulties in Emotion Regulation Scale (DERS) as described in:
+
+Gratz, K. L. & Roemer, L. (2004). Multidimensional assessment of emotion regulation and dysregulation:
+Development, factor structure, and initial validation of the Difficulties in Emotion Regulation Scale.
+Journal of Psychopathology and Behavioral Assessment, 26, 41-54.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+36 5-point Likert questions loading on 6 subscales
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'ders.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									1 = almost never
+									5 = almost always
+									Note: R=reversed scored questions using scale 5, 4, 3, 2, 1
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'DERS_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+TOTAL:								sum of all 6 subscale scores
+NONACCEPT:							Nonacceptance of emotional responses (NONACCEPT): 11, 12, 21, 23, 25, 29
+GOALS:								Difficulty engaging in Goal-directed behavior (GOALS): 13, 18, 20R, 26, 33
+IMPULSE:							Impulse control difficulties (IMPULSE): 3, 14, 19, 24R, 27, 32
+AWARENESS:							Lack of emotional awareness (AWARENESS): 2R, 6R, 8R, 10R, 17R, 34R
+STRATEGIES:							Limited access to emotion regulation strategies (STRATEGIES): 15, 16, 22R, 28, 30, 31, 35, 36
+CLARITY:							Lack of emotional clarity (CLARITY): 1R, 4, 5, 7R, 9
+**”R” indicates reverse scored item
+
++ individual responses to the 36 questions
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+Slightly adapted for the computer - can be edited under section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear on every surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "Please indicate how often the following statements apply to you by selecting the appropriate number from the scale below each item.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+
+<page end>
+Thank you!
+</page>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.TOTAL, expressions.NONACCEPT, expressions.GOALS, expressions.IMPULSE, expressions.AWARENESS,
+expressions.STRATEGIES, expressions.CLARITY,
+
+//individual responses
+radiobuttons.q1R.response,
+radiobuttons.q2R.response,
+radiobuttons.q3.response,
+radiobuttons.q4.response,
+radiobuttons.q5.response,
+radiobuttons.q6R.response,
+radiobuttons.q7R.response,
+radiobuttons.q8R.response,
+radiobuttons.q9.response,
+radiobuttons.q10R.response,
+radiobuttons.q11.response,
+radiobuttons.q12.response,
+radiobuttons.q13.response,
+radiobuttons.q14.response,
+radiobuttons.q15.response,
+radiobuttons.q16.response,
+radiobuttons.q17R.response,
+radiobuttons.q18.response,
+radiobuttons.q19.response,
+radiobuttons.q20R.response,
+radiobuttons.q21.response,
+radiobuttons.q22R.response,
+radiobuttons.q23.response,
+radiobuttons.q24R.response,
+radiobuttons.q25.response,
+radiobuttons.q26.response,
+radiobuttons.q27.response,
+radiobuttons.q28.response,
+radiobuttons.q29.response,
+radiobuttons.q30.response,
+radiobuttons.q31.response,
+radiobuttons.q32.response,
+radiobuttons.q33.response,
+radiobuttons.q34R.response,
+radiobuttons.q35.response,
+radiobuttons.q36.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+SUBSCALE SCORING**: The measure yields a total score (SUM) as well as scores on six sub-scales:
+1. Nonacceptance of emotional responses (NONACCEPT): 11, 12, 21, 23, 25, 29
+2. Difficulty engaging in Goal-directed behavior (GOALS): 13, 18, 20R, 26, 33
+3. Impulse control difficulties (IMPULSE): 3, 14, 19, 24R, 27, 32
+4. Lack of emotional awareness (AWARENESS): 2R, 6R, 8R, 10R, 17R, 34R
+5. Limited access to emotion regulation strategies (STRATEGIES): 15, 16, 22R, 28, 30, 31, 35, 36
+6. Lack of emotional clarity (CLARITY): 1R, 4, 5, 7R, 9
+Total score: sum of all subscales
+**”R” indicates reverse scored item
+
+<expressions>
+/NONACCEPT = radiobuttons.q11.response + radiobuttons.q12.response + radiobuttons.q21.response + radiobuttons.q23.response +
+radiobuttons.q25.response + radiobuttons.q29.response
+/GOALS = radiobuttons.q13.response + radiobuttons.q18.response + radiobuttons.q20R.response + 
+radiobuttons.q26.response + radiobuttons.q33.response
+/IMPULSE = radiobuttons.q3.response + radiobuttons.q14.response + radiobuttons.q19.response +
+radiobuttons.q24R.response + radiobuttons.q27.response + radiobuttons.q32.response
+/AWARENESS = radiobuttons.q2R.response + radiobuttons.q6R.response + radiobuttons.q8R.response +
+radiobuttons.q10R.response + radiobuttons.q17R.response + radiobuttons.q34R.response
+/STRATEGIES = radiobuttons.q15.response + radiobuttons.q16.response + radiobuttons.q22R.response +
+radiobuttons.q28.response + radiobuttons.q30.response + radiobuttons.q31.response +
+radiobuttons.q35.response + radiobuttons.q36.response
+/CLARITY = radiobuttons.q1R.response + radiobuttons.q4.response + radiobuttons.q5.response + 
+radiobuttons.q7R.response + radiobuttons.q9.response
+/TOTAL = expressions.NONACCEPT + expressions.GOALS + expressions.IMPULSE + expressions.AWARENESS +
+expressions.STRATEGIES + expressions.CLARITY
+</expressions>
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1R>
+/caption = "I am clear about my feelings."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2R>
+/caption = "I pay attention to how I feel."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "I experience my emotions as overwhelming and out of control."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "I have no idea how I am feeling."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "I have difficulty making sense out of my feelings."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6R>
+/caption = "I am attentive to my feelings."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7R>
+/caption = "I know exactly how I am feeling."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8R>
+/caption = "I care about what I am feeling."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "I am confused about how I feel."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10R>
+/caption = "When I’m upset, I acknowledge my emotions."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q11>
+/caption = "When I’m upset, I become angry with myself for feeling that way."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "When I’m upset, I become embarrassed for feeling that way."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "When I’m upset, I have difficulty getting work done."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "When I’m upset, I become out of control."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "When I’m upset, I believe that I will remain that way for a long time."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "When I’m upset, I believe that I will end up feeling very depressed."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17R>
+/caption = "When I’m upset, I believe that my feelings are valid and important."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "When I’m upset, I have difficulty focusing on other things."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "When I’m upset, I feel out of control."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20R>
+/caption = "When I’m upset, I can still get things done."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21>
+/caption = "When I’m upset, I feel ashamed at myself for feeling that way."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22R>
+/caption = "When I’m upset, I know that I can find a way to eventually feel better."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23>
+/caption = "When I’m upset, I feel like I am weak."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q24R>
+/caption = "When I’m upset, I feel like I can remain in control of my behaviors."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q25>
+/caption = "When I’m upset, I feel guilty for feeling that way."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q26>
+/caption = "When I’m upset, I have difficulty concentrating."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q27>
+/caption = "When I’m upset, I have difficulty controlling my behaviors."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q28>
+/caption = "When I’m upset, I believe there is nothing I can do to make myself feel better."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q29>
+/caption = "When I’m upset, I become irritated at myself for feeling that way."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q30>
+/caption = "When I’m upset, I start to feel very bad about myself."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q31>
+/caption = "When I’m upset, I believe that wallowing in it is all I can do."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q32>
+/caption = "When I’m upset, I lose control over my behavior."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q33>
+/caption = "When I’m upset, I have difficulty thinking about anything else."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q34R>
+/caption = "When I’m upset I take time to figure out what I’m really feeling."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q35>
+/caption = "When I’m upset, it takes me a long time to feel better."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q36>
+/caption = "When I’m upset, my emotions feel overwhelming."
+/ options = ("1~nalmost never~n(0-10%)", "2~nsometimes~n(11-35%)", 
+"3~nabout half the time~n(36-65%)", "4~nmost of the time~n(66-90%)", "5~nalmost always~n(91-100%)")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage DERS1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1R, q2R, q3]
+</surveypage>
+
+<surveypage DERS2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4, q5, q6R]
+</surveypage>
+
+<surveypage DERS3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7R, q8R, q9]
+</surveypage>
+
+<surveypage DERS4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10R, q11, q12]
+</surveypage>
+
+<surveypage DERS5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage DERS6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q16, q17R, q18]
+</surveypage>
+
+<surveypage DERS7>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q19, q20R, q21]
+</surveypage>
+
+<surveypage DERS8>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q22R, q23, q24R]
+</surveypage>
+
+<surveypage DERS9>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q25, q26, q27]
+</surveypage>
+
+<surveypage DERS10>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q28, q29, q30]
+</surveypage>
+
+<surveypage DERS11>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q31, q32, q33]
+</surveypage>
+
+<surveypage DERS12>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q34R, q35, q36]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey DERS>
+/pages = [
+	1 = DERS1;
+	2 = DERS2;
+	3 = DERS3;
+	4 = DERS4;
+	5 = DERS5;
+	6 = DERS6;
+	7 = DERS7;
+	8 = DERS8;
+	9 = DERS9;
+	10 = DERS10;
+	11 = DERS11;
+	12 = DERS12;
+]
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = true
+/screencapture = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

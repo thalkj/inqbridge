@@ -1,0 +1,333 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									*Social Media Disorder Scale (SMD)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-02-2021
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the 9-item Social Media Disorder Scale by Van Den Eijnden et al (2016).
+
+Reference:
+
+Van Den Eijnden, R.J.J.M., Lemmens, J.S., & Valkenburg, P.M. (2016).
+The Social Media Disorder Scale, Computers in Human Behavior, 61, 478-487.
+
+https://doi.org/10.1016/j.chb.2016.03.038.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+The scale consists of 9 items, one for each of the following 9 problem areas:
+
+Preoccupation: … regularly found that you can't think of anything else but the moment that you will be able to use social media again?
+Tolerance: … regularly felt dissatisfied because you wanted to spend more time on social media?
+Withdrawal: … often felt bad when you could not use social media?
+Persistence: … tried to spend less time on social media, but failed?
+Displacement: … regularly neglected other activities (e.g. hobbies, sport) because you wanted to use social media?
+Problem: … regularly had arguments with others because of your social media use?
+Deception: … regularly lied to your parents or friends about the amount of time you spend on social media?
+Escape: … often used social media to escape from negative feelings?
+Conflict: … had serious conflict with your parents, brother(s) or sister(s) because of your social media use?
+
+(Note: these are the 9 areas assessed to diagnose 'Internet Gaming Disorder' according to the DSM-V.
+Van Den Eijnden et al (2016) argue that the same problem areas should be assessed for the related Social Media Disorder
+as they can both be considered forms of 'Internet addictions'.)
+
+
+Each question is answered on a yes/no scale.
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes < 1 min to complete.
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'smd.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale: yes (1) - no (0)
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'smd_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+smd_totalscore:					sums up the responses to the 9 items (Range: 0-9)
+								A score of 5 or higher is seen as indicative of fulfilling
+								a formal diagnosis of Social Media Disorder (Van Den Eijnden et al (2016, p.479))
+
+
++ responses to the individual 9 items
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please answer the questions by thinking of your experiences with using social media (e.g., WhatsApp, SnapChat, Facebook, Twitter, Instagram, Google+, Pinterest, or forums and weblogs) in the <u>past year</u>. Answer the questions as honestly as possible.<br>"
+
+/presentFeedback = true 		//true = participants get feedback regarding their score
+								//false = no feedback is provided
+</parameters>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.smd_totalscore,
+radiobuttons.q1.response,
+radiobuttons.q2.response,
+radiobuttons.q3.response,
+radiobuttons.q4.response, 
+radiobuttons.q5.response,
+radiobuttons.q6.response,
+radiobuttons.q7.response, 
+radiobuttons.q8.response, 
+radiobuttons.q9.response
+)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES/EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/smd_totalscore = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response +
+radiobuttons.q4.response + radiobuttons.q5.response + radiobuttons.q6.response +
+radiobuttons.q7.response + radiobuttons.q8.response + radiobuttons.q9.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. ...regularly found that you can't think of anything else but the moment that you will be able to use social media again?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. ...regularly felt dissatisfied because you wanted to spend more time on social media?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. ...often felt bad when you could not use social media?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. ...tried to spend less time on social media, but failed?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. ...regularly neglected other activities (e.g. hobbies, sport) because you wanted to use social media?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. ...regularly had arguments with others because of your social media use?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. ...regularly lied to your parents or friends about the amount of time you spend on social media?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. ...often used social media to escape from negative feelings?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. ...had serious conflict with your parents, brother(s) or sister(s) because of your social media use?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<caption end>
+/ caption = "- END OF QUESTIONNAIRE -"
+/ position = (45%, 93%)
+/ fontstyle = ("Arial", 2%, false, true, false, false, 5, 1)
+/ txcolor = gray
+</caption>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage smd_1>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "During the <u>past year</u>, have you ..."
+/ questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage smd_2>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "During the <u>past year</u>, have you ..."
+/ questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage smd_3>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "During the <u>past year</u>, have you ..."
+/ questions = [1 = q7, q8, q9]
+/ nextlabel = "DONE"
+</surveypage>
+
+<surveypage smd_feedback>
+/skip = [
+	!parameters.presentFeedback
+]
+/ caption ="Your total Social Media Disorder Scale is <%expressions.smd_totalscore%> out of 9.<br><br>
+A score of 5 or higher might be indicative of Social Media Disorder.<br>"
+/ questions = [1 = end]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ showbackbutton = false
+</surveypage>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey smd>
+/pages = [
+	1 = smd_1;
+	2 = smd_2;
+	3 = smd_3;
+	4 = smd_feedback;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Submit"
+</survey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

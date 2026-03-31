@@ -1,0 +1,1217 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+										BEHAVIOR ADAPTION TASK
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 10-22-2013
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Behavior Adaptation Task (BAT), a paradigm to study behavior adaption using a
+a motor inhibition Go-NoGo task, as described in:
+
+Hester, R, Simões-Franklin, C., & Garavan, H. (2007). Post-error behavior in active cocaine users: poor awareness 
+of errors in the presence of intact performance adjustments. Neuropsychopharmacology, 32, 1974–1984
+
+Millisecond Software thanks Dr. Hester et al for generously providing assistance with script development/clarifications!
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants are presented a steady paced (1hz) stream of X and Ys (one letter at the time) in the middle of the screen.
+They are instructed to make a button response for each of the letters as long as the letters are alternating 
+(switch from X to Y or from Y to X). Trials with alternating letters are the GO trials. 
+If a letter was repeated (the alternation order interrupted), participants were instructed to withhold the response.
+These trials are the NOGO trials. 
+
+Responses to Go trials in a condition in which all NOGO trials are followed by GO trials (SL = single lure condition) 
+are compared to responses to GO trials in a condition in which NOGO trials can also be followed by another NOGO trial 
+(DL = double lure condition). Behavior Adaptation is thought to occur if there is a slowing down 
+of responses to GO trials following single (correctly suppressed) lure NOGO trials in the DL condition 
+(when another NOGO trial is possible to follow)  compared to the SL condition (when another NOGO trial is impossible).
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 15 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'behavioradaptiontask_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group, 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block.
+																														
+
+blocktype:						"SL": block that only runs single NoGo trials (not followed by other NoGo trials)
+								"DL": block that runs a variety of single and double NoGo trials
+
+trialtype:						"go" vs. "nogo"
+stimulus:						the presented target 
+
+response:						the participant's response (scancode): 
+									57 = spacebar; 
+									0 = no response
+									
+correct:						the correctness of the response (1 = correct; 0 = otherwise)
+
+RT: 							the latency of the response in ms (if no response values.rt = ""); measured from onset of target
+
+responsetype:					"NoGo Success" - successful suppression of response to NoGo trial
+								"NoGo Failure" - failed suppression of response to NoGo trials
+								"Go Anticipatory" - possible anticipatory response to Go trials (latency < parameters.anticipatoryresponse)
+								"Go Success" - correct response to Go trials with latency >= parameters.anticipatoryresponse
+								"Go Omission" - omission of response to Go trials
+								(Note: trialtype distinction added by Millisecond Software)
+
+count_go_SL:					counts Go trials across SL Block (regardless of whether they follow a NoGo trial or not)
+count_nogo_SL:					counts NoGo trials across SL Block
+count_go_DL:					counts Go trials across DL Block (regardless of whether they follow a NoGo trial or not)
+count_nogo_DL:					counts NoGo trials across DL Block
+count_anticipatory_SL:			counts anticipatory responses for Go trials across SL Block
+count_anticipatory_DL:			counts anticipatory responses for Go trials across DL Block
+count_failedsuppressions_SL:	counts failed suppressions across SL Block							
+count_failedsuppressions_DL:	counts failed suppressions across DL Block
+count_omissions_SL:				counts omissions in across SL Block
+count_omissions_DL:				counts omissions across DL Block
+
+sumrt_go_slsl:					sum up correct latencies of GO trials that come after a single correct NOGO trial in the SL condition
+count_go_slsl:					count correct GO trials that come after a single correct NOGO trial in the SL condition
+sumrt_go_sldl:					count correct GO trials that come after a single correct NOGO trial in the DL condition
+count_go_sldl:					sum up correct latencies of GO trials that come after a single correct NOGO trial in the DL condition
+
+
+(2) Summary data file: 'behavioradaptiontask_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+SL = block that runs only single lure NoGo trials (not followed by another Nogo trial)
+DL = block that runs a variety of Nogo trials (some that are followed by another Nogo trial and some that are not)
+
+for SL and DL blocks separately:
+percent_failedsuppression:     		percent of failed suppressions (= responses to Nogo trials)
+percent_anticipatory:				percent of anticipatory responses to Go trials (trials that have latencies < parameters.anticipatoryresponse)
+percent_omissions:             		percent omissions (= no responses to Go trials) 
+
+meanrt_go_slDL:						mean latency (in ms) of correct GO trials after single correct (aka suppressed) NOGO trials (single lure) in the DL condition
+meanrt_go_slSL:						mean latency (in ms) of correct GO trials after single correct (aka suppressed) NOGO trials (single lure) in the SL condition
+
+RT_Diffscore:						the difference score between the two
+									=> positive RT_Diffscore: slowing down in Go trials after single lures in DL condition
+									(when another lure is possible) compared to Go trials after single lures in SL condition (when no other lure is possible)
+																	
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+* 2 Conditions: SL (single lure NOGO trials) vs. DL (mix of double lure and single lure NOGO trials) - tested within participant in a blocked design
+* 1 experimental block per condition (tested in a blocked design; order of conditions is counterbalanced by assigned groupnumber)
+	Note: number of blocks run can be edited under section EDITABLE PARAMETER (Note: Hester et al ran 3 blocks per condition)
+* 314 trials per block
+SL: 1 Start GO trial, 153 GO trials (that follow GO trials), 80 single NOGO trials (follow GO trials), 80 GO trials that follow NOGO trials = 314 trials
+		=> order randomized
+DL: 1 Start Go trial, 171 GO trials (that follow GO trials), 44 single NOGO trials (follow GO trials and are followed by a GO trial), 
+	44 GO trials (follow single NOGO trials),  18 double NOGO trials (followed by another NOGO trial), 
+	18 NOGO trials (follow a NOGO trial and are followed by a GO trial) and 18 GO trials (follow the double NOGO trials) = 314 trials
+		=> order randomized
+* 2 optional practice blocks: practice_SL - 25 trials; practice_DL - 29 trials (practice blocks added by Millisecond Software; not original)
+
+
+Trial Sequence:
+{target (x or y) for 800ms -> fixation cross for 200ms}	-> {target.....
+Responses to a target are taken until the time the next target is presented.
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+not original, can be edited under EDITABLE CODE -> Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/number_SL_blocks:						the number of consecutive SL blocks to run (default: 1)
+/number_DL_blocks:						the number of consecutive DL blocks to run (default: 1)
+											Notes: 
+											1. Hester et al ran 3 blocks per condition
+											2. Each block takes appr. 6 minutes to run
+											
+											
+/fontsize_target:						fontsize of the targets in screen height percentages (default: 10%)
+/fontsize_fixation:						fontsize of the fixation mark in screen height percentages (default: 3%)
+
+/stimulusduration:						presentation duration of the targets in ms (default: 800ms)
+/fixationduration:						presentation duration of the fixation stimulus in ms (default: 200ms)
+
+/anticipatoryresponse:					latencies in ms in Go trials faster than this value (default: 100ms) are coded as anticipatory responses
+										in this script
+										
+/practice:								true = practice blocks are skipped
+										false = practice block are run
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/number_SL_blocks = 1
+/number_DL_blocks = 1
+
+/fontsize_target = 10%
+/fontsize_fixation = 3%
+
+/stimulusduration = 800
+/fixationduration = 200
+/anticipatoryresponse = 100
+
+/skippractice = false 
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+<item stimuli>
+/1 = "X"
+/2 = "Y"
+</item>
+
+<item fixation>
+/1 = "+"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+<item instructions>
+/1 = "In this task we will show you a stream of Xs and Ys, one letter at a time in the middle of the screen at a steady pace. Each letter is briefly followed by a fixation cross.
+
+Your task is to press the <SPACEBAR> whenever the letter you are seeing is different from the one preceding it.
+
+Press the <SPACEBAR> for a demonstration.
+
+
+
+
+
+
+
+
+
+
+
+
+"
+/2 = "Let's practice this task.
+During practice you will receive error feedback each time you respond incorrectly. 
+
+IMPORTANT: In this practice session, a letter can only be repeated ONCE before it will change again (e.g. X X Y). Therefore, in this session, once a letter has repeated the next letter has to be different again.
+
+REMEMBER: if the letter is different than the one before, press the <SPACEBAR> as fast as possible. Otherwise, just wait for the next letter. The letter presentation will be faster than during the demo. The first letter requires a response.
+
+Press the <SPACEBAR> to start practice.
+"
+/3 = "This is a second short practice session.
+
+IMPORTANT: Unlike in the previous practice session, in this practice session, a letter can be repeated ONCE or TWICE before it will change again (e.g. X X Y or X X X Y). 
+
+REMEMBER: if the letter is different than the one before, press the <SPACEBAR> as fast as possible. Otherwise, just wait for the next letter. The letter presentation will be faster than during the demo. The first letter requires a response.
+
+
+Press the <SPACEBAR> to start this practice session."
+/4 = "Practice is over and the actual task is about to begin. There will be no more error feedback.
+
+The actual task consists of two blocks. Pay close attention to the instructions given before each block.
+
+REMEMBER: if the letter is different than the one before, press the <SPACEBAR> as fast as possible. Otherwise, just wait for the next letter. The letter presentation will be faster than during the demo.
+
+Press the <SPACEBAR> to start."
+/5 = "Start of a new round.
+
+IMPORTANT: In this round, a letter can only be repeated ONCE before it will change again (e.g. X X Y).
+
+Press the <SPACEBAR> to start."
+/6 = "Start of a new round.
+
+IMPORTANT: In this round, a letter can be repeated ONCE or TWICE before it will change again (e.g. X X Y or X X X Y).
+
+Press the <SPACEBAR> to start."
+</item>
+
+<text demoRespondAlert>
+/ items = ("Respond (<SPACE>): different letter!")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 60%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ txcolor = red
+</text>
+
+<text demoWaitAlert>
+/ items = ("Wait: same letter")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 60%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ txcolor = blue
+</text>
+
+<text errorfeedback>
+/items = ("Error")
+/ fontstyle = ("Arial", 8%, false, false, false, false, 5, 1)
+/ txcolor = red
+/position = (50%, 80%)
+</text>
+
+<text correctfeedback>
+/items = ("Correct!")
+/ fontstyle = ("Arial", 8%, false, false, false, false, 5, 1)
+/ txcolor = green
+/position = (50%, 80%)
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+</text>
+
+<text exit>
+/ items = ("<press SPACE to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+</text>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+values.blocktype values.trialtype, 
+values.stimulus, response, correct, values.RT, values.responsetype, 
+
+values.count_go_SL, values.count_nogo_SL, values.count_go_DL, values.count_nogo_DL,
+values.count_anticipatory_SL, values.count_anticipatory_DL,
+values.count_failedsuppressions_SL, values.count_failedsuppressions_DL,
+values.count_omissions_SL, values.count_omissions_DL,
+values.sumrt_go_slsl, values.count_go_slsl, values.sumrt_go_sldl, values.count_go_sldl)
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.percent_failedsuppression_sl, expressions.percent_failedsuppression_dl,
+expressions.percent_anticipatory_sl, expressions.percent_anticipatory_dl,
+expressions.percent_omissions_sl, expressions.percent_omissions_dl,
+expressions.meanrt_go_slDL, expressions.meanrt_go_slSL, expressions.RT_Diffscore)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/blockorder:									"SL-DL"; "DL-SL"
+/blocktype:										"SL": block that only runs single NoGo trials (not followed by other NoGo trials)
+												"DL": block that runs a variety of single and double NoGo trials
+
+/trialtype:										"go" vs. "nogo"
+
+/responsetype:									"NoGo Success" - successful suppression of response to NoGo trial
+												"NoGo Failure" - failed suppression of response to NoGo trials
+												"Go Anticipatory" - possible anticipatory response to Go trials (latency < parameters.anticipatoryresponse)
+												"Go Success" - correct response to Go trials with latency >= parameters.anticipatoryresponse
+												"Go Omission" - omission of response to Go trials
+														(Note: trialtype distinction added by Millisecond Software)
+
+/previousresponsetype:							stores the responsetype of the previous trial
+
+/selecttarget:									stores the current index of the target (1 = X; 2 = Y)
+/rt:											stores the response latency (if no response values.rt = "")
+/stimulus:										stores the current target stimulus
+
+Summary Variables by Blocktype:
+/count_go_SL:									counts Go trials across SL Block (regardless of whether they follow a NoGo trial or not)
+/count_nogo_SL:									counts NoGo trials across SL Block
+/count_omissions_SL:							counts omissions in across SL Block
+/count_failedsuppressions_SL:					counts failed suppressions across SL Block
+/count_anticipatory_SL:							counts anticipatory responses for Go trials across SL Block
+
+/count_go_DL:									counts Go trials across DL Block (regardless of whether they follow a NoGo trial or not)
+/count_nogo_DL:									counts NoGo trials across DL Block
+/count_omissions_DL:							counts omissions across DL Block
+/count_failedsuppressions_DL:					counts failed suppressions across DL Block
+/count_anticipatory_DL:							counts anticipatory responses for Go trials across DL Block
+
+/count_Go_SLSL:									count correct GO trials that come after a single correct NOGO trial in the SL condition
+/sumRT_Go_SLSL:									sum up correct latencies of GO trials that come after a single correct NOGO trial in the SL condition
+/count_Go_SLDL:									count correct GO trials that come after a single correct NOGO trial in the DL condition
+/sumRT_Go_SLDL:									sum up correct latencies of GO trials that come after a single correct NOGO trial in the DL condition
+
+
+
+<values>
+/selectInstruct = 0
+/blockorder = ""
+/blocktype= ""
+/trialtype = ""
+/responsetype = ""
+/previousresponsetype = ""
+/selecttarget = 1
+/rt = 0
+/stimulus = ""
+/count_go_SL = 0
+/count_nogo_SL = 0
+/count_omissions_SL = 0
+/count_failedsuppressions_SL = 0
+/count_anticipatory_SL = 0
+/count_go_DL = 0
+/count_nogo_DL = 0
+/count_omissions_DL = 0
+/count_failedsuppressions_DL = 0
+/count_anticipatory_DL = 0
+/count_Go_SLSL = 0
+/sumRT_Go_SLSL = 0
+/count_Go_SLDL = 0
+/sumRT_Go_SLDL = 0
+/countSLblocks = 0
+/countDLblocks = 0
+</values>
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+SL = block that runs only single lure NoGo trials (not followed by another Nogo trial)
+DL = block that runs a variety of Nogo trials (some that are followed by another Nogo trial and some that are not)
+
+/percent_omissions:              percent omissions (= no responses to Go trials) 
+/percent_anticipatory:			 percent of anticipatory responses to Go trials (trials that have latencies < parameters.anticipatoryresponse)
+/percent_failedsuppression:      percent of failed suppressions (= responses to Nogo trials)
+
+/meanrt_GO_SLSL:				mean latency of correct GO trials after single correct (aka suppressed) NOGO trials (single lure) in the SL condition
+/meanrt_GO_SLDL:				mean latency of correct GO trials after single correct (aka suppressed) NOGO trials (single lure) in the DL condition
+/RT_Diffscore:					the difference score between the two
+								=> positive RT_Diffscore: slowing down in Go trials after single lures in DL condition
+								(when another lure is possible) compared to Go trials after single lures in SL condition
+								(when no other lure is possible)
+
+
+<expressions>
+/percent_omissions_SL= 100* (values.count_omissions_SL/values.count_go_SL)
+/percent_anticipatory_SL = 100 * (values.count_anticipatory_SL/values.count_go_SL)
+/percent_failedsuppression_SL = 100 * (values.count_failedsuppressions_SL/values.count_nogo_SL)
+
+/percent_omissions_DL= 100* (values.count_omissions_DL/values.count_go_DL)
+/percent_anticipatory_DL = 100 * (values.count_anticipatory_DL/values.count_go_DL)
+/percent_failedsuppression_DL = 100 * (values.count_failedsuppressions_DL/values.count_nogo_DL)
+
+/meanrt_GO_SLSL = values.sumrt_go_slsl/values.count_go_slsl
+/meanrt_GO_SLDL = values.sumrt_go_sldl/values.count_go_sldl
+/RT_Diffscore = expressions.meanrt_go_sldl - expressions.meanrt_go_slsl
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<text instructions>
+/ items = instructions
+/ select = values.selectInstruct
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ hjustify = left
+/ erase = false
+</text>
+
+<trial intro>
+/ ontrialbegin = [
+	values.selectInstruct = 1;
+]
+/ stimulusframes = [1 = clearScreen, instructions]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial practice_SL>
+/ ontrialbegin = [
+	values.selectInstruct = 2;
+]
+/ stimulusframes = [1 = clearScreen, instructions]
+/ validresponse = (" ")
+/ recorddata = false
+/ errormessage = false
+/ responsemessage = (" ", clearScreen, 0)
+</trial>
+
+<trial practice_DL>
+/ ontrialbegin = [
+	values.selectInstruct = 3;
+]
+/ stimulusframes = [1 = clearScreen, instructions]
+/ validresponse = (" ")
+/ recorddata = false
+/ errormessage = false
+/ responsemessage = (" ", clearScreen, 0)
+</trial>
+
+<trial practiceend>
+/ ontrialbegin = [
+	values.selectInstruct = 4;
+]
+/ stimulusframes = [1 = clearScreen, instructions]
+/ validresponse = (" ")
+/ recorddata = false
+/ errormessage = false
+/ responsemessage = (" ", clearScreen, 0)
+</trial>
+
+<trial SL>
+/ ontrialbegin = [
+	values.selectInstruct = 5;
+]
+/ stimulusframes = [1 = clearScreen, instructions]
+/ validresponse = (" ")
+/ recorddata = false
+/ errormessage = false
+</trial>
+
+<trial DL>
+/ ontrialbegin = [
+	values.selectInstruct = 6;
+]
+/ stimulusframes = [1 = clearScreen, instructions]
+/ validresponse = (" ")
+/ recorddata = false
+/ errormessage = false
+</trial>
+
+<trial demoWait>
+/ stimulustimes = [0 = fixationcross; 500 = target, demoWaitAlert; 2500 = demoWaitAlert]
+/ beginresponsetime = 500
+/ responseinterrupt = frames
+/ validresponse = (" ", noresponse)
+/ correctresponse = (noresponse)
+/ trialduration =  2500
+/ errormessage = true(text.errorfeedback, 500)
+/ correctmessage = true(text.correctfeedback, 500)
+/ recorddata = false
+</trial>
+
+<trial demoRespond>
+/ ontrialbegin = [
+	if (values.selecttarget == 1){
+		values.selecttarget = 2;
+	} else {
+		values.selecttarget = 1;
+	}
+]
+/ stimulustimes = [0 = fixationcross; 500 = target, demoRespondAlert; 2500=demoRespondAlert]
+/ beginresponsetime = 500
+/ responseinterrupt = frames
+/ validresponse = (" ", noresponse)
+/ correctresponse = (" ")
+/trialduration = 2500
+/ errormessage = true(text.errorfeedback, 500)
+/ correctmessage = true(text.correctfeedback, 500)
+/ recorddata = false
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<text target>
+/items = stimuli
+/select = values.selecttarget
+/ fontstyle = ("Arial", parameters.fontsize_target, false, false, false, false, 5, 1)
+/ txcolor = black
+</text>
+
+<text fixationcross>
+/items = fixation
+/select = 1
+/ fontstyle = ("Arial", parameters.fontsize_fixation, false, false, false, false, 5, 1)
+/ txcolor = black
+</text>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	LISTS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: list randomly samples the first letter to be presented in a block
+1 = X
+2 = Y
+
+<list firsttarget>
+/items = (1, 2)
+/replace = true
+</list>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*********************************************************************************************************
+-all response latencies are measured from onset of target stimulus until the next target is presented
+-response does not interrupt trial
+
+Target (800ms) -> Fixation (200ms) -> Target (800ms) .....
+SOA: 1000ms (=> 1 Hz): participants have the entire 1000ms to respond to the presented target
+*********************************************************************************************************
+
+
+Note:
+* first trial needs to be a Go trial
+* randomly selects the first target
+<trial startGO>
+/ontrialbegin = [
+	values.trialtype = "Go";
+	values.selecttarget = list.firsttarget.nextValue;
+	if (values.blocktype == "SL") values.count_go_SL += 1 else values.count_go_dl += 1;
+
+	trial.startgo.insertStimulusTime(clearScreen, parameters.stimulusduration);
+	trial.startgo.insertStimulusTime(text.fixationcross, parameters.stimulusduration);
+	trial.startgo.insertStimulusTime(clearScreen, (parameters.fixationduration + parameters.stimulusduration));
+]
+
+/stimulustimes = [0 = target]
+/responseinterrupt = frames
+/beginresponsetime = 0
+/validresponse = (" ")
+/monkeyresponse = (" ", noresponse)
+/correctresponse = (" ")
+/ontrialend = [
+	trial.startgo.resetStimulusFrames();
+	values.stimulus = text.target.currentItem;
+
+	if (trial.startgo.response != 0) values.rt = trial.startgo.latency else values.rt = "";
+	if (values.rt !=""){
+		if (values.rt >= parameters.anticipatoryresponse){
+			values.responsetype = "Go Success";
+		} else {
+			values.responsetype = "Go Anticipatory";
+		}
+	} else {
+		values.responsetype = "Go Omission";
+	}
+
+	if (values.responsetype == "Go Omission"){
+		if (values.blocktype == "SL") {
+			values.count_omissions_SL += 1;			
+		} else if (values.blocktype == "DL"){
+			values.count_omissions_DL += 1;
+		}
+	} else if (values.responsetype == "Go Anticipatory"){
+		if (values.blocktype == "SL") {
+			values.count_anticipatory_SL += 1;			
+		} else if (values.blocktype == "DL"){
+			values.count_anticipatory_DL += 1;
+		}		
+	}
+]
+/trialduration = (parameters.stimulusduration + parameters.fixationduration)
+/recorddata = true
+</trial>
+
+
+Note:
+* Go trial that follows a Go trial
+* reverses the target
+<trial GO>
+/ontrialbegin = [
+	values.trialtype = "Go";
+	if (values.blocktype == "SL") values.count_go_SL += 1 else values.count_go_dl += 1;
+	if (values.selecttarget == 1) values.selecttarget = 2 else values.selecttarget = 1;
+
+	trial.GO.insertStimulusTime(clearScreen, parameters.stimulusduration);
+	trial.GO.insertStimulusTime(text.fixationcross, parameters.stimulusduration);
+	trial.GO.insertStimulusTime(clearScreen, (parameters.fixationduration + parameters.stimulusduration));
+]
+/stimulustimes = [0 = target]
+/responseinterrupt = frames
+/beginresponsetime = 0
+/ validresponse = (" ")
+/monkeyresponse = (" ", noresponse)
+/correctresponse = (" ")
+/ontrialend = [
+	trial.GO.resetStimulusFrames();
+	values.stimulus = text.target.currentItem;
+	
+	if (trial.GO.response != 0) values.rt = trial.GO.latency else values.rt = "";
+	if (values.rt !=""){
+		if (values.rt >= parameters.anticipatoryresponse){
+			values.responsetype = "Go Success";
+		} else {
+			values.responsetype = "Go Anticipatory";
+		}
+	} else {
+		values.responsetype = "Go Omission";
+	}
+
+	if (values.responsetype == "Go Omission"){
+		if (values.blocktype == "SL") {
+			values.count_omissions_SL += 1;			
+		} else if (values.blocktype == "DL"){
+			values.count_omissions_DL += 1;
+		}
+	} else if (values.responsetype == "Go Anticipatory"){
+		if (values.blocktype == "SL") {
+			values.count_anticipatory_SL += 1;			
+		} else if (values.blocktype == "DL"){
+			values.count_anticipatory_DL += 1;
+		}		
+	}	
+]
+/trialduration = (parameters.stimulusduration + parameters.fixationduration)
+/recorddata = true
+</trial>
+
+
+Note:
+* no target reversal
+* NoGo trial that is followed by a second NoGo trial (->NOGO_DL2)
+<trial NOGO_DL1>
+/ontrialbegin = [
+	values.trialtype = "NoGo";
+	if (values.blocktype == "SL") values.count_nogo_SL += 1 else values.count_NOGO_DL += 1;
+
+	trial.NOGO_DL1.insertStimulusTime(clearScreen, parameters.stimulusduration);
+	trial.NOGO_DL1.insertStimulusTime(text.fixationcross, parameters.stimulusduration);
+	trial.NOGO_DL1.insertStimulusTime(clearScreen, (parameters.fixationduration + parameters.stimulusduration));
+]
+/stimulustimes = [0 = target]
+/responseinterrupt = frames
+/beginresponsetime = 0
+/validresponse = (" ")
+/monkeyresponse = (" ", noresponse)
+/correctresponse = (0)
+/ontrialend = [
+	trial.NOGO_DL1.resetStimulusFrames();
+	values.stimulus = text.target.currentItem;
+
+	if (trial.NOGO_DL1.response != 0) values.rt = trial.NOGO_DL1.latency else values.rt = "";
+	if (trial.NOGO_DL1.error) {
+		values.responsetype = "NoGo Failure";
+		values.count_failedsuppressions_DL += 1;	
+	} else {
+		values.responsetype = "NoGo Success";
+	}
+]
+/trialduration = (parameters.stimulusduration + parameters.fixationduration)
+/recorddata = true
+/branch = [return trial.NOGO_DL2;]
+</trial>
+
+Note:
+* follows a NoGo trial (-> NoGo_DL1)
+* calls a Go trial (->GO_DL)
+<trial NOGO_DL2>
+/ontrialbegin = [
+	values.trialtype = "NoGo";
+	if (values.blocktype == "SL") values.count_NOGO_SL += 1 else values.count_nogo_dl += 1;
+
+	trial.NOGO_DL2.insertStimulusTime(clearScreen, parameters.stimulusduration);
+	trial.NOGO_DL2.insertStimulusTime(text.fixationcross, parameters.stimulusduration);
+	trial.NOGO_DL2.insertStimulusTime(clearScreen, (parameters.fixationduration + parameters.stimulusduration));
+]
+/stimulustimes = [0 = target]
+/responseinterrupt = frames
+/beginresponsetime = 0
+/validresponse = (" ")
+/monkeyresponse = (" ", noresponse)
+/correctresponse = (0)
+/ontrialend = [
+	trial.NOGO_DL2.resetStimulusFrames();
+	values.stimulus = text.target.currentItem;
+
+	if (trial.NOGO_DL2.response != 0) values.rt = trial.NOGO_DL2.latency else values.rt = "";
+	if (trial.NOGO_DL2.error) {
+		values.responsetype = "NoGo Failure";
+		values.count_failedsuppressions_DL += 1;		
+	} else {
+		values.responsetype = "NoGo Success";
+	}
+]
+/trialduration = (parameters.stimulusduration + parameters.fixationduration)
+/recorddata = true
+/branch = [return trial.GO_DL;]
+</trial>
+
+Note:
+* Go trial that follows a NOGO_DL trial
+* target reversal
+<trial GO_DL>
+/ontrialbegin = [
+	values.trialtype = "Go";
+	if (values.blocktype == "SL") values.count_go_SL += 1 else values.count_go_dl += 1;
+	if (values.selecttarget == 1) values.selecttarget = 2 else values.selecttarget = 1;
+
+	trial.GO_DL.insertStimulusTime(clearScreen, parameters.stimulusduration);
+	trial.GO_DL.insertStimulusTime(text.fixationcross, parameters.stimulusduration);
+	trial.GO_DL.insertStimulusTime(clearScreen, (parameters.fixationduration + parameters.stimulusduration));
+]
+/stimulustimes = [0 = target]
+/responseinterrupt = frames
+/beginresponsetime = 0
+/validresponse = (" ")
+/monkeyresponse = (" ", noresponse)
+/correctresponse = (" ")
+/ontrialend = [
+	trial.GO_DL.resetStimulusFrames();
+	values.stimulus = text.target.currentItem;
+
+	if (trial.GO_DL.response != 0) values.rt = trial.GO_DL.latency else values.rt = "";
+	if (values.rt !=""){
+		if (values.rt >= parameters.anticipatoryresponse){
+			values.responsetype = "Go Success";
+		} else {
+			values.responsetype = "Go Anticipatory";
+		}
+	} else {
+		values.responsetype = "Go Omission";
+	}
+
+	if (values.responsetype == "Go Omission"){
+		if (values.blocktype == "SL") {
+			values.count_omissions_SL += 1;			
+		} else if (values.blocktype == "DL"){
+			values.count_omissions_DL += 1;
+		}
+	} else if (values.responsetype == "Go Anticipatory"){
+		if (values.blocktype == "SL") {
+			values.count_anticipatory_SL += 1;			
+		} else if (values.blocktype == "DL"){
+			values.count_anticipatory_DL += 1;
+		}		
+	}	
+]
+
+/trialduration = (parameters.stimulusduration + parameters.fixationduration)
+/recorddata = true
+</trial>
+
+
+Note:
+* a nogo trial that follows a go trial
+* no target reversal
+* is followed by a Go trial (-> GO_SL)
+<trial NOGO_SL>
+/ontrialbegin = [
+	values.trialtype = "NoGo";
+	if (values.blocktype == "SL") values.count_nogo_SL += 1 else values.count_nogo_dl += 1;
+
+	trial.NOGO_SL.insertStimulusTime(clearScreen, parameters.stimulusduration);
+	trial.NOGO_SL.insertStimulusTime(text.fixationcross, parameters.stimulusduration);
+	trial.NOGO_SL.insertStimulusTime(clearScreen, (parameters.fixationduration + parameters.stimulusduration));
+]
+/stimulustimes = [0 = target]
+/responseinterrupt = frames
+/beginresponsetime = 0
+/validresponse = (" ")
+/monkeyresponse = (" ", noresponse)
+/correctresponse = (0)
+/ontrialend = [
+	trial.NOGO_SL.resetStimulusFrames();
+	values.stimulus = text.target.currentItem;
+
+	if (trial.NOGO_SL.response != 0) values.rt = trial.NOGO_SL.latency else values.rt = "";
+	if (trial.NOGO_SL.error) {
+		values.responsetype = "NoGo Failure";
+	} else {
+		values.responsetype = "NoGo Success";
+	}
+
+	if (trial.NOGO_SL.error){
+		if (values.blocktype == "SL"){
+			values.count_failedsuppressions_SL += 1;		
+		} else if (values.blocktype == "DL"){
+			values.count_failedsuppressions_DL += 1;		
+		}
+	} 
+]
+/trialduration = (parameters.stimulusduration + parameters.fixationduration)
+/recorddata = true
+/branch = [return trial.GO_SL;]
+</trial>
+
+Note:*TARGET TRIAL for Behavioral Adaptation*
+* Go trial that follows a NOGO_SL trial
+* target reversal
+* latencies of correct responses that follow correct suppression of the preceding NoGo trial are tracked in 
+summary variables 
+<trial GO_SL>
+/ontrialbegin = [
+	values.trialtype = "Go";
+	if (values.blocktype == "SL") values.count_go_SL += 1 else values.count_go_dl += 1;
+	if (values.selecttarget == 1) values.selecttarget = 2 else values.selecttarget = 1;
+	values.previousresponsetype = values.responsetype;
+
+	trial.GO_SL.insertStimulusTime(clearScreen, parameters.stimulusduration);
+	trial.GO_SL.insertStimulusTime(text.fixationcross, parameters.stimulusduration);
+	trial.GO_SL.insertStimulusTime(clearScreen, (parameters.fixationduration + parameters.stimulusduration));
+]
+/stimulustimes = [0 = target]
+/responseinterrupt = frames
+/beginresponsetime = 0
+/validresponse = (" ")
+/monkeyresponse = (" ", noresponse)
+/correctresponse = (" ")
+/ontrialend = [
+	trial.GO_SL.resetStimulusFrames();
+	values.stimulus = text.target.currentItem;
+
+	if (trial.GO_SL.response != 0) values.rt = trial.GO_SL.latency else values.rt = "";
+	if (values.rt !=""){
+		if (values.rt >= parameters.anticipatoryresponse){
+			values.responsetype = "Go Success";
+		} else {
+			values.responsetype = "Go Anticipatory";
+		}
+	} else {
+		values.responsetype = "Go Omission";
+	}
+
+	if (values.responsetype == "Go Omission"){
+		if (values.blocktype == "SL") {
+			values.count_omissions_SL += 1;			
+		} else if (values.blocktype == "DL"){
+			values.count_omissions_DL += 1;
+		}
+	} else if (values.responsetype == "Go Anticipatory"){
+		if (values.blocktype == "SL") {
+			values.count_anticipatory_SL += 1;			
+		} else if (values.blocktype == "DL"){
+			values.count_anticipatory_DL += 1;
+		}		
+	}		
+
+	if (values.blocktype == "DL"){
+		if (values.responsetype == "Go Success"){
+			if (values.previousresponsetype == "NoGo Success"){
+				values.count_go_sldl += 1; 
+				values.sumrt_go_sldl += trial.go_sl.latency;			
+			}
+		}
+	} else if (values.blocktype == "SL"){
+		if (values.responsetype == "Go Success"){
+			if (values.previousresponsetype ==  "NoGo Success"){
+				values.count_go_slsl += 1; 
+				values.sumrt_go_slsl += trial.go_sl.latency;			
+			}
+		}
+	}
+]
+
+/trialduration = (parameters.stimulusduration + parameters.fixationduration)
+/recorddata = true
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+<block intro>
+/ trials = [
+	1 = intro; 
+	2 = demoRespond; 
+	3-12 = noreplace(demoRespond, demoWait);
+]
+</block>
+
+Note: 
+* runs one start Go trial
+* followed by a random order of 153 GO trials and 80 Nogo_SL trials (that are followed by 80 GO_SL trials)
+=> 314 trials
+<block SL>
+/onblockbegin = [
+	values.blocktype = "SL";
+	values.countSLblocks += 1;
+]
+/trials = [
+	1 = SL; 
+	2 = startGo; 
+	3-235 = noreplace (
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, 
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL,
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL,
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL,
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL,
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL,
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL,
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL,
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL)]
+/ branch = [
+	if (values.countSLblocks < parameters.number_SL_blocks){
+		return block.SL;
+	}
+]
+</block>
+
+Note: 
+* runs one start Go trial
+* followed by a random order of 171 GO trials, 44 Nogo_SL trials (that are followed by 44 GO_SL trials) and
+18 Nogo_DL1 trials (followed by 18 Nogo_DL2 trials and 18 GO_DL trials)
+=> 314 trials
+<block DL>
+/onblockbegin = [
+	values.blocktype = "DL";
+	values.countDLblocks += 1;
+]
+/trials = [
+	1 = DL;
+	2 = startGo; 
+	3-235 = noreplace(
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO, GO, GO, GO, GO, GO, GO, GO, GO, GO, 
+GO,
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL,
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL,
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL,
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL,
+NOGO_SL, NOGO_SL, NOGO_SL, NOGO_SL, 
+NOGO_DL1, NOGO_DL1, NOGO_DL1, NOGO_DL1, NOGO_DL1, NOGO_DL1, NOGO_DL1, NOGO_DL1, NOGO_DL1, NOGO_DL1,
+NOGO_DL1, NOGO_DL1, NOGO_DL1, NOGO_DL1, NOGO_DL1, NOGO_DL1, NOGO_DL1, NOGO_DL1)]
+/ branch = [
+	if (values.countDLblocks < parameters.number_DL_blocks){
+		return block.DL;
+	}
+]
+</block>
+
+
+* practice_SL: runs 25 practice trials with error feedback
+<block practice_SL>
+/skip = [parameters.skippractice == true]
+/onblockbegin = [values.blocktype = "practiceSL"]
+/trials = [
+	1 = practice_SL;
+	2 = startGO; 
+	3-22 = noreplace(GO, GO, GO, GO, NOGO_SL);
+]
+/onblockend = [
+	values.count_go_SL = 0; 
+	values.count_nogo_SL = 0;
+	values.count_omissions_SL = 0; 
+	values.count_failedsuppressions_SL = 0;
+	values.count_anticipatory_SL = 0; 
+	values.count_go_DL = 0;
+	values.count_nogo_DL = 0; 
+	values.count_omissions_DL = 0;
+	values.count_failedsuppressions_DL = 0; 
+	values.count_anticipatory_DL = 0;
+	values.count_Go_SLSL = 0; 
+	values.sumRT_Go_SLSL = 0;
+	values.count_Go_SLDL = 0; 
+	values.sumRT_Go_SLDL = 0;
+]
+/errormessage = true(errorfeedback, 500)
+</block>
+
+*practice_DL: runs 29 practice trials with errorfeedback
+<block practice_DL>
+/skip = [parameters.skippractice == true]
+/onblockbegin = [values.blocktype = "practiceDL"]
+/trials = [
+	1 = practice_DL;
+	2 = startGO; 
+	3-18 = noreplace(GO, GO, NOGO_SL, NOGO_DL1);
+	19 = practiceend;
+]
+/onblockend = [
+	values.count_go_SL = 0; 
+	values.count_nogo_SL = 0;
+	values.count_omissions_SL = 0; 
+	values.count_failedsuppressions_SL = 0;
+	values.count_anticipatory_SL = 0; 
+	values.count_go_DL = 0;
+	values.count_nogo_DL = 0; 
+	values.count_omissions_DL = 0;
+	values.count_failedsuppressions_DL = 0; 
+	values.count_anticipatory_DL = 0;
+	values.count_Go_SLSL = 0; 
+	values.sumRT_Go_SLSL = 0;
+	values.count_Go_SLDL = 0; 
+	values.sumRT_Go_SLDL = 0;
+]
+/errormessage = true(errorfeedback, 500)
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+The order in which 3 SL/3 DL blocks is run is counterbalanced between participants.
+Assignment to orders is done by groupnumber
+
+Practice: SL practice is presented before DL practice in either group.
+
+<expt ba1>
+/groups = (1 of 2)
+/onexptbegin = [values.blockorder = "DL-SL"]
+/blocks = [
+	1 = intro;
+	2 = practice_SL; 
+	3 = practice_DL; 
+	4 = DL; 
+	5 = SL;
+	6 = finish;
+]
+</expt>
+
+
+<expt ba2>
+/groups = (2 of 2)
+/onexptbegin = [values.blockorder = "SL-DL"]
+/blocks = [
+	1 = intro;
+	2 = practice_SL; 
+	3 = practice_DL; 
+	4 = SL; 
+	5 = DL;
+	6 = finish;
+]
+</expt>
+
+<monkey>
+/ latencydistribution = normal (300, 150)
+/ percentcorrect = 95 
+</monkey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

@@ -1,0 +1,460 @@
+﻿<usermanual>
+__________________________________________________________________________________________________________________	
+
+									*The Reflective Functioning Questionnaire (RFQ)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-04-2018
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a computerized version of the Reflective Functioning Questionnaire (RFQ) by:
+
+Fonagy P, Luyten P, Moulton-Perkins A, Lee YW, Warren F, Howard S, et al. 
+Development and validation of a self-report measure of mentalizing: 
+The Reflective Functioning Questionnaire. PLOS ONE. 2016;11(7):e0158678. 
+doi: 10.1371/journal.pone.0158678
+
+downloaded from: http://www.ucl.ac.uk/psychoanalysis/research/rfq
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+8 7-point Likert Scale, self-resport
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'rfq8.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	 with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values 1-7, no rescoring/reversed scoring of raw data)
+								see summary data file for rescored data
+								
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'rfq8_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+RFQ_c:							Certainty about Mental States
+								=> rescoring of q1, q2, q3, q4, q5, q6 responses into values.RFQ_c1-values.RFQ_c6
+								with 1 = 3; 2 = 2; 3 = 1; 4+ = 0
+								=> mean of the rescored RFQ_c values = RFQ_c
+								
+RFQ_u:							Uncertainty about Mental States 
+								=> rescoring of q2, q4, q5, q6, q8 responses into values.RFQ_u2-values.RFQ_u8
+								with 4 and below = 0, 5 = 1, 6 = 2, 7 = 3
+								=> rescoring of q7 into values.RFQ_u with
+								with 1 = 3; 2 = 2; 3 = 1; 4+ = 0
+								=> mean of the rescored RFQ_u values => RFQ_u
+							
++ original & rescored responses								
+Example:
+radiobuttons.q1.response:		original response
+RFQc1:							rescored response (see above) 
+___________________________________________________________________________________________________________________	
+QUESTIONNAIRE SET-UP 
+___________________________________________________________________________________________________________________	
+8 7-point Likert Scale, self-resport
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+see Editable Parameters
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to 
+further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please work through the next 8 statements. For each statement, select a response button between 1 and 7 to say how much you disagree or agree with the statement. Do not think too much about it – your initial responses are usually the best. Thank you.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+
+<page end>
+Thank you!
+</page>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+expressions.RFQ_c, expressions.RFQ_u,
+radiobuttons.q1.response, values.RFQc1, 
+radiobuttons.q2.response, values.RFQc2, values.RFQu2,
+radiobuttons.q3.response, values.RFQc3,
+radiobuttons.q4.response, values.RFQc4, values.RFQu4,
+radiobuttons.q5.response, values.RFQc5, values.RFQu5,
+radiobuttons.q6.response, values.RFQc6, values.RFQu6,
+radiobuttons.q7.response, values.RFQu7,
+radiobuttons.q8.response, values.RFQu8
+)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+/completed:				0 = script was not completed (script prematurely aborted); 1 = script was completed (all conditions run)
+
+<values>
+/RFQc1 = ""
+/RFQc2 = ""
+/RFQc3 = ""
+/RFQc4 = ""
+/RFQc5 = ""
+/RFQc6 = ""
+
+/RFQu2 = ""
+/RFQu4 = ""
+/RFQu5 = ""
+/RFQu6 = ""
+/RFQu7 = ""
+/RFQu8 = ""
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/recoding_RFQ_c = {
+	if (radiobuttons.q1.response == 1){
+		values.RFQc1 = 3;
+	} else if (radiobuttons.q1.response == 2){
+		values.RFQc1 = 2;
+	} else if (radiobuttons.q1.response == 3){
+		values.RFQc1 = 1;
+	} else if (radiobuttons.q1.response >=4){
+		values.RFQc1 = 0;
+	}
+	
+	if (radiobuttons.q2.response == 1){
+		values.RFQc2 = 3;
+	} else if (radiobuttons.q2.response == 2){
+		values.RFQc2 = 2;
+	} else if (radiobuttons.q2.response == 3){
+		values.RFQc2 = 1;
+	} else if (radiobuttons.q2.response >=4){
+		values.RFQc2 = 0;
+	}	
+	
+	if (radiobuttons.q3.response == 1){
+		values.RFQc3 = 3;
+	} else if (radiobuttons.q3.response == 2){
+		values.RFQc3 = 2;
+	} else if (radiobuttons.q3.response == 3){
+		values.RFQc3 = 1;
+	} else if (radiobuttons.q3.response >=4){
+		values.RFQc3 = 0;
+	}
+
+	if (radiobuttons.q4.response == 1){
+		values.RFQc4 = 3;
+	} else if (radiobuttons.q4.response == 2){
+		values.RFQc4 = 2;
+	} else if (radiobuttons.q4.response == 3){
+		values.RFQc4 = 1;
+	} else if (radiobuttons.q4.response >=4){
+		values.RFQc4 = 0;
+	}
+
+	if (radiobuttons.q5.response == 1){
+		values.RFQc5 = 3;
+	} else if (radiobuttons.q5.response == 2){
+		values.RFQc5 = 2;
+	} else if (radiobuttons.q5.response == 3){
+		values.RFQc5 = 1;
+	} else if (radiobuttons.q5.response >=4){
+		values.RFQc5 = 0;
+	}	
+
+	if (radiobuttons.q6.response == 1){
+		values.RFQc6 = 3;
+	} else if (radiobuttons.q6.response == 2){
+		values.RFQc6 = 2;
+	} else if (radiobuttons.q6.response == 3){
+		values.RFQc6 = 1;
+	} else if (radiobuttons.q6.response >=4){
+		values.RFQc6 = 0;
+	}			
+}
+
+/recoding_RFQ_u = {
+	if (radiobuttons.q2.response < 5){
+		values.RFQu2 = 0;
+	} else if (radiobuttons.q2.response == 5){
+		values.RFQu2 = 1;
+	} else if (radiobuttons.q2.response == 6){
+		values.RFQu2 = 2;
+	} else if (radiobuttons.q2.response == 7){
+		values.RFQu2 = 3;
+	}	
+	
+	if (radiobuttons.q4.response < 5){
+		values.RFQu4 = 0;
+	} else if (radiobuttons.q4.response == 5){
+		values.RFQu4 = 1;
+	} else if (radiobuttons.q4.response == 6){
+		values.RFQu4 = 2;
+	} else if (radiobuttons.q4.response == 7){
+		values.RFQu4 = 3;
+	}	
+
+	if (radiobuttons.q5.response < 5){
+		values.RFQu5 = 0;
+	} else if (radiobuttons.q5.response == 5){
+		values.RFQu5 = 1;
+	} else if (radiobuttons.q5.response == 6){
+		values.RFQu5 = 2;
+	} else if (radiobuttons.q5.response == 7){
+		values.RFQu5 = 3;
+	}
+
+	if (radiobuttons.q6.response < 5){
+		values.RFQu6 = 0;
+	} else if (radiobuttons.q6.response == 5){
+		values.RFQu6 = 1;
+	} else if (radiobuttons.q6.response == 6){
+		values.RFQu6 = 2;
+	} else if (radiobuttons.q6.response == 7){
+		values.RFQu6 = 3;
+	}	
+
+	if (radiobuttons.q7.response == 1){
+		values.RFQu7 = 3;
+	} else if (radiobuttons.q7.response == 2){
+		values.RFQu7 = 2;
+	} else if (radiobuttons.q7.response == 3){
+		values.RFQu7 = 1;
+	} else if (radiobuttons.q7.response > 3){
+		values.RFQu7 = 0;
+	}		
+	
+	if (radiobuttons.q8.response < 5){
+		values.RFQu8 = 0;
+	} else if (radiobuttons.q8.response == 5){
+		values.RFQu8 = 1;
+	} else if (radiobuttons.q8.response == 6){
+		values.RFQu8 = 2;
+	} else if (radiobuttons.q8.response == 7){
+		values.RFQu8 = 3;
+	}		
+	
+}
+
+/RFQ_c = (values.RFQc1 + values.RFQc2 + values.RFQc3 + values.RFQc4 + values.RFQc5 + values.RFQc6)/6
+/RFQ_u = (values.RFQu2 + values.RFQu4 + values.RFQu5 + values.RFQu6 + values.RFQu7 + values.RFQu8)/6
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "People’s thoughts are a mystery to me"
+/ options = (" 1 ~nStrongly~ndisagree", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "I don’t always know why I do what I do"
+/ options = (" 1 ~nStrongly~ndisagree", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "When I get angry I say things without really knowing why I am saying them"
+/ options = (" 1 ~nStrongly~ndisagree", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "When I get angry I say things that I later regret "
+/ options = (" 1 ~nStrongly~ndisagree", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "If I feel insecure I can behave in ways that put others’ backs up "
+/ options = (" 1 ~nStrongly~ndisagree", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "Sometimes I do things without really knowing why"
+/ options = (" 1 ~nStrongly~ndisagree", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "I always know what I feel"
+/ options = (" 1 ~nStrongly~ndisagree", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "Strong feelings often cloud my thinking"
+/ options = (" 1 ~nStrongly~ndisagree", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ~nStrongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage rfq8_1>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage rfq8_2>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage rfq8_3>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q7, q8]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey rfq8>
+/pages = [
+	1 = rfq8_1;
+	2 = rfq8_2;
+	3 = rfq8_3;
+]
+/screencapture = false
+/ onblockend = [
+	expressions.recoding_RFQ_c;
+	expressions.recoding_RFQ_u;
+]
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = true
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

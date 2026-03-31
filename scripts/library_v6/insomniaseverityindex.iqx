@@ -1,0 +1,353 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								INSOMNIA SEVERITY INDEX (ISI)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 10-10-2013
+last updated:  02-23-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-23-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Insomnia Severity Index (ISI) to assess Insomnia as described in:
+
+Bastien, C.H., Vallières A., & Morin, C.M. (2001). Validation of the Insomnia Severity Index as a clinical outcome 
+measure for insomnia research. Sleep Medicine, 2, 297-307.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+This script offers the 7 questions of the Insomnia Severity Index on a single surveypage.
+A demographic surveypage at the beginning (by default: not run) as well as a feedback page at the end (by default: run)
+are optional and controlled via Editable Parameters.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'insomniaseverityindex.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 0 - 4 (anchors depend on question)
+									no automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'insomniaseverityindex_summary*.iqdat'
+
+inquisit.version: 				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+ 
+textbox.name.response/textbox.age.response/dropdown.gender.response:		Name/Age/Gender-if collected
+isi_totalscore:					the participant's total ISI score
+
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/skipdemographics:							false = script does collect demographic data 
+											true = script does NOT collect demographic data (default)
+											
+/skipfeedback:								false = script does provide feedback to participants (default)
+											true = script does NOT provide feedback to participants
+											Note: to customize feedback go to EDITABLE CODE -> Editable Stimuli
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/skipdemographics = true
+/skipfeedback = false
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: this feedback is optional
+
+<surveypage feedback>
+/ skip = [
+	parameters.skipfeedback == true;
+]
+/ caption = "Thank you for your participation!
+
+Your ISI Score is: <%expressions.isi_totalscore%>
+
+0-7:          No clinically significant insomnia
+8-14:         Subthreshold insomnia
+15-21:        Clinical insomnia (moderate)
+22-28:        Clinical insomnia (severe)
+
+If you have questions or concerns regarding your score, please contact your health care providers."
+</surveypage>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+********************
+raw data
+********************
+
+saved under InsomniaSeverityIndex.iqdat
+
+
+********************
+summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+textbox.name.response, textbox.age.response, dropdown.gender.response, expressions.isi_totalscore)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/ISI_totalscore:			the participant's total ISI score (sum of all individual scores)
+
+<expressions>
+/ISI_totalscore = radiobuttons.q1_1.response + radiobuttons.q1_2.response + radiobuttons.q1_3.response +
+radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response + radiobuttons.q5.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+************************************
+Demographic questions
+************************************
+Note: by default, demographic questions are NOT required.
+To change, set /requires = true
+
+<textbox Name>
+/caption = "Name: "
+/ orientation = horizontal
+/mask = alphabetic
+/required = false
+</textbox>
+
+<textbox Age>
+/caption = "Your Age (in years): "
+/ orientation = horizontal
+/mask = integer
+/required = false
+</textbox>
+
+<dropdown Gender>
+/caption = "Your Gender: "
+/options = ("Male", "Female")
+/required = false
+</dropdown>
+
+************************************
+ISI questions
+************************************
+
+Note: by default ISI questions are required
+
+<caption q1>
+/caption = "1. Please rate the CURRENT (i.e. LAST 2 WEEKS) SEVERITY of your insomnia problem(s)."
+</caption>
+
+<radiobuttons q1_1>
+/caption = "A. Difficulty falling asleep:"
+/options = ("None", "Mild", "Moderate", "Severe", "Very Severe")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q1_2>
+/caption = "B. Difficulty staying asleep:"
+/options = ("None", "Mild", "Moderate", "Severe", "Very Severe")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q1_3>
+/caption = "C. Problems waking up too early:"
+/options = ("None", "Mild", "Moderate", "Severe", "Very Severe")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. How SATISFIED/DISSATISFIED are you with your CURRENT sleep pattern?"
+/options = ("Very~nSatisfied", "Satisfied", "Moderately~nSatisfied", "Dissatisfied", "Very~nDissatisfied")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. To what extent do you consider your sleep problem to INTERFERE with your daily functioning (e.g. daytime
+fatigue, mood, ability to function at work/daily chores, concentration, memory, mood, etc.) CURRENTLY?"
+/options = ("Not at all~nInterfering", "A Little", "Somewhat", "Much", "Very Much~nInterfering")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. How NOTICEABLE to others do you think your sleep problem is in terms of impairing the quality of your life?"
+/options = ("Not at all~nNoticeable", "Barely", "Somewhat", "Much", "Very Much~nNoticeable")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+   
+<radiobuttons q5>
+/caption = "5. How WORRIED/DISTRESSED are you about your current sleep problem?"
+/options = ("Not at all", "A Little", "Somewhat", "Much", "Very Much")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/ orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: this surveypage is optional (-> parameters.skipdemographics); it presents demographic questions
+<surveypage ISI1>
+/skip = [parameters.skipdemographics == true]
+/caption = "Insomnia Severity Index
+"
+/subcaption = ""
+/questions = [1 = name, age, gender]
+</surveypage>
+
+Note: this surveypage presents the ISI questions
+<surveypage ISI2>
+/caption = "Insomnia Severity Index
+"
+/subcaption = ""
+/questions = [1 = q1, q1_1, q1_2, q1_3]
+</surveypage>
+
+Note: this surveypage presents the ISI questions
+<surveypage ISI3>
+/caption = "Insomnia Severity Index
+"
+/subcaption = ""
+/questions = [1 = q2, q3]
+/ itemspacing = 10%
+</surveypage>
+
+<surveypage ISI4>
+/caption = "Insomnia Severity Index
+"
+/subcaption = ""
+/questions = [1 = q4, q5]
+/ itemspacing = 10%
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY/BLOCK
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<survey InsomniaSeverityIndex>
+/pages = [
+	1 = ISI1; 
+	2 = ISI2; 
+	3 = ISI3;
+	4 = ISI4;
+	5 = feedback;
+]
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

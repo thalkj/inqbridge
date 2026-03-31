@@ -1,0 +1,832 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*SLEEP-WAKE ACTIVITY INVENTORY (SWAI)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-23-2016
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+Millisecond Software thanks Meghan Lee for collaborating on this script!
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Sleep-Wake Activity Inventory (SWAI) as described in:
+
+Rosenthal L., Roehrs TA, Roth T. (1993). The Sleep-Wake Activity Inventory: a self-report measure of daytime sleepiness.
+Biol Psychiatry, 34, 810-20.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+Participants answer 59 9-point Likert Scale questions. 
+31 of these questions belong to 6 subscales (the remaining 28 questions are not considered for scoring):
+Excessive Daytime Sleepiness (EDS): 9 questions
+Psychic Distress (PD): 6 questions
+Social desirability (SD): 6 questions
+Energy Level (EL): 4 questions
+Ability to Relax (AR): 3 questions
+Nocturnal Sleep (NS): 3 questions											  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'sleepwakeactivityinventory.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values: 1 (Always) 9 (Never))
+								Note: Recorded Scores reflect Reversed scoring for questions with 'Reversed' in the question label
+
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'sleepwakeactivityinventory_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+EDS_score: 						score for the Excessive Daytime Sleepiness Scale: 9 (high daytime sleepiness)-81 (low daytime sleepiness)
+PD_score:						score for the Psychic Distress Scale: 6 (high psychic distress) - 54 (low psychic distress)
+SD_score:						score for the Social Desirability Scale: 6 (low social desirability) - 54 (high social desirability)
+EL_score:						score for the Energy Level Scale: 4 (high energy) - 36 (low energy)
+AR_score: 						score for the Ability to Relax Scale: 3 (high ability to relax) - 27 (low ability to relax)
+NS_score:						score for the Nocturnal Sleep Scale: 3 (high ability to fall asleep at night)- 27 (low ability to fall asleep at night)
+(the recorded raw scores reflect reversed coding where appropriate)
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP
+___________________________________________________________________________________________________________________	
+The questionnaire consists of 59 9-point Likert questions. 
+31 questions score on 6 subscales, the remaining 28 questions are not considered for scoring.
+
+Excessive Daytime Sleepiness (EDS): 9 questions (9, 13, 24, 29, 40, 45, 50, 53, 54); Min 9 (high daytime sleepiness)- Max 81 (low daytime sleepiness)
+Psychic Distress (PD): 6 questions (7, 16, 21, 32, 36, 37); Min 6 (high psychic distress) - Max 54 (low psychic distress)
+Social desirability (SD): 6 questions (5, 15, 26, 27, 43, 49);  Min 6 (low social desirability) - Max 54 (high social desirability)
+Energy Level (EL): 4 questions (8, 14R*, 30R*, 41); Min 4 (high energy) - Max 36 (low energy)
+Ability to Relax (AR): 3 questions (34, 38R*, 51); Min 3 (high ability to relax) - Max 27 (low ability to relax)
+Nocturnal Sleep (NS): 3 questions (11R*, 18, 35); Min 3 (high ability to fall asleep at night)- Max 27 (low ability to fall asleep at night)
+
+*R: Script takes care of reversed coding where appropriate.
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+see Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:				the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "How often have the following behaviors occurred over the past 7 days?
+(1= behavior is always present, 9= behavior never occurs)
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.EDS_score, expressions.PD_score, expressions.SD_score, 
+expressions.EL_score, expressions.AR_score, expressions.NS_score)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/EDS_score: 	score for the Excessive Daytime Sleepiness Scale: 9 (high daytime sleepiness)-81 (low daytime sleepiness)
+
+/PD_score:		score for the Psychic Distress Scale: 6 (high psychic distress) - 54 (low psychic distress)
+
+/SD_score:		score for the Social desirability Scale: 6 (low social desirability) - 54 (high social desirability)
+
+/EL_score:		score for the Energy Level Scale: 4 (high energy) - 36 (low energy)
+
+/AR_score: 		score for the Ability to Relax Scale: 3 (high ability to relax) - 27 (low ability to relax)
+
+/NS_score:		score for the Nocturnal Sleep Scale: 3 (high ability to fall asleep at night)- 27 (low ability to fall asleep at night)
+
+Note: reversed scoring of responses (where appropriate) has already been taken care of
+
+<expressions>
+/EDS_score = radiobuttons.q9_EDS.response + radiobuttons.q13_EDS.response + radiobuttons.q24_EDS.response + radiobuttons.q29_EDS.response + 
+radiobuttons.q40_EDS.response + radiobuttons.q45_EDS.response + radiobuttons.q50_EDS.response + radiobuttons.q53_EDS.response + radiobuttons.q54_EDS.response
+
+/PD_score = radiobuttons.q7_PD.response + radiobuttons.q16_PD.response + radiobuttons.q21_PD.response + radiobuttons.q32_PD.response + 
+radiobuttons.q36_PD.response + radiobuttons.q37_PD.response
+
+/SD_score = radiobuttons.q5_SD.response + radiobuttons.q15_SD.response + radiobuttons.q26_SD.response + radiobuttons.q27_SD.response + 
+radiobuttons.q43_SD.response + radiobuttons.q49_SD.response
+
+/EL_score = radiobuttons.q8_EL.response + radiobuttons.q14_EL_reversed.response + radiobuttons.q30_EL_reversed.response + radiobuttons.q41_EL.response
+
+/AR_score = radiobuttons.q34_AR.response + radiobuttons.q38_AR_reversed.response + radiobuttons.q51_AR.response
+
+/NS_score = radiobuttons.q11_NS_Reversed.response + radiobuttons.q18_NS.response + radiobuttons.q35_NS.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. I seem to have very little time for my hobbies."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. I enjoy my daily activities."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. I have a lot of control over my schedule."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. I get drowsy two or more times during the day."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_SD>
+/caption = "5. I feel resentful when I don't get my way."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Even if I am sick, I keep going as usual."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_PD>
+/caption = "7. I get the blues."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_EL>
+/caption = "8. My energy level is high."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_EDS>
+/caption = "9. I doze off while watching TV."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. I hesitate to go out of my way to help someone in trouble."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11_NS_Reversed>
+/caption = "11. I have difficulty with falling asleep."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("9", "8", "7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. I am liked by people."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13_EDS>
+/caption = "13. I can take a nap anywhere."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14_EL_reversed>
+/caption = "14. I feel slowed down."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("9", "8", "7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15_SD>
+/caption = "15. I have been irked when people express ideas very different from my own."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16_PD>
+/caption = "16. I seem to have very little control over what happens to me."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. When I am sleepy, I try to keep it to myself."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18_NS>
+/caption = "18. Even if I take a nap, I sleep well at night."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. My muscles feel stiff."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20>
+/caption = "20. I have very little control over my work schedule."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21_PD>
+/caption = "21. I have doubts about my ability to succeed in life. "
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "22. I can relax without falling asleep."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23>
+/caption = "23. I feel motivated by my daily activities."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q24_EDS>
+/caption = "24. I fall asleep during a conversation."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q25>
+/caption = "25. I am disliked by people. "
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q26_SD>
+/caption = "26. I insist on having things my own way."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q27_SD>
+/caption = "27. I get impatient easily."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q28>
+/caption = "28. I have a strong will power."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q29_EDS>
+/caption = "29. I get drowsy driving a few minutes."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q30_EL_reversed>
+/caption = "30. My mind seems to be working slower than usual."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("9", "8", "7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q31>
+/caption = "31. I resent being asked to return a favor."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q32_PD>
+/caption = "32. I feel useless."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q33>
+/caption = "33. Even if I'm sleepy, I try to just keep going as usual. "
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q34_AR>
+/caption = "34. I seem to have enough time for my hobbies."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q35_NS>
+/caption = "35. It takes me less than 5 minutes to fall asleep."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q36_PD>
+/caption = "36. I have felt like rebelling against people in authority even though I knew they were right."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q37_PD>
+/caption = "37. I feel uneasy most of the day."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q38_AR_reversed>
+/caption = "38. I seem to have very little time to relax."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("9", "8", "7", "6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q39>
+/caption = "39. I set deadlines or quotas for myself at work or at home."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q40_EDS>
+/caption = "40. I get drowsy within 10 minutes when I sit still."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q41_EL>
+/caption = "41. My mind seems to be working faster than usual."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q42>
+/caption = "42. I would rather sit and daydream than doing anything else."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q43_SD>
+/caption = "43. I try to get even, rather than forgive and forget."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q44>
+/caption = "44. My life is filled by challenges which need to be met."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q45_EDS>
+/caption = "45. I fall asleep when visiting with friends. "
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q46>
+/caption = "46. I seem to have a lot of control over what happens to me."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q47>
+/caption = "47. I am irritated by people who ask favors of me."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q48>
+/caption = "48. When in competition, I try hard to win."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q49_SD>
+/caption = "49. My temper is fiery and hard to control."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q50_EDS>
+/caption = "50. I get sleepy after reading for 15 minutes."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q51_AR>
+/caption = "51. I seem to have enough time to relax."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q52>
+/caption = "52. If I could get into a movie without paying and be sure I was not seen, I would do it."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q53_EDS>
+/caption = "53. I doze off when relaxed."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q54_EDS>
+/caption = "54. I fall asleep when riding as a passenger."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q55>
+/caption = "55. My appetite is poor."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q56>
+/caption = "56. I like to gossip."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q57>
+/caption = "57. I make written lists of what needs to be done."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q58>
+/caption = "58. When bored, I tend to drift away."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q59>
+/caption = "59. I can feel my heart beating."
+/ options = ("1~nAlways", "2", "3", "4", "5", "6", "7", "8", "9~nNever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage SWAI1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 =q1, q2, q3]
+</surveypage>
+
+<surveypage SWAI2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4, q5_SD, q6]
+</surveypage>
+
+<surveypage SWAI3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7_PD, q8_EL, q9_EDS]
+</surveypage>
+
+<surveypage SWAI4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10, q11_NS_Reversed, q12]
+</surveypage>
+
+<surveypage SWAI5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 =q13_EDS, q14_EL_reversed, q15_SD]
+</surveypage>
+
+<surveypage SWAI6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q16_PD, q17, q18_NS]
+</surveypage>
+
+<surveypage SWAI7>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 =q19, q20, q21_PD]
+</surveypage>
+
+<surveypage SWAI8>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 =q22, q23, q24_EDS]
+</surveypage>
+
+<surveypage SWAI9>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q25, q26_SD, q27_SD]
+</surveypage>
+
+<surveypage SWAI10>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q28, q29_EDS, q30_EL_reversed]
+</surveypage>
+
+<surveypage SWAI11>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q31, q32_PD, q33]
+</surveypage>
+
+<surveypage SWAI12>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q34_AR, q35_NS, q36_PD]
+</surveypage>
+
+<surveypage SWAI13>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q37_PD, q38_AR_reversed, q39]
+</surveypage>
+
+<surveypage SWAI14>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q40_EDS, q41_EL, q42]
+</surveypage>
+
+<surveypage SWAI15>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1  = q43_SD, q44, q45_EDS]
+</surveypage>
+
+<surveypage SWAI16>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1  = q46, q47, q48]
+</surveypage>
+
+<surveypage SWAI17>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q49_SD, q50_EDS, q51_AR]
+</surveypage>
+
+<surveypage SWAI18>
+/caption ="<%parameters.pageinstructions%>"
+/ txcolor = (0, 0, 0)
+/questions = [1 = q52, q53_EDS, q54_EDS]
+</surveypage>
+
+<surveypage SWAI19>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q55, q56, q57]
+</surveypage>
+
+<surveypage SWAI20>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q58, q59]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey SleepWakeActivityInventory>
+/pages = [
+	1 = SWAI1; 
+	2 = SWAI2; 
+	3 = SWAI3; 
+	4 = SWAI4; 
+	5 = SWAI5; 
+	6 = SWAI6; 
+	7 = SWAI7; 
+	8 = SWAI8;
+	9 = SWAI9; 
+	10 = SWAI10; 
+	11 = SWAI11; 
+	12 = SWAI12; 
+	13 = SWAI13; 
+	14 = SWAI14; 
+	15 = SWAI15;
+	16 = SWAI16;
+	17 = SWAI17;
+	18 = SWAI18;
+	19 = SWAI19;
+	20 = SWAI20;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

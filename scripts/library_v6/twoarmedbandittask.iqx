@@ -1,0 +1,1200 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+										Two Armed Bandit Task
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-29-2018
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the 2-armed bandit task, a decision making game in which participants tradeoff pursuing 
+a known resource vs exploring a new resource as described in:
+
+Knox, W.B., Otto, A.R., Stone, P. & Love, B.C. (2012). The nature of belief-directed exploratory choice in human 
+decision-making. Frontiers in Psychology, Volume 2, Article 298, 1-12
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants select between 2 options ("bandits") that are tied to different payoff schedules.
+One option is always worth 10 points more than the other. The pay off schedules change with a certain probability (flipRate)
+each trial. When they change, 20 points are added to the lesser paid option which flips the relative payoffs.
+Participants are told that their final reward is tied to the number of times they selected the higher payoff choice.
+2 phases:
+1. Passive Observation Phase: participants watch the computer select choices for 300 trials (default).
+Payoff changes are made explicit to participants by presenting a text message on screen.
+Every 100 trials (starting at trial 200), participants are asked to estimate how many reversals in payoff
+they expect to observe during the next set of 100 trials
+2. Active Game: participants play the game for 300 trials (default)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set up with 300 trials in each phase takes about 35 minutes to run
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'twoarmedbandittask_raw*.iqdat'*
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group, 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial
+										(Note: not all trials that are run might record data; 
+										by default data is collected unless /recorddata = false is set for a particular trial/block;
+										in this script trial.selectBandit and trial.summary store data to the data file.
+										Trial.summary stores the comprehensive summary of all relevant values at the end of each
+										'successful' (= a choice was made) trial.)
+																												
+(parameter) flipRate:			p(flip) = the fixed probability with which the payoff schedules will switch and the former
+								lower payoff choice will be the higher payoff choice (until the next flip)
+countSelections:				counts the number of choices A or B made (excludes trials with no responses)	
+
+attempts:						running total of attempts for the current trial 
+								(Note: if participant takes too long to decide, the current trial terminates and is repeated after feedback. 
+								Those repeats are called 'attempts' in this script)
+								
+flip:							1 = a flip of the pay-offs occurred during this trial; 0 = no payoff changes occurred	
+countFlipsPractice:				counts the number of flips
+
+valueA:							stores the value of choice A (NOTE: changes in values after flips are stored in trial.summary only)
+valueB:							stores the value of choice B (NOTE: changes in values after flips are stored in trial.summary only)
+								trial.selectBandit: values present the pre-flip values (preflip values are used to assess whether participants selected the known higher payoff)
+								trial.summary: present the post-flip values
+										
+higherPayOff:					stores the choice with the higher payoff ("A" or "B")
+								!Note: this variable is only updated in trial.summary, see valueA and valueB
+
+selectionRT:					stores the response time (in ms) of selecting the last response; measured from start of last trial.selectBandit		
+previousArm:					stores the previously (preceding trial) selected choice ("A" or "B")						
+
+response:						the participant's response during current trial
+								trial.selectBandig: 18 = E; 23 = I or 0 (no response)
+								trial.summary: 0 = no response
+
+selectedArm:					stores the selected choice ("A" or "B")
+
+selectedHigherPayOff:			1 = participant selected the currently higher payoff 
+								(note: if there was a payoff flip, participant wasn't aware of the flip at time of making response); 
+								0 = otherwise
+								
+choice:							0 = no choice made
+								1 = exploitative choice (the choice selected was the one attached to the highest seen payoff up to this point);
+								2 = exploratory choice (participant selected the other choice)
+
+highestSeenPayOff:				stores the current (at time of data saving) highest payoff that participant has seen
+									trial.selectBandit: stores the highestSeenPayOff from perspective of participant at time of making response
+									trial.summary: stores the highestSeenPayOff from perspective of participant at the end of the trial (after totalpoints give feedback)
+									(Note: the highestSeenPayOff can change from trial.selectBandit to trial.summary depending on whether or not
+									there was a payoff flip)
+								
+consecutiveSameChoice:			running total of selecting the same choice consecutively (resets after switch)
+
+selectionChange:				1 = participant changed selection; 
+								0 = otherwise
+								
+totalPoints:					stores the current total points earned									
+
+
+(2) Summary data file: 'twoarmedbandittask_summary*.iqdat'*
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)
+							
+(parameter) flipRate:		p(flip) = the fixed probability with which the payoff schedules will switch and the former
+							lower payoff choice will be the higher payoff choice until the next flip
+*************
+Phase1:								
+*************								
+meanFliprateEstimate:		the estimate flip rate based on the mean Number of Flips over 100 trials								
+meanFlipEstimate:			the mean estimate of flips over 100 trials
+sumFlipEstimate:			the total number of estimated flips for 400 trials (phase 1)
+countFlipsPractice:			the total number of actual flips for 400 trials (phase 1)
+
+*************
+Phase 2:
+*************
+propHigherPayOffs:			proportion of selecting the higher payoff option
+propExploit:				proportion of selecting the option with the known higher payoff
+							(Note: at the time of making the choice the participant does not know whether a flip occurred
+							and can only use the information gathered up to this point)
+									
+propExplore:				proportion of selecting the option with the known lower payoff
+							(Note: at the time of making the choice the participant does not know whether a flip might have occurred
+							and can only use the information gathered up to this point)
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+
+Two phases:
+1. Passive Observation Phase: participants watch the computer select choices for 500 trials.
+Every 100 trials (starting at trial 200), participants are asked to estimate how many reversals in payoff
+they expect to observe during the next set of 300 trials.
+
+Trial Sequence:
+choice ("Choose") (2000ms, editable) -> selected choice highlighted and total updated (1000ms, editable)
+If the payoff schedule has changed that trial, the choice trial displays "Changed" in red font
+
+
+2. Active Game Phase: participants plays the game for 300 trials
+
+Trial Sequence
+choice ("Choose") (max.1500ms, editable) -> if no response: feedback and trial gets repeated until a response is made->
+point update (1000ms, editable) -> etc.
+
+The default fliprate is 0.075 (editable) => each trial there is a 7.5% chance that the payoffs flip
+(so you could expect to see 7.5 flips every 100 trials)
+Notes: 
+* in this script, the fliprate is a true probability.
+* the first trial cannot be a flip trial
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+provided by Millisecond Software - can be edited under section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+provided by Millisecond Software - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/flipRate:					p(flip) = the fixed probability with which the payoff schedules will switch and the former
+							lower payoff choice will be the higher payoff choice until the next flip (default: 0.075)
+							Note: in order for the script to run without error messages, make sure that flipRate*1000 results in an integer number
+
+/start_A:					the start value of option A (default: 10)
+/start_B:					the start value of option B (default: 20)
+
+/nrDemotrials:				the number of passive demo trials (default: 300)
+/nrTesttrials:				the number of active test trials (default: 300)
+							Note: Knox et al (2012) run 500 trials in each phase
+
+/demoSelectionTime:			the time (in ms) it takes computer to make a choice during the passive demo trials (default: 2000)
+/demo_ResponseFeedback:	the feedback duration (in ms) during the passive demo trials (default: 1000)
+									
+/readyDuration:				the duration (in ms) of the get-ready trial (default: 3000ms)
+
+/selectionTime:				the response timeout (in ms) of making a selection during a test trial (default: 1500ms)
+/feedbackDuration:			the duration (in ms) of the feedback during a test trial (default: 1000ms)
+
+/leftKey:					the left response button (default: "E") - this key is attached to option A
+/rightKey:					the right response button (default: "I") - this key is attached to option B
+
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/flipRate = 0.075
+/start_A = 10
+/start_B = 20
+
+/nrDemotrials = 300
+/nrTesttrials = 300
+
+/demoSelectionTime = 2000
+/demo_ResponseFeedback = 1000
+/readyDuration = 3000
+
+/selectionTime = 1500
+/feedbackDuration = 1000
+/iti = 1000
+
+/leftKey = "E"
+/rightKey = "I"
+</parameters>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item noresponseFeedback>
+/1 = "Too Slow!"
+</item>
+
+<item alerts>
+/1 = ""
+/2 = "CHANGED"
+</item>
+
+<text flipEstimate>
+/ items = ("How many payoff flips to you expect to see during the next 100 trials?")
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+<text trialcount>
+/ items = ("   Trial #: <%values.trialcount%>   ")
+/ position = (50%, 10%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+/ erase = false
+</text>
+
+<text chooseInstructions>
+/ items = ("Choose")
+/ position = (50%, 35%)
+/ fontstyle = ("Arial", 8%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+/ erase = false
+</text>
+
+<text points>
+/items = ("    Total Points: <%values.totalPoints%>    ")
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+/ txbgcolor = white
+/ txcolor = black
+/ vjustify = center
+/ hjustify = center
+/ position = (50%, 80%)
+/ erase = false
+</text>
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+</instruct>
+
+
+
+<item instructions>
+/1 = "Welcome!
+
+In this game you have the choice of selecting option A or option B.
+
+
+
+
+
+
+
+
+Both options are worth points, but one of the options is always worth <%abs(parameters.start_A - parameters.start_B)%> points more than the other. 
+
+The superior option (the one that is worth more) will change over time with a fixed probability. When it changes, <%expressions.adjustment%> points are  added to the previously inferior option, thus turning the previously inferior option into the one that is worth more."
+/2 = "Let's watch a fictional participant play the task.
+
+At the start of the task Option B will be the superior option. It will be worth <%abs(parameters.start_A - parameters.start_B)%> points more than option A. But of course, our fictional player won't know this at the start of the game.
+
+Our fictional player will be awarded points based on the selections made. Whenever the payoffs change and the previously inferior option becomes worth more, the word 'CHANGED' will be flashed onto the screen in red font.
+
+After each round of 100 trials, you will be asked to estimate how often you think the payoff schedules will change for the next round of 100 trials. 
+
+Once our fictional player has made 500 choices, it will be your turn.
+Continue, when you are ready to start watching."
+/3 = "Now it is your turn to play.
+
+To select option A, press the left '<%parameters.leftKey%>' button.
+To select option B, press the right '<%parameters.rightKey%>' button.
+
+Your final reward will be tied to the number of times you choose the higher payoff option.
+
+Like our fictional player, you will work on 500 trials and option B is the option that is worth more at the beginning. 
+The probability that the payoff schedules changes stays also the same.
+
+Unlike before, it will NOT be announced anymore whether the payoff schedule has changed.
+
+Continue, when you are ready to start."
+</item>
+
+<text continue>
+/ items = ("Spacebar >>", "Press the SPACEBAR to start watching", "Press the SPACEBAR to start the game")
+/ select = values.continueButton
+/ fontstyle = ("Courier New", 2.5%, false, false, false, false, 5, 1)
+/ position = (75%, 90%)
+/ size = (50%, 5%)
+/ vjustify = center
+/ hjustify = center
+/ txcolor = gray
+</text>
+
+<text goback>
+/ items = ("<< B")
+/ fontstyle = ("Courier New", 2.5%, false, false, false, false, 5, 1)
+/ position = (25%, 90%)
+/ size = (50%, 5%)
+/ vjustify = center
+/ hjustify = center
+/ txcolor = gray
+</text>
+
+<picture task>
+/ items = ("task.png")
+/ position = (50%, 42%)
+/ size = (30%, 30%)
+</picture>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+</text>
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/ items = ("Get Ready:
+~n<%expressions.buttoninstruct1%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"place your index fingers over the left and right response buttons";} 
+else {"put your index fingers on the '<%parameters.leftKey%>' and '<%parameters.rightKey%>' keys";}
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+
+parameters.flipRate,
+values.countSelections, values.attempts, values.flip, values.countFlipsPractice, values.countFlips, values.valueA, values.valueB, values.higherPayOff, 
+values.selectionRT, values.previousArm, 
+response, values.selectedArm, values.selectedHigherPayOff, values.choice, values.highestSeenPayOff,
+
+values.consecutiveSameChoice, values.selectionChange, values.totalPoints)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+parameters.flipRate, expressions.meanFliprateEstimate, expressions.meanFlipEstimate, 
+expressions.sumFlipEstimate, values.countFlipsPractice,
+expressions.propHigherPayOffs, expressions.propExploit, expressions.propExplore)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/countSelections:		counts the number of selections of choice A or B made
+/valueA:				stores the current value of choice A
+/valueB:				stores the current value of choice B
+
+/totalPoints:			stores the current total points earned
+
+/higherPayOff:			stores the choice with the current higher payoff ("A" or "B")
+/flip:					1 = a flip of the pay-offs occurred during this trial; 0 = no payoff changes occurred
+/selectedArm:			stores the selected choice ("A" or "B")
+/selectedHigherPayOff:	1 = participant selected the currently higher payoff (note: if there was a flip, participant wasn't aware of the flip yet); 
+						0 = otherwise
+
+/highestSeenPayOff:		stores the current (at time of data saving) highest payoff that participant has seen
+/choice:				1 = exploitative choice (the choice selected was the one attached to the highest seen payoff);
+						2 = exploratory choice (participant selected the other choice)
+
+/stop:					helper variable; if values.stops is set to 0, block.game stops
+/attempts:				running total of attempts for the current trial (Note: if participant takes too long, the trial gets repeated. Those repeats are called 'attempts')
+/repeat:				1 = the selection trial needs to be repeated as no choice was made during the allotted time; 
+						0 = otherwise
+/previousArm:			stores the previously selected choice ("A" or "B")
+/selectionChange:		1 = participant changed selection; 0 = otherwise
+/consecutiveSameChoice:	running total of selecting the same choice (resets after switch)
+
+/selectionRT:			stores the response time (in ms) of selecting the last response
+
+
+<values>
+/trialcount = 0
+/countSelections = 0
+/valueA = 0
+/valueB = 0
+
+/totalPoints = 0
+
+/higherPayOff = "B"
+/flip = 0
+/countFlips = 0
+/countFlipsPractice = 0
+/selectedArm = "B"
+/selectedHigherPayOff = 1
+
+/highestSeenPayOff = 0
+/choice = 0
+
+/stop = 0
+/attempts = 0
+/repeat = 0
+/previousArm = 0
+/selectionChange = 0
+/consecutiveSameChoice = 0
+
+/selectionRT = 0
+/continueButton = 1
+</values>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/adjustment:			the adjustment (in points) made to the inferior option after a flip
+/alertSelection:		helper function to select the correct alert message (changed vs. same)
+/stayProbability:		the probability that payoff schedule stays the same
+
+/meanFlipEstimate:		the mean estimate of flips over 100 trials
+/sumFlipEstimate:		the total number of estimated flips for 400 trials
+/flipEstimateACC:		the number of estimated flips for 400 trials compared to the actually occurring flips
+/propHigherPayOffs:		proportion of selecting the higher payoff option
+/propExploit:			proportion of selecting selecting the option with the known higher payoff
+						(Note: at the time of making the choice the participant does not know whether a flip occurred
+						and can only use the information gathered up to this point)
+/propExplore:			proportion of the selecting the option with the known lower payoff
+						(Note: at the time of making the choice the participant does not know whether a flip occurred
+						and can only use the information gathered up to this point)
+						
+<expressions>
+/adjustment = abs(parameters.start_A - parameters.start_B) * 2
+/alertSelection = values.flip + 1
+/stayProbability = 1 - parameters.flipRate
+
+/meanFlipEstimate = list.flipEstimates.mean
+/meanFliprateEstimate = list.flipEstimates.mean/100
+/sumFlipEstimate = list.flipEstimates.mean * list.flipEstimates.itemCount
+/propHigherPayOffs = list.selectedHigherPayOffs.mean
+/propExploit = list.exploitativeChoices.mean
+/propExplore = 1 - list.exploitativeChoices.mean
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text intro1>
+/ items = instructions
+/ select = 1
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<trial intro1>
+/ ontrialbegin = [
+	values.continueButton = 1;
+]
+/ stimulusframes = [1 = intro1, task, continue]
+/ validresponse = (" ")
+/ branch = [
+	return trial.intro2;
+]
+/ recorddata = false
+</trial>
+
+<text intro2>
+/ items = instructions
+/ select = 2
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<trial intro2>
+/ ontrialbegin = [
+	values.continueButton = 2;
+]
+/ stimulusframes = [1 = intro2, goback, continue]
+/ validresponse = ("B", " ")
+/ branch = [
+	if (trial.intro2.response == 48){
+		return trial.intro1;
+	}
+]
+/ recorddata = false
+</trial>
+
+<text gameStart>
+/ items = instructions
+/ select = 3
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<trial gameStart>
+/ ontrialbegin = [
+	values.continueButton = 3;
+]
+/ stimulusframes = [1 = gameStart, continue]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+*************************************
+General Helper Instruction Trials/Blocks
+*************************************
+
+This trial is used when participants are asked to place their fingers on specific response
+buttons. On the touchscreen, this trial presents the (inactive) response buttons to the participants.
+<trial getReady>
+/ stimulusframes = [1 = getReady]
+/ timeout = parameters.readyDuration
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ beginresponsetime = parameters.readyDuration
+/ errormessage = false
+/ recorddata = false
+/ posttrialpause = 2000
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text A>
+/items = ("A")
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ size = (30%, 10%)
+/ txbgcolor = black
+/ txcolor = white
+/ vjustify = center
+/ hjustify = center
+/ position = (25%, 50%)
+/ erase = false
+</text>
+
+<text B>
+/items = ("B")
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ size = (30%, 10%)
+/ txbgcolor = black
+/ txcolor = white
+/ vjustify = center
+/ hjustify = center
+/ position = (75%, 50%)
+/ erase = false
+</text>
+
+<text A_HL>
+/items = ("A")
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ width = text.A.width
+/ height = text.A.height
+/ txbgcolor = yellow
+/ txcolor = white
+/ vjustify = center
+/ hjustify = center
+/ vposition = text.A.vposition
+/ hposition = text.A.hposition
+/ erase = false
+</text>
+
+<text B_HL>
+/items = ("B")
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ width = text.B.width
+/ height = text.B.height
+/ txbgcolor = yellow
+/ txcolor = white
+/ vjustify = center
+/ hjustify = center
+/ vposition = text.B.vposition
+/ hposition = text.B.hposition
+/ erase = false
+</text>
+
+
+
+
+<text noresponseFeedback>
+/items = noresponseFeedback
+/ select = 1
+/ fontstyle = ("Arial", 8%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+/ txbgcolor = white
+/ txcolor = black
+/ vjustify = center
+/ hjustify = center
+/ position = (50%, 25%)
+/ erase = false
+</text>
+
+
+<text X>
+/items = ("X")
+/ fontstyle = ("Arial", 30%, false, false, false, false, 5, 1)
+/ size = (80%, 35%)
+/ txbgcolor = white
+/ txcolor = red
+/ vjustify = center
+/ hjustify = center
+/ position = (50%, 60%)
+/ erase = false
+</text>
+
+<text alert>
+/items = alerts
+/ select = expressions.alertSelection
+/ fontstyle = ("Arial", 8%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+/ txbgcolor = white
+/ txcolor = black
+/ vjustify = center
+/ hjustify = center
+/ position = (50%, 70%)
+/ erase = false
+</text>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list flips>
+/ items = (0, 1)
+/ itemprobabilities = (expressions.stayProbability, parameters.flipRate)
+/poolSize = 1000
+/ replace = true
+</list>
+
+<list demochoices>
+/items = ("A", "B")
+/ poolSize = 500
+/ replace = false
+/ resetinterval = 0
+</list>
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+list stores the flip estimates made during the demo
+<list flipEstimates>
+</list>
+
+list stores selected PayOffs during the test trials
+1 = higher Payoff selected; 0 = lower Payoff selected
+<list selectedHigherPayOffs>
+</list>
+
+list stores the number of exploitative choices made
+1 = exploitative choice; 0 = otherwise
+<list exploitativeChoices>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list accuracy>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies>
+</list>
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial demoStart>
+/ trialduration = 1000
+/ recorddata = false
+</trial>
+
+
+<trial selectBandit_demo>
+/ ontrialbegin = [
+	values.countSelections += 1;
+	values.trialcount += 1;
+	values.previousArm = values.selectedArm;
+	values.flip = list.flips.nextValue;	
+	
+	if (values.flip == 1){
+		text.alert.textColor = red;
+	} else {
+		text.alert.textColor = blue;
+	}
+	
+	values.countFlips += values.flip;
+	values.countFlipsPractice += values.flip;
+	
+	if (values.flip == 1){
+		if (values.higherPayOff == "A"){
+			values.valueB += expressions.adjustment;
+			if (values.valueB > values.valueA){
+				values.higherPayOff = "B";			
+			}
+		} else {
+			values.valueA += expressions.adjustment;
+			if (values.valueA > values.valueB){
+				values.higherPayOff = "A";			
+			}			
+		}
+	}	
+
+
+]
+/ stimulusframes = [1 = clearScreen, chooseInstructions, A, B, points, alert, trialcount]
+/timeout = parameters.demoSelectionTime
+
+/ ontrialend = [	
+	values.selectedArm = list.demochoices.nextValue;
+		
+		
+]
+/ branch = [
+	return trial.summary_demo;
+]
+/ recorddata = false
+</trial>
+
+<trial summary_demo>
+/ ontrialbegin = [
+	if (values.selectedArm == "A"){
+		values.totalPoints += values.valueA;
+		text.A.skip = true;
+		text.B_HL.skip = true;		
+	} else {
+		values.totalPoints += values.valueB;	
+		text.B.skip = true;
+		text.A_HL.skip = true;			
+	}
+
+]
+/ stimulusframes = [1 = clearScreen, A, B, A_HL, B_HL, alert, points, trialcount]
+/ trialduration = parameters.feedbackDuration
+/ ontrialend = [
+	if (values.countSelections >= parameters.nrDemotrials){
+		values.stop = 1;
+	}
+	
+	text.A.skip = false;
+	text.A_HL.skip = false;
+	text.B.skip = false;
+	text.B_HL.skip = false;	
+]
+/ branch = [
+	if (mod(values.countSelections, 100) == 0){
+		return openended.flipEstimate_demo;
+	} else {
+		return trial.selectBandit_demo;		
+	}
+
+]
+/ recorddata = true
+</trial>
+
+<openended flipEstimate_demo>
+/ pretrialpause = 1000
+/ required = true
+/ mask = integer
+/ ontrialbegin = [
+	values.selectedArm = "";
+]
+/ stimulusframes = [1 = clearScreen, flipEstimate, trialcount]
+/ responsefontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (30%, 5%)
+/ ontrialend = [
+	list.flipEstimates.appendItem(openended.flipEstimate_demo.response);
+	if (openended.flipEstimate_demo.trialcount == 1){
+		values.countFlipsPractice = 0;
+	}
+]
+/ branch = [
+	return trial.selectBandit_demo;		
+]
+/ responsemessage = (anyresponse, clearScreen, 0)
+/ posttrialpause = 1000
+/ monkeyresponse = ("5", "6", "7", "8", "9", "10")
+</openended>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: trial.selectBandit
+* checks whether this a repeat or a new trial; if new:
+	* randomly selects whether this is a flip trial or not 
+* presents the two choices as well as the currently awarded points
+* waits for choice (response deadline imposed)
+* if response was made in time:
+	- determines values.choice (exploitative or exploratory) by checking the response against the known last highest payoff
+	- updates values.valueA/values.valueB in case of flip trials
+	- counts number of consecutive same responses
+	- calls trial.summary
+* if response was not made in time: calls trial.noresponseFeedback
+	
+<trial selectBandit>
+/ ontrialbegin = [
+	if (values.repeat == 0){
+		values.trialcount += 1;
+		values.previousArm = values.selectedArm;
+		values.attempts = 1;
+		
+		if (values.trialcount > 1){
+			values.flip = list.flips.nextValue;			
+		}
+
+		values.countFlips += values.flip;
+	} else {
+		values.attempts += 1;
+	}
+	
+	values.choice = 0;
+	values.selectedArm = "";
+	values.selectedHigherPayOff	= "";
+]
+/ stimulusframes = [1 = clearScreen, chooseInstructions, A, B, points, trialcount]
+/ validresponse = (parameters.leftKey,parameters.rightKey, 0)
+/ ontrialend = [
+	values.selectionRT = trial.selectBandit.latency;
+
+	if (trial.selectBandit.response != 0){	
+		values.countSelections += 1;
+		values.choice = 1;
+		if (trial.selectBandit.responseText == parameters.leftKey){
+			values.selectedArm = "A";		
+			if (values.highestSeenPayOff != values.valueA){
+				values.choice = 2;
+			}	
+
+		} else if (trial.selectBandit.responseText == parameters.rightKey){
+			values.selectedArm = "B";			
+			if (values.highestSeenPayOff != values.valueB){
+				values.choice = 2;
+			}		
+		}	
+		if (values.choice == 1){
+			list.exploitativeChoices.appendItem(1);
+		} else {
+			list.exploitativeChoices.appendItem(0);
+		}		
+				
+			
+		if (values.previousArm != values.selectedArm){
+			values.selectionChange = 1;
+			values.consecutiveSameChoice = 1;
+		} else {
+			values.consecutiveSameChoice += 1;
+		}	
+	}
+]
+/ timeout = parameters.selectionTime;
+/ branch = [
+	if (trial.selectBandit.response == 0){
+		return trial.noResponseFeedback;
+	} else {
+		return trial.summary;
+	}
+]
+/ recorddata = true
+</trial>
+
+Note: trial.summary
+*  updates the totalpoints and potentially values.highestSeenPayOff
+* reports the new total for 1000ms
+* checks whether block stop condition has been met (have all trials been run?)
+* if not: calls trial.selectBandit
+<trial summary>
+/ ontrialbegin = [
+	if (values.flip == 1){
+		if (values.higherPayOff == "A"){
+			values.valueB += expressions.adjustment;
+			if (values.valueB > values.valueA){
+				values.higherPayOff = "B";			
+			}
+		} else {
+			values.valueA += expressions.adjustment;
+			if (values.valueA > values.valueB){
+				values.higherPayOff = "A";			
+			}			
+		}
+	}
+	
+	if (values.selectedArm == values.higherPayOff){
+		values.selectedHigherPayOff = 1;
+	} else {
+		values.selectedHigherPayOff = 0;
+	}
+	
+	list.selectedHigherPayOffs.appendItem(values.selectedHigherPayOff);
+
+	if (values.selectedArm == "A"){
+		text.A.skip = true;
+		text.B_HL.skip = true;	
+		values.totalPoints += values.valueA;
+		if (values.valueA > values.highestSeenPayOff){
+			values.highestSeenPayOff = values.valueA;
+		}			
+	} else {
+		text.B.skip = true;
+		text.A_HL.skip = true;		
+		values.totalPoints += values.valueB;
+		if (values.valueB > values.highestSeenPayOff){
+				values.highestSeenPayOff = values.valueB;
+		}				
+	}
+		
+]
+/ stimulusframes = [1 = clearScreen, A, B, A_HL, B_HL, points, trialcount]
+/ trialduration = parameters.feedbackDuration
+/ ontrialend = [
+	values.repeat = 0;
+	if (values.countSelections >= parameters.nrTesttrials){
+		values.stop = 1;
+	}
+	
+	text.A.skip = false;
+	text.A_HL.skip = false;
+	text.B.skip = false;
+	text.B_HL.skip = false;
+]
+/ branch = [
+	return trial.selectBandit;
+]
+/ recorddata = true
+</trial>
+
+
+Note: trial.noResponseFeedback
+* presents the noresponse Feedback and a red X for 1000ms
+* calls trial.selectBandit again with values.repeat = 1 (which will prevent trial from selecting a new values.flip)
+<trial noResponseFeedback>
+/ ontrialbegin = [
+	values.repeat = 1;
+]
+/ stimulusframes = [1 = clearScreen, noresponseFeedback, x, trialcount]
+/ trialduration = parameters.feedbackDuration
+/ branch = [
+	return trial.selectBandit;
+]
+/ recorddata = false
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block intro>
+/ trials = [1 = intro1]
+/ recorddata = false
+</block>
+
+
+<block passiveGame>
+/ stop = [
+	values.stop == 1;
+]
+/ onblockbegin = [
+	values.stop = 0;
+	values.trialcount = 0;
+	values.totalPoints = 0;
+	values.countFlips = 0;
+	values.attempts = "";
+	values.repeat = "";
+	values.selectedArm = "";
+	values.selectionChange = "";
+	values.consecutiveSameChoice = "";
+	values.highestSeenPayOff = "";
+	values.selectedHigherPayOff = "";
+	values.choice = "";
+	values.valueA = parameters.start_A;
+	values.valueB = parameters.start_B;
+	if (values.valueA > values.valueB){
+		values.higherPayOff = "A";
+	} else if (values.valueB > values.valueA){
+		values.higherPayOff = "B";
+	} else {
+		values.higherPayOff = "NA";
+	}
+	
+	values.totalPoints = 0;
+
+]
+/ trials = [1 = demoStart; 2 = selectBandit_demo]
+</block>
+
+
+
+<block activeGame>
+/ stop = [
+	values.stop == 1;
+]
+/ onblockbegin = [
+	values.stop = 0;
+	values.trialcount = 0;
+	values.totalPoints = 0;
+	values.countFlips = 0;
+	values.attempts = 0;
+	values.repeat = 0;
+	values.selectedArm = "";
+	values.selectionChange = "";
+	values.selectedHigherPayOff = "";
+	values.consecutiveSameChoice = 1;
+
+	values.choice = 0;
+	values.valueA = parameters.start_A;
+	values.valueB = parameters.start_B;
+	if (values.valueA > values.valueB){
+		values.highestSeenPayOff = values.valueA;
+	} else {
+		values.highestSeenPayOff = values.valueB;
+	}
+		
+	if (values.valueA > values.valueB){
+		values.higherPayOff = "A";
+	} else if (values.valueB > values.valueA){
+		values.higherPayOff = "B";
+	} else {
+		values.higherPayOff = "NA";
+	}
+	
+	values.totalPoints = 0;
+	values.countSelections = 0;
+]
+/ trials = [1 = gameStart; 2 = getReady; 3 = selectBandit]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt a>
+/ blocks = [
+	1 = intro;
+	2 = passiveGame;
+	3 = activeGame;
+	4 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

@@ -1,0 +1,593 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							*Problematic Internet Use Questionnaire (PIUQ)*
+							*with 18 items()
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 12-18-2020
+last updated:  02-25-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-25-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the Problematic Internet Use Questionnaire (PIUQ) by Demetrovics et al (2008).
+The PIUQ was tested with a sample that ranged in age from 12-69 (mean: ~23).
+
+Reference
+
+Demetrovics, Z., Szeredi, B., & Rózsa, S. (2008). The three-factor model of Internet addiction: 
+The development of the Problematic Internet Use Questionnaire. Behavior Research Methods, 40, 563-574.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+18 questions, 5-point Likert Scale (never - always)
+
+Subscales
+Obsession: Questions 1, 4, 7, 10, 13, 16
+Neglect: Questions 2, 5, 8, 11, 14, 17
+Control disorder: Questions 3, 6, 9, 12, 15, 18
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'piuq.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		 with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale: 1 (never) - 5 (always)
+									no reversed scored questions
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'piuq_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+									
+numberMissingItems:					the number of questions that have not been answered 
+Note: by default settings, all questions are required to be answered. However, that setting can be changed.
+If default setting is changed, the above variable can be used as a flag.
+
+//Total and Subscale Scores: scored on scale: 1 (never) to 5 (always)
+PIUQ_total:							the total score (range: 18-90); 
+PIUQ_Obsession:						the score on subscale 'obsession' (range: 6-30) 
+PIUQ_Neglect:						the score on subscale 'neglect' (range: 6-30)  
+PIUQ_ControlDisorder:				the score on subscale 'controldisorder' (range: 6-30) 									
++ z-scores and percentiles if applicable
+									
++ responses to individual items
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________								
+
+18 questions, 5-point Likert Scale (never - always)
+
+Subscales
+Obsession: Questions 1, 4, 7, 10, 13, 16
+Neglect: Questions 2, 5, 8, 11, 14, 17
+Control Disorder: Questions 3, 6, 9, 12, 15, 18
+
+Scoring:
+Each question is scored on a scale 1 (never) to 5 (always)
+A subscale score is computed for each of the 3 subscales based on the sum of the individual responses.
+The Total PIUQ score is based on the sum of all responses.
+
+Norms are calculated (if gender is provided) by default based on data (means and standard deviations)
+provided by Demetrovics et al (2008, p.569, table 7).
+Check out section Editable Parameters to turn off the demographic questions (and norm calculations).
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/ calculateGenderNorms = true		//true = the script collects gender information and calculates z-scores and percentiles based on reported gender
+									//false = the script does not collect gender information (and does not calculate z-scores/percentiles)
+</parameters>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed,
+values.numberMissingItems,
+radiobuttons.gender.response, textbox.age.response,
+expressions.PIUQ_total, values.z_score_PIUQ, values.percentile_PIUQ,
+expressions.PIUQ_Obsession, values.z_score_O, values.percentile_O, 
+expressions.PIUQ_Neglect, values.z_score_N, values.percentile_N,
+expressions.PIUQ_ControlDisorder, values.z_score_C, values.percentile_C,
+radiobuttons.q1_o.response, radiobuttons.q2_n.response, radiobuttons.q3_c.response, 
+radiobuttons.q4_o.response, radiobuttons.q5_n.response, radiobuttons.q6_c.response,
+radiobuttons.q7_o.response, radiobuttons.q8_n.response, radiobuttons.q9_c.response, 
+radiobuttons.q10_o.response, radiobuttons.q11_n.response, radiobuttons.q12_c.response,
+radiobuttons.q13_o.response, radiobuttons.q14_n.response, radiobuttons.q15_c.response,
+radiobuttons.q16_o.response, radiobuttons.q17_n.response, radiobuttons.q18_c.response
+)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/numberMissingItems = 0
+</values>
+
+//norming data (see Demetrovics et al, 2008, p.569, table 7)
+<values>
+/mean_F_O = 9.2
+/SD_F_O = 3.9
+
+/mean_F_N = 12.1
+/SD_F_N = 4.1
+
+/mean_F_C = 11.3
+/SD_F_C = 4.1
+
+/mean_F_Total = 32.6
+/SD_F_Total = 10.0
+
+/mean_M_O = 9.1
+/SD_M_O = 3.8
+
+/mean_M_N = 13.0
+/SD_M_N = 4.4
+
+/mean_M_C = 10.3
+/SD_M_C = 3.7
+
+/mean_M_Total = 32.4
+/SD_M_Total = 9.7
+
+/z_score_O = "not calculated"
+/percentile_O = "not calculated"
+
+/z_score_N = "not calculated"
+/percentile_N = "not calculated"
+
+/z_score_C = "not calculated"
+/percentile_C = "not calculated"
+
+/z_score_PIUQ = "not calculated"
+/percentile_PIUQ = "not calculated"
+</values>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/PIUQ_Obsession = radiobuttons.q1_o.response + radiobuttons.q4_o.response + radiobuttons.q7_o.response + 
+radiobuttons.q10_o.response + radiobuttons.q13_o.response + radiobuttons.q16_o.response
+
+/PIUQ_Neglect = radiobuttons.q2_n.response + radiobuttons.q5_n.response + radiobuttons.q8_n.response + 
+radiobuttons.q11_n.response + radiobuttons.q14_n.response + radiobuttons.q17_n.response
+
+/PIUQ_ControlDisorder = radiobuttons.q3_c.response + radiobuttons.q6_c.response + radiobuttons.q9_c.response +
+radiobuttons.q12_c.response + radiobuttons.q15_c.response + radiobuttons.q18_c.response
+
+/PIUQ_Total = expressions.PIUQ_Obsession + expressions.PIUQ_Neglect + expressions.PIUQ_ControlDisorder
+
+/generateGenderNorms = {
+	if (radiobuttons.gender.response == "Female"){
+		values.z_score_PIUQ = (expressions.PIUQ_Total - values.mean_F_Total)/values.SD_F_Total;
+		values.percentile_PIUQ = pofz(values.z_score_PIUQ);
+		
+		values.z_score_O = (expressions.PIUQ_Obsession - values.mean_F_O)/values.SD_F_O;
+		values.percentile_O = pofz(values.z_score_O);
+
+		values.z_score_N = (expressions.PIUQ_Neglect - values.mean_F_N)/values.SD_F_N;
+		values.percentile_N = pofz(values.z_score_N);		
+
+		values.z_score_C = (expressions.PIUQ_ControlDisorder - values.mean_F_C)/values.SD_F_C;
+		values.percentile_C = pofz(values.z_score_C);	
+	} else if (radiobuttons.gender.response == "Male"){
+		values.z_score_PIUQ = (expressions.PIUQ_Total - values.mean_M_Total)/values.SD_M_Total;
+		values.percentile_PIUQ = pofz(values.z_score_PIUQ);
+		
+		values.z_score_O = (expressions.PIUQ_Obsession - values.mean_M_O)/values.SD_M_O;
+		values.percentile_O = pofz(values.z_score_O);
+
+		values.z_score_N = (expressions.PIUQ_Neglect - values.mean_M_N)/values.SD_M_N;
+		values.percentile_N = pofz(values.z_score_N);		
+
+		values.z_score_C = (expressions.PIUQ_ControlDisorder - values.mean_M_C)/values.SD_M_C;
+		values.percentile_C = pofz(values.z_score_C);	
+	}	 	
+}
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_o>
+/caption = "1. How often do you fantasize about the Internet, or think about what it would be like to be online when you are not on the Internet?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_n>
+/caption = "2. How often do you neglect household chores to spend more time online?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_c>
+/caption = "3. How often do you feel that you should decrease the amount of time spent online?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_o>
+/caption = "4. How often do you daydream about the Internet?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_n>
+/caption = "5. How often do you spend time online when you’d rather sleep?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_c>
+/caption = "6. How often does it happen to you that you wish to decrease the amount of time spent online but you do not succeed?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_o>
+/caption = "7. How often do you feel tense, irritated, or stressed if you cannot use the Internet for as long as you want to?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_n>
+/caption = "8. How often do you choose the Internet rather than being with your partner?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_c>
+/caption = "9. How often do you try to conceal the amount of time spent online?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10_o>
+/caption = "10. How often do you feel tense, irritated, or stressed if you cannot use the Internet for several days?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11_n>
+/caption = "11. How often does the use of Internet impair your work or your efficacy?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12_c>
+/caption = "12. How often do you feel that your Internet usage causes problems for you?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13_o>
+/caption = "13. How often does it happen to you that you feel depressed, moody, or nervous when you are not on the Internet and these feelings stop once you are back online?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14_n>
+/caption = "14. How often do people in your life complain about spending too much time online?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15_c>
+/caption = "15. How often do you realize saying when you are online, “just a couple of more minutes and I will stop”?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16_o>
+/caption = "16. How often do you dream about the Internet?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17_n>
+/caption = "17. How often do you choose the Internet rather than going out with somebody to have some fun?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18_c>
+/caption = "18. How often do you think that you should ask for help in relation to your Internet use?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Always")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons gender>
+/ caption = "What is your gender?"
+/ options = ("Female", "Male", "Other", "I prefer not to answer")
+/ required = true
+</radiobuttons>
+
+<textbox age>
+/ caption = "What is your age?"
+/ mask = positiveintegerorzero
+/ required = false
+</textbox>
+
+<caption end>
+/ caption = "- END OF QUESTIONNAIRE -"
+/ position = (45%, 93%)
+/ fontstyle = ("Arial", 2%, false, true, false, false, 5, 1)
+/ txcolor = gray
+</caption>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage piuq_1>
+/ caption ="In the following you will read statements about your Internet use. Please indicate how much these statements characterize you.
+"
+/ questions = [1 = q1_o, q2_n, q3_c]
+</surveypage>
+
+<surveypage piuq_2>
+/ caption ="In the following you will read statements about your Internet use. Please indicate how much these statements characterize you.
+"
+/ questions = [1 = q4_o, q5_n, q6_c]
+</surveypage>
+
+<surveypage piuq_3>
+/ caption ="In the following you will read statements about your Internet use. Please indicate how much these statements characterize you.
+"
+/ questions = [1 = q7_o, q8_n, q9_c]
+</surveypage>
+
+<surveypage piuq_4>
+/ caption ="In the following you will read statements about your Internet use. Please indicate how much these statements characterize you.
+"
+/ questions = [1 = q10_o, q11_n, q12_c]
+</surveypage>
+
+<surveypage piuq_5>
+/ caption ="In the following you will read statements about your Internet use. Please indicate how much these statements characterize you.
+"
+/ questions = [1 = q13_o, q14_n, q15_c]
+</surveypage>
+
+
+<surveypage piuq_6>
+/ caption ="In the following you will read statements about your Internet use. Please indicate how much these statements characterize you.
+"
+/ questions = [1 = q16_o, q17_n, q18_c]
+</surveypage>
+
+<surveypage piuq_demographics>
+/ caption = "Please answer the following questions."
+
+/ skip = [
+	parameters.calculateGenderNorms == false;
+]
+/ questions = [1 = age, gender, end]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey piuq>
+/pages = [
+	1 = piuq_1;
+	2 = piuq_2;
+	3 = piuq_3;
+	4 = piuq_4;
+	5 = piuq_5;
+	6 = piuq_6;
+	7 = piuq_demographics;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Submit"
+/ onblockend = [
+	if (radiobuttons.q1_o.response == ""){
+		values.numberMissingItems += 1;
+	}
+	if (radiobuttons.q2_n.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q3_c.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q4_o.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q5_n.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q6_c.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q7_o.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q8_n.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q9_c.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q10_o.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q11_n.response == ""){
+		values.numberMissingItems += 1;
+	}
+	if (radiobuttons.q12_c.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q13_o.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q14_n.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q15_c.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q16_o.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q17_n.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	if (radiobuttons.q18_c.response == ""){
+		values.numberMissingItems += 1;
+	}	
+	
+	expressions.generateGenderNorms;
+]
+</survey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

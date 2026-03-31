@@ -1,0 +1,311 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							Screener Adult ADHD Self-Report Scale (ASRS) - 6 questions
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-28-2018
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of the short ASRS screener instrument of adult ADHD
+(based on the the World Health Organization (WHO) 18-item ASRS) as introduced by:
+
+Kessler RC, Adler L, Ames M, Demler O, Faraone S, Hiripi E, Howes MJ, Jin R, Secnik K, Spencer
+T, Ustun TB, Walters EE. (2005). The World Health Organization Adult ADHD Self-Report Scale
+(ASRS): a short screening scale for use in the general population. Psychol. Med.; 35:245–256.
+
+Scoring of the 6 item ASRS in:
+van de Glind, G. et al (2013). Validity of the Adult ADHD Self-Report Scale (ASRS) as a screener for adult ADHD 
+in treatment seeking substance use disorder patients. Drug Alcohol Depend, 132(3): 587–596.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+6 screening questions for adult ADHD, 5-point Likert scale
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes less than a minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'asrs_6.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 0 (never) - 4 (very often)
+									no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'asrs_6_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)
+
+ScreeningScore:				=> number of items with a positive score
+							=> screener ASRS is positive for adult ADHD with a score of 4 or above (van de Glind et al., 2013)
+								
+categorized response values into positive or negative score for each of the 6 questions								
+q1:						1 (=positive score) if question 1 has a raw score of 2 or higher; 0 (negative score) otherwise 
+q2:						1 (=positive score) if question 2 has a raw score of 2 or higher; 0 (negative score) otherwise  
+q3:						1 (=positive score) if question 3 has a raw score of 2 or higher; 0 (negative score) otherwise  
+q4:						1 (=positive score) if question 4 has a raw score of 3 or higher; 0 (negative score) otherwise  
+q5:						1 (=positive score) if question 5 has a raw score of 3 or higher; 0 (negative score) otherwise  
+q6:						1 (=positive score) if question 6 has a raw score of 3 or higher; 0 (negative score) otherwise 		
+								(see van de Glind et al, 2013, p.17)
+								
+raw response scores (0-4) for each of the 6 questions:								
+radiobuttons.q1.response-radiobuttons.q6.response
+								
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please answer the questions below, rating yourself on each of the criteria shown using the scale below each question. 
+
+As you answer each question, select the option that best describes how you have felt and conducted yourself over the PAST 6 MONTHS.
+
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+values.ScreeningScore, values.q1, values.q2, values.q3, values.q4, values.q5, values.q6,
+radiobuttons.q1.response,
+radiobuttons.q2.response, 
+radiobuttons.q3.response,
+radiobuttons.q4.response,
+radiobuttons.q5.response,
+radiobuttons.q6.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+/completed:				0 = script was not completed (script prematurely aborted); 1 = script was completed (all conditions run)
+
+<values>
+/q1 = 0
+/q2 = 0
+/q3 = 0
+/q4 = 0
+/q5 = 0
+/q6 = 0
+/ScreeningScore = 0
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. How often do you have trouble wrapping up the final details of a project, once the challenging parts have been done?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Very often")
+/ optionvalues = ("0","1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. How often do you have difficulty getting things in order when you have to do a task that requires organization?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Very often")
+/ optionvalues = ("0","1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. When you have a task that requires a lot of thought, how often do you avoid or delay getting started?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Very often")
+/ optionvalues = ("0","1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. How often do you have problems remembering appointments or obligations?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Very often")
+/ optionvalues = ("0","1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. How often do you fidget or squirm with your hands or feet when you have to sit down for a long time?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Very often")
+/ optionvalues = ("0","1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. How often do you feel overly active and compelled to do things, like you were driven by a motor?"
+/ options = ("Never", "Rarely", "Sometimes", "Often", "Very often")
+/ optionvalues = ("0","1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage asrs_6_1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage asrs_6_2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey asrs_6>
+/pages = [
+	1 = asrs_6_1;
+	2 = asrs_6_2;
+]
+/screencapture = false
+/ onblockend = [
+	if (radiobuttons.q1.response >= 2){
+		values.q1 = 1;
+	}
+	if (radiobuttons.q2.response >= 2){
+		values.q2 = 1;
+	}
+	if (radiobuttons.q3.response >= 2){
+		values.q3 = 1;
+	}	
+	if (radiobuttons.q4.response >= 3){
+		values.q4 = 1;
+	}
+	if (radiobuttons.q5.response >= 3){
+		values.q5 = 1;
+	}	
+	if (radiobuttons.q6.response >= 3){
+		values.q6 = 1;
+	}		
+	values.ScreeningScore = values.q1+values.q2+values.q3+values.q4+values.q5+values.q6;
+]
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ finishlabel = "Finish"
+/ nextbuttonposition = (65%, 90%)
+/ backbuttonposition = (20%, 90%)
+/ navigationbuttonfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (12%, 3%)
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

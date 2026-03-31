@@ -1,0 +1,374 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*Kessler Psychological Distress Scale K10*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the Kessler Psychological Distress Scale K10.
+The implemented procedure is based on:
+
+Reference:
+
+Kessler, R.C., Barker, P.R., Colpe, L.J., Epstein, J.F., Gfroerer, J.C., Hiripi, E., Howes, M.J, Normand, S-L.T., 
+Manderscheid, R.W., Walters, E.E., Zaslavsky, A.M. (2003). 
+Screening for serious mental illness in the general population Archives of General Psychiatry. 60(2), 184-189
+
+https://www.hcp.med.harvard.edu/ncs/K10_scales.php
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+Scored question: Question1 with 10 5-point Likert questions scored on scale 0-4
+several additional questions that do not contribute to the total score
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'K10.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		 with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale: q1a-q1j (the main 10 questions) are scored on a scale 0 (none of the time) - 4 (all of the time)
+									q2: 1 ('more often than usual: a lot') to 7 ('less often than usual: a lot')
+									q3-q4: number of days
+									q5: number of times
+									q6: 1 ('all of the time') to 5 ('none of the time)
+																		
+									NO reversed scored questions
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'K10_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+K10_totalscore:					the sum of questions q1a-q1j (scored on scale 0 'none of the time' to 4 'all of the time)	
+								Range: 0-40
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________								
+
+The scored questions in this survey are q1a-q1f. The additional questions do not contribute to scoring.								
+
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed, expressions.K10_totalscore,
+radiobuttons.q1a.response, radiobuttons.q1b.response, radiobuttons.q1c.response,
+radiobuttons.q1d.response, radiobuttons.q1e.response, radiobuttons.q1f.response,
+radiobuttons.q1g.response, radiobuttons.q1h.response, radiobuttons.q1i.response,
+radiobuttons.q1j.response, 
+radiobuttons.q2.response, textbox.q3.response, textbox.q4.response, textbox.q5.response,
+radiobuttons.q6.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/K10_totalscore = radiobuttons.q1a.response + radiobuttons.q1b.response + radiobuttons.q1c.response +
+radiobuttons.q1d.response + radiobuttons.q1e.response + radiobuttons.q1f.response +
+radiobuttons.q1g.response + radiobuttons.q1h.response + radiobuttons.q1i.response + radiobuttons.q1j.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<caption q1>
+/ caption = "Q1. During the past 30 days, about how often did you feel …"
+</caption>
+
+<radiobuttons q1a>
+/caption = "...tired out for no good reason?"
+/ options = ("All~nof the time", "Most~nof the time", "Some~nof the time", "A little~nof the time", "None~nof the time")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q1b>
+/caption = "...nervous?"
+/ options = ("All~nof the time", "Most~nof the time", "Some~nof the time", "A little~nof the time", "None~nof the time")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q1c>
+/caption = "...so nervous that nothing could calm you down?"
+/ options = ("All~nof the time", "Most~nof the time", "Some~nof the time", "A little~nof the time", "None~nof the time")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q1d>
+/caption = "...hopeless?"
+/ options = ("All~nof the time", "Most~nof the time", "Some~nof the time", "A little~nof the time", "None~nof the time")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q1e>
+/caption = "...restless or fidgety?"
+/ options = ("All~nof the time", "Most~nof the time", "Some~nof the time", "A little~nof the time", "None~nof the time")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q1f>
+/caption = "...so restless that you could not sit still?"
+/ options = ("All~nof the time", "Most~nof the time", "Some~nof the time", "A little~nof the time", "None~nof the time")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q1g>
+/caption = "...depressed?"
+/ options = ("All~nof the time", "Most~nof the time", "Some~nof the time", "A little~nof the time", "None~nof the time")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q1h>
+/caption = "...so depressed that nothing could cheer you up?"
+/ options = ("All~nof the time", "Most~nof the time", "Some~nof the time", "A little~nof the time", "None~nof the time")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q1i>
+/caption = "...that everything was an effort?"
+/ options = ("All~nof the time", "Most~nof the time", "Some~nof the time", "A little~nof the time", "None~nof the time")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q1j>
+/caption = "...worthless?"
+/ options = ("All~nof the time", "Most~nof the time", "Some~nof the time", "A little~nof the time", "None~nof the time")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/ caption = "Q2. The last six questions asked about feelings that might have occurred during the past 30 days. Taking them altogether, did these feelings occur <u>More often</u> in the past 30 days than is usual for you, <u>about the same as usual</u>, or <u>less often</u> than usual?  (If you <u>never</u> have any of these feelings, select response option “4.”)<br><br><br><br>"
+/ options = ("A lot~n1", "Some~n2", "A little~n3", "<font color='white'>this should be</font><br>4", "A little~n5", "Some~n5", "A lot~n6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/ orientation = horizontalequal
+/ required = true
+/ subcaptionfontstyle = ("Arial", 2.75%, false, false, false, false, 5, 1)
+/ position = (5%, 10%)
+</radiobuttons>
+
+<caption q2_1>
+/ caption = "More often than usual"
+/ position = (12%, 30%)
+</caption>
+
+<caption q2_2>
+/ caption = "<center>About the same<br>as usual</center>"
+/ position = (42%, 30%)
+</caption>
+
+<caption q2_3>
+/ caption = "Less often than usual"
+/ position = (65%, 30%)
+</caption>
+
+
+<textbox q3>
+/ caption = "Q3. During the past 30 days, how many days out of 30 were you <u>totally</u> unable to work or carry out your normal activities because of these feelings? (in days)"
+/ textboxsize = (20%, 5%)
+/ mask = positiveintegerorzero
+/ required = false
+/ fontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+</textbox>
+
+<textbox q4>
+/ caption = "Q4. <i>Not counting the days you reported in response to Q3</i>, how many days in the past 30 were you able to do <u>only half or less</u> of what you would normally have been able to do, because of these feelings? (in days)"
+/ textboxsize = (20%, 5%)
+/ mask = positiveintegerorzero
+/ required = false
+/ fontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+</textbox>
+
+<textbox q5>
+/ caption = "Q5. During the past 30 days, how many times did you see a doctor or other health professional about these feelings? (number of times)"
+/ textboxsize = (20%, 5%)
+/ mask = positiveintegerorzero
+/ required = false
+/ fontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+</textbox>
+
+<radiobuttons q6>
+/ caption = "Q6. During the past 30 days, how often have physical health problems been the main cause of these feelings? <br>"
+/ options = ("All~nof the time", "Most~nof the time", "Some~nof the time", "A little~nof the time", "None~nof the time")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ orientation = horizontalequal
+/ required = true
+</radiobuttons>
+
+<caption end>
+/ caption = "- END OF QUESTIONNAIRE -"
+/ position = (45%, 93%)
+/ fontstyle = ("Arial", 2%, false, true, false, false, 5, 1)
+/ txcolor = gray
+</caption>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage K10_1>
+/ caption ="The following questions ask about how you have been feeling during the <b>past 30 days</b>. For each question, please circle the number that best describes how often you had this feeling."
+/ questions = [1 = q1, q1a, q1b]
+</surveypage>
+
+<surveypage K10_2>
+/ questions = [1 = q1, q1c, q1d]
+</surveypage>
+
+<surveypage K10_3>
+/ questions = [1 = q1, q1e, q1f]
+</surveypage>
+
+<surveypage K10_4>
+/ questions = [1 = q1, q1g, q1h]
+</surveypage>
+
+<surveypage K10_5>
+/ questions = [1 = q1, q1i, q1j]
+</surveypage>
+
+<surveypage K10_6>
+/ questions = [1 = q2, q2_1, q2_2, q2_3]
+</surveypage>
+
+<surveypage K10_7>
+/ caption ="The next few questions are about how these feelings may have affected you in the past 30 days. You need not answer these questions if you answered “None of the time” to <b>all</b> of the six questions about your feelings.<br>"
+/ questions = [1 = q3, q4, q5]
+</surveypage>
+
+<surveypage K10_8>
+/ questions = [1 = q6, end]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey K10>
+/pages = [
+	1 = K10_1;
+	2 = K10_2;
+	3 = K10_3;
+	4 = K10_4;
+	5 = K10_5;
+	6 = K10_6;
+	7 = K10_7;
+	8 = K10_8;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Submit"
+</survey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

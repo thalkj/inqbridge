@@ -1,0 +1,823 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+						Four Choice Reaction Time Task - Keyboard Input
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-11-2017
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a version of a 4 Choice Reaction Time Task similar to the one described in:
+
+Armstrong et al (2012). Mild Dehydration Affects Mood in Healthy Young Women.
+The Journal of Nutrition: Ingestive Behavior and Neurosciences.
+Feb;142(2):382-8. doi: 10.3945/jn.111.142000. Epub 2011 Dec 21
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+4 boxes are presented on the screen in a horizontal array. Each box has an assigned response key (by default, the 
+response keys are matched spatially to the position of their assigned boxes: DFJK).
+After a fixed amount of time, one of the boxes turns red and participants are asked to press the 
+corresponding response key as fast as possible.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'fourchoicereactiontimetask_raw*.iqdat'*
+
+build:						The specific Inquisit version used (the 'build') that was run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+date, time: 				date and time script was run 
+subject, group: 			with the current subject/groupnumber
+session:					with the current session id
+
+blockcode, blocknum:		the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 		the name and number of the currently recorded trial (built-in Inquisit variable)
+								Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+								that do not store data to the data file such as feedback trials. Thus, trialnum 
+								may not reflect the number of main trials run per block. 
+										
+										
+totalTrialcount:			number of test trials run
+position:					1, 2, 3, or 4 => screen position of the stim from left to right
+
+response:					the participant's response (scancode of response button)
+							32 = D (left middle finger)
+							33 = F (left index finger)
+							36 = J (right index finger)
+							37 = K (right middle finger)
+
+selectedPosition:			the selected position based on keyboard press
+
+latency: 					the response latency (in ms) measured from start of trial (onset of the 4 gray boxes)
+rt:							stores the latency measured from onset of red box (Note: negative latencies => response was made before ONSET of red box)
+
+prematureError:				1 = premature error was made 
+							(premature error: rt < parameters.prematureErrorWindow)
+							0 = otherwise;
+									
+timeoutError:				1 = a timeout error was made; 
+							(timeout error: rt > parameters.timeoutErrorWindow)
+							0 = otherwise;
+									
+incorrectChoice:			1 = a valid (neither premature nor timeout response) but incorrect response was made; 
+							0 = otherwise
+
+ACC:						the correctness of the response 
+							1 => valid (no premature response nor late response) AND correct choice of response button
+							0 => otherwise
+									
+countPrematureErrors:		counts incorrect premature responses 
+							(responses made BEFORE appearance of red box and those made AFTER within the prematureErrorWindow)
+									
+countTimeoutErrors:			responses made after parameters.timeoutErrorWindow
+countIncorrectChoices:		counts the number of valid responses (neither premature nor late) that are incorrect response choices
+
+
+
+(2) Summary data file: 'fourchoicereactiontimetask_summary*.iqdat'*
+
+inquisit.version: 			Inquisit version run
+computer.platform:		the platform the script was run on (win/mac/ios/android)
+startDate:				date script was run
+startTime:				time script was started
+subjectid:				assigned subject id number
+groupid:				assigned group id number
+sessionid:				assigned session id number
+elapsedTime:			time it took to run script (in ms); measured from onset to offset of script
+completed:				0 = script was not completed (prematurely aborted); 
+						1 = script was completed (all conditions run)
+									
+totalTrialcount:		number of test trials run 
+propCorrect:			proportion correct responses (correct in terms of response button and timing of response)
+meanRT:					the average reaction time (in ms) of correct responses
+SD:						the standard deviation of correct response reaction times 									
+									
+propPrematureErrors:	proportion of Premature Errors relative of total number of trials
+propTimeoutErrors:		proportion of Timeout Errors relative of total number of trials
+propIncorrectChoices:	proportion of IncorrectChoices (otherwise valid) relative of total number of trials
+
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+1. Practice Block: 10 practice trials with feedback
+by default, the positions of the red box is randomly determined with replacement (see section Editable Lists)
+error feedback provided
+
+2. Testblock: 100 trials (default; can be adjusted under section Editable Parameters)
+by default, the positions of the red box is randomly determined with replacement (see section Editable Lists)
+
+Trial Sequence:
+
+4 gray boxes (default: 500ms; parameters.SOA; fixed)-> onset of red box -> waits for response to continue
+Two  latencies recorded: 
+1) 'latency' measured from onset of trial (with onset of the 4 gray boxes)
+2) values.RT measured from onset of red box 
+
+Error Categories:
+
+premature Errors: all responses with values.rt < parameters.prematureErrorWindow (measured from onset of red box)
+If participant responds BEFORE red box appears, values.rt will be negative and automatically scored as a prematureError.
+
+timeoutErrors: all responses with values.rt > parameters.timeoutErrorWindow (measured from onset of red box)
+
+incorrectChoiceErrors: all responses that are valid (aka: no premature Error nor a timeoutError) BUT 
+						the incorrect response button was pressed
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section EDITABLE INSTRUCTIONS
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+																
+Interface:
+/pos1_x:						the first horizonal box position from the left in canvas width percentages (0% at the far left of canvas - 100% far right of canvas)
+/pos2_x:						the second horizonal box position from the left in canvas width percentages
+/pos3_x:						the third horizonal box position from the left in canvas width percentages
+/pos4_x:						the fourth horizonal box position from the left in canvas width percentages
+/stimHeight:					height of the boxes in canvas height percentages (default: 5%)
+
+Response Keys (from left to right):
+/responsekey1:					the first response button ("D"); furthest left
+/responsekey2:					the second response button ("F")
+/responsekey3:					the third response button ("J")
+/responsekey4:					the fourth response button ("K"); furthest right
+
+Duration Parameters (in ms):
+/SOA:							Response Stimulus Interval in ms (interval between onset of gray boxes and onset of red box)(default: 500ms)
+ 
+/prematureErrorWindow:			responses made before the end of this window (measured in ms fro m  onset of red box)are scored as premature errors (default: 100)
+								(Note: ALL responses BEFORE appearance of red box are automatically considered premature)
+								
+/timeoutErrorWindow:			responses made after this response window (measured from onset of red box in ms) are considered 'timeOut Errors' (default: 1000ms)
+								Example: if a response is made 1000ms AFTER onset of red box, the response is scored as a timeout error.
+								
+/readyDuration:					duration (in ms) of getting ready trial (default: 5000ms)
+/feedbackDuration:				duration (in ms) of feedback during the practice trials (default: 1000ms)
+
+Trial Numbers:
+/maxTrials:						number of trials to run (default: 100)
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ pos1_x = 35.5%
+/ pos2_x = 45.0%
+/ pos3_x = 55.0%
+/ pos4_x = 65.0%
+/ stimHeight = 7%
+
+/ responsekey1 = "D"
+/ responsekey2 = "F"
+/ responsekey3 = "J"
+/ responsekey4 = "K"
+
+/SOA = 500
+/prematureErrorWindow = 100
+/timeoutErrorWindow = 1000
+/readyDuration = 7000
+/feedbackDuration = 1000
+
+/maxTrials = 100
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item instructions>
+/1 = "There are 4 gray boxes arranged in a horizontal line on your screen. 
+Any of the 4 gray boxes can turn red.
+~n~n~n~n~n~n~n~n~n~n~n
+As soon as a box turns red, press the corresponding response button (here highlighted in red) <%expressions.buttoninstruct1%>. Respond as FAST as you can while making as few errors as possible.
+
+When you are ready for a short practice session press <Spacebar> to start."
+/2 = "Let's continue the same task without feedback.
+~n~nWhen you are ready to continue, press <SPACEBAR>."
+</item>
+
+<item feedback>
+/1 = "Response was made too early"
+/2 = "Response was made too late"
+/3 = "Response was incorrect"
+/4 = "correct!"
+</item>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/ items = ("Get Ready:
+~n<%expressions.buttoninstruct2%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+
+<expressions>
+/ buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {
+"shown at the bottom";} 
+else {
+"on your keyboard";}
+/ buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"place your left middle and index finger on the two left buttons and your right index and middle finger on the two right buttons";} else {"place your left middle and index finger on the '<%parameters.responsekey1%>' and '<%parameters.responsekey2%>' 
+place your right index and middle finger on the '<%parameters.responsekey3%>' and '<%parameters.responsekey4%>'";}
+
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: by default, this list selects one of the 4 positions randomly.
+
+The item list can be changed to run:
+- a specific sequence
+- a specific number of positions etc.
+<list highlightedPosition_practice>
+/ items = (1, 2, 3, 4)
+/ replace = true
+</list>
+
+
+Note: by default, this list selects one of the 4 positions randomly.
+
+The item list can be changed to run:
+- a specific sequence
+- a specific number of positions etc.
+<list highlightedPosition>
+/ items = (1, 2, 3, 4)
+/ replace = true
+</list>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = black
+/ txcolor = white
+/ screencolor = black
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+expressions.totalTrialcount,
+values.position, response, values.selectedPosition, latency, values.rt,
+values.prematureError, values.timeoutError, values.incorrectChoice, values.ACC, 
+values.countPrematureErrors, values.countTimeoutErrors, values.countIncorrectChoices)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.totalTrialcount, expressions.propCorrect, expressions.meanRT, expressions.SD, 
+expressions.propPrematureErrors, expressions.propTimeoutErrors, expressions.propIncorrectChoices)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/completed:				0 = script was not completed; 1 = script was completed (all conditions run)
+/position:				1, 2, 3, or 4 => screen position of the stim from left to right
+/selectedPosition:		the selected position based on keyboard press
+/rt:					stores the latency measured from onset of red box.
+/countPrematureErrors:	counts incorrect premature responses 
+						(responses made BEFORE appearance of red box and those made AFTER within the prematureErrorWindow)
+/prematureError:		1 = premature error was made; 0 = otherwise
+/countTimeoutErrors:	responses made after parameters.timeoutErrorWindow
+/timeoutError:			1 = a timeout error was made; 0 = otherwise
+/countIncorrectChoices:	counts the number of valid responses (neither premature nor late) that are incorrect response choices
+/incorrectChoice:		1 = a valid (neither premature nor late) but incorrect response was made; 0 = otherwise
+/correct:				1 = response was correct (no error was made); 0 = otherwise
+/selectFeedback:		stores the itemnumber of the selected feedback
+
+
+<values>
+/completed = 0
+/position=0
+/selectedPosition = 0
+/rt = 0
+/countPrematureErrors = 0
+/prematureError = 0
+/countTimeoutErrors = 0
+/timeoutError = 0
+/countIncorrectChoices = 0
+/incorrectChoice = 0
+/ACC = 0
+/selectFeedback = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/totalTrialcount:			number of test trials run
+/propCorrect:			proportion of correct responses
+						Notes: all trials with values.Anticipatory = 1 are automatically scored as 0 (incorrect)
+						regardless of response key hit
+												
+/meanRT:				mean correct response latency (in ms; measured from onset of red box)
+/SD:					standard deviations of correct latencies
+
+/propPrematureError:	proportion of Premature Errors relative of total number of trials
+/propTimeoutErrors:		proportion of Timeout Errors relative of total number of trials
+/propIncorrectChoices:	proportion of IncorrectChoices (otherwise valid) relative of total number of trials
+
+<expressions>
+/totalTrialcount = list.accuracy.itemCount
+/propCorrect = list.accuracy.mean
+/meanRT = list.latencies.mean
+/SD = list.latencies.standarddeviation
+
+/propPrematureErrors = values.countPrematureErrors/expressions.totalTrialcount
+/propTimeoutErrors = values.countTimeoutErrors/expressions.totalTrialcount
+/propIncorrectChoices = values.countIncorrectChoices/expressions.totalTrialcount
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text box1_key>
+/ items = ("<%parameters.responsekey1%>")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos1_x
+/ vposition = 60%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+<text box2_key>
+/ items = ("<%parameters.responsekey2%>")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos2_x
+/ vposition = 60%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+<text box3_key>
+/ items = ("<%parameters.responsekey3%>")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos3_x
+/ vposition = 60%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = black
+/ txcolor = red
+</text>
+
+<text box4_key>
+/ items = ("<%parameters.responsekey4%>")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos4_x
+/ vposition = 60%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = black
+/ txcolor = white
+</text>
+
+
+<text instructions>
+/ items = instructions
+/ select = sequence
+/ position = (10%, 25%)
+/ halign = left
+/ valign = top
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+
+<trial intro>
+/ stimulusframes = [1 = instructions, box1, box2, box3, box4, box1_key, box2_key, box3_key, box4_key]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial testIntro>
+/ stimulusframes = [1 = instructions]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+*************************************
+General Helper Instruction Trials/Blocks
+*************************************
+
+This trial is used when participants are asked to place their fingers on specific response
+buttons. On the touchscreen, this trial presents the (inactive) response buttons to the participants.
+<trial getReady>
+/ stimulusframes = [1 = getReady]
+/ trialduration = parameters.readyDuration
+/ validresponse = (parameters.responsekey1, parameters.responsekey2, parameters.responsekey3, parameters.responsekey4)
+/ beginresponsetime = parameters.readyDuration
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+<text box1>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos1_x
+/ vposition = 50%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = gray
+/ erase = false
+</text>
+
+<text box2>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos2_x
+/ vposition = 50%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = gray
+/ erase = false
+</text>
+
+<text box3>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos3_x
+/ vposition = 50%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = red
+/ erase = false
+</text>
+
+<text box4>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ hposition = parameters.pos4_x
+/ vposition = 50%
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = gray
+/ erase = false
+</text>
+
+<text redBox>
+/ items = ("")
+/ fontstyle = ("Arial", parameters.stimHeight, false, false, false, false, 5, 1)
+/ size = (parameters.stimHeight*0.75, parameters.stimHeight)
+/ txbgcolor = red
+/ erase = false
+/ position = (50%, 50%)
+</text>
+
+<text feedback>
+/ items = feedback
+/ select = values.selectFeedback
+/ position = (50%, 70%)
+/ fontstyle = ("Arial",5%, true, false, false, false, 5, 1)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list accuracy>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial 4choiceRT>
+/ ontrialbegin = [	
+	values.prematureError = 0;
+	values.timeoutError = 0;
+	values.incorrectChoice = 0;
+	values.ACC = 0;
+	values.position = list.highlightedPosition.nextValue;
+	if (values.position == 1) {
+		text.redBox.hposition = text.box1.hposition;
+		text.redBox.vposition = text.box1.vposition;
+	} else if (values.position == 2) {
+		text.redBox.hposition = text.box2.hposition;
+		text.redBox.vposition = text.box2.vposition;
+	} else if (values.position == 3) {
+		text.redBox.hposition = text.box3.hposition;
+		text.redBox.vposition = text.box3.vposition;
+	} else if (values.position == 4) {
+		text.redBox.hposition = text.box4.hposition;
+		text.redBox.vposition = text.box4.vposition;
+	} ;
+	
+	trial.4choiceRT.insertStimulusTime(text.redBox, parameters.SOA);
+]
+/ stimulustimes = [0 = box1, box2, box3, box4]
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ validresponse = (parameters.responsekey1, parameters.responsekey2, parameters.responsekey3, parameters.responsekey4)
+/ iscorrectresponse = [
+	return (
+	(values.position == 1 && trial.4choiceRT.responseText == parameters.responsekey1) ||
+	(values.position == 2 && trial.4choiceRT.responseText == parameters.responsekey2) ||
+	(values.position == 3 && trial.4choiceRT.responseText == parameters.responsekey3) ||	
+	(values.position == 4 && trial.4choiceRT.responseText == parameters.responsekey4));	
+]
+/ ontrialend = [
+	trial.4choiceRT.resetStimulusFrames();
+
+	if (trial.4choiceRT.responseText == parameters.responsekey1){
+		values.selectedPosition = 1;
+	} else if (trial.4choiceRT.responseText == parameters.responsekey2){
+		values.selectedPosition = 2;
+	} else if (trial.4choiceRT.responseText == parameters.responsekey3){
+		values.selectedPosition = 3;
+	} else if (trial.4choiceRT.responseText == parameters.responsekey4){
+		values.selectedPosition = 4;
+	}
+	
+	values.rt = trial.4choiceRT.latency - parameters.SOA;
+	if (values.rt < parameters.prematureErrorWindow){
+		values.prematureError = 1;
+		values.countPrematureErrors += 1;
+	} else if (values.rt > parameters.timeoutErrorWindow){
+		values.timeoutError = 1;
+		values.countTimeoutErrors += 1;
+	} else if (trial.4choiceRT.error){
+		values.incorrectChoice = 1;
+		values.countIncorrectChoices += 1;
+	} else if (trial.4choiceRT.correct){
+		values.ACC = 1;
+		list.latencies.insertItem(values.rt, 1);
+	}
+		
+	list.accuracy.insertItem(values.ACC, 1);
+]
+/ branch = [
+	return trial.4choiceRT;
+]
+</trial>
+		
+	
+************************************************
+practice trials
+************************************************
+
+<trial 4choiceRT_practice>
+/ ontrialbegin = [	
+	values.prematureError = 0;
+	values.timeoutError = 0;
+	values.incorrectChoice = 0;
+	values.ACC = 0;
+	values.position = list.highlightedPosition_practice.nextValue;
+	if (values.position == 1) {
+		text.redBox.hposition = text.box1.hposition;
+		text.redBox.vposition = text.box1.vposition;
+	} else if (values.position == 2) {
+		text.redBox.hposition = text.box2.hposition;
+		text.redBox.vposition = text.box2.vposition;
+	} else if (values.position == 3) {
+		text.redBox.hposition = text.box3.hposition;
+		text.redBox.vposition = text.box3.vposition;
+	} else if (values.position == 4) {
+		text.redBox.hposition = text.box4.hposition;
+		text.redBox.vposition = text.box4.vposition;
+	} ;
+	
+	trial.4choiceRT_practice.insertStimulusTime(text.redBox, parameters.SOA);
+]
+/ stimulustimes = [0 = box1, box2, box3, box4]
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ validresponse = (parameters.responsekey1, parameters.responsekey2, parameters.responsekey3, parameters.responsekey4)
+/ iscorrectresponse = [
+	return (
+	(values.position == 1 && trial.4choiceRT_practice.responseText == parameters.responsekey1) ||
+	(values.position == 2 && trial.4choiceRT_practice.responseText == parameters.responsekey2) ||
+	(values.position == 3 && trial.4choiceRT_practice.responseText == parameters.responsekey3) ||	
+	(values.position == 4 && trial.4choiceRT_practice.responseText == parameters.responsekey4));
+]
+/ ontrialend = [
+	trial.4choiceRT_practice.resetStimulusFrames();
+
+	if (trial.4choiceRT_practice.responseText == parameters.responsekey1){
+		values.selectedPosition = 1;
+	} else if (trial.4choiceRT_practice.responseText == parameters.responsekey2){
+		values.selectedPosition = 2;
+	} else if (trial.4choiceRT_practice.responseText == parameters.responsekey3){
+		values.selectedPosition = 3;
+	} else if (trial.4choiceRT_practice.responseText == parameters.responsekey4){
+		values.selectedPosition = 4;
+	}
+	
+	values.rt = trial.4choiceRT_practice.latency - parameters.SOA;
+	if (values.rt < parameters.prematureErrorWindow){
+		values.prematureError = 1;
+		values.selectFeedback = 1;
+		text.feedback.textColor = yellow;
+	} else if (values.rt > parameters.timeoutErrorWindow){
+		values.timeoutError = 1;
+		values.selectFeedback = 2;
+		text.feedback.textColor = yellow;		
+	} else if (trial.4choiceRT_practice.error){
+		values.incorrectChoice = 1;
+		values.selectFeedback = 3;
+		text.feedback.textColor = red;		
+	} else if (trial.4choiceRT_practice.correct){
+		values.ACC = 1;
+		values.selectFeedback = "";
+		text.feedback.textColor = green;
+	}
+		
+]
+/branch = [
+	if (values.selectFeedback !=""){
+		return trial.feedback;
+	}
+]
+</trial>
+
+<trial feedback>
+/ stimulusframes = [1 = feedback]
+/ trialduration = parameters.feedbackDuration
+/ recorddata = false
+</trial>
+	
+	
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+<block intro>
+/ trials = [1 = intro]
+/ onblockend = [
+	text.box3.textBgColor = gray;
+]
+</block>
+
+<block practice>
+/ trials = [
+	1 = getReady; 
+	2-11 = 4choiceRT_practice; 
+	12 = testIntro; 
+	13 = getReady;
+]
+</block>
+
+<block 4choiceRTtask>
+/ onblockbegin = [
+	list.highlightedPosition.reset();
+]
+/ stop = [
+	expressions.totalTrialcount >= parameters.maxTrials;
+]
+/ trials = [1 = 4choiceRT]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt fourchoice>
+/ blocks = [
+	1 = intro; 
+	2 = practice;
+	3 = 4choiceRTtask;
+	4 = finish;
+]
+</expt>
+
+<monkey>
+/ latencydistribution = normal(700, 100)
+</monkey>
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

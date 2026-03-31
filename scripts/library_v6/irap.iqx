@@ -1,0 +1,2022 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+						The Implicit Relational Assessment Procedure (IRAP): Template
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 07-31-2018
+last updated:  02-23-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-23-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________ 
+
+The IRAP is a procedure suggested by Barnes-Holmes et al (e.g. 2006, 2010A, 2010B) to measure implicit attitudes.
+Participants are asked to quickly categorize pairs of stimuli according to pre-determined rules. 
+The rules are either hypothesis-consistent (e.g. 'Flowers are pleasant; Insects are unpleasant')
+or hypothesis-inconsistent (e.g. 'Insects are pleasant, Flowers are unpleasant').
+From one block to the next, the rule flips from being hypothesis-consistent to hypothesis-inconsistent. 
+
+The IRAP is based on the assumption that participants are faster to categorize item pairs 
+(e.g. the positive word 'beautiful' paired with the flower 'daisy')
+when the categorization rule coincides with the participant's implicit attitudes towards the targets 
+(e.g. "I like flowers") and slower when the categorization rule works against the participant's implicit attitude.
+
+The difference in mean reaction btw. hypothesis-consistent and hypothesis-inconsistent trials are 
+computed and captured in several D-IRAP scores which can be used to assess implicit attitudes.
+This script uses the D-IRAP algorithms outlined in Barnes-Holmes et al (2010A, p.533, 2010B, p.298).
+
+In general, positive D-IRAP scores suggest implicit attitudes in line with the hypothesis-consistent
+categorization rule. Negative D-IRAP scores suggest implicit attitudes in line with the hypothesis-inconsistent
+categorization rule.
+
+In contrast to the Implicit Association Task (IAT), the IRAP generates D-IRAP scores separately for
+each target category.
+
+This script provides a general IRAP framework to assess implicit attitudes using the target categories 
+"FLOWERS" and "INSECTS" as examples.
+
+The hypothesis-consistent rule is: 'Flowers are pleasant'-'Insects are unpleasant'.
+=> positive D-IRAP scores reflect a hypothesis-consistent bias ('flowers are pleasant, insects are unpleasant')
+=> negative D-IRAP scores reflect a hypothesis-inconsistent bias ('insects are pleasant, flowers are unpleasant')
+The zero-point reflects no bias.
+
+This script implements The Implicit Relational Assessment Procedure (IRAP) similarly to 
+the open source IRAP procedure by I. Hussey:
+https://contextualscience.org/implicit_relational_assessment_procedure_irap_website.
+
+
+References:
+
+Barnes-Holmes, D., Barnes-Holmes, Y., Power, P., Hayden, E., Milne, R., & Stewart, I. (2006). 
+Do you know what you really believe? Developing the Implicit Relational Evaluation Procedure (IRAP) as a direct measure
+of implicit beliefs. The Irish Psychologist, 32(7), 169–177.
+
+Barnes-Holmes, D., Barnes-Holmes, Y., Stewart, I., & Boles, S. (2010A). A sketch of the
+implicit relational assessment procedure (IRAP) and the relational elaboration
+and coherence (REC) model. The Psychological Record, 60(3), 527.
+
+Barnes-Holmes, D., Murtagh, L., Barnes-Holmes, Y., & Stewart, I. (2010B). Using the Implicit Association
+Test and the Implicit Relational Assessment Procedure to measure attitudes towards meat and
+vegetables in vegetarians and meat-eaters. The Psychological Record, 60, 287-306.
+
+Hussey, I., Mhaoileoin, D. N., Barnes-Holmes, D., Ohtsuki, T., Kishita, N., Hughes, S., & Murphy, C. (2016). 
+The IRAP Is Nonrelative but notAcontextual: Changes to the Contrast Category Influence Men’s
+Dehumanization of Women. The Psychological Record, 66(2), 291– 299. 
+http://doi.org/10.1007/s40732-016-0171-6
+
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+
+Participants are asked to assess the similarity of two items such as the word "Tulip" 
+(belonging to the target 'Flower' category)
+paired with the word "Superb" (belonging to the positive attribute category).
+The rule to assess 'similarity' is: 'Flowers are pleasant, insects are unpleasant'.
+According to this rule, words belonging to the category 'FLOWER' that are paired with a pleasant word are 
+'similar' whereasflower words that are paired with unpleasant words are 'different'. 
+Likewise, insects that are paired with pleasant words 
+are 'different' and insects that are paired with unpleasant words are 'similar'.
+
+Participants work through several rounds of testing whereas each round consists of 2 blocks:
+the first blocks presents the hypothesis-consistent rule, the second rule presents the hypothesis-inconsistent rule 
+(or vice versa).
+
+This script counterbalances whether the hypothesis consistent rule ('flowers are pleasant, insects are unpleasant')
+or the hypothesis inconsistent rule ('flowers are unpleasant, insects are pleasant') is presented first in each round
+of testing. Use odd groupnumber to run the order 'consistent -> inconsistent'; use even groupnumbers to run the order
+'inconsistent -> consistent' order.
+
+__________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. ~10-15min (depending on speed and accuracy) to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________ 
+The default data stored in the data files are:
+
+(1) Raw data file: 'irap_raw*.iqdat'*
+
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group, 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; 
+									even those that do not store data to the data file such as feedback trials
+									
+									
+conditionOrder:					"c-ic" - 'hypothesis-consistent' rule run before 'hypothesis-inconsistent' rule
+								"ic-c" - 'hypothesis-inconsistent' rule run before 'hypothesis-consistent' rule
+										
+countPracticeRounds:			counts the number of practice rounds (one round = two blocks)									
+countTestRounds:				counts the number of test rounds (one round = two blocks)
+phase:							"practice" vs. "test"	
+								
+ruleConsistency:				1 = block runs the hypothesis-consistent rule
+								2 = block runs the hypothesis-inconsistent rule
+									
+targetCat:						the currently tested target category (here: FLOWERS or INSECTS)
+attributeCat:					the currently tested attribute category	(here: PLEASANT or UNPLEASANT)
+							
+stimulusitem.1:					the attribute word presented
+stimulusitem.2:					the target image presented
+
+latency: 						the response latency (in ms); measured from: onset of words until CORRECT response is made
+								(!Note: trials only advance with a correct response, so if an error is made a latency-penalty 
+								is automatically added until the response is corrected)
+										
+response:						scancode of the participant's (last) response button
+										18 = E
+										21 = I
+																				
+										
+corrResp:						the correct response in words "similar" vs. "different"									
+corrKey:						stores the key of the currently correct response									
+correct:						accuracy of INITIAL response: 1 = correct initial response; 0 = otherwise
+responseOptionA:				the response Option A key (here: response option A = 'similar' key)
+responseOptionB:				the response Option B key (here: response option B = 'different' key)
+
+ACC_practice:					proportion correct (based on initial response) during the current practice block
+								(resets after each practice block)
+											
+medianRT_practice:				median response latency (in ms) of correct or corrected responses during 
+								the current practice block (resets after each practice block)
+											
+practicePass:					1 = practice mastery criteria have been met
+								0 = practice mastery criteria have not been met 
+
+
+(2) Summary data file: 'irap_images_summary*.iqdat'*
+
+inquisit.version: 					Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+								
+conditionOrder:					"c-ic" - 'hypothesis-consistent' rule run before 'hypothesis-inconsistent' rule
+								"ic-c" - 'hypothesis-inconsistent' rule run before 'hypothesis-consistent' rule								
+												
+practicePass:					1 = practice mastery criteria have been met
+								0 = practice mastery criteria have not been met
+									
+countPracticeRounds:			counts the number of practice rounds (one round = two blocks)	
+
+minTestblockACC:				tracks the lowest proportion correct (based on initial response) in any test block run
+								Note: Barnes-Holmes et al (2010A, p.532): "No performance criteria are applied during the test blocks 
+								in order to proceed, but if a participant’s performance falls below the practice accuracy criterion 
+								(e.g., 80%) for any test block, the data for that participant typically are discarded."
+
+propBelowMinRT:					proportion of test trials with response latencies < 300ms
+								Note: Barnes-Holmes et al (2010A, p.533), suggest to eliminate all data of participants 
+								with propBelowMinRT > 0.1 (10%)
+
+
+Notes: 
+(1) the D_IRAP scores are calculated based on 3 or fewer test rounds (this script does not automatically
+adapt to running more than 3 test rounds - however, it could be edited to do so):	
+
+(2) D-IRAP interpretation: in general
+positive D-IRAP scores reflect a hypothesis-consistent bias ('flowers are pleasant, insects are unpleasant')
+negative D-IRAP scores reflect a hypothesis-inconsistent bias ('insects are pleasant, flowers are unpleasant')
+The zero-point reflects no bias.
+
+																
+D_IRAP_AA:		D_IRAP score for AA (here: pleasant word-flower) trials - (D_IRAP_AA1 + D_IRAP_AA2 + D_IRAP_AA3)/2
+				(calculated as the mean of the D-IRAP scores of the individual test rounds 1-3, 
+				automatically adapts if fewer test rounds are run)
+									
+				positive D_IRAP_AA: on average, participant was faster to correctly categorize trials that paired 
+				'pleasant words with flowers'	
+				if the rule was 'flowers are good' (=similar) than under the rule 'flowers are bad' (=different)
+									
+				negative D_IRAP_AA: on average, participant was faster to correctly categorize trials that paired 
+				'pleasant words with flowers'	
+				if the rule was 'flowers are bad' (=different) than under the rule 'flowers are good' (=similar)									
+									
+									
+D_IRAP_AB:		D_IRAP score for AB (here: pleasant word-insect) trials - (D_IRAP_AB1 + D_IRAP_AB2 + D_IRAP_AB3)/2
+				(calculated as the mean of the D-IRAP scores of the individual test rounds 1-3, 
+				automatically adapts if fewer test rounds are run)
+								
+				positive D_IRAP_AB: on average, participant was faster to correctly categorize trials that paired 
+				'pleasant words with insects'	
+				if the rule was 'insects are bad' (=different) than under the rule 'insects are good' (=similar)
+									
+				negative D_IRAP_AB: on average, participant was faster to correctly categorize trials that paired 
+				'pleasant words with insects'	
+				if the rule was 'insects are good' (=similar) than under the rule 'insects are bad' (=different)									
+																		
+																		
+D_IRAP_BA:		D_IRAP score for BA (here: unpleasant word-flower) trials - (D_IRAP_BA1 + D_IRAP_BA2 + D_IRAP_BA3)/2
+				(calculated as the mean of the D-IRAP scores of the individual test rounds 1-3, automatically adapts if fewer test rounds are run)
+								
+				positive D_IRAP_BA: on average, participant was faster to correctly categorize trials that paired 
+				'unpleasant words with flowers'	
+				if the rule was 'flowers are good' (=different) than under the rule 'flowers are bad' (=similar)
+									
+				negative D_IRAP_BA: on average, participant was faster to correctly categorize trials that paired 
+				'unpleasant words with flowers'	
+				if the rule was 'flowers are bad' (=similar) than under the rule 'flowers are good' (=different)									
+																											
+D_IRAP_BB:		D_IRAP score for BB (here: unpleasant word-insect) trials- (D_IRAP_BB1 + D_IRAP_BB2 + D_IRAP_BB3)/2
+				(calculated as the mean of the D-IRAP scores of the individual test rounds 1-3, 
+				automatically adapts if fewer test rounds are run)
+																		
+				positive D_IRAP_BB: on average, participant was faster to correctly categorize trials that paired 'unpleasant words with insects'	
+				if the rule was 'insects are bad' (=similar) than under the rule 'insects are good' (=different)
+									
+				negative D_IRAP_BB: on average, participant was faster to correctly categorize trials that paired 'unpleasant words with insects'	
+				if the rule was 'insects are good' (=different) than under the rule 'insects are bad' (=similar)									
+
+								
+D_IRAP_A:		mean of the two IRAP D-scores for target A (here: flowers) - (D_IRAP_AA+D_IRAP_BA)/2
+
+				positive D_IRAP_A: 
+				averaged across trials that presented flowers ('pleasant-flower'; 'unpleasant-flower')
+				participant was faster to correctly categorize the item pairs under the rule 
+				'flowers are good'.
+									
+				negative D_IRAP_A: 
+				averaged across trials that presented flowers ('pleasant-flower'; 'unpleasant-flower')
+				participant was faster to correctly categorize the item pairs under the rule 
+				'flowers are bad'.
+								
+D_IRAP_B:		mean of the two IRAP D-scores for target B (here: insects) - (D_IRAP_AB+D_IRAP_BB)/2
+
+				positive D_IRAP_B: 
+				averaged across trials that presented insects ('pleasant-insect'; 'unpleasant-insect')
+				participant was faster to correctly categorize the item pairs under the rule 
+				'insects are bad'.
+									
+				negative D_IRAP_B: 
+				averaged across trials that presented insects ('pleasant-insect'; 'unpleasant-insect')
+				participant was faster to correctly categorize the item pairs under the rule 
+				'insects are good'.
+								
+D_IRAP:			overall D_IRAP score as the mean of the D_IRAP scores for target A and target B - (D_IRAP_A + D_IRAP_B)/2
+
+				positive D_IRAP: 
+				averaged across all trial types participant was faster to correctly categorize the item pairs under the 
+				rule 'flowers are good - insects are bad' 
+				=> bias towards flowers over insects
+								
+				negative D_IRAP: 
+				averaged across all trial types participant was faster to correctly categorize the item pairs under the 
+				rule 'flowers are bad - insects are good' 
+				=> bias towards insects over flowers
+								
+
+
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+
+(1) Practice: max. 4 practice rounds (one round = one hypothesis-consistent and one hypothesis-inconsistent block)
+- each practice block presents 32 trials: 8 repeats of each of the four trialtypes:
+AA = pleasant attributes paired with flowers
+AB = pleasant attributes paired with insects
+BA = unpleasant attributes paired with flowers
+BB = unpleasant attributes paired with insects
+
+- the order of the trials is determined randomly by the computer
+- each trial type randomly samples from the pool of available items (sampling = random without replacement).
+In this script: there are 4 examplars per each target and attribute category,
+thus each trialtype uses each of the four attributes and targets twice, randomly assembling the pair.
+- all trials terminate with the correct response (if an error is made a red X 
+appears on screen until the response is corrected)
+- by default, location of the 'similar'/'different' response keys changes randomly 
+(see Editable Parameters to set it to a fixed location)
+
+Practice End:	
+- if the practice performance in both blocks of any given round is 80% or higher AND the median response latency in 
+both blocks is 2000ms or lower (=mastery criteria), practice terminates and the test is started.
+
+- practice rounds are repeated for a maximum of 4 practice rounds IF
+	- the performance in one or both of the blocks in any given round is below 80% (based on initial response) OR
+	- the median response latency is greater than 2000ms in one or both of the blocks in any given round
+
+- The script terminates prematurely if the 'mastery criteria' is not reached after 4 practice rounds.
+
+(2) Test: 3 test rounds (one round = one hypothesis-consistent and one hypothesis-inconsistent block)
+- each practice block presents 32 trials: 8 repeats of each of the four trialtypes:
+AA = pleasant attributes paired with flowers
+AB = pleasant attributes paired with insects
+BA = unpleasant attributes paired with flowers
+BB = unpleasant attributes paired with insects
+
+- the order of the trials is determined randomly by the computer
+- each trial type randomly samples from the pool of available items (sampling = random without replacement)
+In this script: there are 4 examplars per each target and attribute category,
+thus each trialtype uses each of the four attributes and targets twice, randomly assembling the pair.
+- all trials terminate with the correct response (if an error is made a red X appears on screen until the response is corrected)
+- by default, location of the 'similar'/'different' response keys changes randomly (see Editable Parameters to set it to a fixed location)
+- Barnes-Holmes et al (2010A, p.532): "No performance criteria are applied during the test blocks in order to proceed, but if 
+a participant’s performance falls below the practice accuracy criterion (e.g., 80%) for any test block, the data for that participant typically are discarded."
+-> this script tracks the lowest test performance of each participant by values.minTestblockACC (see summary data file)
+
+Trialsequence: 
+Item pair until correct response -> ITI
+
+Note: the order of consistent-inconsistent rules are counterbalanced by groupnumbers
+odd groupnumbers: start with hypothesis-consistent rule (here: flowers are pleasant, insects are unpleasant)
+even groupnumbers: start with hypothesis-inconsistent rule (here: flowers are unpleasant, insects are pleasant)
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+provided by Millisecond Software - can be edited under section Editable Stimuli
+The default script provides:
+4 flower words, 4 insect words, 4 positive attribute words, 4 negative attribute words
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+(Note: some of the instructions are modelled on the open source IRAP procedure by I. Hussey)
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+
+Experimental Design Parameters:
+
+
+/maxNumberPracticeRounds:					max number of practice rounds (default: 4)
+												Notes: 
+												a) one round = one hypothesis-consistent and one hypothesis-inconsistent block
+												b) Participants have to get 80% correct (see parameters.minPracACC) in each block of a practice round as well as
+												as perform with a median latency <= 2000ms (see parameters.maxPracRT) in each block of a practice round to 
+												advance to the test.
+												
+/numberOfTestRounds:						number of test rounds run (default: 3)
+												Notes:
+												a) one round = one hypothesis-consistent and one hypothesis-inconsistent block
+												b) D-IRAP scores in this script are calculated for 3 or fewer test rounds
+												
+/fixedResponseKeyLocation:					true (1): the response key assignment is fixed throughout the task
+												(the assignment is randomly decided at the start of the task) (default)
+											false (0): the response key assignment is randomly decided for each trial
+												(in this case participants not only have to make a categorization choice but
+												also pay attention to the location of the correct response key)
+																								
+Timing Parameters:												
+												
+
+/readyDuration:								the duration (in ms) of the 'get-ready' trial (default: 3000ms)
+/iti:										the intertrial interval in ms (default: 400)
+
+/minPracACC:								mastery accuracy criterion: the minimum proportion correct that participants have to reach 
+												in each of the two blocks of a practice round before they can move on to the test (default: 0.8)
+												
+/maxPracRT:									mastery response time criterion: the maximum medium latency (in ms) that is permitted 
+												in each of the two blocks of a round before participants might be able to move on to the test (default: 2000ms)
+
+/minTestRT:									this script tracks the number of test responses with latencies smaller than minTestRT (in ms)
+												and stores the proportion (expressions.propBelowMinRT) in the summary data file.
+												The scoring algorithm for D-IRAP (e.g. Barnes-Holmes et al, 2010, suggests to exclude all 
+												participants from further analyses whose expressions.propBelowMinRT > 0.1 - or 10% )
+												(default: 300ms)
+												
+
+/maxTestRT:									The scoring algorithm for D-IRAP excludes all test responses with latencies (in ms) > 10000ms
+												from D-IRAP calculations (default: 10000ms)
+												
+
+Sizing Parameters:
+
+/stimSize:									proportional sizing (relative to canvas height) of the presented words on the screen (default: 8%)
+
+
+Response Key Parameters:
+/leftkey:									the left response key (default: "E")
+/rightkey:									the right response key (default: "I")
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/maxNumberPracticeRounds = 4
+/numberOfTestRounds = 3
+/fixedResponseKeyLocation = true
+
+/readyDuration = 3000
+/iti = 400
+
+/minPracACC = 0.8
+/maxPracRT = 2000
+/minTestRT = 300
+/maxTestRT = 10000
+
+/stimSize = 8%
+
+/leftkey = "E"
+/rightkey = "I"
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: 
+pairings of targetA/attributeA as well as targetB/attributeB are considered 'hypothesis-consistent'
+pairings of targetA/attributeB as well as targetB/attributeA are considered 'hypothesis-inconsistent'
+
+<item targetA_label>
+/1 = "FLOWERS"
+</item>
+
+<item targetA>
+/1 = "daffodil"
+/2 = "rose"
+/3 = "lilly"
+/4 = "daisy"
+</item>
+
+<item targetB_label>
+/1 = "INSECTS"
+</item>
+
+<item targetB>
+/1 = "spider"
+/2 = "wasp"
+/3 = "maggot"
+/4 = "bee"
+</item>
+
+<item attributeA_label>
+/1 = "PLEASANT"
+</item>
+
+<item attributeA>
+/1 = "happy"
+/2 = "friendly"
+/3 = "pretty"
+/4 = "good"
+</item>
+
+<item attributeB_label>
+/1 = "UNPLEASANT"
+</item>
+
+<item attributeB>
+/1 = "pain"
+/2 = "mean"
+/3 = "hostile"
+/4 = "hateful"
+</item>
+
+<item responseCategory1>
+/1 = "SIMILAR"
+</item>
+
+<item responseCategory2>
+/1 = "DIFFERENT"
+</item>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+</instruct>
+
+
+<item instructions>
+/1 = "We will present you with words related to <%item.targetA_label.item(1)%> OR <%item.targetB_label.item(1)%>.
+The words appear one by one.
+
+Each of those words is paired with either a positive word such as '<%item.attributeA.item(1)%>' OR a negative word such as '<%item.attributeB.item(1)%>'.
+
+You have to decide whether these two words are <%item.responseCategory1.item(1)%> or <%item.responseCategory2.item(1)%> in meaning:
+
+They are <%item.responseCategory1.item(1)%> if the two words are both positive or both are negative.
+They are <%item.responseCategory2.item(1)%> if one of the words is positive but the other one is negative.
+
+However, for this task it's IRRELEVANT what you personally think about <%item.targetA_label.item(1)%> or <%item.targetB_label.item(1)%>. It's only relevant that you follow a particular rule."
+/2 = "Consider the following rule: <%expressions.Target1%> are positive, <%expressions.Target2%> are negative.
+
+If <%expressions.Target1%> are paired with a positive word, the correct response is therefore '<%item.responseCategory1.item(1)%>' as both are positive.
+
+If <%expressions.Target1%> are paired with a negative word, the correct response is therefore '<%item.responseCategory2.item(1)%>' as one is positive but the other is not.
+
+If <%expressions.Target2%> are paired with a positive word, the correct response is therefore '<%item.responseCategory2.item(1)%>' as one is negative but the other is not.
+
+If <%expressions.Target2%> are paired with a negative word, the correct response is therefore '<%item.responseCategory1.item(1)%>' as both are negative.
+
+
+Please note that the rule will reverse throughout the task but you will always be told upfront what the rule will be."
+/3 = "<%expressions.keyinstruct1%>.
+
+<%expressions.buttonpositioninstruct1%>
+
+If you press the incorrect <%expressions.keyinstruct2%>, you will see a red 'X' flashed onto the screen. Simply correct your response and continue.
+
+Try to be as fast as possible without making too many errors. You will naturally start going faster when you learned to be accurate given the current rule."
+/4 = "The first blocks are practice sessions. Pay close attention to the instructions for each block.
+ 
+Start the practice sessions when you are ready."
+/5 = "Practice is over and the actual task is about to start. Pay close attention to the instructions for each block.
+
+Press spacebar to start the first test block."
+</item>
+
+<item blockInstructions>
+/1 = "
+Respond as if:
+       <%item.targetA_label.item(1)%> are positive
+       <%item.targetB_label.item(1)%> are negative
+
+Respond as fast as possible without making too many errors. If you make an error, simply correct it and continue.
+"
+/2 = "
+Respond as if:
+		<%item.targetB_label.item(1)%> are positive
+		<%item.targetA_label.item(1)%> are negative
+
+Respond as fast as possible without making too many errors. If you make an error, simply correct it and continue.
+"
+</item>
+
+<text ruleChange>
+/items = ("RULE CHANGE!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 10%)
+/ size = (80%, 20%)
+/ vjustify = center
+/ txcolor = orange
+</text>
+
+
+<text responseOptionA>
+/ items = ("press '<%values.responseOptionA%>' for <%item.responseCategory1.item(1)%>")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ vposition = 90%
+/ hposition = values.responseOptionA_x
+/ size = (25%, 10%)
+/ vjustify = center
+/ txcolor = forestgreen
+</text>
+
+<text responseOptionB>
+/ items = ("press '<%values.responseOptionB%>' for <%item.responseCategory2.item(1)%>")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ vposition = 90%
+/ hposition = values.responseOptionB_x
+/ size = (25%, 10%)
+/ vjustify = center
+/ txcolor = forestgreen
+</text>
+
+<text errormessage>
+/ items = ("X")
+/ fontstyle = ("Arial", 15%, true, false, false, false, 5, 1)
+/ vposition = 75%
+/ hposition = 50
+/ size = (15%, 15%)
+/ vjustify = center
+/ txcolor = red
+/ txbgcolor = white
+</text>
+
+<text feedback>
+/ items = ("Aim for > <%parameters.minPracACC*100%>% and < <%parameters.maxPracRT%>ms
+
+
+Accuracy: <%expressions.blockACC%>% correct
+
+Speed: <%expressions.blockRT%>ms")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ size = (80%, 50%)
+/ vjustify = center
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+</text>
+
+<text continue>
+/ items = ("<press spacebar to continue>")
+/ fontstyle = ("Courier New", 2.5%, true, false, false, false, 5, 1)
+/ position = (75%, 90%)
+/ size = (40%, 5%)
+/ vjustify = center
+/ txcolor = blue
+</text>
+
+<text goback>
+/ items = ("<press 'B' to go back>")
+/ fontstyle = ("Courier New", 2.5%, false, false, false, false, 5, 1)
+/ position = (25%, 90%)
+/ size = (40%, 5%)
+/ vjustify = center
+</text>
+
+<text start>
+/ items = ("<press spacebar to start>")
+/ fontstyle = ("Courier New", 2.5%, true, false, false, false, 5, 1)
+/ position = (75%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ txcolor = green
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+</text>
+
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/ items = ("Get Ready:
+
+<%expressions.keyinstruct3%>")
+/ fontstyle = ("Arial", 5.00%, true, false, false, false, 5, 1)
+/ size = (80%, 40%)
+/ vjustify = center
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttonpositioninstruct1 = 
+if (parameters.fixedResponseKeyLocation == true) {
+	"In this task, press '<%values.responseOptionA%>' for '<%item.responseCategory1.item(1)%>' and press '<%values.responseOptionB%>' for '<%item.responseCategory2.item(1)%>'. 
+There will be reminders on which button to press for each trial."
+} else {
+	"For each trial, it is randomly decided which key to press to say '<%item.responseCategory1.item(1)%>' and which key to press to say '<%item.responseCategory2.item(1)%>'. So you need to pay close attention to the instructions that will be displayed on the screen for each trial.";
+}
+/keyinstruct1 = 
+if (computer.touch && !computer.hasKeyboard) {
+	"The two possible response buttons are the <%parameters.leftkey%> and <%parameters.rightkey%> buttons that will appear on the bottom of your screen";
+} else {
+	"The two possible response buttons are the <%parameters.leftkey%> and <%parameters.rightkey%> keys on your keyboard";
+}
+/keyinstruct2 = 
+if (computer.touch && !computer.hasKeyboard) {
+	"button";
+} else {
+	"key";
+}
+/keyinstruct3 = 
+if (computer.touch && !computer.hasKeyboard) {
+	"Place your index fingers over the left and right response button";
+} else {
+	"Put your index fingers on the '<%parameters.leftkey%>' and <%parameters.rightkey%>' keys";
+}
+
+/Target1 = if (values.conditionOrder == "c-ic"){
+	"<%item.targetA_label.item(1)%>"
+} else {
+	"<%item.targetB_label.item(1)%>"
+}
+/Target2 = if (values.conditionOrder == "c-ic"){
+	"<%item.targetB_label.item(1)%>"
+} else {
+	"<%item.targetA_label.item(1)%>"
+}
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum, values.conditionOrder,
+values.countPracticeRounds, values.countTestRounds, values.phase,
+values.ruleConsistency, values.targetCat, values.attributeCat,
+stimulusitem, stimulusitem, latency, response, values.corrResp, values.corrKey, correct, 
+values.responseOptionA, values.responseOptionB,
+expressions.ACC_practice, expressions.medianRT_practice, values.practicePass)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, values.conditionOrder,
+
+values.practicePass, 
+values.countPracticeRounds,
+
+values.minTestblockACC, 
+expressions.propBelowMinRT,
+
+expressions.D_IRAP_AA,
+expressions.D_IRAP_AB,
+expressions.D_IRAP_BA,
+expressions.D_IRAP_BB,
+
+expressions.D_IRAP_A,
+expressions.D_IRAP_B,
+
+expressions.D_IRAP)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/startInstructions:			helper variable to select appropriate instructions
+/endInstructions:			helper variable to select appropriate instructions
+
+/responseOptionA_x:			the horizontal screen location of the response Option A key (here: response option A = similar key)
+/responseOptionB_x:			the horizontal screen location of the response Option B key (here: response option B = different key)
+
+/responseOptionA_key:		the scancode of the response Option A key
+/responseOptionA:	the label that is attached to the response Option A key
+/responseOptionB_key:		the scancode of the response Option B key
+/responseOptionB:	the label that is attached to the response Option B key
+/corrKey:					stores the key of the currently correct key
+/corrResp:					the correct response in words "similar" vs. "different"
+/targetCat:					the currently tested target category
+/attributeCat:				the currently tested attribute category
+
+/trialcount_block:			counts the number of trials (AA, BA, AB, BB) run per block
+
+/ruleConsistency:			1 = block runs the hypothesis-consistent rule
+							2 = block runs the hypothesis-inconsistent rule
+/instructselect:			helper variable to select instruction text
+/selectBlockInstruct:		helper variable to select block instruction text
+/phase:						"practice" vs. "test"
+/countPracticeRounds:		counts the number of practice rounds (one round = two blocks)
+/practicePass:				1 = practice mastery criteria have been met
+							0 = practice mastery criteria have not been met 
+/minTestblockACC:			tracks the lowest proportion correct in any test block
+
+/countTestRounds:			counts the number of test rounds (one round = two blocks)
+/trialcode:					stores the trialcode of the currently run trial
+
+/ACC_practice1:				stores the proportion correct of the first block in a practice round
+/RT_practice1:				stores the median latency (in ms) of the first block in a practice round
+/ACC_practice2:				stores the proportion correct of the second block in a practice round
+/RT_practice2:				stores the median latency (in ms) of the second block in a practice round
+
+/SDpooled_testround1_AA:	stores the standard deviation of the response latencies (in ms) of AA trials in test round 1 (across Consistent and Inconsistent Blocks)
+/SDpooled_testround1_AB:	stores the standard deviation of the response latencies (in ms) of AB trials in test round 1
+/SDpooled_testround1_AA:	stores the standard deviation of the response latencies (in ms) of BA trials in test round 1
+/SDpooled_testround1_BB:	stores the standard deviation of the response latencies (in ms) of BB trials in test round 1
+/SDpooled_testround2_AA:	stores the standard deviation of the response latencies (in ms) of AA trials in test round 2
+/SDpooled_testround2_AB:	stores the standard deviation of the response latencies (in ms) of AB trials in test round 2
+/SDpooled_testround2_AA:	stores the standard deviation of the response latencies (in ms) of BA trials in test round 2
+/SDpooled_testround2_BB:	stores the standard deviation of the response latencies (in ms) of BB trials in test round 2
+/SDpooled_testround3_AA:	stores the standard deviation of the response latencies (in ms) of AA trials in test round 3
+/SDpooled_testround3_AB:	stores the standard deviation of the response latencies (in ms) of AB trials in test round 3
+/SDpooled_testround3_AA:	stores the standard deviation of the response latencies (in ms) of BA trials in test round 3
+/SDpooled_testround3_BB:	stores the standard deviation of the response latencies (in ms) of BB trials in test round 3
+
+/meanRT_testround1_AA_C:	stores the mean latency (in ms) of AA trials in the Consistent Block of test round 1
+/meanRT_testround1_AB_C:	stores the mean latency (in ms) of AB trials in the Consistent Block of test round 1
+/meanRT_testround1_BA_C:	stores the mean latency (in ms) of BA trials in the Consistent Block of test round 1
+/meanRT_testround1_BB_C:	stores the mean latency (in ms) of BB trials in the Consistent Block of test round 1
+/meanRT_testround2_AA_C:	stores the mean latency (in ms) of AA trials in the Consistent Block of test round 2
+/meanRT_testround2_AB_C:	stores the mean latency (in ms) of AB trials in the Consistent Block of test round 2
+/meanRT_testround2_BA_C:	stores the mean latency (in ms) of BA trials in the Consistent Block of test round 2
+/meanRT_testround2_BB_C:	stores the mean latency (in ms) of BB trials in the Consistent Block of test round 2
+/meanRT_testround3_AA_C:	stores the mean latency (in ms) of AA trials in the Consistent Block of test round 3
+/meanRT_testround3_AB_C:	stores the mean latency (in ms) of AB trials in the Consistent Block of test round 3
+/meanRT_testround3_BA_C:	stores the mean latency (in ms) of BA trials in the Consistent Block of test round 3
+/meanRT_testround3_BB_C:	stores the mean latency (in ms) of BB trials in the Consistent Block of test round 3
+
+/meanRT_testround1_AA_IC:	stores the mean latency (in ms) of AA trials in the Inconsistent Block of test round 1
+/meanRT_testround1_AB_IC:	stores the mean latency (in ms) of AB trials in the Inconsistent Block of test round 1
+/meanRT_testround1_BA_IC:	stores the mean latency (in ms) of BA trials in the Inconsistent Block of test round 1
+/meanRT_testround1_BB_IC:	stores the mean latency (in ms) of BB trials in the Inconsistent Block of test round 1
+/meanRT_testround2_AA_IC:	stores the mean latency (in ms) of AA trials in the Inconsistent Block of test round 2
+/meanRT_testround2_AB_IC:	stores the mean latency (in ms) of AB trials in the Inconsistent Block of test round 2
+/meanRT_testround2_BA_IC:	stores the mean latency (in ms) of BA trials in the Inconsistent Block of test round 2
+/meanRT_testround2_BB_IC:	stores the mean latency (in ms) of BB trials in the Inconsistent Block of test round 2
+/meanRT_testround3_AA_IC:	stores the mean latency (in ms) of AA trials in the Inconsistent Block of test round 3
+/meanRT_testround3_AB_IC:	stores the mean latency (in ms) of AB trials in the Inconsistent Block of test round 3
+/meanRT_testround3_BA_IC:	stores the mean latency (in ms) of BA trials in the Inconsistent Block of test round 3
+/meanRT_testround3_BB_IC:	stores the mean latency (in ms) of BB trials in the Inconsistent Block of test round 3
+
+<values>
+/startInstructions = 0
+/endInstructions = 0
+
+/responseOptionA_x = 25%
+/responseOptionB_x = 75%
+/responseOptionA = ""
+/responseOptionB = ""
+/corrKey = ""
+/corrResp = ""
+/targetCat = ""
+/attributeCat = ""
+
+/trialcount_block = 0
+
+/ruleConsistency = 1
+/instructselect = 0
+/selectBlockInstruct = 0
+/phase = ""
+/countPracticeRounds = 0
+/practicePass = 0
+/minTestblockACC = 1
+
+/countTestRounds = 0
+/trialcode = ""
+
+/ACC_practice1 = 0
+/RT_practice1 = 0
+/ACC_practice2 = 0
+/RT_practice2 = 0
+
+/SDpooled_testround1_AA = ""
+/SDpooled_testround1_AB = ""
+/SDpooled_testround1_BA = ""
+/SDpooled_testround1_BB = ""
+/SDpooled_testround2_AA = ""
+/SDpooled_testround2_AB = ""
+/SDpooled_testround2_BA = ""
+/SDpooled_testround2_BB = ""
+/SDpooled_testround3_AA = ""
+/SDpooled_testround3_AB = ""
+/SDpooled_testround3_BA = ""
+/SDpooled_testround3_BB = ""
+
+/meanRT_testround1_AA_C = ""
+/meanRT_testround1_AB_C = ""
+/meanRT_testround1_BA_C = ""
+/meanRT_testround1_BB_C = ""
+/meanRT_testround2_AA_C = ""
+/meanRT_testround2_AB_C = ""
+/meanRT_testround2_BA_C = ""
+/meanRT_testround2_BB_C = ""
+/meanRT_testround3_AA_C = ""
+/meanRT_testround3_AB_C = ""
+/meanRT_testround3_BA_C = ""
+/meanRT_testround3_BB_C = ""
+
+/meanRT_testround1_AA_IC = ""
+/meanRT_testround1_AB_IC = ""
+/meanRT_testround1_BA_IC = ""
+/meanRT_testround1_BB_IC = ""
+/meanRT_testround2_AA_IC = ""
+/meanRT_testround2_AB_IC = ""
+/meanRT_testround2_BA_IC = ""
+/meanRT_testround2_BB_IC = ""
+/meanRT_testround3_AA_IC = ""
+/meanRT_testround3_AB_IC = ""
+/meanRT_testround3_BA_IC = ""
+/meanRT_testround3_BB_IC = ""
+
+/conditionOrder = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note:
+in this script:
+AA = attribute A (pleasant), target A (flower)
+AB = attribute A (pleasant), target A (insect)
+BA = attribute B (unpleasant), target A (flower)
+BB = attribute B (unpleasant), target B (insect)
+
+/ACC_practice:			proportion correct during the current practice block (resets after each practice block)
+/medianRT_practice:		median response latency during the current practice block (resets after each practice block)
+/meanRT_practice:		mean response latency during the current practice block (resets after each practice block)
+
+
+/ACC_test:				proportion correct during the current testblock (resets after each test block)
+/medianRT_test:			median response latency during the current test block (resets after each test block)
+
+/blockACC:				stores percent correct of the current block
+/blockRT:				stores the median RT (in ms) of the current block
+/propBelowMinRT:		proportion of test trials with response latencies < 300ms
+						(Note: Barnes-Holmes et al, 2010, suggest to eliminate the data of participants with propBelowMinRT > 0.1 (10%))
+
+/Diff_AA_1:				Difference score of response latencies in consistent and inconsistent testround 1 for trialtype 'AA' (attributeA, targetA)
+/Diff_AB_1:				Difference score of response latencies in consistent and inconsistent testround 1 for trialtype 'AB' (attributeA, targetB)
+/Diff_BA_1:				Difference score of response latencies in consistent and inconsistent testround 1 for trialtype 'BA' (attributeB, targetA)
+/Diff_BB_1:				Difference score of response latencies in consistent and inconsistent testround 1 for trialtype 'BB' (attributeB, targetB)
+
+/Diff_AA_2:				Difference score of response latencies in consistent and inconsistent testround 2 for trialtype 'AA' (attributeA, targetA)
+/Diff_AB_2:				Difference score of response latencies in consistent and inconsistent testround 2 for trialtype 'AB' (attributeA, targetB)
+/Diff_BA_2:				Difference score of response latencies in consistent and inconsistent testround 2 for trialtype 'BA' (attributeB, targetA)
+/Diff_BB_2:				Difference score of response latencies in consistent and inconsistent testround 2 for trialtype 'BB' (attributeB, targetB)
+
+/Diff_AA_3:				Difference score of response latencies in consistent and inconsistent testround 3 for trialtype 'AA' (attributeA, targetA)
+/Diff_AB_3:				Difference score of response latencies in consistent and inconsistent testround 3 for trialtype 'AB' (attributeA, targetB)
+/Diff_BA_3:				Difference score of response latencies in consistent and inconsistent testround 3 for trialtype 'BA' (attributeB, targetA)
+/Diff_BB_3:				Difference score of response latencies in consistent and inconsistent testround 3 for trialtype 'BB' (attributeB, targetB)
+
+/D_IRAP_AA_1:			IRAP D score for trialtype AA in testround 1 (difference score relative to pooled standard deviation)
+/D_IRAP_AB_1:			IRAP D score for trialtype AB in testround 1 (difference score relative to pooled standard deviation)
+/D_IRAP_BA_1:			IRAP D score for trialtype BA in testround 1 (difference score relative to pooled standard deviation)
+/D_IRAP_BB_1:			IRAP D score for trialtype BB in testround 1 (difference score relative to pooled standard deviation)
+
+/D_IRAP_AA_2:			IRAP D score for trialtype AA in testround 2 (difference score relative to pooled standard deviation)
+/D_IRAP_AB_2:			IRAP D score for trialtype AB in testround 2 (difference score relative to pooled standard deviation)
+/D_IRAP_BA_2:			IRAP D score for trialtype BA in testround 2 (difference score relative to pooled standard deviation)
+/D_IRAP_BB_2:			IRAP D score for trialtype BB in testround 2 (difference score relative to pooled standard deviation)
+
+/D_IRAP_AA_3:			IRAP D score for trialtype AA in testround 3 (difference score relative to pooled standard deviation)
+/D_IRAP_AB_3:			IRAP D score for trialtype AB in testround 3 (difference score relative to pooled standard deviation)
+/D_IRAP_BA_3:			IRAP D score for trialtype BA in testround 3 (difference score relative to pooled standard deviation)
+/D_IRAP_BB_3:			IRAP D score for trialtype BB in testround 3 (difference score relative to pooled standard deviation)
+
+/D_IRAP_AA:				mean of the three IRAP D-scores for trialtype AA (here: pleasant with flowers)
+							Note: if fewer than 3 test rounds are run, the score adapts
+/D_IRAP_AB:				mean of the three IRAP D-scores for trialtype AB (here: pleasant with insects)
+							Note: if fewer than 3 test rounds are run, the score adapts
+/D_IRAP_BA:				mean of the three IRAP D-scores for trialtype BA (here: unpleasant with flowers)
+							Note: if fewer than 3 test rounds are run, the score adapts
+/D_IRAP_BB:				mean of the three IRAP D-scores for trialtype BB (here: unpleasant with insects)
+							Note: if fewer than 3 test rounds are run, the score adapts
+
+/D_IRAP_A:		mean of the two IRAP D-scores for target A (here: flowers)
+/D_IRAP_B:		mean of the two IRAP D-scores for target A (here: insects)
+
+/D_IRAP:				overall D_IRAP score as the mean of all individual D_IRAPs
+
+<expressions>
+/ACC_practice = list.ACC_practice.mean
+/medianRT_practice = list.RT_practice.median
+/meanRT_practice = list.RT_practice.mean
+
+/propBelowMinRT = 1-list.testRTs.mean
+
+/ACC_test = list.ACC_test.mean
+/medianRT_test = list.RT_test.median
+
+/blockACC = 
+if (values.phase == "practice"){
+	expressions.ACC_practice * 100;
+} else {
+	expressions.ACC_test * 100;
+}
+
+/blockRT = 
+if (values.phase == "practice"){
+	expressions.medianRT_practice;
+} else {
+	expressions.medianRT_test;
+}
+
+/Diff_AA_1 = values.meanRT_testround1_AA_IC - values.meanRT_testround1_AA_C
+/Diff_AB_1 = values.meanRT_testround1_AB_IC - values.meanRT_testround1_AB_C
+/Diff_BA_1 = values.meanRT_testround1_BA_IC - values.meanRT_testround1_BA_C
+/Diff_BB_1 = values.meanRT_testround1_BB_IC - values.meanRT_testround1_BB_C
+
+/Diff_AA_2 = values.meanRT_testround2_AA_IC - values.meanRT_testround2_AA_C
+/Diff_AB_2 = values.meanRT_testround2_AB_IC - values.meanRT_testround2_AB_C
+/Diff_BA_2 = values.meanRT_testround2_BA_IC - values.meanRT_testround2_BA_C
+/Diff_BB_2 = values.meanRT_testround2_BB_IC - values.meanRT_testround2_BB_C
+
+/Diff_AA_3 = values.meanRT_testround3_AA_IC - values.meanRT_testround3_AA_C
+/Diff_AB_3 = values.meanRT_testround3_AB_IC - values.meanRT_testround3_AB_C
+/Diff_BA_3 = values.meanRT_testround3_BA_IC - values.meanRT_testround3_BA_C
+/Diff_BB_3 = values.meanRT_testround3_BB_IC - values.meanRT_testround3_BB_C
+
+/D_IRAP_AA_1 = expressions.Diff_AA_1/values.SDpooled_testround1_AA
+/D_IRAP_AB_1 = expressions.Diff_AB_1/values.SDpooled_testround1_AB
+/D_IRAP_BA_1 = expressions.Diff_BA_1/values.SDpooled_testround1_BA
+/D_IRAP_BB_1 = expressions.Diff_BB_1/values.SDpooled_testround1_BB
+
+/D_IRAP_AA_2 = expressions.Diff_AA_2/values.SDpooled_testround2_AA
+/D_IRAP_AB_2 = expressions.Diff_AB_2/values.SDpooled_testround2_AB
+/D_IRAP_BA_2 = expressions.Diff_BA_2/values.SDpooled_testround2_BA
+/D_IRAP_BB_2 = expressions.Diff_BB_2/values.SDpooled_testround2_BB
+
+/D_IRAP_AA_3 = expressions.Diff_AA_3/values.SDpooled_testround3_AA
+/D_IRAP_AB_3 = expressions.Diff_AB_3/values.SDpooled_testround3_AB
+/D_IRAP_BA_3 = expressions.Diff_BA_3/values.SDpooled_testround3_BA
+/D_IRAP_BB_3 = expressions.Diff_BB_3/values.SDpooled_testround3_BB
+
+/D_IRAP_AA = 
+if (parameters.numberOfTestRounds < 3){
+	if (parameters.numberOfTestRounds < 2){
+		expressions.D_IRAP_AA_1;
+	} else {
+		(expressions.D_IRAP_AA_1 + expressions.D_IRAP_AA_2)/2;
+	}
+} else {
+	(expressions.D_IRAP_AA_1 + expressions.D_IRAP_AA_2 + expressions.D_IRAP_AA_3)/3;
+}
+
+/D_IRAP_AB = 
+if (parameters.numberOfTestRounds < 3){
+	if (parameters.numberOfTestRounds < 2){
+		expressions.D_IRAP_AB_1;
+	} else {
+		(expressions.D_IRAP_AB_1 + expressions.D_IRAP_AB_2)/2;
+	}
+} else {
+	(expressions.D_IRAP_AB_1 + expressions.D_IRAP_AB_2 + expressions.D_IRAP_AB_3)/3;
+}
+
+/D_IRAP_BA = 
+if (parameters.numberOfTestRounds < 3){
+	if (parameters.numberOfTestRounds < 2){
+		expressions.D_IRAP_BA_1;
+	} else {
+		(expressions.D_IRAP_BA_1 + expressions.D_IRAP_BA_2)/2;
+	}
+} else {
+	(expressions.D_IRAP_BA_1 + expressions.D_IRAP_BA_2 + expressions.D_IRAP_BA_3)/3;
+}
+
+/D_IRAP_BB = 
+if (parameters.numberOfTestRounds < 3){
+	if (parameters.numberOfTestRounds < 2){
+		expressions.D_IRAP_BB_1;
+	} else {
+		(expressions.D_IRAP_BB_1 + expressions.D_IRAP_BB_2)/2;
+	}
+} else {
+	(expressions.D_IRAP_BB_1 + expressions.D_IRAP_BB_2 + expressions.D_IRAP_BB_3)/3;
+}
+
+/D_IRAP_A = (expressions.D_IRAP_AA + expressions.D_IRAP_BA)/2
+/D_IRAP_B = (expressions.D_IRAP_AB + expressions.D_IRAP_BB)/2
+
+/D_IRAP = (expressions.D_IRAP_A + expressions.D_IRAP_B)/2
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+<text instruction>
+/items = instructions
+/ select = values.instructselect
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ hjustify = left
+</text>
+
+<text blockInstruction>
+/items = blockInstructions
+/ select = values.ruleConsistency
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ hjustify = left
+</text>
+
+<trial instruction>
+/ ontrialbegin = [
+	text.start.skip = true;
+	text.continue.skip = false;
+
+	if (values.instructselect == 1 || values.instructselect > 4){
+		text.goback.skip = true;
+	} else {
+		text.goback.skip = false;
+	}
+	
+	if (values.instructselect >= 4){
+		text.start.skip = false;
+		text.continue.skip = true;
+	}
+	
+]
+/ stimulusframes = [1 = instruction, continue, start, goback]
+/ validresponse = ("B", " ")
+/ recorddata = false
+/ branch = [
+	if (trial.instruction.responseText == "B"){
+		if (values.instructselect < 5 && values.instructselect > 1){
+			values.instructselect -= 1;
+			return trial.instruction;
+		} else {
+			return trial.instruction;
+		}
+	} else if (trial.instruction.responseText == " " && values.instructselect < values.endInstructions){
+		values.instructselect += 1;
+		return trial.instruction;
+	}
+	return null;
+]
+</trial>
+
+
+<trial blockInstruction>
+/ stimulusframes = [1 = blockInstruction, ruleChange, start]
+/ validresponse = (" ")
+/ ontrialend = [
+	text.ruleChange.skip = false;
+]
+/ posttrialpause = parameters.iti
+/ recorddata = false
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = true
+</trial>
+
+*************************************
+General Helper Instruction Trials/Blocks
+*************************************
+
+This trial is used when participants are asked to place their fingers on specific response
+buttons. On the touchscreen, this trial presents the (inactive) response buttons to the participants.
+<trial getReady>
+/ stimulusframes = [1 = getReady]
+/ timeout = parameters.readyDuration
+/ validresponse = (parameters.leftkey, parameters.rightkey)
+/ beginresponsetime = parameters.readyDuration
+/ errormessage = false
+/ recorddata = false
+/ posttrialpause = parameters.iti
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+Note: this text stimulus is used for AA trials that present A attributes (in this script: A attributes = 'pleasant')
+<text attributeA_AA>
+/ items = attributeA
+/ fontstyle = ("Arial", parameters.stimSize, true, false, false, false, 5, 1)
+/ position = (50%, 60%)
+/ size = (80%, 15%)
+/ vjustify = center
+</text>
+
+Note: this text stimulus is used for AB trials that present A attributes (in this script: A attributes = 'pleasant')
+<text attributeA_AB>
+/ items = attributeA
+/ fontstyle = ("Arial", parameters.stimSize, true, false, false, false, 5, 1)
+/ position = (50%, 60%)
+/ size = (80%, 15%)
+/ vjustify = center
+</text>
+
+Note: this text stimulus is used for BA trials that present B attributes (in this script: B attributes = 'unpleasant')
+<text attributeB_BA>
+/ items = attributeB
+/ fontstyle = ("Arial", parameters.stimSize, true, false, false, false, 5, 1)
+/ position = (50%, 60%)
+/ size = (80%, 15%)
+/ vjustify = center
+</text>
+
+Note: this text stimulus is used for BB trials that present B attributes (in this script: B attributes = 'unpleasant')
+<text attributeB_BB>
+/ items = attributeB
+/ fontstyle = ("Arial", parameters.stimSize, true, false, false, false, 5, 1)
+/ position = (50%, 60%)
+/ size = (80%, 15%)
+/ vjustify = center
+</text>
+
+Note: this text stimulus is used for AA trials that present A targets (in this script: A targets = 'flowers')
+<text targetA_AA>
+/ items = targetA
+/ select = noreplace
+/ position = (50%, 40%)
+/ fontstyle = ("Arial", parameters.stimSize, true, false, false, false, 5, 1)
+/ size = (80%, 15%)
+/ vjustify = center
+</text>
+
+Note: this text stimulus is used for BA trials that present A targets (in this script: A targets = 'flowers')
+<text targetA_BA>
+/ items = targetA
+/ select = noreplace
+/ position = (50%, 40%)
+/ fontstyle = ("Arial", parameters.stimSize, true, false, false, false, 5, 1)
+/ size = (80%, 15%)
+/ vjustify = center
+</text>
+
+Note: this text stimulus is used for AB trials that present B targets (in this script: B targets = 'insects')
+<text targetB_AB>
+/ items = targetB
+/ select = noreplace
+/ position = (50%, 40%)
+/ fontstyle = ("Arial", parameters.stimSize, true, false, false, false, 5, 1)
+/ size = (80%, 15%)
+/ vjustify = center
+</text>
+
+Note: this text stimulus is used for BB trials that present B targets (in this script: B targets = 'insects')
+<text targetB_BB>
+/ items = targetB
+/ select = noreplace
+/ position = (50%, 40%)
+/ fontstyle = ("Arial", parameters.stimSize, true, false, false, false, 5, 1)
+/ size = (80%, 15%)
+/ vjustify = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: the following two lists are used to select the horizontal screen location for optionA (here: similar)
+and optionB (here: different)
+25% = left side of canvas
+75% = right side of canvas
+(0% = left border of canvas - 100% right border of canvas)
+<list responseOptionA_x>
+/ items = (25%, 75%)
+/ replace = true
+/ resetinterval = 0
+</list>
+
+<list responseOptionB_x>
+/ items = (75%, 25%)
+/ selectionMode = list.responseOptionA_x.currentIndex
+/ resetinterval = 0
+</list>
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = initial correct response; 0 = initial incorrect response for each relevant practice trial
+any response coded as an error is automatically coded as 0
+<list ACC_practice>
+</list>
+
+Note: list stores the latency of responses for each practice trial
+(Note: all responses that advance practice trials are correct even if the initial response is incorrect)
+<list RT_practice>
+</list>
+
+Note: collects test performance for each block
+<list ACC_test>
+</list>
+
+<list RT_test>
+</list>
+
+
+store 0 = test RT is below 300; 1 = test RT is at or above 300
+<list testRTs>
+</list>
+
+Note: this list collects all reaction times (within given constraints)
+for trial type "AA" per test block (resets after each test block)
+<list RT_testround_AA>
+</list>
+
+Note: this list collects all reaction times (within given constraints)
+for trial type "AA" across a pair of test blocks (one consistent, the other inconsistent)
+<list RT_testround_AA_pooled>
+</list>
+
+<list RT_testround_AB>
+</list>
+
+<list RT_testround_AB_pooled>
+</list>
+
+<list RT_testround_BA>
+</list>
+
+<list RT_testround_BA_pooled>
+</list>
+
+<list RT_testround_BB>
+</list>
+
+<list RT_testround_BB_pooled>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS: used for practice and test trials
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: trial.AA
+- selects the screen position for responseOptionA (here: 'similar') and responseOptionB (here: 'different)
+IF parameters.fixedResponseKeyLocation is set to 'false'
+(in that case, the script simply uses the randomly assigned locations under the expt-element)
+- determines the correct response key depending on ruleConsistency and position of 'similar' and 'different' screen position
+AA: for ruleConsistency = 1, the correct response is 'similar'; for ruleConsistency = 2, the correct response is 'different'
+
+<trial AA>
+/ ontrialbegin = [
+	values.trialcode = "AA";
+	values.targetCat = item.targetA_label.item(1);
+	values.attributeCat = item.attributeA_label.item(1);
+
+	if (parameters.fixedResponseKeyLocation == false){
+		values.responseOptionA_x = list.responseOptionA_x.nextValue;
+		values.responseOptionB_x = list.responseOptionB_x.nextValue;		
+	}
+
+	if (values.responseOptionA_x == 25%){
+		values.responseOptionA = parameters.leftkey;
+		values.responseOptionB = parameters.rightkey;
+		if (values.ruleConsistency == 1){
+			values.corrKey = parameters.leftkey;		
+		} else {
+			values.corrKey = parameters.rightkey;		
+		}
+	} else {
+		values.responseOptionA = parameters.rightkey;
+		values.responseOptionB = parameters.leftkey;		
+		if (values.ruleConsistency == 1){
+			values.corrKey = parameters.rightkey;		
+		} else {
+			values.corrKey = parameters.leftkey;		
+		}		
+	}
+	
+	if (values.ruleConsistency == 1){
+		values.corrResp = item.responseCategory1.items.1;
+	} else {
+		values.corrResp = item.responseCategory2.items.1;
+	}
+]
+
+/ stimulusframes = [1 = attributeA_AA, targetA_AA, responseOptionA, responseOptionB]
+/ validresponse = (parameters.leftkey, parameters.rightkey)
+/ correctresponse = (values.corrKey)
+/response = correct
+/ posttrialpause = parameters.iti
+/ errormessage = true(text.errormessage, 0)
+</trial>
+
+AB: for ruleConsistency = 1, the correct response is 'different'; for ruleConsistency = 2, the correct response is 'similar'
+<trial AB>
+/ ontrialbegin = [
+	values.trialcode = "AB";
+	values.targetCat = item.targetB_label.items.1;
+	values.attributeCat = item.attributeA_label.items.1;	
+	
+	
+	if (parameters.fixedResponseKeyLocation == false){
+		values.responseOptionA_x = list.responseOptionA_x.nextValue;
+		values.responseOptionB_x = list.responseOptionB_x.nextValue;		
+	}
+	
+	if (values.responseOptionA_x == 25%){
+		values.responseOptionA = parameters.leftkey;
+		values.responseOptionB = parameters.rightkey;		
+		if (values.ruleConsistency == 1){
+			values.corrKey = parameters.rightkey;		
+		} else {
+			values.corrKey = parameters.leftkey;		
+		}
+	} else {
+		values.responseOptionA = parameters.rightkey;
+		values.responseOptionB = parameters.leftkey;			
+		if (values.ruleConsistency == 1){
+			values.corrKey = parameters.leftkey;		
+		} else {
+			values.corrKey = parameters.rightkey;		
+		}		
+	}
+	
+	if (values.ruleConsistency == 1){
+		values.corrResp = item.responseCategory2.items.1;
+	} else {
+		values.corrResp = item.responseCategory1.items.1;
+	}
+]
+/ stimulusframes = [1 = attributeA_AB, targetB_AB, responseOptionA, responseOptionB]
+/ validresponse = (parameters.leftkey, parameters.rightkey)
+/ correctresponse = (values.corrKey)
+/response = correct
+/ posttrialpause = parameters.iti
+/ errormessage = true(text.errormessage, 0)
+</trial>
+
+BA: for ruleConsistency = 1, the correct response is 'different'; for ruleConsistency = 2, the correct response is 'similar'
+<trial BA>
+/ ontrialbegin = [
+	values.trialcode = "BA";
+	values.targetCat = item.targetA_label.items.1;
+	values.attributeCat = item.attributeB_label.items.1;	
+	
+	if (parameters.fixedResponseKeyLocation == false){
+		values.responseOptionA_x = list.responseOptionA_x.nextValue;
+		values.responseOptionB_x = list.responseOptionB_x.nextValue;		
+	}
+	if (values.responseOptionA_x == 25%){
+		values.responseOptionA = parameters.leftkey;
+		values.responseOptionB = parameters.rightkey;	
+		if (values.ruleConsistency == 1){
+			values.corrKey = parameters.rightkey;		
+		} else {
+			values.corrKey = parameters.leftkey;		
+		}
+	} else {
+		values.responseOptionA = parameters.rightkey;
+		values.responseOptionB = parameters.leftkey;		
+		if (values.ruleConsistency == 1){
+			values.corrKey = parameters.leftkey;		
+		} else {
+			values.corrKey = parameters.rightkey;		
+		}		
+	}
+	
+	if (values.ruleConsistency == 1){
+		values.corrResp = item.responseCategory2.items.1;
+	} else {
+		values.corrResp = item.responseCategory1.items.1;
+	}
+]
+/ stimulusframes = [1 = attributeB_BA, targetA_BA, responseOptionA, responseOptionB]
+/ validresponse = (parameters.leftkey, parameters.rightkey)
+/ correctresponse = (values.corrKey)
+/response = correct
+/ posttrialpause = parameters.iti
+/ errormessage = true(text.errormessage, 0)
+</trial>
+
+BB: for ruleConsistency = 1, the correct response is 'similar'; for ruleConsistency = 2, the correct response is 'different'
+<trial BB>
+/ ontrialbegin = [
+	values.trialcode = "BB";
+	values.targetCat = item.targetB_label.items.1;
+	values.attributeCat = item.attributeB_label.items.1;	
+	
+	if (parameters.fixedResponseKeyLocation == false){
+		values.responseOptionA_x = list.responseOptionA_x.nextValue;
+		values.responseOptionB_x = list.responseOptionB_x.nextValue;		
+	}
+	if (values.responseOptionA_x == 25%){
+		values.responseOptionA = parameters.leftkey;
+		values.responseOptionB = parameters.rightkey;	
+		if (values.ruleConsistency == 1){
+			values.corrKey = parameters.leftkey;		
+		} else {
+			values.corrKey = parameters.rightkey;		
+		}
+	} else {
+		values.responseOptionA = parameters.rightkey;
+		values.responseOptionB = parameters.leftkey;			
+		if (values.ruleConsistency == 1){
+			values.corrKey = parameters.rightkey;		
+		} else {
+			values.corrKey = parameters.leftkey;		
+		}		
+	}
+	
+	if (values.ruleConsistency == 1){
+		values.corrResp = item.responseCategory1.items.1;
+	} else {
+		values.corrResp = item.responseCategory2.items.1;
+	}
+]
+/ stimulusframes = [1 = attributeB_BB, targetB_BB, responseOptionA, responseOptionB]
+/ validresponse = (parameters.leftkey, parameters.rightkey)
+/ correctresponse = (values.corrKey)
+/response = correct
+/ posttrialpause = parameters.iti
+/ errormessage = true(text.errormessage, 0)
+</trial>
+
+<trial feedback>
+/ ontrialbegin = [
+	text.continue.skip = false;
+]
+/ stimulusframes = [1 = feedback, continue]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+<block instruction>
+/ onblockbegin = [
+	values.startInstructions = 1;
+	values.endInstructions = 4;
+	values.instructselect = values.startInstructions
+]
+/ trials = [1= instruction]
+</block>
+
+**************************************************************************************************************
+	Practice:
+	
+	Practice is run as a pair of blocks: practice_part1 and practice_part2.
+	Performance and median RT is assessed at the end of each block.
+	
+	If proportion correct in BOTH blocks >= 80% (see parameters.minPracACC) AND
+	median latency in BOTH blocks <= 2000ms (see parameters.maxPracRT)
+	then practice is terminated (= practice performance is good enough to advance to the test)
+	
+	If proportion correct in any of the blocks is below 80% OR median response latency 
+	is above 2000ms in one of the two blocks, then the practice block is repeated
+	as long as not the maximum number of practice block have been run (default: 4)
+	
+	
+************************************************************************************************************** 
+
+<block practice_part1>
+/ onblockbegin = [
+	values.phase = "practice";
+	values.countPracticeRounds += 1;
+	list.ACC_practice.reset();
+	list.RT_practice.reset();
+	values.trialcount_block = 0;
+	
+	if (mod(script.groupId, 2) != 0){
+		values.ruleConsistency = 1;		
+	} else {
+		values.ruleConsistency = 2;	
+	}		
+]
+/ trials = [1 = blockInstruction; 2 = getReady; 3-34 = noreplace(AA, AB, BA, BB); 35 = feedback]
+/ ontrialend = [
+	if (block.practice_part1.currenttrialnumber > 2 && block.practice_part1.currenttrialnumber < 35){
+		list.ACC_practice.appendItem(block.practice_part1.correct);
+		list.RT_practice.appendItem(block.practice_part1.latency);		
+		values.trialcount_block += 1;
+	}
+]
+/ onblockend = [
+	values.ACC_practice1 = expressions.ACC_practice;
+	values.RT_practice1 = expressions.medianRT_practice;
+]
+/ branch = [
+	return block.practice_part2;
+]
+</block>
+
+<block practice_part2>
+/ onblockbegin = [
+	values.phase = "practice";
+	list.ACC_practice.reset();
+	list.RT_practice.reset();
+	values.trialcount_block = 0;
+	
+	if (mod(script.groupId, 2) != 0){
+		values.ruleConsistency = 2;		
+	} else {
+		values.ruleConsistency = 1;	
+	}		
+]
+/ trials = [1 = blockInstruction; 2 = getReady; 3-34 = noreplace(AA, AB, BA, BB); 35 = feedback]
+/ ontrialend = [
+	if (block.practice_part2.currenttrialnumber > 2 && block.practice_part2.currenttrialnumber < 35){
+		list.ACC_practice.appendItem(block.practice_part2.correct);
+		list.RT_practice.appendItem(block.practice_part2.latency);	
+		values.trialcount_block += 1;	
+	}
+]
+/ onblockend = [
+	values.ACC_practice2 = expressions.ACC_practice;
+	values.RT_practice2 = expressions.medianRT_practice;
+]
+/ branch = [
+	if (monkey.monkeyMode){
+		values.practicePass = 1;
+	} else if (values.countPracticeRounds >= parameters.maxNumberPracticeRounds){
+		if (values.ACC_practice1 < parameters.minPracACC || values.ACC_practice2 < parameters.minPracACC ||
+		values.RT_practice1 > parameters.maxPracRT || values.RT_practice2 > parameters.maxPracRT){
+			return block.prematureEnd;
+		} else {
+			values.practicePass = 1;
+		}
+	} else {
+		if (values.ACC_practice1 < parameters.minPracACC || values.ACC_practice2 < parameters.minPracACC ||
+			values.RT_practice1 > parameters.maxPracRT || values.RT_practice2 > parameters.maxPracRT){
+			return block.practice_part1;
+		} else {
+			values.practicePass = 1; 
+		}
+	}
+	return null;
+]
+</block>
+
+
+<block prematureEnd>
+/ trials = [1 = finish]
+/ onblockend = [
+	script.abort();
+]
+</block>
+
+**************************************************************************************************************
+Test
+**************************************************************************************************************
+
+<block testInstructions>
+/ onblockbegin = [
+	values.phase = "test";
+	values.instructselect = 5;
+	values.endInstructions = 5;
+]
+/ trials = [1 = instruction]
+</block>
+
+****************************************************************************
+* runs the first block of a test round and updates testround Count
+(also resets necessary summary data lists)
+* RuleConsistency is assigned according to groupid: 
+	odd numbers = consistent
+	even numbers = inconsistent
+* the block ensures that at the end of each test trial,
+summary data are collected in respective data lists
+* at the end of the block, 
+relevant summary data for the first block are stored in respective variables
+* automatically calls the second block of the current test round
+****************************************************************************
+
+
+<block test_part1>
+/ onblockbegin = [
+	list.ACC_test.reset();
+	list.RT_test.reset();
+	values.countTestRounds += 1;
+	list.RT_testround_AA_pooled.reset();
+	list.RT_testround_AA.reset();
+	list.RT_testround_AB_pooled.reset();
+	list.RT_testround_AB.reset();
+	list.RT_testround_BA_pooled.reset();
+	list.RT_testround_BA.reset();
+	list.RT_testround_BB_pooled.reset();
+	list.RT_testround_BB.reset();	
+	values.trialcount_block = 0;
+	
+	if (mod(script.groupId, 2) != 0){
+		values.ruleConsistency = 1;		
+	} else {
+		values.ruleConsistency = 2;	
+	}		
+]
+/ trials = [1 = blockInstruction; 2 = getReady; 3-34 = noreplace(AA, AB, BA, BB); 35 = feedback]
+/ ontrialend = [
+	if (block.test_part1.currenttrialnumber > 2 && block.test_part1.currenttrialnumber < 35){
+		list.ACC_test.appendItem(block.test_part1.correct);
+		list.RT_test.appendItem(block.test_part1.latency);
+		list.testRTs.appendItem(block.test_part1.latency >= parameters.minTestRT);
+		values.trialcount_block += 1;
+		
+		if (block.test_part1.latency <= parameters.maxTestRT){
+			if (values.trialcode == "AA"){
+				list.RT_testround_AA_pooled.appendItem(block.test_part1.latency);
+				list.RT_testround_AA.appendItem(block.test_part1.latency);
+			} else if (values.trialcode == "AB"){
+				list.RT_testround_AB_pooled.appendItem(block.test_part1.latency);
+				list.RT_testround_AB.appendItem(block.test_part1.latency);						
+			} else if (values.trialcode == "BA"){
+				list.RT_testround_BA_pooled.appendItem(block.test_part1.latency);
+				list.RT_testround_BA.appendItem(block.test_part1.latency);						
+			} else if (values.trialcode == "BB"){
+				list.RT_testround_BB_pooled.appendItem(block.test_part1.latency);
+				list.RT_testround_BB.appendItem(block.test_part1.latency);						
+			}				
+		}
+
+	}
+
+]
+/ onblockend = [
+	if (values.countTestRounds == 1){
+		if (values.RuleConsistency == 1){
+			values.meanRT_testround1_AA_C = list.RT_testround_AA.mean;
+			values.meanRT_testround1_AB_C = list.RT_testround_AB.mean;
+			values.meanRT_testround1_BA_C = list.RT_testround_BA.mean;
+			values.meanRT_testround1_BB_C = list.RT_testround_BB.mean;
+		} else {
+			values.meanRT_testround1_AA_IC = list.RT_testround_AA.mean;
+			values.meanRT_testround1_AB_IC = list.RT_testround_AB.mean;
+			values.meanRT_testround1_BA_IC = list.RT_testround_BA.mean;
+			values.meanRT_testround1_BB_IC = list.RT_testround_BB.mean;			
+		}		
+	} else if (values.countTestRounds == 2){
+		if (values.RuleConsistency == 1){
+			values.meanRT_testround2_AA_C = list.RT_testround_AA.mean;
+			values.meanRT_testround2_AB_C = list.RT_testround_AB.mean;
+			values.meanRT_testround2_BA_C = list.RT_testround_BA.mean;
+			values.meanRT_testround2_BB_C = list.RT_testround_BB.mean;
+		} else {
+			values.meanRT_testround2_AA_IC = list.RT_testround_AA.mean;
+			values.meanRT_testround2_AB_IC = list.RT_testround_AB.mean;
+			values.meanRT_testround2_BA_IC = list.RT_testround_BA.mean;
+			values.meanRT_testround2_BB_IC = list.RT_testround_BB.mean;			
+		}			
+	} else if (values.countTestRounds == 3){
+		if (values.RuleConsistency == 1){
+			values.meanRT_testround3_AA_C = list.RT_testround_AA.mean;
+			values.meanRT_testround3_AB_C = list.RT_testround_AB.mean;
+			values.meanRT_testround3_BA_C = list.RT_testround_BA.mean;
+			values.meanRT_testround3_BB_C = list.RT_testround_BB.mean;
+		} else {
+			values.meanRT_testround3_AA_IC = list.RT_testround_AA.mean;
+			values.meanRT_testround3_AB_IC = list.RT_testround_AB.mean;
+			values.meanRT_testround3_BA_IC = list.RT_testround_BA.mean;
+			values.meanRT_testround3_BB_IC = list.RT_testround_BB.mean;			
+		}
+
+		
+	}
+	
+	if (values.minTestblockACC > list.ACC_test.mean){
+		values.minTestblockACC = list.ACC_test.mean;
+	}	
+]	
+
+/ branch = [
+	return block.test_part2;
+]
+</block>
+
+****************************************************************************
+* runs the second block of a test round;
+(resets necessary summary data lists)
+* RuleConsistency is assigned according to groupid: 
+	odd numbers = inconsistent
+	even numbers = consistent
+* the block ensures that at the end of each test trial,
+summary data are collected in respective data lists
+* at the end of the block, 
+relevant summary data for the entire round are stored in respective variables
+* calls another block.test_part1 if the maximum number of test rounds has
+not run yet
+****************************************************************************
+
+<block test_part2>
+/ onblockbegin = [
+	list.ACC_test.reset();
+	list.RT_test.reset();
+	list.RT_testround_AA.reset();
+	list.RT_testround_AB.reset();
+	list.RT_testround_BA.reset();
+	list.RT_testround_BB.reset();
+	values.trialcount_block = 0;
+
+	if (mod(script.groupId, 2) != 0){
+		values.ruleConsistency = 2;		
+	} else {
+		values.ruleConsistency = 1;	
+	}		
+]
+/ trials = [1 = blockInstruction; 2 = getReady; 3-34 = noreplace(AA, AB, BA, BB); 35 = feedback]
+/ ontrialend = [
+	if (block.test_part2.currenttrialnumber > 2 && block.test_part2.currenttrialnumber < 35){
+		list.ACC_test.appendItem(block.test_part2.correct);	
+		list.RT_test.appendItem(block.test_part2.latency);
+		list.testRTs.appendItem(block.test_part2.latency >= parameters.minTestRT);
+		values.trialcount_block += 1;
+		
+		if (block.test_part2.latency <= parameters.maxTestRT){
+			if (values.trialcode == "AA"){
+				list.RT_testround_AA_pooled.appendItem(block.test_part2.latency);
+				list.RT_testround_AA.appendItem(block.test_part2.latency);
+			} else if (values.trialcode == "AB"){
+				list.RT_testround_AB_pooled.appendItem(block.test_part2.latency);
+				list.RT_testround_AB.appendItem(block.test_part2.latency);						
+			} else if (values.trialcode == "BA"){
+				list.RT_testround_BA_pooled.appendItem(block.test_part2.latency);
+				list.RT_testround_BA.appendItem(block.test_part2.latency);						
+			} else if (values.trialcode == "BB"){
+				list.RT_testround_BB_pooled.appendItem(block.test_part2.latency);
+				list.RT_testround_BB.appendItem(block.test_part2.latency);						
+			}				
+		}
+	}
+
+]
+/ onblockend = [
+	if (values.countTestRounds == 1){
+		values.SDpooled_testround1_AA = list.RT_testround_AA_pooled.standarddeviation;
+		values.SDpooled_testround1_AB = list.RT_testround_AB_pooled.standarddeviation;		
+		values.SDpooled_testround1_BA = list.RT_testround_BA_pooled.standarddeviation;
+		values.SDpooled_testround1_BB = list.RT_testround_BB_pooled.standarddeviation;		
+	
+		if (values.RuleConsistency == 1){
+			values.meanRT_testround1_AA_C = list.RT_testround_AA.mean;
+			values.meanRT_testround1_AB_C = list.RT_testround_AB.mean;
+			values.meanRT_testround1_BA_C = list.RT_testround_BA.mean;
+			values.meanRT_testround1_BB_C = list.RT_testround_BB.mean;
+		} else {
+			values.meanRT_testround1_AA_IC = list.RT_testround_AA.mean;
+			values.meanRT_testround1_AB_IC = list.RT_testround_AB.mean;
+			values.meanRT_testround1_BA_IC = list.RT_testround_BA.mean;
+			values.meanRT_testround1_BB_IC = list.RT_testround_BB.mean;			
+		}		
+	} else if (values.countTestRounds == 2){
+		values.SDpooled_testround2_AA = list.RT_testround_AA_pooled.standarddeviation;
+		values.SDpooled_testround2_AB = list.RT_testround_AB_pooled.standarddeviation;		
+		values.SDpooled_testround2_BA = list.RT_testround_BA_pooled.standarddeviation;
+		values.SDpooled_testround2_BB = list.RT_testround_BB_pooled.standarddeviation;	
+		
+		if (values.RuleConsistency == 1){
+			values.meanRT_testround2_AA_C = list.RT_testround_AA.mean;
+			values.meanRT_testround2_AB_C = list.RT_testround_AB.mean;
+			values.meanRT_testround2_BA_C = list.RT_testround_BA.mean;
+			values.meanRT_testround2_BB_C = list.RT_testround_BB.mean;
+		} else {
+			values.meanRT_testround2_AA_IC = list.RT_testround_AA.mean;
+			values.meanRT_testround2_AB_IC = list.RT_testround_AB.mean;
+			values.meanRT_testround2_BA_IC = list.RT_testround_BA.mean;
+			values.meanRT_testround2_BB_IC = list.RT_testround_BB.mean;			
+		}			
+	} else if (values.countTestRounds == 3){
+		values.SDpooled_testround3_AA = list.RT_testround_AA_pooled.standarddeviation;
+		values.SDpooled_testround3_AB = list.RT_testround_AB_pooled.standarddeviation;		
+		values.SDpooled_testround3_BA = list.RT_testround_BA_pooled.standarddeviation;
+		values.SDpooled_testround3_BB = list.RT_testround_BB_pooled.standarddeviation;	
+		
+		if (values.RuleConsistency == 1){
+			values.meanRT_testround3_AA_C = list.RT_testround_AA.mean;
+			values.meanRT_testround3_AB_C = list.RT_testround_AB.mean;
+			values.meanRT_testround3_BA_C = list.RT_testround_BA.mean;
+			values.meanRT_testround3_BB_C = list.RT_testround_BB.mean;
+		} else {
+			values.meanRT_testround3_AA_IC = list.RT_testround_AA.mean;
+			values.meanRT_testround3_AB_IC = list.RT_testround_AB.mean;
+			values.meanRT_testround3_BA_IC = list.RT_testround_BA.mean;
+			values.meanRT_testround3_BB_IC = list.RT_testround_BB.mean;			
+		}			
+	}
+	
+	if (values.minTestblockACC > list.ACC_test.mean){
+		values.minTestblockACC = list.ACC_test.mean;
+	}	
+]
+/ branch = [
+	if (values.countTestRounds < parameters.numberOfTestRounds){
+		return block.test_part1;		
+	}
+	return null;
+]
+</block>
+
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt irap1>
+/ groups = (1 of 2)
+/ onexptbegin = [
+	values.conditionOrder = "c-ic";
+	text.ruleChange.skip = true;
+	
+	values.responseOptionA_x = list.responseOptionA_x.nextValue;
+	values.responseOptionB_x = list.responseOptionB_x.nextValue;
+	if (values.responseOptionA_x == 25%){
+		values.responseOptionA = parameters.leftkey;
+		values.responseOptionB = parameters.rightkey;
+	} else {
+		values.responseOptionA = parameters.rightkey;
+		values.responseOptionB = parameters.leftkey;		
+	}
+	
+	list.responseOptionA_x.reset();
+	list.responseOptionB_x.reset();
+]
+/ blocks = [
+	1 = instruction;
+	2 = practice_part1;
+	3 = testInstructions;
+	4 = test_part1;	
+	5 = finish;
+]
+</expt>
+
+
+<expt irap2>
+/ groups = (2 of 2)
+/ onexptbegin = [
+	values.conditionOrder = "ic-c";
+	text.ruleChange.skip = true;
+	
+	values.responseOptionA_x = list.responseOptionA_x.nextValue;
+	values.responseOptionB_x = list.responseOptionB_x.nextValue;
+	if (values.responseOptionA_x == 25%){
+		values.responseOptionA = parameters.leftkey;
+		values.responseOptionB = parameters.rightkey;
+	} else {
+		values.responseOptionA = parameters.rightkey;
+		values.responseOptionB = parameters.leftkey;		
+	}
+	
+	list.responseOptionA_x.reset();
+	list.responseOptionB_x.reset();
+]
+/ blocks = [
+	1 = instruction;
+	2 = practice_part1;
+	3 = testInstructions;
+	4 = test_part1;	
+	5 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

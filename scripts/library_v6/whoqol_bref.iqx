@@ -1,0 +1,829 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+						THE WORLD HEALTH ORGANIZATION QUALITY OF LIFE (WHOQOL) -BREF (US English version)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-16-2016
+last updated:  11-01-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 11-01-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the (US English Version) of World Health Organization Quality of Life scale 
+(an abbreviated generic Quality of Life Scale developed through the World Health Organization)
+
+the instrument (US English Version) can be downloaded from:
+http://depts.washington.edu/seaqol/WHOQOL-BREF
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+self-administered questionnaire with 26 5-point Likert questions											  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'whoqol_bref.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (most negative response) - 5 (most positive response) - wording depends on question
+								R = automatically reversed coded questions (here: q3R, q4R, q26R)
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'whoqol_bref_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)									
+								
+///Raw Scores:
+Domain1_raw:					calculates the raw score for Domain1 (PHYSICAL) by adding the responses to the Domain 1 questions
+								(reversed items are automatically reversed scored)
+								if 1 item is missing: the score gets replaced with the mean of the remaining 6 scores
+								if more than 1 item is missing: no raw score is calculated
+								Range: 7-35
+
+Domain2_raw:					calculates the raw score for Domain2 (PSYCHOLOGICAL) by adding the responses to the Domain 2 questions
+								(reversed items are automatically reversed scored)
+								No raw score is calculated if not all questions are answered
+								Range: 6-30
+							
+Domain3_raw:					calculates the raw score for Domain3 (SOCIAL RELATIONSHIP) by adding the responses to the Domain 3 questions
+								(reversed items are automatically reversed scored)
+								No raw score is calculated if not all questions are answered
+								Range: 3-15
+							
+Domain4_raw:					calculates the raw score for Domain4 (ENVIRONMENT) by adding the responses to the Domain 4 questions
+								(reversed items are automatically reversed scored)
+								if 1 item is missing: the score gets replaced with the mean of the remaining 7 scores
+								if more than 1 item is missing: no raw score is calculated
+								Range: 8-40
+								
+							
+///Transformed Scores: 
+	
+Domain1_TS100:					transformed score for Domain 1 (PHYSICAL) on the scale 0-100
+									((Raw Score - 7)/28) * 100
+									=> lowest score (7) gets transformed to 0
+									=> highest score (35) gets transformed to 100
+									
+Domain2_TS100:					transformed score for Domain 2 (PSYCHOLOGICAL) on the scale 0-100
+									((Raw Score - 6)/24) * 100
+									=> lowest score (6) gets transformed to 0
+									=> highest score (30) gets transformed to 100
+
+Domain3_TS100:					transformed score for Domain 3 (SOCIAL RELATIONSHIP) on the scale 0-100	
+									((Raw Score - 3)/12) * 100
+									=> lowest score (3) gets transformed to 0
+									=> highest score (15) gets transformed to 100
+									
+Domain4_TS100:					transformed score for Domain 4 (ENVIRONMENT) on the scale 0-100
+									((Raw Score - 8)/32) * 100
+									=> lowest score (8) gets transformed to 0
+									=> highest score (40) gets transformed to 100
+
+countValid1-
+countValid4:						store the number of questions that were answered for domain1-domain4
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________	
+26 questions, questions 3, 4, 26 automatically reversed scored
+
+SCORING
+scoring of the questions follows the guidelines posted on: 
+http://depts.washington.edu/seaqol/docs/Wq_bref.txt
+
+___________________________________________________________________________________________________________________
+INSTRUCTIONS
+___________________________________________________________________________________________________________________
+http://depts.washington.edu/seaqol/WHOQOL-BREF
+
+"This assessment asks how you feel about your quality of life, health, or other areas of your life. Please answer all the
+questions. If you are unsure about which response to give to a question, please choose the one that appears most
+appropriate. This can often be your first response.
+Please keep in mind your standards, hopes, pleasures and concerns. We ask that you think about your life in the last
+two* weeks."
+
+*to change the instructions to the "last 4 weeks", change instructions under section SURVEYPAGES
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+to change instructions to to section SURVEYPAGES and change instructions under
+/caption = 
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.0.1.0
+
+<defaults>
+/minimumversion = "6.0.1.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, script.completed, 
+expressions.Domain1_raw, expressions.Domain1_TS100, values.countValid1,
+expressions.Domain2_raw, expressions.Domain2_TS100, values.countValid2, 
+expressions.Domain3_raw, expressions.Domain3_TS100, values.countValid3, 
+expressions.Domain4_raw, expressions.Domain4_TS100, values.countValid4, 
+)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+/completed:				0 = script was not completed (script prematurely aborted); 1 = script was completed (all conditions run)
+/sum:					helper variable to store the sum for domain1-domain4 questions
+/countValid1-
+/countValid4:			store the number of questions that were answered for domain1-domain4
+/domain1-
+/domain4:				store the mean raw score for domain1-domain4
+
+<values>
+/sum = 0
+/countValid1 = 0
+/countValid2 = 0
+/countValid3 = 0
+/countValid4 = 0
+/domain1 = 0
+/domain2 = 0
+/domain3 = 0
+/domain4 = 0
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+The coding of the raw scores follows the recommendation of:							
+http://depts.washington.edu/seaqol/WHOQOL-BREF	
+
+"If no more than one item from the Physical Health or Environment domains has been
+coded as missing, we recommend that a domain score be calculated by substituting a personspecific
+average across the completed items in the same scale. For example, if a respondent does
+not have a value for item B16 How satisfied are you with your sleep? in the Physical Health
+domain, but has answered all of the other items in that domain, then the value for item B16
+would be the average of the remaining 6 items. If two or more items are coded missing in these
+two domains, the domain score should not be calculated, likewise if any items are coded missing
+in the Psychological and Social Relationships domains, a domain score for that respondent
+would not be calculated."
+
+/Domain1_raw:				calculates the raw score for Domain1 by adding the responses to the Domain 1 questions
+							(reversed items are automatically reversed scored)
+							if 1 item is missing: the score gets replaced with the mean of the remaining 6 scores
+							if more than 1 item is missing: no raw score is calculated
+
+/Domain2_raw:				calculates the raw score for Domain2 by adding the responses to the Domain 2 questions
+							(reversed items are automatically reversed scored)
+							No raw score is calculated if not all questions are answered
+							
+/Domain3_raw:				calculates the raw score for Domain3 by adding the responses to the Domain 3 questions
+							(reversed items are automatically reversed scored)
+							No raw score is calculated if not all questions are answered
+							
+/Domain4_raw:				calculates the raw score for Domain4 by adding the responses to the Domain 4 questions
+							(reversed items are automatically reversed scored)
+							if 1 item is missing: the score gets replaced with the mean of the remaining 7 scores
+							if more than 1 item is missing: no raw score is calculated
+							
+Transformed Scores:
+							
+/Domain1_TS20:				transformed score for Domain 1 on the scale 4-20
+/Domain2_TS20 :				transformed score for Domain 2 on the scale 4-20
+/Domain3_TS20:				transformed score for Domain 3 on the scale 4-20	
+/Domain4_TS20:				transformed score for Domain 4 on the scale 4-20
+	
+/Domain1_TS100:				transformed score for Domain 1 on the scale 0-100
+/Domain2_TS100:				transformed score for Domain 2 on the scale 0-100
+/Domain3_TS100:				transformed score for Domain 3 on the scale 0-100	
+/Domain4_TS100:				transformed score for Domain 4 on the scale 0-100
+
+<expressions>
+/Domain1_raw = {
+	values.sum = 0;
+	values.countValid1 = 0;
+	if (radiobuttons.q3R.response) {
+		values.sum += radiobuttons.q3R.response;
+		values.countValid1 += 1;
+	}
+	if (radiobuttons.q4R.response) {
+		values.sum += radiobuttons.q4R.response;
+		values.countValid1 += 1;
+	} 
+	if (radiobuttons.q10.response) {
+		values.sum += radiobuttons.q10.response;
+		values.countValid1 += 1;
+	}	
+	if (radiobuttons.q15.response) {
+		values.sum += radiobuttons.q15.response;
+		values.countValid1 += 1;
+	}	
+	if (radiobuttons.q16.response) {
+		values.sum += radiobuttons.q16.response;
+		values.countValid1 += 1;
+	}
+	if (radiobuttons.q17.response) {
+		values.sum += radiobuttons.q17.response;
+		values.countValid1 += 1;
+	}	
+	if (radiobuttons.q18.response) {
+		values.sum += radiobuttons.q18.response;
+		values.countValid1 += 1;
+	}	
+	values.domain1 = values.sum/values.countValid1;
+	if (values.countValid1 < 6){
+		"too few scores";
+	} else if (values.countValid1 == 6){
+		values.sum += values.domain1;
+		values.sum;
+
+	} else {
+		values.sum;		
+	}
+}
+/Domain2_raw = {
+	values.sum = 0;
+	values.countValid2 = 0;
+	if (radiobuttons.q5.response) {
+		values.sum += radiobuttons.q5.response;
+		values.countValid2 += 1;
+	}
+	if (radiobuttons.q6.response) {
+		values.sum += radiobuttons.q6.response;
+		values.countValid2 += 1;
+	} 
+	if (radiobuttons.q7.response) {
+		values.sum += radiobuttons.q7.response;
+		values.countValid2 += 1;
+	}	
+	if (radiobuttons.q11.response) {
+		values.sum += radiobuttons.q11.response;
+		values.countValid2 += 1;
+	}	
+	if (radiobuttons.q19.response) {
+		values.sum += radiobuttons.q19.response;
+		values.countValid2 += 1;
+	}
+	if (radiobuttons.q26R.response) {
+		values.sum += radiobuttons.q26R.response;
+		values.countValid2 += 1;
+	}	
+	values.domain2 = values.sum/values.countValid2;
+	if (values.countValid2 <= 5){
+		"too few scores";
+	} else {
+		values.sum;
+	}
+}
+/Domain3_raw = {
+	values.sum = 0;
+	values.countValid3 = 0;
+	if (radiobuttons.q20.response) {
+		values.sum += radiobuttons.q20.response;
+		values.countValid3 += 1;
+	}
+	if (radiobuttons.q21.response) {
+		values.sum += radiobuttons.q21.response;
+		values.countValid3 += 1;
+	} 
+	if (radiobuttons.q22.response) {
+		values.sum += radiobuttons.q22.response;
+		values.countValid3 += 1;
+	}	
+	values.domain3 = values.sum/values.countValid3;
+	if (values.countValid3 <= 2){
+		"too few scores";
+	} else {
+		values.sum;
+	}
+}
+/Domain4_raw = {
+	values.sum = 0;
+	values.countValid4 = 0;
+	if (radiobuttons.q8.response) {
+		values.sum += radiobuttons.q8.response;
+		values.countValid4 += 1;
+	}
+	if (radiobuttons.q9.response) {
+		values.sum += radiobuttons.q9.response;
+		values.countValid4 += 1;
+	} 
+	if (radiobuttons.q12.response) {
+		values.sum += radiobuttons.q12.response;
+		values.countValid4 += 1;
+	}	
+	if (radiobuttons.q13.response) {
+		values.sum += radiobuttons.q13.response;
+		values.countValid4 += 1;
+	}	
+	if (radiobuttons.q14.response) {
+		values.sum += radiobuttons.q14.response;
+		values.countValid4 += 1;
+	}
+	if (radiobuttons.q23.response) {
+		values.sum += radiobuttons.q23.response;
+		values.countValid4 += 1;
+	}	
+	if (radiobuttons.q24.response) {
+		values.sum += radiobuttons.q24.response;
+		values.countValid4 += 1;
+	}
+	if (radiobuttons.q25.response) {
+		values.sum += radiobuttons.q25.response;
+		values.countValid4 += 1;
+	}	
+	values.domain4 = values.sum/values.countValid4;
+	if (values.countValid4 <= 6){
+		"too few scores";
+	} else if (values.countValid4 == 7){
+		values.sum += values.domain4;
+		values.sum;		
+	} else {
+		values.sum;
+	}
+}	
+	
+/Domain1_TS100 = if (expressions.Domain1_raw != "too few scores"){
+					((expressions.Domain1_raw - 7)/28) * 100;
+				} else {
+					"too few scores";
+				}		
+				
+				
+/Domain2_TS100 = if (expressions.Domain2_raw != "too few scores"){
+					((expressions.Domain2_raw-6)/24) * 100					
+				} else {
+					"too few scores";
+				}		
+				
+							
+/Domain3_TS100 = if (expressions.Domain3_raw != "too few scores"){
+					((expressions.Domain3_raw-3)/12) * 100	
+				} else {
+					"too few scores";
+				}			
+				
+			
+				
+/Domain4_TS100 = if (expressions.Domain4_raw != "too few scores"){
+					((expressions.Domain4_raw-8)/32) * 100
+				} else {
+					"too few scores";
+				}		
+	
+
+</expressions>
+
+
+<expressions>
+/buttonInstruct1 = if (computer.touch && !computer.hasKeyboard){"tap with your finger"} else {"click with your mouse"}
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are not required to be answered. To change
+/required = true
+
+<radiobuttons sample1>
+/caption = "Question: Do you get the kind of support from others that you need?"
+/ options = ("Not at all", "Not much", "Moderately", "A great deal", "Completely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+/ txcolor = purple
+</radiobuttons>
+
+<caption sampleInstruct1>
+/ caption = "You should select the response that best fits how much support you got from others over the last two weeks.
+ 
+If you got a great deal of support from others in the last two weeks, you would <%expressions.buttonInstruct1%> the circle above 'a great deal' .
+
+If you did not get any of the support that you needed from others in the last two weeks, you would <%expressions.buttonInstruct1%> the circle 'not at all' ."
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+</caption>
+
+
+<radiobuttons q1>
+/caption = "1. How would you rate your quality of life?"
+/ options = ("Very poor", "Poor", "Neither poor ~nnor good", "Good", "Very good")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. How satisfied are you with your health?"
+/ options = ("Very~n dissatisfied", "Dissatisfied", "Neither satisfied ~nnor dissatisfied", "Satisfied", "Very ~nsatisfied")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3R>
+/caption = "3. To what extent do you feel that physical pain prevents you from doing what you need to do?"
+/ options = ("Not at all", "A little", "A moderate ~namount", "Very much", "An extreme ~namount")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4R>
+/caption = "4. How much do you need any medical treatment to function in your daily life?"
+/ options = ("Not at all", "A little", "A moderate ~namount", "Very much", "An extreme ~namount")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. How much do you enjoy life?"
+/ options = ("Not at all", "A little", "A moderate ~namount", "Very much", "An extreme ~namount")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. To what extent do you feel your life to be meaningful?"
+/ options = ("Not at all", "A little", "A moderate ~namount", "Very much", "An extreme ~namount")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. How well are you able to concentrate?"
+/ options = ("Not at all", "Slightly", "A moderate ~namount", "Very much", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. How safe do you feel in your daily life?"
+/ options = ("Not at all", "Slightly", "A moderate ~namount", "Very much", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. How healthy is your physical environment?"
+/ options = ("Not at all", "Slightly", "A moderate ~namount", "Very much", "Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. Do you have enough energy for everyday life?"
+/ options = ("Not at all", "A little", "Moderately", "Mostly", "Completely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. Are you able to accept your bodily appearance?"
+/ options = ("Not at all", "A little", "Moderately", "Mostly", "Completely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. Have you enough money to meet your needs?"
+/ options = ("Not at all", "A little", "Moderately", "Mostly", "Completely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. How available to you is the information that you need in your day-to-day life?"
+/ options = ("Not at all", "A little", "Moderately", "Mostly", "Completely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "14. To what extent do you have the opportunity for leisure activities?"
+/ options = ("Not at all", "A little", "Moderately", "Mostly", "Completely")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. How well are you able to get around?"
+/ options = ("Very poor", "poor", "Neither poor ~nnor well", "Well", "Very well")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<caption caption1>
+/ caption = "
+The following questions ask you to say how GOOD OR SATISFIED you have felt about various aspects of your life over the last two weeks."
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+</caption>
+
+<radiobuttons q16>
+/caption = "16. How satisfied are you with your sleep?"
+/ options = ("Very~n dissatisfied", "Dissatisfied", "Neither satisfied ~nnor dissatisfied", "Satisfied", "Very ~nsatisfied")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. How satisfied are you with your ability to perform your daily living activities?"
+/ options = ("Very~n dissatisfied", "Dissatisfied", "Neither satisfied ~nnor dissatisfied", "Satisfied", "Very ~nsatisfied")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "18. How satisfied are you with your capacity for work?"
+/ options = ("Very~n dissatisfied", "Dissatisfied", "Neither satisfied ~nnor dissatisfied", "Satisfied", "Very ~nsatisfied")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. How satisfied are you with yourself?"
+/ options = ("Very~n dissatisfied", "Dissatisfied", "Neither satisfied ~nnor dissatisfied", "Satisfied", "Very ~nsatisfied")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20>
+/caption = "20. How satisfied are you with your personal relationships?"
+/ options = ("Very~n dissatisfied", "Dissatisfied", "Neither satisfied ~nnor dissatisfied", "Satisfied", "Very ~nsatisfied")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21>
+/caption = "21. How satisfied are you with your sex life?"
+/ options = ("Very~n dissatisfied", "Dissatisfied", "Neither satisfied ~nnor dissatisfied", "Satisfied", "Very ~nsatisfied")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "22. How satisfied are you with the support you get from your friends?"
+/ options = ("Very~n dissatisfied", "Dissatisfied", "Neither satisfied ~nnor dissatisfied", "Satisfied", "Very ~nsatisfied")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23>
+/caption = "23. How satisfied are you with the conditions of your living place?"
+/ options = ("Very~n dissatisfied", "Dissatisfied", "Neither satisfied ~nnor dissatisfied", "Satisfied", "Very ~nsatisfied")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q24>
+/caption = "24. How satisfied are you with your access to health services?"
+/ options = ("Very~n dissatisfied", "Dissatisfied", "Neither satisfied ~nnor dissatisfied", "Satisfied", "Very ~nsatisfied")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q25>
+/caption = "25. How satisfied are you with your transport?"
+/ options = ("Very~n dissatisfied", "Dissatisfied", "Neither satisfied ~nnor dissatisfied", "Satisfied", "Very ~nsatisfied")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<caption caption2>
+/ caption = "
+The following question refers to HOW OFTEN you have felt or experienced certain things in the last two weeks."
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+</caption>
+
+<radiobuttons q26R>
+/caption = "26. How often do you have negative feelings such as blue mood, despair, anxiety, depression?"
+/ options = ("Never", "Seldom", "Quite often", "Very often", "Always")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<textbox feedback>
+/ caption = "Do you have any comments about the assessment?"
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ textboxsize = (80%, 50%)
+/ multiline = true
+/ maxchars = 10000
+/ required = false
+</textbox>
+
+<caption caption3>
+/ caption = "Thank you!"
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+</caption>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: instructions on the first page are slightly altered from the original to reflect the
+different question style used in this script
+(e.g.: original: circle a number; script: select with your mouse/finger)
+
+<surveypage WHOQOL_BREF_instruct>
+/caption ="This assessment asks how you feel about your quality of life, health, or other areas of your life. Please answer all the questions. If you are unsure about which response to give to a question, please choose the one that appears most appropriate. This can often be your first response.
+
+Please keep in mind your standards, hopes, pleasures and concerns. We ask that you think about your life in the last two weeks. 
+
+For example, thinking about the last two weeks, a question might ask:
+"
+/questions = [1 = sample1, sampleInstruct1]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.%, false, false, false, false, 5, 1)
+</surveypage>
+
+
+<surveypage WHOQOL_BREF1>
+/caption ="Please read each question, assess your feelings, and circle the number on the scale for each question that gives the best answer for you.
+"
+/questions = [1 = q1, q2]
+</surveypage>
+
+<surveypage WHOQOL_BREF2>
+/caption ="The following questions ask about HOW MUCH you have experienced certain things in the last two weeks.
+"
+/questions = [1 = q3R, q4R, q5]
+</surveypage>
+
+<surveypage WHOQOL_BREF3>
+/caption ="The following questions ask about HOW MUCH you have experienced certain things in the last two weeks.
+"
+/questions = [1 = q6, q7]
+</surveypage>
+
+<surveypage WHOQOL_BREF4>
+/caption ="The following questions ask about HOW MUCH you have experienced certain things in the last two weeks.
+"
+/questions = [1 = q8, q9]
+</surveypage>
+
+<surveypage WHOQOL_BREF5>
+/caption ="The following questions ask about how completely you experienced or were able to do certain things in the last two weeks.
+"
+/questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage WHOQOL_BREF6>
+/caption ="The following questions ask about how completely you experienced or were able to do certain things in the last two weeks.
+"
+/questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage WHOQOL_BREF7>
+/caption ="The following questions ask you to say how GOOD OR SATISFIED you have felt about various aspects of your life over the last two weeks.
+"
+/questions = [1 = q16, q17, q18]
+</surveypage>
+
+<surveypage WHOQOL_BREF8>
+/caption ="The following questions ask you to say how GOOD OR SATISFIED you have felt about various aspects of your life over the last two weeks.
+"
+/questions = [1 = q19, q20, q21]
+</surveypage>
+
+<surveypage WHOQOL_BREF9>
+/caption ="The following questions ask you to say how GOOD OR SATISFIED you have felt about various aspects of your life over the last two weeks.
+"
+/questions = [1 = q22, q23, q24]
+</surveypage>
+
+<surveypage WHOQOL_BREF10>
+/caption ="The following questions ask you to say how GOOD OR SATISFIED you have felt about various aspects of your life over the last two weeks.
+"
+/questions = [1 = q25, caption2, q26R]
+</surveypage>
+
+<surveypage WHOQOL_BREF11>
+/caption =""
+/questions = [1 = feedback, caption3]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey WHOQOL_BREF>
+/pages = [
+	1 = WHOQOL_BREF_instruct; 
+	2 = WHOQOL_BREF1; 
+	3 = WHOQOL_BREF2; 
+	4 = WHOQOL_BREF3; 
+	5 = WHOQOL_BREF4; 
+	6 = WHOQOL_BREF5; 
+	7 = WHOQOL_BREF6; 
+	8 = WHOQOL_BREF7; 
+	9 = WHOQOL_BREF8;
+	10 = WHOQOL_BREF9;
+	11 = WHOQOL_BREF10;
+	12 = WHOQOL_BREF11;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

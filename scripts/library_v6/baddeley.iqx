@@ -1,0 +1,514 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+							Baddeley's 3-Minute Grammatical Reasoning Test
+___________________________________________________________________________________________________________________
+
+Script Author: Sean Draine, Ph.D. (seandr@millisecond.com) for Millisecond Software, LLC
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+
+This script implements the Baddeley's 3-Minute Grammatical Deductive Reasoning Test
+described in:
+
+Baddeley, A. D. (1968). A 3 min reasoning test based on grammatical transformation. 
+Psychonomic Science, 10, 341-342.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants view statements like "A follows B" paired with 2 letters "AB" or "BA" and are asked
+to judge whether the letter pair is a correct representation of the statement by clicking
+"true" or "false". The test times out after 3 minutes.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________ 
+The default data stored in the data files are:
+
+(1) Raw data file: 'baddeley_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group, 				with the current subject/groupnumber
+sesion:							with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file.
+
+stimulusitem:					the presented stimuli in order of trial presentation
+response:						the participant's response ('true' or 'false')
+correct:						accuracy of response: 1 = correct response; 0 = otherwise
+latency: 						the response latency (in ms); measured from: onset of problem
+totalCorrectCount: 				total correct responses tallied separately for practice and test trials
+
+(2) Summary data file: 'baddeley_summary*.iqdat'
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)
+								
+totalCorrectCount:			total number of correct test responses
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+- 64 statements (half of them are 'true') tested in 3 minutes
+- order of statements random
+	
+PRACTICE 
+- 4 practice statements
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+- 64 statements: 2 phrasing (positive vs negative) x 2 activeness (active vs passive) x 2 Correctness (true vs false) x 2 order (precedes vs. follows) x 2 first letter mentioned in statement (A or B) vs. 2 letter pairs (AB vs BA)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see section EDITABLE INSTRUCTIONS
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/testduration:			sets the duration of the test in ms (default: 3min => 180000ms)
+
+</usermanual>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+<parameters>
+/ testduration = 180000
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+<item examples>
+/ 1 = "A is followed by B - AB"
+/ 2 = "B is not followed by A - BA"
+/ 3 = "B is preceded by A - BA"
+/ 4 = "A does not precede B - BA"
+</item>
+
+
+<item test>
+/ 1 = "A is preceded by B - BA"	
+/ 2 = "B does not precede A - AB"	
+/ 3 = "A is not followed by B - BA"	
+/ 4 = "B is preceded by A - BA"	
+/ 5 = "A is followed by B - AB"	
+/ 6 = "A does not follow B - AB"	
+/ 7 = "B is not preceded by A - AB" 
+/ 8 = "B follows A - AB"		
+/ 9 = "A precedes B - BA"		
+/ 10 = "B does not follow A - BA"	
+/ 11 = "B precedes A - AB"		
+/ 12 = "B is followed by A - AB"	
+/ 13 = "B is not followed by A - BA"	
+/ 14 = "B is preceded by A - AB"	
+/ 15 = "B is followed by A - BA"	
+/ 16 = "B precedes A - BA"		
+/ 17 = "A is not followed by B - AB"	
+/ 18 = "A is followed by B - BA"	
+/ 19 = "B is not preceded by A - BA"	
+/ 20 = "B is followed by A - AB"	
+/ 21 = "A does not follow B - BA"	
+/ 22 = "A is preceded by B - AB"	
+/ 23 = "B does not follow A - AB"	
+/ 24 = "A is not preceded by B - BA"	
+/ 25 = "A follows B - BA"		
+/ 26 = "A is not preceded by B - AB"	
+/ 27 = "A follows B - AB"		
+/ 28 = "A does not precede B - AB"	
+/ 29 = "A precedes B - AB"		
+/ 30 = "B follows A - BA"		
+/ 31 = "B does not precede A - BA"	
+/ 32 = "A does not precede B - BA"	
+/ 33 = "A does not follow B - AB"	
+/ 34 = "A is not followed by B - BA"	
+/ 35 = "B is not preceded by A - BA"	
+/ 36 = "B is preceded by A - AB"	
+/ 37 = "A follows B - BA"		
+/ 38 = "B precedes A - BA"		
+/ 39 = "B is followed by A - BA"	
+/ 40 = "A precedes B - AB"		
+/ 41 = "A follows B - AB"		
+/ 42 = "B does not precede A - BA"	
+/ 43 = "A does not precede B - BA"	
+/ 44 = "A is preceded by B - BA"	
+/ 45 = "B is not followed by A - AB"	
+/ 46 = "B does not follow A - BA"	
+/ 47 = "B does not precede A - AB"	
+/ 48 = "A is followed by B - AB"	
+/ 49 = "B is not preceded by A - AB"	
+/ 50 = "B follows A - BA"		
+/ 51 = "A does not precede B - AB"	
+/ 52 = "A is not followed by B - AB"	
+/ 53 = "B is preceded by A - BA"	
+/ 54 = "A is not preceded by B - AB"	
+/ 55 = "A does not follow B - BA"	
+/ 56 = "A is followed by B - BA"	
+/ 57 = "A is not preceded by B - BA"	
+/ 58 = "B is followed by A - AB"	
+/ 59 = "B is not followed by A - BA"	
+/ 60 = "A precedes B - BA"		
+/ 61 = "B does not follow A - AB"	
+/ 62 = "A is preceded by B - AB"	
+/ 63 = "B precedes A - AB"		
+/ 64 = "B follows A - AB"
+</item>
+
+<item correctmessage>
+/ 1 = "correct"
+</item>
+
+<item error>
+/ 1 = "error"
+</item>
+
+<item true>
+/ 1 = "T"
+</item>
+
+<item false>
+/ 1 = "F"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<item instructions>
+/ 1 = "In this task, you will see a series of statements. After each statement there are two letters. 
+
+Your task is to decide whether the statement about the letters is true or false. 
+
+Respond by <%expressions.buttoninstruct4%> the T if you believe the statement is true or the F if you believe the statement is false."
+
+/ 2 = "For example, consider the following statement:
+
+A is followed by B - AB
+
+The statement is true. Look at the order of AB, and notice that A is followed by B. You would <%expressions.buttoninstruct2%> T for True as this is the correct answer.
+
+Next will be some practice trials."
+/ 3 = "Next, you will begin the task. Go as quickly as possible without making mistakes. You will have three minutes to complete as many questions as you can.
+
+Note that you will no longer receive feedback as to whether your response was correct."
+</item>
+
+<item continue>
+/ 1 = "Continue"
+</item>
+
+************************************
+general expressions
+************************************
+/buttoninstruct: adjusts the instruction text depending on device used to run script
+
+<expressions>
+/ buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {return "Touch";} else {return "Click";}
+/ buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {return "touch";} else {return "click";}
+/ buttoninstruct3 = if (computer.touch && !computer.hasKeyboard) {return "Touching";} else {return "Clicking";}
+/ buttoninstruct4 = if (computer.touch && !computer.hasKeyboard) {return "touching";} else {return "clicking";}
+/ totalCorrectCount = block.test.totalCorrectCount
+</expressions>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ txcolor = black
+/ inputdevice = mouse
+/ screencolor = white
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Custom Data Output
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************
+raw data
+*************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+stimulusitem response latency correct 
+expressions.totalCorrectCount)
+</data>
+
+*************
+summary data
+*************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.totalCorrectCount)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Instructions and stimulus text
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text true>
+/ items = true
+/ txcolor = darkGray
+/ txbgcolor = white
+/ position = (40%, 60%)
+/ fontstyle = ("Arial", 7%, false, false, false, false, 5, 1)
+</text>
+
+<text false>
+/ items = false
+/ txcolor = darkGray
+/ txbgcolor = white
+/ position = (60%, 60%)
+/ fontstyle = ("Arial", 7%, false, false, false, false, 5, 1)
+</text>
+
+<text continue>
+/ items = continue
+/ txcolor = blue
+/ position = (50%, 66%)
+/ fontstyle = ("Arial", 4%, false, false, true, false, 5, 1)
+</text>
+
+<text instructions>
+/ items = instructions
+/ txcolor = darkGray
+/ txbgcolor = white
+/ position = (50%, 33%)
+/ size = (66%, 50%)
+/ hjustify = left
+/ vjustify = center
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ select = sequence
+</text>
+
+<text examples>
+/ items = examples
+/ fontstyle = ("Arial", 3.91%, false, false, false, false, 5, 1)
+/ txcolor = black
+/ select = sequence
+/ position = (50%, 40%)
+</text>
+
+<text test>
+/ items = test
+/ fontstyle = ("Arial", 3.91%, false, false, false, false, 5, 1)
+/ txcolor = black
+/ select = noreplace
+/ position = (50%, 40%)
+</text>
+
+<text correctmessage>
+/ items = correctmessage
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ txcolor = green
+</text>
+
+<text errormessage>
+/ items = error
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ txcolor = red
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Correct responses
+**************************************************************************************************************
+**************************************************************************************************************
+	The following define the correct response (true or false) for all practice and test items. 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item exampleanswers>
+/ 1 = "true"
+/ 2 = "false"
+/ 3 = "false"
+/ 4 = "true"
+</item>
+
+<item testanswers>
+/ 1 = "true"	
+/ 2 = "true"	
+/ 3 = "true"	
+/ 4 = "false"	
+/ 5 = "true"	
+/ 6 = "true"	
+/ 7 = "false" 
+/ 8 = "true"		
+/ 9 = "false"		
+/ 10 = "true"	
+/ 11 = "false"		
+/ 12 = "false"	
+/ 13 = "false"	
+/ 14 = "true"	
+/ 15 = "true"	
+/ 16 = "true"		
+/ 17 = "false"	
+/ 18 = "false"	
+/ 19 = "true"	
+/ 20 = "false"	
+/ 21 = "false"	
+/ 22 = "false"	
+/ 23 = "false"	
+/ 24 = "false"	
+/ 25 = "true"		
+/ 26 = "true"	
+/ 27 = "false"		
+/ 28 = "false"	
+/ 29 = "true"		
+/ 30 = "false"		
+/ 31 = "false"	
+/ 32 = "true"	
+/ 33 = "true"	
+/ 34 = "true"	
+/ 35 = "true"	
+/ 36 = "true"	
+/ 37 = "true"		
+/ 38 = "true"		
+/ 39 = "true"	
+/ 40 = "true"		
+/ 41 = "false"		
+/ 42 = "false"	
+/ 43 = "true"	
+/ 44 = "true"	
+/ 45 = "true"	
+/ 46 = "true"	
+/ 47 = "true"	
+/ 48 = "true"	
+/ 49 = "false"	
+/ 50 = "false"		
+/ 51 = "false"	
+/ 52 = "false"	
+/ 53 = "false"	
+/ 54 = "true"	
+/ 55 = "false"	
+/ 56 = "false"	
+/ 57 = "false"	
+/ 58 = "false"	
+/ 59 = "false"	
+/ 60 = "false"		
+/ 61 = "false"	
+/ 62 = "false"	
+/ 63 = "false"		
+/ 64 = "true"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Trial Definitions
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial examples>
+/ stimulusframes = [1=examples, true, false]
+/ validresponse = (true, false)
+/ correctmessage = true(correctmessage, 500)
+/ errormessage = true(errormessage, 500)
+/ iscorrectresponse = [
+	return (trial.examples.response == item.exampleanswers.item(text.examples.nextIndex));
+]
+</trial>
+
+<trial test>
+/ stimulusframes = [1=test, true, false]
+/ validresponse = (true, false)
+/ iscorrectresponse = [
+	return (trial.test.response == item.testanswers.item(text.test.nextIndex));
+]
+</trial>
+
+<trial instructions>
+/ stimulustimes = [1=instructions, continue]
+/ validresponse = (continue)
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Block Definitions
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block test>
+/ trials = [1-64=test]
+/ timeout = parameters.testduration
+</block>
+
+<block instructions>
+/ trials = [1-2=instructions; 3-6=examples;7=instructions]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Experiment Definition
+**************************************************************************************************************
+**************************************************************************************************************
+<expt baddeley>
+/ blocks = [
+	1=instructions; 
+	2=test;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

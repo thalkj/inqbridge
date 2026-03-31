@@ -1,0 +1,1634 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+					YOUTH RISK BEHAVIOR SURVEY (YRBS) - High School Version (State & Local)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 08-29-2019
+last updated:  03-03-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 03-03-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements an Inquisit computer version of the 2019 High School (HS) Youth Risk Behavior Risk Survey (YRBS) 
+as published by:
+
+Centers for Disease Control and Prevention. 2019 Youth Risk Behavior Survey. 
+https://www.cdc.gov/healthyyouth/data/yrbs/questionnaires.htm; Accessed on 08/29/2019.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+There are 89 questions covering health related areas such as drug use, alcohol use, sexual behavior, food behavior etc.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 10 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: '2019yrbs_hs.iqdat' 
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: depends on question
+								no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'yrbs_hs_2019_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please select the answers that apply best to you."
+</parameters>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<caption thankyou>
+/caption = "Thank you very much for your help."
+/ fontstyle = ("Arial", 2.5%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<caption 2019N_YRBS>
+/caption = "2019 Standard HS YRBS"
+/ fontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (74%, 97%)
+</caption>
+
+<radiobuttons q1_age>
+/caption = "1. How old are you?"
+/ options = ("A. 12 years old or younger",
+"B. 13 years old",
+"C. 14 years old",
+"D. 15 years old",
+"E. 16 years old",
+"F. 17 years old",
+"G. 18 years old or older")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q2_sex>
+/caption = "2. What is your sex?"
+/ options = ("A. Female", "B. Male")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q3_grade>
+/caption = "3. In what grade are you?"
+/ options = (
+"A. 9th grade", 
+"B. 10th grade", 
+"C. 11th grade", 
+"D. 12th grade", 
+"E. Ungraded or other grade")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q4_hispanic>
+/caption = "4. Are you Hispanic or Latino?"
+/ options = ("A. Yes", "B. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<checkboxes q5_race>
+/caption = "5. What is your race? (Select one or more responses.)"
+/options = (
+"A. American Indian or Alaska Native", 
+"B. Asian", 
+"C. Black or African American", 
+"D. Native Hawaiian or Other Pacific Islander", 
+"E. White")
+/required = false
+/ orientation = vertical
+</checkboxes>
+
+<dropdown q6_height>
+/caption = "6. How tall are you without your shoes on?"
+/options = ("3'0''", "3'1''", "3'2''", "3'3''", "3'4''", "3'5''", "3'6''", "3'7''", "3'8''", "3'9''", "3'10''", "3'11''",
+"4'0''", "4'1''", "4'2''", "4'3''", "4'4''", "4'5''", "4'6''", "4'7''", "4'8''", "4'9''", "4'10''", "4'11''",
+"5'0''", "5'1''", "5'2''", "5'3''", "5'4''", "5'5''", "5'6''", "5'7''", "5'8''", "5'9''", "5'10''", "5'11''",
+"6'0''", "6'1''", "6'2''", "6'3''", "6'4''", "6'5''", "6'6''", "6'7''", "6'8''", "6'9''", "6'10''", "6'11''",
+"7'0''", "7'1''", "7'2''", "7'3''", "7'4''", "7'5''", "7'6''", "7'7''", "7'8''", "7'9''", "7'10''", "7'11''")
+/required = false
+</dropdown>
+
+<textbox q7_weight>
+/caption = "7. How much do you weigh without your shoes on (in lbs)? Example: 152"
+/required = false
+/mask = integer
+/maxchars = 3
+</textbox>
+
+<caption safety>
+/caption = "The next 4 questions ask about safety."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q8_safety1>
+/caption = "8. How often do you wear a seat belt when RIDING in a car driven by someone else?"
+/ options = (
+"A. Never",
+"B. Rarely",
+"C. Sometimes",
+"D. Most of the time",
+"E. Always")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q9_safety2>
+/caption = "9. During the past 30 days, how many times did you RIDE in a car or other vehicle driven BY SOMEONE WHO HAD BEEN DRINKING ALCOHOL?"
+/ options = ("A. 0 times",
+"B. 1 time",
+"C. 2 or 3 times",
+"D. 4 or 5 times",
+"E. 6 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q10_safety3>
+/caption = "10. During the past 30 days, how many times did you DRIVE a car or other vehicle WHEN YOU HAD BEEN DRINKING ALCOHOL?"
+/ options = (
+"A. I did not drive a car or other vehicle during the past 30 days",
+"B. 0 times",
+"C. 1 time",
+"D. 2 or 3 times",
+"E. 4 or 5 times",
+"F. 6 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q11_safety4>
+/caption = "11. During the past 30 days, on how many days did you TEXT OR E-MAIL while DRIVING a car or other vehicle?"
+/ options = (
+"A. I did not drive a car or other vehicle during the past 30 days",
+"B. 0 days",
+"C. 1 or 2 days",
+"D. 3 to 5 days",
+"E. 6 to 9 days",
+"F. 10 to 19 days",
+"G. 20 to 29 days",
+"H. All 30 days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption violence>
+/caption = "The next 11 questions ask about violence-related behaviors."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q12_violence1>
+/caption = "12. During the past 30 days, on how many days did you carry A WEAPON such as a gun, knife, or club?"
+/ options = (
+"A. 0 days",
+"B. 1 day",
+"C. 2 or 3 days",
+"D. 4 or 5 days",
+"E. 6 or more days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q13_violence2>
+/caption = "13. During the past 30 days, on how many days did you carry a weapon such as a gun, knife, or club on SCHOOL PROPERTY?"
+/ options = (
+"A. 0 days",
+"B. 1 day",
+"C. 2 or 3 days",
+"D. 4 or 5 days",
+"E. 6 or more days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q14_violence3>
+/caption = "14. DURING THE PAST 12 MONTHS, on how many days did you carry a GUN? (Do NOT count the days when you carried a gun only for hunting or for a sport, such as target shooting.)"
+/ options = (
+"A. 0 days",
+"B. 1 day",
+"C. 2 or 3 days",
+"D. 4 or 5 days",
+"E. 6 or more days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q15_violence4>
+/caption = "15. During the past 30 days, on how many days did you NOT go to school because you felt you would be unsafe at school or on your way to or from school?"
+/ options = (
+"A. 0 days",
+"B. 1 day",
+"C. 2 or 3 days",
+"D. 4 or 5 days",
+"E. 6 or more days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q16_violence5>
+/caption = "16. During the past 12 months, how many times has someone threatened or injured you with A WEAPON such as a gun, knife, or club ON SCHOOL PROPERTY?"
+/ options = (
+"A. 0 times",
+"B. 1 time",
+"C. 2 or 3 times",
+"D. 4 or 5 times",
+"E. 6 or 7 times",
+"F. 8 or 9 times",
+"G. 10 or 11 times",
+"H. 12 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q17_violence6>
+/caption = "17. During the past 12 months, how many times were you in a PHYSICAL FIGHT?"
+/ options = (
+"A. 0 times",
+"B. 1 time",
+"C. 2 or 3 times",
+"D. 4 or 5 times",
+"E. 6 or 7 times",
+"F. 8 or 9 times",
+"G. 10 or 11 times",
+"H. 12 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q18_violence7>
+/caption = "18. During the past 12 months, how many times were you in a PHYSICAL FIGHT ON SCHOOL PROPERTY?"
+/ options = (
+"A. 0 times",
+"B. 1 time",
+"C. 2 or 3 times",
+"D. 4 or 5 times",
+"E. 6 or 7 times",
+"F. 8 or 9 times",
+"G. 10 or 11 times",
+"H. 12 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q19_violence8>
+/caption = "19. Have you ever been physically forced to have sexual intercourse when you did not want to?"
+/ options = (
+"A. Yes",
+"B. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+
+<radiobuttons q20_violence9>
+/caption = "20. During the past 12 months, how many times did ANYONE force you to do sexual things that you did not want to do? (Count such things as kissing, touching, or being physically forced to have sexual intercourse.)"
+/ options = (
+"A. 0 times",
+"B. 1 time",
+"C. 2 or 3 times",
+"D. 4 or 5 times",
+"E. 6 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q21_violence10>
+/caption = "21. During the past 12 months, how many times did SOMEONE YOU WERE DATING OR GOING OUT WITH force you to do sexual things that you did not want to do? (Count such things as kissing, touching, or being physically forced to have sexual intercourse.)"
+/ options = (
+"A. I did not date or go out with anyone during the past 12 months",
+"B. 0 times",
+"C. 1 time",
+"D. 2 or 3 times",
+"E. 4 or 5 times";
+"F. 6 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q22_violence11>
+/caption = "22. During the past 12 months, how many times did SOMEONE YOU WERE DATING OR GOING OUT WITH with physically hurt you on purpose? (Count such things as being hit, slammed into something, or injured with an object or weapon.)"
+/ options = (
+"A. I did not date or go out with anyone during the past 12 months",
+"B. 0 times",
+"C. 1 time",
+"D. 2 or 3 times",
+"E. 4 or 5 times",
+"F. 6 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption bullying>
+/caption = "The next 2 questions ask about bullying. Bullying is when 1 or more students tease, threaten, spread rumors about, hit, shove, or hurt another student over and over again. It is not bullying when 2 students of about the same strength or power argue or fight or tease each other in a friendly way."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q23_bullying1>
+/caption = "23. During the past 12 months, have you ever been bullied on SCHOOL PROPERTY?"
+/ options = ("A. Yes", "B. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q24_bullying2>
+/caption = "24. During the past 12 months, have you ever been ELECTRONICALLY bullied? (Count being bullied through texting, Instagram, Facebook, or other social media.)"
+/ options = ("A. Yes", "B. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption suicide>
+/caption = "The next 5 questions ask about sad feelings and attempted suicide. Sometimes people feel so depressed about the future that they may consider attempting suicide, that is, taking some action to end their own life."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q25_suicide1>
+/caption = "25. During the past 12 months, did you ever feel so sad or hopeless almost every day for TWO WEEKS OR MORE IN A ROW that you stopped doing some usual activities?"
+/ options = ("A. Yes", "B. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q26_suicide2>
+/caption = "26. During the past 12 months, did you ever SERIOUSLY consider attempting suicide?"
+/ options = ("A. Yes", "B. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q27_suicide3>
+/caption = "27. During the past 12 months, did you make a plan about how you would attempt suicide?"
+/ options = ("A. Yes", "B. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q28_suicide4>
+/caption = "28. During the past 12 months, how many times did you actually attempt suicide?"
+/ options = (
+"A. 0 times",
+"B. 1 time",
+"C. 2 or 3 times",
+"D. 4 or 5 times",
+"E. 6 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q29_suicide5>
+/caption = "29. IF YOU ATTEMPTED SUICIDE during the past 12 months, did any attempt result in an injury, poisoning, or overdose that had to be treated by a doctor or nurse?"
+/ options = (
+"A. I DID NOT ATTEMPT SUICIDE during the past 12 months",
+"B. Yes",
+"C. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption cigarettes>
+/caption = "The next 4 questions ask about cigarette smoking."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q30_cigarettes1>
+/caption = "30. Have you ever tried cigarette smoking, even one or two puffs?"
+/ options = ("A. Yes", "B. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q31_cigarettes2>
+/caption = "31. How old were you when you first tried cigarette smoking, even one or two puffs?"
+/ options = (
+"A. I have never tried cigarette smoking, not even one or two puffs",
+"B. 8 years old or younger",
+"C. 9 or 10 years old",
+"D. 11 or 12 years old",
+"E. 13 or 14 years old",
+"F. 15 or 16 years old",
+"G. 17 years old or older")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q32_cigarettes3>
+/caption = "32. During the past 30 days, on how many days did you smoke cigarettes?"
+/ options = ("A. 0 days", "B. 1 or 2 days", "C. 3 to 5 days", "D. 6 to 9 days", "E. 10 to 19 days", "F. 20 to 29 days", "G. All 30 days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q33_cigarettes4>
+/caption = "33. During the past 30 days, on the days you smoked, how many cigarettes did you smoke PER DAY?"
+/ options = ("A. I did not smoke cigarettes during the past 30 days", "B. Less than 1 cigarette per day", "C. 1 cigarette per day", "D. 2 to 5 cigarettes per day", 
+"E. 6 to 10 cigarettes per day", "F. 11 to 20 cigarettes per day", "G. More than 20 cigarettes per day")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption electronicvapor>
+/caption = "The next 3 questions ask about electronic vapor products, such as JUUL, Vuse, MarkTen, and blu. Electronic vapor products include e-cigarettes, vapes, vape pens, e-cigars, e-hookahs, hookah pens, and mods."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q34_electronicvapor1>
+/caption = "34. Have you ever used an electronic vapor product?"
+/ options = (
+"A. Yes", 
+"B. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q35_electronicvapor2>
+/caption = "35. During the past 30 days, on how many days did you use an electronic vapor product?"
+/ options = ( 
+"A. 0 days",
+"B. 1 or 2 days",
+"C. 3 to 5 days",
+"D. 6 to 9 days",
+"E. 10 to 19 days",
+"F. 20 to 29 days",
+"G. All 30 days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q36_electronicvapor3>
+/caption = "36. During the past 30 days, how did you usually get your own electronic vapor products?"
+/ options = ( 
+"A. I did not use any electronic vapor products during the past 30 days",
+"B. I bought them in a store such as a convenience store, supermarket, discount store, gas station, or vape store",
+"C. I got them on the Internet",
+"D. I gave someone else money to buy them for me",
+"E. I borrowed them from someone else",
+"F. A person who can legally buy these products gave them to me",
+"G. I took them from a store or another person",
+"H. I got them some other way")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption othertobacco>
+/caption = "The next 3 questions ask about other tobacco products."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q37_othertobacco1>
+/caption = "37. During the past 30 days, on how many days did you use CHEWING TOBACCO, SNUFF, DIP, SNUS, OR DISSOLVABLE TOBACCO PRODUCTS, such as Copenhagen, Grizzly, Skoal, or Camel Snus? (Do not count any electronic vapor products.)"
+/ options = (
+"A. 0 days",
+"B. 1 or 2 days",
+"C. 3 to 5 days",
+"D. 6 to 9 days",
+"E. 10 to 19 days",
+"F. 20 to 29 days",
+"G. All 30 days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q38_othertobacco2>
+/caption = "38. During the past 30 days, on how many days did you smoke CIGARS, CIGARILLOS, or LITTLE CIGARS?"
+/ options = (
+"A. 0 days",
+"B. 1 or 2 days",
+"C. 3 to 5 days",
+"D. 6 to 9 days",
+"E. 10 to 19 days",
+"F. 20 to 29 days",
+"G. All 30 days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q39_othertobacco3>
+/caption = "39. During the past 12 months, did you ever try TO QUIT using ALL tobacco products, including cigarettes, cigars, smokeless tobacco, shisha or hookah tobacco, and electronic vapor products?"
+/ options = ( 
+"A. I did not use any tobacco products during the past 12 months",
+"B. Yes",
+"C. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption alcohol>
+/caption = "The next 5 questions ask about drinking alcohol. This includes drinking beer, wine, wine coolers, and liquor such as rum, gin, vodka, or whiskey. For these questions, drinking alcohol does not include drinking a few sips of wine for religious purposes."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q40_alcohol1>
+/caption = "40. How old were you when you had your first drink of alcohol other than a few sips?"
+/ options = (
+"A. I have never had a drink of alcohol other than a few sips",
+"B. 8 years old or younger",
+"C. 9 or 10 years",
+"D. 11 or 12 years",
+"E. 13 or 14 years",
+"F. 15 or 16 years",
+"G. 17 years or older")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+
+<radiobuttons q41_alcohol2>
+/caption = "41. During the past 30 days, on how many days did you have at least one drink of alcohol?"
+/ options = (
+"A. 0 days",
+"B. 1 or 2 days",
+"C. 3 to 5 days",
+"D. 6 to 9 days",
+"E. 10 to 19 days",
+"F. 20 to 29 days",
+"G. All 30 days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q42_alcohol3>
+/caption = "42. During the past 30 days, on how many days did you have FOUR or more drinks of alcohol in a row, that is, within a couple of hours (if you are FEMALE) or FIVE or more drinks of alcohol in a row, that is, within a couple of hours (if you are MALE)?"
+/ options = (
+"A. 0 days",
+"B. 1 day",
+"C. 2 days",
+"D. 3 to 5 days",
+"E. 6 to 9 days",
+"F. 10 to 19 days",
+"G. 20 or more days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q43_alcohol4>
+/caption = "43. During the past 30 days, what is the largest number of alcoholic drinks you had in a row, that is, within a couple of hours?"
+/ options = (
+"A. I did not drink alcohol during the past 30 days",
+"B. 1 or 2 drinks",
+"C. 3 drinks",
+"D. 4 drinks",
+"E. 5 drinks",
+"F. 6 or 7 drinks",
+"G. 8 or 9 drinks",
+"H. 10 or more drinks")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q44_alcohol5>
+/caption = "44. During the past 30 days, how did you USUALLY get the alcohol you drank?"
+/ options = (
+"A. I did not drink alcohol during the past 30 days",
+"B. I bought it in a store such as a liquor store, convenience store, supermarket, discount store, or gas station",
+"C. I bought it at a restaurant, bar, or club",
+"D. I bought it at a public event such as a concert or sporting event",
+"E. I gave someone else money to buy it for me",
+"F. Someone gave it to me",
+"G. I took it from a store or family member",
+"H. I got it some other way")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption marijuana>
+/caption = "The next 3 questions ask about marijuana use. Marijuana also is called pot, weed, or cannabis."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q45_marijuana1>
+/caption = "45. During your life, how many times have you used marijuana?"
+/ options = (
+"A. 0 times",
+"B. 1 or 2 times",
+"C. 3 to 9 times",
+"D. 10 to 19 times",
+"E. 20 to 39 times",
+"F. 40 to 99 times",
+"G. 100 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q46_marijuana2>
+/caption = "46. How old were you when you tried marijuana for the first time?"
+/ options = (
+"A. I have never tried marijuana",
+"B. 8 years old or younger",
+"C. 9 or 10 years old",
+"D. 11 or 12 years old",
+"E. 13 or 14 years old",
+"F. 15 or 16 years old",
+"G. 17 years old or older")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q47_marijuana3>
+/caption = "47. During the past 30 days, how many times did you use marijuana?"
+/ options = (
+"A. 0 times",
+"B. 1 or 2 times",
+"C. 3 to 9 times",
+"D. 10 to 19 times",
+"E. 20 to 39 times",
+"F. 40 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption synmarijuana>
+/caption = "The next question asks about synthetic marijuana use. Synthetic marijuana also is called Spice, fake weed, K2, King Kong, Yucatan Fire, or Skunk."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q48_synmarijuana1>
+/caption = "48. During your life, how many times have you used synthetic marijuana?"
+/ options = (
+"A. 0 times",
+"B. 1 or 2 times",
+"C. 3 to 9 times",
+"D. 10 to 19 times",
+"E. 20 to 39 times",
+"F. 40 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption prescriptionDrugs>
+/caption = "The next question asks about the use of prescription pain medicine without a doctor’s prescription or differently than how a doctor told you to use it. For this question, count drugs such as codeine, Vicodin, OxyContin, Hydrocodone, and Percocet."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q49_prescriptionDrugs1>
+/caption = "49. During your life, how many times have you taken PRESCRIPTION PAIN MEDICATION without a doctor's prescription or differently than how a doctor told you to use it?"
+/ options = (
+"A. 0 times",
+"B. 1 or 2 times",
+"C. 3 to 9 times",
+"D. 10 to 19 times",
+"E. 20 to 39 times",
+"F. 40 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+
+<caption otherdrugs>
+/caption = "The next 8 questions ask about other drugs."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q50_otherdrugs1>
+/caption = "50. During your life, how many times have you used ANY form of cocaine, including powder, crack, or freebase?"
+/ options = (
+"A. 0 times",
+"B. 1 or 2 times",
+"C. 3 to 9 times",
+"D. 10 to 19 times",
+"E. 20 to 39 times",
+"F. 40 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q51_otherdrugs2>
+/caption = "51. During your life, how many times have you sniffed glue, breathed the contents of aerosol spray cans, or inhaled any paints or sprays to get high?"
+/ options = (
+"A. 0 times",
+"B. 1 or 2 times",
+"C. 3 to 9 times",
+"D. 10 to 19 times",
+"E. 20 to 39 times",
+"F. 40 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q52_otherdrugs3>
+/caption = "52. During your life, how many times have you used HEROIN (also called smack, junk, or China White)?"
+/ options = (
+"A. 0 times",
+"B. 1 or 2 times",
+"C. 3 to 9 times",
+"D. 10 to 19 times",
+"E. 20 to 39 times",
+"F. 40 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q53_otherdrugs4>
+/caption = "53. During your life, how many times have you used METHAMPHETAMINES (also called speed, crystal meth, crank, ice, or meth)?"
+/ options = (
+"A. 0 times",
+"B. 1 or 2 times",
+"C. 3 to 9 times",
+"D. 10 to 19 times",
+"E. 20 to 39 times",
+"F. 40 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q54_otherdrugs5>
+/caption = "54. During your life, how many times have you used ECSTASY (also called MDMA)?"
+/ options = (
+"A. 0 times",
+"B. 1 or 2 times",
+"C. 3 to 9 times",
+"D. 10 to 19 times",
+"E. 20 to 39 times",
+"F. 40 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q55_otherdrugs6>
+/caption = "55. During your life, how many times have you taken STEROID PILLS OR SHOTS without a doctor's prescription??"
+/ options = (
+"A. 0 times",
+"B. 1 or 2 times",
+"C. 3 to 9 times",
+"D. 10 to 19 times",
+"E. 20 to 39 times",
+"F. 40 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q56_otherdrugs7>
+/caption = "56. During your life, how many times have you used a needle to inject any ILLEGAL drug into your body?"
+/ options = (
+"A. 0 times",
+"B. 1 or 2 times",
+"C. 3 to 9 times",
+"D. 10 to 19 times",
+"E. 20 to 39 times",
+"F. 40 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q57_otherdrugs8>
+/caption = "57. During the past 12 months, has anyone offered, sold, or given you an illegal drug ON SCHOOL PROPERTY?"
+/ options = (
+"A. Yes",
+"B. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+
+<caption sexualbehavior>
+/caption = "The next 9 questions ask about sexual behavior."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q58_sexualbehavior1>
+/caption = "58. Have you ever had sexual intercourse?"
+/ options = (
+"A. Yes",
+"B. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q59_sexualbehavior2>
+/caption = "59. How old were you when you had sexual intercourse for the first time?"
+/ options = (
+"A. I have never had sexual intercourse",
+"B. 11 years old or younger",
+"C. 12 years old",
+"D. 13 years old",
+"E. 14 years old",
+"F. 15 years old",
+"G. 16 years old",
+"H. 17 years old or older")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q60_sexualbehavior3>
+/caption = "60. During your life, with how many people have you had sexual intercourse?"
+/ options = (
+"A. I have never had sexual intercourse",
+"B. 1 person",
+"C. 2 people",
+"D. 3 people",
+"E. 4 people",
+"F. 5 people",
+"G. 6 or more people")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q61_sexualbehavior4>
+/caption = "61. During the past 3 months, with how many people did you have sexual intercourse?"
+/ options = (
+"A. I have never had sexual intercourse",
+"B. 1 person",
+"C. 2 people",
+"D. 3 people",
+"E. 4 people",
+"F. 5 people",
+"G. 6 or more people")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q62_sexualbehavior5>
+/caption = "62. Did you drink alcohol or use drugs before you had sexual intercourse the LAST TIME?"
+/ options = (
+"A. I have never had sexual intercourse",
+"B. Yes",
+"C. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q63_sexualbehavior6>
+/caption = "63. THE LAST TIME you had sexual intercourse, did you or your partner use a condom?"
+/ options = (
+"A. I have never had sexual intercourse",
+"B. Yes",
+"C. No")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q64_sexualbehavior7>
+/caption = "64. The LAST TIME you had sexual intercourse, what ONE method did you or your partner use to PREVENT PREGNANCY?"
+/ options = (
+"A. I have never had sexual intercourse",
+"B. No method was used to prevent pregnancy",
+"C. Birth control pills",
+"D. Condoms",
+"E. An IUD (such as Mirena or ParaGard) or implant (such as Implanon or Nexplanon)",
+"F. A shot (such as Depo-Provera), patch (such as Ortho Evra), or birth control ring (such as NuvaRing)",
+"G. Withdrawal or some other method",
+"H. Not sure")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q65_sexualbehavior8>
+/caption = "65. During your life, with whom have you had sexual contact?"
+/ options = (
+"A. I have never had sexual contact",
+"B. Females",
+"C. Males",
+"D. Females and males")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q66_sexualbehavior9>
+/caption = "66. Which of the following best describes you?"
+/ options = (
+"A. Heterosexual (straight)",
+"B. Gay or lesbian",
+"C. Bisexual",
+"D. Not sure")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption bodyweight>
+/caption = "The next 2 questions ask about body weight."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q67_bodyweight1>
+/caption = "67. How do YOU describe your weight?"
+/ options = (
+"A. Very underweight",
+"B. Slightly underweight",
+"C. About the right weight",
+"D. Slightly overweight",
+"E. Very overweight")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q68_bodyweight2>
+/caption = "68. Which of the following are you trying to do about your weight?"
+/ options = (
+"A. LOSE weight",
+"B. GAIN weight",
+"C. STAY the same weight",
+"D. I am NOT TRYING TO DO ANYTHING about my weight")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption food>
+/caption = "The next 9 questions ask about food you ate or drank during the past 7 days. Think about all the meals and snacks you had from the time you got up until you went to bed. Be sure to include food you ate at home, at school, at restaurants, or anywhere else."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q69_food1>
+/caption = "69. During the past 7 days, how many times did you drink 100% FRUIT JUICES such as orange juice, apple juice, or grape juice? (Do NOT count punch, Kool-Aid, sports drinks, or other fruit-flavored drinks.)"
+/ options = (
+"A. I did not drink 100% fruit juice during the past 7 days",
+"B. 1 to 3 times during the past 7 days",
+"C. 4 to 6 times during the past 7 days",
+"D. 1 time per day",
+"E. 2 times per day",
+"F. 3 times per day",
+"G. 4 or more times per day")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q70_food2>
+/caption = "70. During the past 7 days, how many times did you eat FRUIT? (Do NOT count fruit juice.)"
+/ options = (
+"A. I did not eat fruit during the past 7 days",
+"B. 1 to 3 times during the past 7 days",
+"C. 4 to 6 times during the past 7 days",
+"D. 1 time per day",
+"E. 2 times per day",
+"F. 3 times per day",
+"G. 4 or more times per day")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q71_food3>
+/caption = "71. During the past 7 days, how many times did you eat GREEN SALAD?"
+/ options = (
+"A. I did not eat green salad during the past 7 days",
+"B. 1 to 3 times during the past 7 days",
+"C. 4 to 6 times during the past 7 days",
+"D. 1 time per day",
+"E. 2 times per day",
+"F. 3 times per day",
+"G. 4 or more times per day")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q72_food4>
+/caption = "72. During the past 7 days, how many times did you eat POTATOES? (Do NOT count french fries, fried potatoes, or potato chips.)"
+/ options = (
+"A. I did not eat potatoes during the past 7 days",
+"B. 1 to 3 times during the past 7 days",
+"C. 4 to 6 times during the past 7 days",
+"D. 1 time per day",
+"E. 2 times per day",
+"F. 3 times per day",
+"G. 4 or more times per day")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q73_food5>
+/caption = "73. During the past 7 days, how many times did you eat CARROTS?"
+/ options = (
+"A. I did not eat carrots during the past 7 days",
+"B. 1 to 3 times during the past 7 days",
+"C. 4 to 6 times during the past 7 days",
+"D. 1 time per day",
+"E. 2 times per day",
+"F. 3 times per day",
+"G. 4 or more times per day")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q74_food6>
+/caption = "74. During the past 7 days, how many times did you eat OTHER VEGETABLES? (Do NOT count green salad, potatoes, or carrots.)"
+/ options = (
+"A. I did not eat other vegetables during the past 7 days",
+"B. 1 to 3 times during the past 7 days",
+"C. 4 to 6 times during the past 7 days",
+"D. 1 time per day",
+"E. 2 times per day",
+"F. 3 times per day",
+"G. 4 or more times per day")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q75_food7>
+/caption = "75. During the past 7 days, how many times did you drink a CAN, BOTTLE, OR GLASS OF SODA OR POP, such as Coke, Pepsi, or Sprite? (Do NOT count diet soda or diet pop.)"
+/ options = (
+"A. I did not drink soda or pop during the past 7 days",
+"B. 1 to 3 times during the past 7 days",
+"C. 4 to 6 times during the past 7 days",
+"D. 1 time per day",
+"E. 2 times per day",
+"F. 3 times per day",
+"G. 4 or more times per day")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q76_food8>
+/caption = "76. During the past 7 days, how many GLASSES OF MILK did you drink? (Count the milk you drank in a glass or cup, from a carton, or with cereal. Count the half pint of milk served at school as equal to one glass.)"
+/ options = (
+"A. I did not drink milk during the past 7 days",
+"B. 1 to 3 times during the past 7 days",
+"C. 4 to 6 times during the past 7 days",
+"D. 1 time per day",
+"E. 2 times per day",
+"F. 3 times per day",
+"G. 4 or more times per day")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q77_food9>
+/caption = "77. During the past 7 days, on how many days did you eat BREAKFAST?"
+/ options = (
+"A. 0 days",
+"B. 1 day",
+"C. 2 days",
+"D. 3 days",
+"E. 4 days",
+"F. 5 days",
+"G. 6 days",
+"H. 7 days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption physicalactivity>
+/caption = "The next 5 questions ask about physical activity"
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q78_physicalactivity1>
+/caption = "78. During the past 7 days, on how many days were you physically active for a total of AT LEAST 60 MINUTES PER DAY? (Add up all the time you spent in any kind of physical activity that increased your heart rate and made you breathe hard some of the time.)"
+/ options = (
+"A. 0 days",
+"B. 1 day",
+"C. 2 days",
+"D. 3 days",
+"E. 4 days",
+"F. 5 days",
+"G. 6 days",
+"H. 7 days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q79_physicalactivity2>
+/caption = "79. On an average school day, how many hours do you watch TV?"
+/ options = (
+"A. I do not watch TV on an average school day",
+"B. Less than 1 hour per day",
+"C. 1 hour per day",
+"D. 2 hours per day",
+"E. 3 hours per day",
+"F. 4 hours per day",
+"G. 5 or more hours per day")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q80_physicalactivity3>
+/caption = "80. On an average school day, how many hours do you play video or computer games or use a computer for something that is not school work? (Count time spent playing games, watching videos, texting, or using social media on your smartphone, computer, Xbox, PlayStation, iPad, or other tablet.)"
+/ options = (
+"A. I do not play video or computer games or use a computer for something that is not school work",
+"B. Less than 1 hour per day",
+"C. 1 hour per day",
+"D. 2 hours per day",
+"E. 3 hours per day",
+"F. 4 hours per day",
+"G. 5 or more hours per day")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q81_physicalactivity4>
+/caption = "81. In an average week when you are in school, on how many days do you go to physical education (PE) classes?"
+/ options = (
+"A. 0 days",
+"B. 1 day",
+"C. 2 days",
+"D. 3 days",
+"E. 4 days",
+"F. 5 days")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q82_physicalactivity5>
+/caption = "82. During the past 12 months, on how many sports teams did you play? (Count any teams run by your school or community groups.)"
+/ options = (
+"A. 0 teams",
+"B. 1 team",
+"C. 2 teams",
+"D. 3 or more teams")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption concussions>
+/caption = "The next question asks about concussions. A concussion is when a blow or jolt to the head causes problems such as headaches, dizziness, being dazed or confused, difficulty remembering or concentrating, vomiting, blurred vision, or being knocked out."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q83_concussion1>
+/caption = "83. During the past 12 months, how many times did you have a concussion FROM PLAYING A SPORT OR BEING PHYSICALLY ACTIVE?"
+/ options = (
+"A. 0 times",
+"B. 1 time",
+"C. 2 times",
+"D. 3 times",
+"E. 4 or more times")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption otherhealthtopics>
+/caption = "The next 6 questions ask about other health-related topics."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+<radiobuttons q84_otherhealthtopics1>
+/caption = "84. Have you ever been tested for HIV, the virus that causes AIDS? (Do NOT count tests done if you donated blood.)"
+/ options = (
+"A. Yes",
+"B. No",
+"C. Not sure")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q85_otherhealthtopics2>
+/caption = "85. During the past 12 months, have you been tested for a sexually transmitted disease (STD) other than HIV, such as chlamydia or gonorrhea?"
+/ options = (
+"A. Yes",
+"B. No",
+"C. Not sure")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q86_otherhealthtopics3>
+/caption = "86. When was the last time you saw a dentist for a check-up, exam, teeth cleaning, or other dental work?"
+/ options = (
+"A. During the past 12 months",
+"B. Between 12 and 24 months ago",
+"C. More than 24 months ago",
+"D. Never"
+"E. Not sure")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q87_otherhealthtopics4>
+/caption = "87. Has a doctor or nurse ever told you that you have asthma?"
+/ options = (
+"A. Yes",
+"B. No",
+"C. Not sure")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q88_otherhealthtopics5>
+/caption = "88. On an average school night, how many hours of sleep do you get?"
+/ options = (
+"A. 4 or less hours",
+"B. 5 hours",
+"C. 6 hours",
+"D. 7 hours",
+"E. 8 hours",
+"F. 9 hours",
+"G. 10 or more hours")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q89_otherhealthtopics6>
+/caption = "89. During the past 12 months, how would you describe your grades in school?"
+/ options = (
+"A. Mostly A's",
+"B. Mostly B's",
+"C. Mostly C's",
+"D. Mostly D's",
+"E. Mostly F's",
+"F. None of these grades",
+"G. Not sure")
+/required = false
+/orientation = vertical
+</radiobuttons>
+
+<caption end>
+/caption = "This is the end of the survey.
+Thank you very much for your help."
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ txcolor = black
+</caption>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: original instructions; updated for computer usage
+
+<surveypage instructions>
+/caption ="2019 State and Local
+Youth Risk Behavior Survey
+"
+/subcaption = "This survey is about health behavior. It has been developed so you can tell us what you do that may affect your health. The information you give will be used to improve health education for young people like yourself.
+
+DO NOT write your name on this survey. The answers you give will be kept private. No one will know what you write. Answer the questions based on what you really do.
+
+Completing the survey is voluntary. Whether or not you answer the questions will not affect your grade in this class. If you are not comfortable answering a question, just leave it blank.
+
+The questions that ask about your background will be used only to describe the types of students completing this survey. The information will not be used to find out your name. No names will ever be reported.
+
+Make sure to read every question. When you are finished, follow the instructions of the person giving you the survey.
+
+"
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/questions = [1 = thankyou, 2019N_YRBS]
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+
+<surveypage YRBS_HS1>
+/ caption = "<%parameters.pageinstructions%>"
+/questions = [1 = q1_age, q2_sex, q3_grade, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS2>
+/questions = [1 = q4_hispanic, q5_race, q6_height, q7_weight, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS3>
+/questions = [1 = safety, q8_safety1, q9_safety2, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS4>
+/questions = [1 = q10_safety3, q11_safety4, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS5>
+/questions = [1 = violence, q12_violence1, q13_violence2, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS6>
+/questions = [1 = q14_violence3, q15_violence4, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS7>
+/questions = [1 = q16_violence5, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS8>
+/questions = [1 = q17_violence6, q18_violence7,2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS9>
+/questions = [1 = q19_violence8, q20_violence9, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS10>
+/questions = [1 = q21_violence10, q22_violence11, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS11>
+/questions = [1 = bullying, q23_bullying1, q24_bullying2,  2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS12>
+/questions = [1 = suicide, q25_suicide1, q26_suicide2,  2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS13>
+/questions = [1 = q27_suicide3, q28_suicide4, q29_suicide5,  2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS14>
+/questions = [1 = cigarettes, q30_cigarettes1, q31_cigarettes2, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS15>
+/questions = [1 = q32_cigarettes3, q33_cigarettes4, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS16>
+/questions = [1 = electronicvapor, q34_electronicvapor1, q35_electronicvapor2, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS17>
+/questions = [1 = q36_electronicvapor3, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS18>
+/questions = [1 = othertobacco, q37_othertobacco1, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS19>
+/questions = [1 = q38_othertobacco2, q39_othertobacco3, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS20>
+/questions = [1 = alcohol, q40_alcohol1, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS21>
+/questions = [1 = q41_alcohol2, q42_alcohol3, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS22>
+/questions = [1 = q43_alcohol4, q44_alcohol5, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS23>
+/questions = [1 = marijuana, q45_marijuana1, q46_marijuana2, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS24>
+/questions = [1 = q47_marijuana3, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS25>
+/questions = [1 = synmarijuana, q48_synmarijuana1, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS26>
+/questions = [1 = prescriptionDrugs, q49_prescriptionDrugs1, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS27>
+/questions = [1 = otherdrugs, q50_otherdrugs1, q51_otherdrugs2, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS28>
+/questions = [1 = q52_otherdrugs3, q53_otherdrugs4, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS29>
+/questions = [1 = q54_otherdrugs5, q55_otherdrugs6, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS30>
+/questions = [1 = q56_otherdrugs7, q57_otherdrugs8, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS31>
+/questions = [1 = sexualbehavior, q58_sexualbehavior1, q59_sexualbehavior2, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS32>
+/questions = [1 = q60_sexualbehavior3, q61_sexualbehavior4, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS33>
+/questions = [1 = q62_sexualbehavior5, q63_sexualbehavior6, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS34>
+/questions = [1 = q64_sexualbehavior7, q65_sexualbehavior8, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS35>
+/questions = [1 = q66_sexualbehavior9, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS36>
+/questions = [1 = bodyweight, q67_bodyweight1, q68_bodyweight2, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS37>
+/questions = [1 = food, q69_food1, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS38>
+/questions = [1 = q70_food2, q71_food3, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS39>
+/questions = [1 = q72_food4, q73_food5, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS40>
+/questions = [1 = q74_food6, q75_food7, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS41>
+/questions = [1 = q76_food8, q77_food9, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS42>
+/questions = [1 = physicalactivity, q78_physicalactivity1, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS43>
+/questions = [1 = q79_physicalactivity2, q80_physicalactivity3, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS44>
+/questions = [1 = q81_physicalactivity4, q82_physicalactivity5, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS45>
+/questions = [1 = concussions, q83_concussion1, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS46>
+/questions = [1 = otherhealthtopics, q84_otherhealthtopics1, q85_otherhealthtopics2, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS47>
+/questions = [1 = q86_otherhealthtopics3, q87_otherhealthtopics4, 2019N_YRBS]
+</surveypage>
+
+<surveypage YRBS_HS48>
+/questions = [1 = q88_otherhealthtopics5, q89_otherhealthtopics6, end, 2019N_YRBS]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+
+<survey 2019yrbs_hs>
+/pages = [
+1 = instructions;
+2=YRBS_HS1;
+3=YRBS_HS2;
+4=YRBS_HS3;
+5=YRBS_HS4;
+6=YRBS_HS5;
+7=YRBS_HS6;
+8=YRBS_HS7;
+9=YRBS_HS8;
+10=YRBS_HS9;
+11=YRBS_HS10;
+12=YRBS_HS11;
+13=YRBS_HS12;
+14=YRBS_HS13;
+15=YRBS_HS14;
+16=YRBS_HS15;
+17=YRBS_HS16;
+18=YRBS_HS17;
+19=YRBS_HS18;
+20=YRBS_HS19;
+21=YRBS_HS20;
+22=YRBS_HS21;
+23=YRBS_HS22;
+24=YRBS_HS23;
+25=YRBS_HS24;
+26=YRBS_HS25;
+27=YRBS_HS26;
+28=YRBS_HS27;
+29=YRBS_HS28;
+30=YRBS_HS29;
+31=YRBS_HS30;
+32=YRBS_HS31;
+33=YRBS_HS32;
+34=YRBS_HS33;
+35=YRBS_HS34;
+36=YRBS_HS35;
+37=YRBS_HS36;
+38=YRBS_HS37;
+39=YRBS_HS38;
+40=YRBS_HS39;
+41=YRBS_HS40;
+42=YRBS_HS41;
+43=YRBS_HS42;
+44=YRBS_HS43;
+45=YRBS_HS44;
+46=YRBS_HS45;
+47=YRBS_HS46;
+48=YRBS_HS47;
+49=YRBS_HS48]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Finish - Thank you!"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

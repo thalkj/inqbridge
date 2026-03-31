@@ -1,0 +1,1506 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+									Deck Choice Effort Task
+___________________________________________________________________________________________________________________	
+
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 11-07-2023
+last updated:  11-10-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 11-10-2023 Millisecond Software
+
+Millisecond Software thanks Joshua Di Vincenzo for his assistance in creating this script!
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements Millisecond Software's version of Deck Choice Effort Task, a paradigm to study
+cognitive effort-based decision making using two tasks of varying cognitive difficulty while keeping 
+physical effort the same.
+
+The Inquisit script is based on the paper by Reddy et al (2018) and the original eprime script of the
+task.
+
+Reference:											
+
+Reddy, L. F., Horan, W. P., Barch, D. M., Buchanan, R. W., Gold, J. M., Marder, S. R., Wynn, J. K., Young, J.,
+& Green, M. F. (2018). 
+Understanding the Association Between Negative Symptoms and Performance on Effort-Based Decision-Making Tasks: 
+The Importance of Defeatist Performance Beliefs. Schizophrenia Bulletin, 44(6), 1217–1226. 
+https://doi.org/10.1093/schbul/sbx156
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+
+Participants are instructed to choose between 2 decks of cards that represent an 
+Easy (cognitive) task vs. Hard (cognitive) Task.
+The Easy deck contains only cards of the same color
+The Hard deck contains cards of alternating colors
+
+The colors are tied to specific tasks to perform:
+blue -> do a parity task ('is this number odd or even?')
+yellow -> do a magnitude task ('is this number less or greater than 5?')
+
+Choosing to work on a Hard deck (with the alternating tasks) can earn more money. 
+Specifically, three levels of reward for the Hard deck are tested 
+(the Easy task offers the same amount throughout).
+
+3 different experimental phases:
+1. Practice of tasks: learn to associate color with tasks to perform
+2. Introduction of the Easy vs. Hard card deck
+3. Test
+
+Note: the script offers the choice to run the script in an "in person" vs. a "remote" setting (default is remote).
+in person: test administrator has the choice to select each phase separately via a selection screen
+remote: task flow is automatic
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 20 minutes to complete
+
+practice1: ~3min per block
+practice2: ~1min per block
+test: ~1min per block
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'deckchoiceefforttask_raw*.iqdat'
+
+build:						The specific Inquisit version used (the 'build') that was run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+date, time: 				date and time script was run 
+subject:					with the current subject id
+group: 						with the current group id
+session:					with the current session id
+
+blockcode, blocknum:		the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 		the name and number of the currently recorded trial (built-in Inquisit variable)
+								Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+								that do not store data to the data file. 
+								
+								
+phase:						1 = practice with feedback (training of individual task); 
+							2 = practice w/o feedback (decks introduction)
+							3 = test
+											
+blockCounterPerPhase:		tracks the number of blocks run during the current phase
+trialCounterPerBlock:		tracks the number of trials run during the current block
+
+difficulty:					1 = easy task
+							2 = hard task
+											
+currentRewardEasy: 			the currently offered reward for the easy task
+currentRewardHard: 			the currently offered reward for the hard task
+rewardLevelHard:			1,2 or 3 (depending on reward amount)
+currentReward: 				the offered reward for the current task (tied to selection)
+currentColor:				the color of the current card
+currentTask:				the current task to perform (tied to color)
+number:						the currently presented number (1-9; 5 excluded)
+correctResp:				"1" or "2" (refers to the correct key to press)
+selectFeedback:				1 = correct; 2 = incorrect; 3 = no response
+winnings:					the current win amount
+total:						sum of all win amounts across all test blocks								
+
+response:					the response of participant (scancode of response button)
+								- Note: scancodes can be confusing for number buttons (Example: scancode 2 refers to key "1")
+								- 57 -> spacebar press
+								
+responseText:				the label of key pressed (note: confusing for spacebar press as it appears empty)	
+correct:					correctness of response (1 = correct, 0 = error)
+latency:					response latency (in ms); measured from: onset of card
+
+list.ACC_block.mean: 	 	running proportion correct responses during the current block
+list.RT_block.mean: 		running mean response times (in ms) during the current block (based on correct AND incorrect responses as well as no responses)
+
+practiceSuccess:			1 = practice1 session was finished successfully (only applies to 'remote' testing settings)	
+							0 = otherwise
+
+
+(2) Summary data file: 'deckchoiceefforttask_summary*.iqdat'
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)	
+
+
+propHardChoices: 			proportion Hard Choices across all test blocks
+propHardChoices1: 			proportion Hard Choices when hard choice gets reward1 (lowest reward)
+propHardChoices2: 			proportion Hard Choices when hard choice gets reward2 (medium reward) 
+propHardChoices3: 			proportion Hard Choices when hard choice gets reward3 (highest reward)
+
+effortScore:				Difference Score of (propHardChoices3 - propHardChoices1)
+							Reddy et al (2018):
+							"Higher scores indicate greater willingness to exert effort for large versus small rewards."
+							Note: this score is only calculated if 0 < propHardChoices < 100, otherwise "NA" is noted in the data file
+							(thus excluding participants who always chose Hard choices and those that never chose Hard choices)
+											
+propCorrectEasy: 			proportion correct Easy task responses across all test trials
+meanCorrRTEasy:				mean correct response times (in ms) for correct Easy task responses (across all test trials)
+propCorrectHard: 			proportion correct Hard task responses across all test trials
+meanCorrRTHard:				mean correct response times (in ms) for correct Hard task responses (across all test trials)
+							
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+This task provides the option to use a 'in person' set up or a 'remote' set up of the tasks:
+
+in person: for the in-person set up, the script always returns to a task menu option after each experimental phase.
+				This set up allows test administrators to select which phase should be run next (if any)
+				
+remote: this set up automatically calls the different experimental phases in sequences.
+				The default setting of this script is 'remote'
+
+				
+(1) Practice1 (Task Learning Phase with performance feedback after each response)
+- 20 practice trials per block 
+- colors/tasks are selected randomly WITHOUT replacement => 50% parity tasks, 50% magnitude tasks
+- numbers are selected randomly WITH replacement from list.numbers (see below)
+- each card is presented for 3000ms (editable parameter)
+- at the end of practice1 block performance feedback is provided
+
+"remote" only: script checks performance after each practice1 block. If performance is lower than 70% correct (editable parameters)
+the practice block is repeated. If the maximum number of practice1 blocks has been run without success (default: 3, editable parameters),
+the script terminates prematurely
+
+"in person" only:  at the end of the block (when performance feedback is presented), participants are asked to fetch test administrator.
+Test administrator can use performance feedback to decide if the block needs to be repeated. 
+Pressing key 'C' calls the task selection menu screen (hidden from participants).
+
+
+(2) Practice2 (Introduction of Easy/Hard card decks, no response feedback provided)
+- 2 blocks of 10 trials (aka '10' cards per deck played): Easy block vs. Hard block
+- order of decks/blocks is randomly determined
+- each card is presented for 3000ms (editable parameter)
+
+(3) Test
+- 12 blocks of 10 trials each (editable parameters, Note: original eprime script runs 36 blocks)
+- equal number of blocks that offer hardReward1, hardReward2, hardReward3 (all blocks offer the same amount for the Easy deck)
+- colors selected for Easy tasks: randomly selects a color with the constraint that roughly half of the selected Easy tasks are parity tasks
+- star colors selected for Hard tasks: randomly selects a starting color with the constraint that roughly half of the first presented cards are blue
+- at the end of each block, participant receives feedback about money won
+		=> if 90% of responses (editable parameter) are correct -> money is won and added to total (otherwise no money won)
+
+////////////////////////
+Test Trial Sequence:
+////////////////////////
+-> task choice (until response)
+-> task feedback (until spacebar response)
+-> ISI (500ms)
+-> card trial (duration: 3000ms, card removed after response) (regardless of response => easy and hard task take the same amount of time)
+-> ISI (500ms)
+....
+-> feedback (3000ms)
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+
+provided by Millisecond Software - can be edited under section 'Editable Stimuli'
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+
+provided by Millisecond Software - can be edited under section 'Editable Instructions'.
+Partly based on original eprime script.
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+##design
+taskAdministration = "remote"					choose from: "in person", "remote"
+												"in person" = provides a menu to choose (1) practice with feedback; (2) practice without feedback; (3) test; (4) Exit
+												"remote" = runs the blocks in sequence and implements a learning criterium for the first practice block
+
+######only applies for taskAdministration = "remote"																
+minPracticeACC = 0.7							implements a learning criterium for association 'color-task'
+												reruns practice block1 for 'maxPracticeBlocks' if performance is lower than 70% correct. 
+												If minPracticeACC is not achieved, task prematurely terminates
+
+maxPracticeBlocks = 3							number of maximum practice1 blocks run
+												If minPracticeACC is not achieved, task prematurely terminates
+######/
+
+numberPractice1TrialsPerBlock = 20				number of practice1 trials per learning block (Note: should be an even number)
+numberPractice2TrialsPerBlock = 10 				number of practice2 trials per block (aka 'number of cards per deck') Note: practice2 runs 2 blocks (one Easy, one Hard)
+
+numberTestBlocks = 12							number of test blocks to run (Note: needs to be divisible by 3 because of three different levels of hardRewards)
+												Note: the original eprime script runs 36 blocks
+												
+numberTestTrialsPerBlock = 10					number of test trials per test block (aka 'number of cards per deck') 
+minTestPerformanceForReward = 0.9				minimum propCorrect responses during a test block to get rewarded
+
+##reward selection
+easyReward = 0.1								the reward amount offered for selection of Easy deck
+hardReward1 = 0.1								the lowest reward amount offered for selection of Hard deck
+hardReward2 = 0.2								the medium reward amount offered for selection of Hard deck
+hardReward3 = 0.4								the highest reward amount offered for selection of Hard deck
+monetaryUnit = "$"								the money unit used to present amount
+monetaryUnitPlacement = "B"						choose from "B" (before) or "A" (after) monetary amount
+
+##color selection
+parityTaskColor = "blue"						color used for parity (odd/even) task -> use English term for the selected color (used in actual code)
+magnitudeTaskColor = "yellow"					color used for magnitude (less/more) task -> use English term for the selected color (used in actual code)																											
+												Change actual instructions in section Editable Instructions
+##timing parameters
+numberDuration_inms = 3000						the duration (in ms) that the number is presented (also refers to response timeout)					
+isi_inms = 500									the interstimulus interval (in ms) before/after a number is presented
+practiceFeedbackDuration_inms = 2000			the duration (in ms) of the feedback reported during practice1
+testFeedbackDuration_inms = 3000				the duration (in ms) of the feedback reported after each test block
+
+##sizing parameters
+cardHeight_inpct = 40%							the proportional (to canvas height) height of the cards		
+numberFontHeight_inpct = 10%					the proportional (to canvas height) size of the numbers on the card
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+//design
+/ taskAdministration = "remote"					//choose from: "in person", "remote"
+												//"in person" = provides a menu to choose (1) practice with feedback; (2) practice without feedback; (3) test; (4) Exit
+												//"remote" = runs the blocks in sequence and implements a learning criterium for the first practice block
+
+//////only applies for taskAdministration = "remote"																
+/ minPracticeACC = 0.7							//implements a learning criterium for association 'color-task'
+												//reruns practice block1 for 'maxPracticeBlocks' if performance is lower than 70% correct. 
+												//If minPracticeACC is not achieved, task prematurely terminates
+
+/ maxPracticeBlocks = 3							//number of maximum practice1 blocks run
+												//If minPracticeACC is not achieved, task prematurely terminates
+///////
+
+/ numberPractice1TrialsPerBlock = 20			//number of practice1 trials per learning block (Note: should be an even number)
+/ numberPractice2TrialsPerBlock = 10			//number of practice2 trials per block (aka 'number of cards per deck') Note: practice2 runs 2 blocks (one Easy, one Hard)
+
+/ numberTestBlocks = 12							//number of test blocks to run (Note: needs to be divisible by 3 because of three different levels of hardRewards)
+												//Note: the original eprime script runs 36 blocks
+
+/ numberTestTrialsPerBlock = 10					//number of test trials per test block (aka 'number of cards per deck') 
+/ minTestPerformanceForReward = 0.9				//minimum propCorrect responses during a test block to get rewarded
+
+//reward selection
+/ easyReward = 0.1								//the reward amount offered for selection of Easy deck
+/ hardReward1 = 0.1								//the lowest reward amount offered for selection of Hard deck
+/ hardReward2 = 0.2								//the medium reward amount offered for selection of Hard deck
+/ hardReward3 = 0.4								//the highest reward amount offered for selection of Hard deck
+/ monetaryUnit = "$"							//the money unit used to present amount
+/ monetaryUnitPlacement = "B"					//choose from "B" (before) or "A" (after) monetary amount
+
+//color selection
+/ parityTaskColor = "blue"						//color used for parity (odd/even) task -> use English term for the selected color (used in actual code)
+/ magnitudeTaskColor = "yellow"					//color used for magnitude (less/more) task -> use English term for the selected color (used in actual code)																											
+												//Change actual instructions in section Editable Instructions
+//timing parameters
+/ numberDuration_inms = 3000					//the duration (in ms) that the number is presented (also refers to response timeout)					
+/ isi_inms = 500								//the interstimulus interval (in ms) before/after a number is presented
+/ practiceFeedbackDuration_inms = 2000			//the duration (in ms) of the feedback reported during practice1
+/ testFeedbackDuration_inms = 3000				//the duration (in ms) of the feedback reported after each test block
+
+//sizing parameters
+/ cardHeight_inpct = 40%						//the proportional (to canvas height) height of the cards		
+/ numberFontHeight_inpct = 10%					//the proportional (to canvas height) size of the numbers on the card
+</parameters>
+
+******************************************************
+	EDITABLE LISTS: change editable lists here
+******************************************************
+
+//list that selects numbers during the blocks. The list includes an equal number of odd/even numbers 
+//and an equal numbers less/greater than 5
+//default selection is set to random with replacement
+<list numbers>
+/ items = (1,2,3,4,6,7,8,9)
+/ replace = true
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item feedback_practice1>
+/ 1 = "<font size=+3>✓</font>"
+/ 2 = "<font size=+3>X</font>"
+/ 3 = "<font size=-3>no response detected</font>"
+</item>
+
+<item feedback_test>
+/ 1 = "<center>
+Accuracy: <%list.ACC_block.mean*100%>% correct<br>
+Avg. Response Time: <%list.RT_block.mean%>ms<br><br>
+<span style='background-color:green;'> You won <%expressions.presentWonMoney%>!</span>
+<br><br>
+Total Money: <%expressions.presentTotalMoney%></center>"
+/ 2 = "<center>
+Accuracy: <%list.ACC_block.mean*100%>% correct<br>
+Avg. Response Time: <%list.RT_block.mean%>ms<br><br>
+<span style='background-color:red;'> You made too many errors this round.<br>
+You did <u>not</u> win anything.</span><br><br>
+Total Money: <%expressions.presentTotalMoney%></center>"
+</item>
+
+<expressions>
+/ presentWonMoney = {
+	if (parameters.monetaryUnitPlacement == "A"){
+		return ("<%values.winnings%><%parameters.monetaryUnit%>");
+	} else {
+		return ("<%parameters.monetaryUnit%><%values.winnings%>");
+	}
+}
+/ presentTotalMoney = {
+	if (parameters.monetaryUnitPlacement == "A"){
+		return ("<%values.total%><%parameters.monetaryUnit%>");
+	} else {
+		return ("<%parameters.monetaryUnit%><%values.total%>");
+	}
+}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ screenColor = black
+/ txColor = white
+/ finishLabel = "press [space] to start"
+</instruct>
+
+Note on simple html-code that could be used in Inquisit instruction texts 
+to format individual words/paragraphs:
+
+<h1>Header</h1> => header1 styling
+<h2>Header</h2> => header2 styling
+<hr> => horizontal line
+<br> => paragraph break
+<center>centered text/images</center>
+<u>underlined</u>
+<i>italic</i>
+<b>bold</b>
+<font color='red'>red text</font>
+&bull; => creates a bullet point
+
+
+adding & sizing an image to the instructions can be done using the following code
+<img src='xxx.png' height=<%expressions.stim_height_inpx%>/>
+
+with:
+//the following expression codes the proportional size of the instruction images
+//used in text/page elements
+<expressions>
+/ stim_height_inpx = trimRight(display.getPixelsY(10%), "px")
+</expressions>
+
+------------------------------------------------------
+//JUST A DEMO - IS NOT USED BY THIS SCRIPT
+<page examplePage>
+<center><h1>Welcome!</h1><hr></center><br>
+This page elements shows how to:<br><br>
+&bull; <b>bold</b> words<br>
+&bull; <u>underline</u> words<br>
+&bull; <i>italize</i> words<br>
+&bull; <font color='red'>color words</font>
+</page>
+------------------------------------------------------
+
+
+<text intro>
+/ items = ("<center><h1>Welcome!</h1><br>
+In this task you will see numbers on <font color=<%parameters.parityTaskColor%>>blue</font> and 
+<font color=<%parameters.magnitudeTaskColor%>>yellow</font> cards such as these:")
+/ fontStyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ position = (50%,20%)
+</text>
+
+<text continue>
+/ items = ("Press [space] to learn more about this task.")
+/ fontStyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ position = (50%,90%)
+</text>
+
+<shape parityCardExample>
+/ shape = rectangle
+/ height = parameters.cardHeight_inpct
+/ width = 2/3*parameters.cardHeight_inpct* display.canvasHeight/display.canvasWidth
+/ position = (25%,60%)
+/ color = parameters.parityTaskColor
+</shape>
+
+<shape parityCardExampleCircle>
+/ shape = circle
+/ height = 0.5*parameters.cardHeight_inpct
+/ width = 0.5*parameters.cardHeight_inpct * display.canvasHeight/display.canvasWidth
+/ color = white
+/ vPosition = shape.parityCardExample.vPosition
+/ hPosition = shape.parityCardExample.hPosition
+</shape>
+
+<text parityCardExampleNumber>
+/ items = ("3")
+/ fontStyle = ("Arial", parameters.numberFontHeight_inpct, false, false, false, false, 5, 1)
+/ txbgColor = shape.parityCardExampleCircle.color
+/ txColor = black
+/ vPosition = shape.parityCardExample.vPosition
+/ hPosition = shape.parityCardExample.hPosition
+</text>
+
+<shape magnitudeCardExample>
+/ shape = rectangle
+/ height = parameters.cardHeight_inpct
+/ width = 2/3*parameters.cardHeight_inpct* display.canvasHeight/display.canvasWidth
+/ position = (75%,60%)
+/ color = parameters.magnitudeTaskColor
+</shape>
+
+<shape magnitudeCardExampleCircle>
+/ shape = circle
+/ height = 0.5*parameters.cardHeight_inpct
+/ width = 0.5*parameters.cardHeight_inpct * display.canvasHeight/display.canvasWidth
+/ color = white
+/ vPosition = shape.magnitudeCardExample.vPosition
+/ hPosition = shape.magnitudeCardExample.hPosition
+</shape>
+
+<text magnitudeCardExampleNumber>
+/ items = ("6")
+/ fontStyle = ("Arial", parameters.numberFontHeight_inpct, false, false, false, false, 5, 1)
+/ txbgColor = shape.magnitudeCardExampleCircle.color
+/ txColor = black
+/ vPosition = shape.magnitudeCardExample.vPosition
+/ hPosition = shape.magnitudeCardExample.hPosition
+</text>
+
+<trial intro>
+/stimulusFrames = [1 = intro, parityCardExample, parityCardExampleCircle, parityCardExampleNumber,
+magnitudeCardExample, magnitudeCardExampleCircle, magnitudeCardExampleNumber, continue]
+/ validResponse = (" ")
+</trial>
+
+<page practice1Intro>
+<br><br>
+For each <b>number</b> that shows up on your screen, you will make a judgment about it based on the color of its card.<br><br><br>
+If the card is <span style='background-color:<%parameters.parityTaskColor%>;'>blue</span> then you decide if the number is odd or even.<br>
+&bull; If it is an <b><u>odd</u></b> number, you press 1.<br>
+&bull; If it is an <b><u>even</u></b> number, you press 2.<br><br>
+
+If the card is <span style='background-color:<%parameters.magnitudeTaskColor%>;'>yellow</span> then you decide if the number is less than 5 or greater than 5.<br> 
+&bull; If it is <u>less than 5</u></b>, you press 1.<br> 
+&bull; If it is <u>greater than 5</u></b>, you press 2.<br><br>
+
+<center><i>Respond to each number as quickly as you can.</i></center><br><br>
+Press the spacebar to begin practice.
+</page>
+
+<page practice1Repeat>
+<br><br><br><br><br>
+<center><h1>Let's try that again!</h1></center>
+</page>
+
+<page practice2IntroA>
+<br><br><br>
+This phase introduces you to two decks of cards that differ in how challenging they are.<br><br><br>
+<b><u>Easy Deck</u></b>: deck of <%parameters.numberTestTrialsPerBlock%> cards that all have the same color<br><br>
+<b><u>Hard Deck</u></b>: deck of <%parameters.numberTestTrialsPerBlock%> cards - the color of the cards changes from card to card<br><br><br>
+You will play both deck of cards in a randomly selected order.
+</page>
+
+<page practice2IntroB>
+<br><br>
+<center><h1><u>Remember:</u></h1></center>
+<span style='background-color:<%parameters.parityTaskColor%>;'>blue</span> cards:<br>
+&bull; If it is an <b><u>odd</u></b> number, you press 1.<br>
+&bull; If it is an <b><u>even</u></b> number, you press 2.<br><br>
+<span style='background-color:<%parameters.magnitudeTaskColor%>;'>yellow</span> cards:<br>
+&bull; If the number is <u>less than 5</u></b>, you press 1.<br> 
+&bull; If the number is greater than 5</u></b>, you press 2.<br><br>
+
+<center><i>Respond to each number as quickly as you can.</i><br>
+You will not be given anymore feedback.</center><br><br>
+Press the spacebar to begin.
+</page>
+
+<page testIntroA>
+<center><h1>Main Game</h1></center><hr>
+In this section of the task you can earn money. It will be up to you to choose which deck of cards you want to play. 
+The more you challenge yourself, the more money you could win!<br><br>
+<b><u>Easy Deck</u></b>: deck of <%parameters.numberTestTrialsPerBlock%> cards that all have the same color<br><br>
+<b><u>Hard Deck</u></b>: deck of <%parameters.numberTestTrialsPerBlock%> cards -  the color of the cards changes from card to card<br><br><br>
+
+Your total test time will <u>not</u> be shorter or longer depending on whether you pick the EASY or HARD deck but you may
+earn more money by choosing the HARD one.<br><br>
+Press the spacebar to begin.
+</page>
+
+**************************************************************************************************************
+Selection Menu (in person)
+**************************************************************************************************************
+
+<text taskMenu>
+/ items = ("1. Practice
+2. Practice w/o feedback
+3. Test
+4. Exit
+")
+/ fontStyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</text>
+
+<trial taskMenu>
+/ stimulusTimes = [0 = taskMenu]
+/ validResponse = ("1", "2", "3","4")
+/ recordData = true
+</trial>
+
+**************************************************************************************************************
+practice 1 block feedback
+**************************************************************************************************************
+
+<text practice1RoundFeedback>
+/ items = ("<center>Performance Feedback: <%list.ACC_block.mean*100%>% correct responses<br><br>
+<%expressions.showResponseButton%>")
+/ fontStyle = ("Arial", 4%, false, false, false, false, 5, 1)
+</text>
+<expressions>
+/ showResponseButton = {
+	if (parameters.taskAdministration != "in person"){
+		return ("Press [C] to continue");
+	} else {
+		return "";
+	}
+}
+</expressions>
+
+
+<trial practice1RoundFeedback>
+/ stimulusTimes = [0 = practice1RoundFeedback]
+/ validResponse = ("C")
+/ recordData = true//false
+</trial>
+
+
+**************************************************************************************************************
+Task Choice
+**************************************************************************************************************
+
+<shape deckEasy>
+/ shape = rectangle
+/ height = parameters.cardHeight_inpct
+/ width = 2/3*parameters.cardHeight_inpct* display.canvasHeight/display.canvasWidth
+/ position = (25%,50%)
+/ color = purple
+</shape>
+
+<shape deckEasyCanvas>
+/ shape = rectangle
+/ height = 0.7*parameters.cardHeight_inpct
+/ width = 0.75*0.6*parameters.cardHeight_inpct
+/ hPosition = shape.deckEasy.hPosition
+/ vPosition = shape.deckEasy.vPosition
+/ color = white
+</shape>
+
+<text deckEasyLabel>
+/ items = ("<center><h1>EASY</h1>
+<%expressions.presentEasyMoney%><br><br>
+Press '1'</center>")
+/ txbgColor = white
+/ txColor = black
+/ fontStyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ hPosition = shape.deckEasy.hPosition
+/ vPosition = shape.deckEasy.vPosition
+</text>
+<expressions>
+/ presentEasyMoney = {
+	if (parameters.monetaryUnitPlacement == "A"){
+		return ("<%values.currentRewardEasy%><%parameters.monetaryUnit%>");
+	} else {
+		return ("<%parameters.monetaryUnit%><%values.currentRewardEasy%>");
+	}
+}
+</expressions>
+
+<shape deckHard>
+/ shape = rectangle
+/ height = parameters.cardHeight_inpct
+/ width = 2/3*parameters.cardHeight_inpct* display.canvasHeight/display.canvasWidth
+/ position = (75%,50%)
+/ color = purple
+</shape>
+
+<shape deckHardCanvas>
+/ shape = rectangle
+/ height = 0.7*parameters.cardHeight_inpct
+/ width = 0.75*0.6*parameters.cardHeight_inpct
+/ hPosition = shape.deckHard.hPosition
+/ vPosition = shape.deckHard.vPosition
+/ color = white
+</shape>
+
+<text deckHardLabel>
+/ items = ("<center><h1>HARD</h1>
+<%expressions.presentHardMoney%><br><br>
+Press '2'</center>")
+/ txbgColor = white
+/ txColor = black
+/ fontStyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ hPosition = shape.deckHard.hPosition
+/ vPosition = shape.deckHard.vPosition
+</text>
+<expressions>
+/ presentHardMoney = {
+	if (parameters.monetaryUnitPlacement == "A"){
+		return ("<%values.currentRewardHard%><%parameters.monetaryUnit%>");
+	} else {
+		return ("<%parameters.monetaryUnit%><%values.currentRewardHard%>");
+	}
+}
+</expressions>
+
+<text taskChoice>
+/ items = ("Make your choice")
+/ fontStyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (50%,20%)
+</text>
+
+<trial taskChoice>
+/ stimulusTimes = [0 = taskChoice, deckEasy, deckEasyCanvas, deckEasyLabel,deckHard, deckHardCanvas,deckHardLabel]
+/ validResponse = ("1", "2")
+/ onTrialEnd = [
+	values.difficulty = trial.taskChoice.responseText;
+	if (values.difficulty == 1){
+		values.currentReward = values.currentRewardEasy;
+		values.currentColor = list.testStartColorsEasy.nextValue;
+		list.hardChoices.appendItem(0);
+		if (values.currentRewardHard == parameters.hardReward1){
+			list.hardChoicesReward1.appendItem(0);
+		} else if (values.currentRewardHard == parameters.hardReward2){
+			list.hardChoicesReward2.appendItem(0);
+		} else if (values.currentRewardHard == parameters.hardReward3){
+			list.hardChoicesReward3.appendItem(0);
+		}		
+	} else {
+		values.currentReward = values.currentRewardHard;
+		values.currentColor = list.testStartColorsHard.nextValue;
+		list.hardChoices.appendItem(1);
+		if (values.currentRewardHard == parameters.hardReward1){
+			list.hardChoicesReward1.appendItem(1);
+		} else if (values.currentRewardHard == parameters.hardReward2){
+			list.hardChoicesReward2.appendItem(1);
+		} else if (values.currentRewardHard == parameters.hardReward3){
+			list.hardChoicesReward3.appendItem(1);
+		}
+	}
+]
+/ recordData = true
+</trial>
+
+
+**************************************************************************************************************
+Difficulty Feedback
+**************************************************************************************************************
+
+<text difficultyFeedback>
+/ items = ("<center><h1><%expressions.difficultyLevel%></h1><br>
+Press [space] to start")
+/ fontStyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</text>
+<expressions>
+/ difficultyLevel = {
+	if (values.difficulty == 1){
+		return "Easy Task";
+	} else {
+		return "Hard Task";
+	}
+}
+</expressions>
+
+<trial difficultyLevel>
+/ stimulusTimes = [0 = difficultyFeedback]
+/ validResponse = (" ")
+/ recordData = true//false
+</trial>
+
+**************************************************************************************************************
+finish trial
+**************************************************************************************************************
+
+<text finish>
+/ items = ("<center><h1>Thank you!</h1><br>
+Total money won: <%expressions.presentTotalMoney%></center>")
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+</text>
+
+<button exit>
+/ caption = "press [space] to exit"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (30%, 8%)
+</button>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 1000
+/ recorddata = true
+</trial>
+
+<text prematureExit>
+/ items = ("<center><h1>Thank you!</h1><br><br>
+You have reached the end of the task.</center>")
+/ fontStyle = ("Arial", 4%, false, false, false, false, 5, 1)
+</text>
+
+<trial prematureExit>
+/ stimulusTimes = [1 = prematureExit, exit]
+/ validResponse = (" ")
+/ timeout = 5000
+</trial>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.6.1.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = black
+/ txcolor = white
+/ screenColor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session,  
+blockcode, blocknum, trialcode, trialnum,
+
+values.phase,
+values.blockCounterPerPhase,
+values.trialCounterPerBlock,
+values.difficulty,
+values.currentRewardEasy, 
+values.currentRewardHard, 
+values.rewardLevelHard
+values.currentReward,
+values.currentColor,
+values.currentTask,
+values.number,
+values.correctResp,
+values.selectFeedback,
+values.winnings,
+values.total,
+
+response, responseText, correct, latency, 
+list.ACC_block.mean, list.RT_block.mean, values.practiceSuccess)	
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+values.practiceSuccess,
+expressions.propHardChoices, 
+expressions.propHardChoices1, expressions.propHardChoices2, expressions.propHardChoices3,
+expressions.effortScore,
+
+expressions.propCorrectEasy, expressions.meanCorrRTEasy,
+expressions.propCorrectHard, expressions.meanCorrRTHard)
+</summarydata>
+	
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<values>
+/ phase = null
+/ practiceSuccess = 0
+/ number = null
+/ currentColor = null
+/ currentTask = null
+/ correctResp = null
+/ trialCounterPerBlock = 0
+/ blockCounterPerPhase = 0
+/ selectFeedback = 0
+/ difficulty = null
+/ currentRewardEasy= null
+/ currentRewardHard= null
+/ currentReward = null
+/ total = 0
+/ winnings = 0
+/ selectedTask = null
+/ rewardLevelHard = null
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/ propHardChoices = return list.hardChoices.mean
+/ propHardChoices1 = return list.hardChoicesReward1.mean
+/ propHardChoices2 = return list.hardChoicesReward2.mean
+/ propHardChoices3 = return list.hardChoicesReward3.mean
+/ propCorrectEasy = return list.ACC_easy.mean
+/ meanCorrRTEasy = return list.corrRT_easy.mean
+/ propCorrectHard = return list.ACC_hard.mean
+/ meanCorrRTHard = return list.corrRT_hard.mean
+
+/ effortScore = if (expressions.propHardChoices > 0 && expressions.propHardChoices < 1){
+	return (expressions.propHardChoices3 - expressions.propHardChoices1);
+} else {
+	return "NA";
+}
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	LISTS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<list colors>
+/ items = (parameters.parityTaskColor, parameters.magnitudeTaskColor)
+/ replace = false
+/ resetInterval = 0
+</list>
+
+<list practice2Difficulty>
+/ items = (1,2)
+/ replace = false
+/ resetInterval = 0
+</list>
+
+<list testStartColorsEasy>
+/ items = (parameters.parityTaskColor, parameters.magnitudeTaskColor)
+/ replace = false
+/ resetInterval = 1 //reset for each new test block
+</list>
+
+<list testStartColorsHard>
+/ items = (parameters.parityTaskColor, parameters.magnitudeTaskColor)
+/ replace = false
+/ resetInterval = 1 //reset for each new test block
+</list>
+
+<list rewardsHard>
+/ items = (parameters.hardReward1, parameters.hardReward2, parameters.hardReward3)
+/ replace = false
+/ poolSize = parameters.numberTestBlocks
+/ resetInterval = 0
+</list>
+
+******************************************************
+Data Lists
+
+accuracy: store 1 for each correct trial; 0 = otherwise
+latency: store the latency of correct responses
+******************************************************
+
+<list ACC_block>
+</list>
+
+<list RT_block>
+</list>
+
+<list hardChoices>
+</list>
+
+<list hardChoicesReward1>
+</list>
+
+<list hardChoicesReward2>
+</list>
+
+<list hardChoicesReward3>
+</list>
+
+
+<list ACC_easy>
+</list>
+
+<list corrRT_easy>
+</list>
+
+<list ACC_hard>
+</list>
+
+<list corrRT_hard>
+</list>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<shape card>
+/ shape = rectangle
+/ height = parameters.cardHeight_inpct
+/ width = 2/3*shape.card.height* display.canvasHeight/display.canvasWidth
+/ position = (50%,50%)
+/ color = values.currentColor
+</shape>
+
+<shape cardCircle>
+/ shape = circle
+/ height = 0.5*parameters.cardHeight_inpct
+/ width = 0.5*parameters.cardHeight_inpct * display.canvasHeight/display.canvasWidth
+/ color = white
+/ vPosition = shape.card.vPosition
+/ hPosition = shape.card.hPosition
+</shape>
+
+<text number>
+/ items = ("<%values.number%>")
+/ fontStyle = ("Arial", parameters.numberFontHeight_inpct, false, false, false, false, 5, 1)
+/ txbgColor = shape.cardCircle.color
+/ txColor = black
+/ vPosition = shape.card.vPosition
+/ hPosition = shape.card.hPosition
+</text>
+
+<text practiceFeedback>
+/ onPrepare = [
+	text.practiceFeedback.textColor = red;
+	if (values.selectFeedback == 1){
+		text.practiceFeedback.textColor = green;
+	}
+]
+/ items = item.feedback_practice1
+/ select = values.selectFeedback
+/ fontStyle = ("Arial", 10%, false, false, false, false, 5, 1)
+/ position = (50%,60%)
+</text>
+
+<text testFeedback>
+/ items = feedback_test
+/ select = values.selectFeedback
+/ fontStyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</text>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+///////////////////////////////////////////////////////////////////
+Practice1 - with Feedback
+///////////////////////////////////////////////////////////////////
+
+<trial practice1StartIsi>
+/ trialDuration = parameters.isi_inms
+/ branch = [
+	return trial.practice1;
+]
+/ recordData = false
+</trial>
+
+<trial practice1>
+/ onTrialBegin = [
+	values.trialCounterPerBlock += 1;
+	values.number = list.numbers.nextValue;	
+	values.currentColor = list.colors.nextValue;
+	if (values.currentColor == parameters.parityTaskColor){
+		values.currentTask = 1;
+		if (mod(values.number, 2) == 1){//odd number
+			values.correctResp = "1";
+		} else {
+			values.correctResp = "2";
+		}
+	} else {
+		values.currentTask = 2;
+		if (values.number < 5){
+			values.correctResp = "1";
+		} else {
+			values.correctResp = "2";
+		}
+	}
+]
+/ stimulusTimes = [0 = card, cardCircle, number]
+/ validResponse = ("1", "2")
+/ isCorrectResponse = [
+	return (trial.practice1.responseText == values.correctResp);
+]
+/ trialDuration = parameters.numberDuration_inms
+/ onTrialEnd = [
+	list.ACC_block.appendItem(trial.practice1.correct);
+	list.RT_block.appendItem(trial.practice1.latency);
+	if (trial.practice1.correct){
+		values.selectFeedback = 1; //correct
+	} else if (trial.practice1.response == 0){
+		values.selectFeedback = 3; //no response
+	} else {
+		values.selectFeedback = 2; //incorrect
+	}
+]
+/ branch = [
+	return trial.practice1FeedbackIsi;
+]
+</trial>
+
+<trial practice1FeedbackIsi>
+/ trialDuration = parameters.isi_inms
+/ branch = [
+	return trial.practice1Feedback;
+]
+/ recordData = false
+</trial>
+
+<trial practice1Feedback>
+/ stimulusTimes = [0 = practiceFeedback]
+/ trialDuration = parameters.practiceFeedbackDuration_inms
+/ branch = [
+	if (values.trialCounterPerBlock < parameters.numberPractice1TrialsPerBlock){
+		return trial.practice1StartIsi;
+	} else {
+		return trial.practice1RoundFeedback;
+	}
+]
+/ recordData = false
+</trial>
+
+///////////////////////////////////////////////////////////////////
+Practice2 - without Feedback
+///////////////////////////////////////////////////////////////////
+
+<trial practice2StartIsi>
+/ trialDuration = parameters.isi_inms
+/ branch = [
+	return trial.practice2;
+]
+/ recordData = false
+</trial>
+
+<trial practice2>
+/ onTrialBegin = [
+	values.trialCounterPerBlock += 1;
+	values.number = list.numbers.nextValue;
+
+	if (values.difficulty == 2){//alternate colors
+		if (values.currentColor == parameters.parityTaskColor){
+			values.currentColor = parameters.magnitudeTaskColor;
+		} else {
+			values.currentColor = parameters.parityTaskColor;
+		}
+	}
+	
+	if (values.currentColor == parameters.parityTaskColor){
+		values.currentTask = 1;
+		if (mod(values.number, 2) == 1){//odd number
+			values.correctResp = "1";
+		} else {
+			values.correctResp = "2";
+		}
+	} else {
+		values.currentTask = 2;
+		if (values.number < 5){
+			values.correctResp = "1";
+		} else {
+			values.correctResp = "2";
+		}
+	}
+]
+/ stimulusTimes = [0 = card, cardCircle, number]
+/ validResponse = ("1", "2")
+/ isCorrectResponse = [
+	return (trial.practice2.responseText == values.correctResp);
+]
+/ trialDuration = parameters.numberDuration_inms
+/ onTrialEnd = [
+	list.ACC_block.appendItem(trial.practice2.correct);
+	list.RT_block.appendItem(trial.practice2.latency);
+]
+/ branch = [
+	return trial.practice2Isi;
+]
+</trial>
+
+<trial practice2Isi>
+/ trialDuration = parameters.isi_inms
+/ branch = [
+	if (values.trialCounterPerBlock < parameters.numberPractice2TrialsPerBlock){
+		return trial.practice2StartIsi;
+	} else {
+		return null;
+	}
+]
+/ recordData = false
+</trial>
+
+////////////////////////////////////////////////////////
+Test
+///////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////
+Practice2 - without Feedback
+///////////////////////////////////////////////////////////////////
+
+<trial testStartIsi>
+/ trialDuration = parameters.isi_inms
+/ branch = [
+	return trial.test;
+]
+/ recordData = false
+/ branch = [
+	return trial.test;
+]
+</trial>
+
+<trial test>
+/ onTrialBegin = [
+	values.trialCounterPerBlock += 1;
+	values.number = list.numbers.nextValue;
+
+	if (values.difficulty == 2){//alternate colors
+		if (values.currentColor == parameters.parityTaskColor){
+			values.currentColor = parameters.magnitudeTaskColor;
+		} else {
+			values.currentColor = parameters.parityTaskColor;
+		}
+	}
+	
+	if (values.currentColor == parameters.parityTaskColor){
+		values.currentTask = 1;
+		if (mod(values.number, 2) == 1){//odd number
+			values.correctResp = "1";
+		} else {
+			values.correctResp = "2";
+		}
+	} else {
+		values.currentTask = 2;
+		if (values.number < 5){
+			values.correctResp = "1";
+		} else {
+			values.correctResp = "2";
+		}
+	}
+]
+/ stimulusTimes = [0 = card, cardCircle, number]
+/ validResponse = ("1", "2")
+/ isCorrectResponse = [
+	return (trial.test.responseText == values.correctResp);
+]
+/ trialDuration = parameters.numberDuration_inms
+/ onTrialEnd = [
+	list.ACC_block.appendItem(trial.test.correct);
+	list.RT_block.appendItem(trial.test.latency);
+	
+	if (values.difficulty == 1){
+		list.ACC_easy.appendItem(trial.test.correct);
+		if (trial.test.correct){
+			list.corrRT_easy.appendItem(trial.test.latency);
+		}
+	} else {
+		list.ACC_hard.appendItem(trial.test.correct);
+		if (trial.test.correct){
+			list.corrRT_hard.appendItem(trial.test.latency);
+		}
+	}
+
+	if (values.trialCounterPerBlock >= parameters.numberTestTrialsPerBlock){
+		if (list.ACC_block.mean >= parameters.minTestPerformanceForReward){
+			values.winnings = values.currentReward;
+			values.selectFeedback = 1;
+		} else {
+			values.selectFeedback = 2;
+		}
+		values.total += values.winnings;
+	}
+]
+/ branch = [
+	return trial.testIsi;
+]
+</trial>
+
+<trial testIsi>
+/ trialDuration = parameters.isi_inms
+/ branch = [
+	if (values.trialCounterPerBlock < parameters.numberTestTrialsPerBlock){
+		return trial.testStartIsi;
+	} else {
+		return trial.testFeedback;
+	}
+]
+/ recordData = false
+</trial>
+
+<trial testFeedback>
+/ stimulusTimes = [0= testFeedback]
+/ trialDuration = parameters.testFeedbackDuration_inms
+/ recorddata = false
+</trial>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<block inpersonMenu>
+/ skip = [
+	return (parameters.taskAdministration != "in person");
+]
+/ trials = [1 = taskMenu]
+/ branch = [
+	if (trial.taskMenu.responseText == "1"){
+		return block.practice1Start;
+	} else if (trial.taskMenu.responseText == "2"){
+		return block.practice2Start;
+	} else if (trial.taskMenu.responseText == "3"){
+		return block.testStart;
+	} else {
+		return block.finish;
+	}
+]
+</block>
+
+<block remoteStart>
+/ skip = [
+	return (parameters.taskAdministration == "in person");
+]
+/ branch = [
+	return block.practice1Start;
+]
+</block>
+
+/////////////////////////////////////////////////
+practice1 - with feedback
+////////////////////////////////////////////////
+
+<block practice1Start>
+/ onBlockBegin = [
+	values.phase = 1;
+	values.blockCounterPerPhase = 0;
+]
+/ trials = [1= intro]
+/ branch = [
+	return block.practice1_withFeedback;
+]
+</block>
+
+<block practice1_withFeedback>
+/ preInstructions = (practice1Intro)
+/ onBlockBegin = [
+	list.ACC_block.reset();
+	list.RT_block.reset();
+	list.colors.reset();
+	list.colors.poolSize = parameters.numberPractice1TrialsPerBlock;	
+	values.blockCounterPerPhase += 1;
+	values.trialCounterPerBlock = 0;
+	values.difficulty = 0;	
+]
+/ trials = [1 = practice1StartIsi]
+/ branch = [
+	if (parameters.taskAdministration != "in person"){//remote testing
+		if (list.ACC_block.mean < parameters.minPracticeACC  && !monkey.monkeyMode){
+			if (values.blockCounterPerPhase < parameters.maxPracticeBlocks){
+				return block.practice1Repeat;
+			} else {
+				return block.prematureExit;
+			}
+		} else {
+			values.practiceSuccess = 1;
+			return block.practice2Start;
+		}
+	} else {//in person testing: provides menu
+		return block.inpersonMenu;
+	}
+]
+</block>
+
+<block practice1Repeat>
+/ preInstructions = (practice1Repeat)
+/ branch = [
+	return block.practice1_withFeedback;
+]
+</block>
+
+/////////////////////////////////////////////////
+practice1 - with feedback
+////////////////////////////////////////////////
+
+<block practice2Start>
+/ preInstructions = (practice2IntroA, practice2IntroB)
+/ onBlockBegin = [
+	values.phase = 2;
+	values.blockCounterPerPhase = 0;
+	values.selectFeedback = null;
+]
+/ branch = [
+	return block.practice2_withoutFeedback;
+]
+</block>
+
+<block practice2_withoutFeedback>
+/ onBlockBegin = [
+	list.ACC_block.reset();
+	list.RT_block.reset();
+	list.colors.reset();
+	list.colors.poolSize = parameters.numberPractice2TrialsPerBlock;
+	values.blockCounterPerPhase += 1;
+	values.trialCounterPerBlock = 0;
+	values.difficulty = list.practice2Difficulty.nextValue; //select the next difficulty	
+	values.currentColor = list.colors.nextValue; //select the first color
+]
+/ trials = [1 = difficultyLevel; 2 = practice2StartIsi]
+/ branch = [
+	if (parameters.taskAdministration != "in person"){
+		if (values.blockCounterPerPhase < 2){
+			return block.practice2_withoutFeedback;
+		} else {
+			return block.testStart;
+		}	
+	} else {
+		if (values.blockCounterPerPhase < 2){
+			return block.practice2_withoutFeedback;
+		} else {
+			return block.inpersonMenu;
+		}		
+	}
+]
+</block>
+
+<block testStart>
+/ preInstructions = (testIntroA)
+/ onBlockBegin = [
+	values.phase = 3;
+	values.blockCounterPerPhase = 0;
+]
+/ branch = [
+	return block.test;
+]
+</block>
+
+<block test>
+/ onBlockBegin = [
+	list.ACC_block.reset();
+	list.RT_block.reset();
+	values.blockCounterPerPhase += 1;
+	values.trialCounterPerBlock = 0;
+	values.winnings = 0;
+	values.selectFeedback = null;
+	values.currentRewardEasy = parameters.easyReward;
+	values.currentRewardHard = list.rewardsHard.nextValue;
+	if (values.currentRewardHard == parameters.hardReward1){
+		values.rewardLevelHard = 1;
+	} else if (values.currentRewardHard == parameters.hardReward2){
+		values.rewardLevelHard = 2;
+	} else if (values.currentRewardHard == parameters.hardReward3){
+		values.rewardLevelHard = 3;
+	}
+]
+/ trials = [1 = taskChoice; 2 = difficultyLevel; 3 = testStartIsi]
+/ branch = [
+	if (parameters.taskAdministration != "in person"){
+		if (values.blockCounterPerPhase < parameters.numberTestBlocks){
+			return block.test;
+		} else {
+			return block.finish;
+		}
+	} else {
+		if (values.blockCounterPerPhase < parameters.numberTestBlocks){
+			return block.test;
+		} else {
+			return block.inpersonMenu;
+		}	
+	}
+]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+<block prematureExit>
+/ trials = [1 = prematureExit]
+/ onBlockEnd = [
+	script.abort(false);
+]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expt choiceEffort>
+/ onexptbegin = [
+	if (monkey.monkeyMode){
+		parameters.isi_inms = 0;
+		parameters.practiceFeedbackDuration_inms = 17;
+		parameters.testFeedbackDuration_inms = 17;
+		parameters.numberDuration_inms = 100;
+	}
+]
+/ blocks = [
+	1 = inpersonMenu; //branching via a task selection menu
+	2 = remoteStart; //automatic sequence through practice1 -> practice2 -> test -> exit
+]
+</expt>
+
+<monkey>
+/ latencydistribution=normal(100, 80)
+</monkey>
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

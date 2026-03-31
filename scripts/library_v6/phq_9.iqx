@@ -1,0 +1,436 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									*Patient Health Questionnaire (PHQ-9)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-02-2021
+last updated:  02-25-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-25-2022 Millisecond Software
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a computerized version of the Patient Health Questionnaire (PHQ-9)
+by Kroenke et al (2001).
+
+
+Reference:
+Kroenke, K., Spitzer, R. L., & Williams, J. B. W. (2001). The PHQ-9 - Validity of a brief 
+depression severity measure. Journal of General Internal Medicine, 16, 606-613.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+The scale consists of 9 4-point Likert scale items.
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes < 1 min to complete.
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'phq_9.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		 with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale: q1-q9: 0 (Not at all) - 3 (Nearly every day)
+									Scale: q10: 0 (Not difficult at all) - 3 (Extremely difficult)
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'phq_9_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+								
+DepressedMoodOrAnhedonia:		1 = at least one answer for q1 (anhedonia) or q2 (depressed mood) 
+								was a '2' or a '3 (>= more than half the days)
+								0 = otherwise
+												
+DepressionSymptonsCounter:		counts the number of '2' or '3' responses (>= more than half the days)
+								for q1-q8 as well as any response other than 0 for q9
+												
+								Major Depression if
+								1. 'DepressedMoodOrAnhedonia' = 1 AND
+								2.  DepressionSymptonsCounter >= 5
+												
+								Other Depression if
+								1. 'DepressedMoodOrAnhedonia' = 1 AND
+								2.  2 <= DepressionSymptonsCounter < 5
+												
+									
+phq9_severityScore:				Total Score (adds up all valid response values from q1-q9; range: 0-27)
+								1-4 Minimal depression
+								5-9 Mild depression
+								10-14 Moderate depression
+								15-19 Moderately severe depression
+								20-27 Severe depression 
+
+individual responses: 
+Scale: q1-q9: 0 (Not at all) - 3 (Nearly every day)
+Scale: q10: 0 (Not difficult at all) - 3 (Extremely difficult)
+
+radiobuttons.q1.response to 
+q10 (*Note: q10 is only presented if participant has indicated any 
+possible depression response (response > 0) for any of the nine questions. If 
+all responses = 0, q10 is automatically scored with a 0)
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Over the <u>last 2 weeks</u>, how often have you been bothered by any of the following problems?<br>
+"
+</parameters>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, 
+script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId,
+script.elapsedTime, script.completed,
+
+expressions.DepressedMoodOrAnhedonia, values.DepressionSymptonsCounter,
+values.phq9_severityScore,
+radiobuttons.q1.response,
+radiobuttons.q2.response,
+radiobuttons.q3.response,
+radiobuttons.q4.response,
+radiobuttons.q5.response,
+radiobuttons.q6.response,
+radiobuttons.q7.response,
+radiobuttons.q8.response,
+radiobuttons.q9.response,
+expressions.q10
+)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES/EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+<expressions>
+/DepressedMoodOrAnhedonia = {
+	if (radiobuttons.q1.response == 2 || radiobuttons.q1.response == 3 || radiobuttons.q2.response == 2 || radiobuttons.q2.response == 3){
+		1;
+	} else {
+		0;
+	}
+}
+/countDepressionSymptoms = {
+	values.DepressionSymptonsCounter = 0;
+	if (radiobuttons.q1.response == 2 || radiobuttons.q1.response == 3){
+		values.DepressionSymptonsCounter += 1;
+	}
+	if (radiobuttons.q2.response == 2 || radiobuttons.q2.response == 3){
+		values.DepressionSymptonsCounter += 1;
+	}	
+	if (radiobuttons.q3.response == 2 || radiobuttons.q3.response == 3){
+		values.DepressionSymptonsCounter += 1;
+	}
+	if (radiobuttons.q4.response == 2 || radiobuttons.q4.response == 3){
+		values.DepressionSymptonsCounter += 1;
+	}
+	if (radiobuttons.q5.response == 2 || radiobuttons.q5.response == 3){
+		values.DepressionSymptonsCounter += 1;
+	}
+	if (radiobuttons.q6.response == 2 || radiobuttons.q6.response == 3){
+		values.DepressionSymptonsCounter += 1;
+	}
+	if (radiobuttons.q7.response == 2 || radiobuttons.q7.response == 3){
+		values.DepressionSymptonsCounter += 1;
+	}
+	if (radiobuttons.q8.response == 2 || radiobuttons.q8.response == 3){
+		values.DepressionSymptonsCounter += 1;
+	}
+	if (radiobuttons.q9.response == 1 || radiobuttons.q9.response == 2 || radiobuttons.q9.response == 3){
+		values.DepressionSymptonsCounter += 1;
+	}	
+}	
+
+/phq9_severityScore = {
+	values.phq9_severityScore = 0;
+	if (radiobuttons.q1.response <= 3){
+		values.phq9_severityScore += radiobuttons.q1.response;
+	}
+	if (radiobuttons.q2.response <= 3){
+		values.phq9_severityScore += radiobuttons.q2.response;
+	}	
+	if (radiobuttons.q3.response <= 3){
+		values.phq9_severityScore += radiobuttons.q3.response;
+	}	
+	if (radiobuttons.q4.response <= 3){
+		values.phq9_severityScore += radiobuttons.q4.response;
+	}	
+	if (radiobuttons.q5.response <= 3){
+		values.phq9_severityScore += radiobuttons.q5.response;
+	}	
+	if (radiobuttons.q6.response <= 3){
+		values.phq9_severityScore += radiobuttons.q6.response;
+	}	
+	if (radiobuttons.q7.response <= 3){
+		values.phq9_severityScore += radiobuttons.q7.response;
+	}	
+	if (radiobuttons.q8.response <= 3){
+		values.phq9_severityScore += radiobuttons.q8.response;
+	}	
+	if (radiobuttons.q9.response <= 3){
+		values.phq9_severityScore += radiobuttons.q9.response;
+	}
+}
+
+/q10 = {
+	if (radiobuttons.q1.response == 0 &&
+	radiobuttons.q2.response == 0 &&	
+	radiobuttons.q3.response == 0 &&	
+	radiobuttons.q4.response == 0 &&	
+	radiobuttons.q5.response == 0 &&	
+	radiobuttons.q6.response == 0 &&	
+	radiobuttons.q7.response == 0 &&
+	radiobuttons.q8.response == 0 &&
+	radiobuttons.q9.response == 0){
+		0;
+	} else {
+		radiobuttons.q10.response;
+	}
+}
+</expressions>
+
+<values>
+/completed = 0
+/DepressionSymptonsCounter = 0
+/phq9_severityScore = 0
+</values>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. Little interest or pleasure in doing things"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Feeling down, depressed or hopeless"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Trouble falling asleep, staying asleep, or sleeping too much"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. Feeling tired or having little energy"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. Poor appetite or overeating"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Feeling bad about yourself - or that you're a failure or have let yourself or your family down"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. Trouble concentrating on things, such as reading the newspaper or watching television"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. Moving or speaking so slowly that other people could have noticed. Or, the opposite- being so fidgety or restless that you have been moving around a lot more than usual"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. Thoughts that you would be better off dead or of hurting yourself in some way"
+/ options = ("Not~nAt All", "Several ~nDays", "More than ~nHalf the Days", "Nearly ~nEvery Day")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. If you checked off any problems, how difficult have those problems made it for you to do your work, take care of things at home, or get along with other people?
+"
+/ options = ("Not difficult ~nat all", "Somewhat ~ndifficult", "Very ~ndifficult", "Extremely ~ndifficult")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage phq_9_1>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage phq_9_2>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage phq_9_3>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage phq_9_4>
+/ skip = [
+	radiobuttons.q1.response == 0 &&
+	radiobuttons.q2.response == 0 &&	
+	radiobuttons.q3.response == 0 &&	
+	radiobuttons.q4.response == 0 &&	
+	radiobuttons.q5.response == 0 &&	
+	radiobuttons.q6.response == 0 &&	
+	radiobuttons.q7.response == 0 &&
+	radiobuttons.q8.response == 0 &&
+	radiobuttons.q9.response == 0;	
+]
+/ questions = [1 = q10]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey phq_9>
+/pages = [
+	1 = phq_9_1;
+	2 = phq_9_2;
+	3 = phq_9_3;
+	4 = phq_9_4;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Submit"
+/ onblockend = [
+	expressions.countDepressionSymptoms;
+	expressions.phq9_severityScore;
+]
+</survey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

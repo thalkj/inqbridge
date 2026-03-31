@@ -1,0 +1,375 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							Mindful Attention Awareness Scale (MAAS)
+___________________________________________________________________________________________________________________
+
+Script Author: David Nitz (dave@millisecond.com) for Millisecond Software, LLC
+Date: 11-07-2019
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized adaptation of the short form of the Mindful Attention Awareness Scale (MAAS) as described in:
+
+Brown, K.W. & Ryan, R.M. (2003). The benefits of being present: Mindfulness and its role in psychological well-being. 
+Journal of Personality and Social Psychology, 84, 822-848.
+
+Carlson, L.E. & Brown, K.W. (2005). Validation of the Mindful Attention Awareness Scale in a cancer population.
+Journal of Psychosomatic Research, 58, 29-33.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+											  
+The trait MAAS is a 15-item scale designed to assess a core characteristic of mindfulness, namely, 
+a receptive state of mind in which attention, 
+informed by a sensitive awareness of what is occurring in the present, simply observes what is taking place.
+
+Participants are asked to answer 15 6-point Likert-type questions with the following anchors:
+"almost always", "very frequently", "somewhat frequently", "somewhat infrequently", "very infrequently" and "almost never".
+
+Scoring: To score the scale, simply compute a mean (average) of the 15 items.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'maas_survey*.iqdat' 
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (almost always) - 6 (almost never)
+								no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'maas_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+								
+maas_mean						mean of responses to the 15 6-point questions
+
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+can be edited under section Editable Parameters.
+The original instructions are:
+"Below is a collection of statements about your everyday experience. Using the 1-6 scale below, please indicate how frequently or infrequently 
+you currently have each experience. Please answer according to what really reflects your experience rather than what you think your
+experience should be. Please treat each item separately from every other item."
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<parameters>
+/pageinstructions = "Below is a collection of statements about your everyday experience. Using the 1-6 scale below, please indicate how frequently or infrequently you currently have each experience. Please answer according to what really reflects your experience rather than what you think your experience should be. Please treat each item separately from every other item."
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed, expressions.maas_mean)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/ maas_mean = average of responses to the 15 6-point likert questions
+
+<expressions>
+/ maas_mean = (radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response + radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q11.response + radiobuttons.q12.response + radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q15.response)/15
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/ caption = "I could be experiencing some emotion and not be conscious of it until some time later."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q2>
+/ caption = "I break or spill things because of carelessness, not paying attention, or thinking of something else."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q3>
+/ caption = "I find it difficult to stay focused on what’s happening in the present."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q4>
+/ caption = "I tend to walk quickly to get where I’m going without paying attention to what I experience along the way."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q5>
+/ caption = "I tend not to notice feelings of physical tension or discomfort until they really grab my attention."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q6>
+/ caption = "I forget a person’s name almost as soon as I’ve been told it for the first time."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q7>
+/ caption = "It seems I am ~"running on automatic,~" without much awareness of what I’m doing."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q8>
+/ caption = "I rush through activities without being really attentive to them."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q9>
+/ caption = "I get so focused on the goal I want to achieve that I lose touch with what I’m doing right now to get there."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q10>
+/ caption = "I do jobs or tasks automatically, without being aware of what I'm doing."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q11>
+/ caption = "I find myself listening to someone with one ear, doing something else at the same time."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q12>
+/ caption = "I drive places on ‘automatic pilot’ and then wonder why I went there."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q13>
+/ caption = "I find myself preoccupied with the future or the past."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q14>
+/ caption = "I find myself doing things without paying attention."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q15>
+/ caption = "I snack without being aware that I’m eating."
+/ options = ("1~nalmost~nalways", "2~nvery~nfrequently", "3~nsomewhat~nfrequently", "4~nsomewhat~ninfrequently", "5~nvery~ninfrequently", "6~nalmost~nnever")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+<surveypage maas1>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q1; 2=q2; 3=q3]
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</surveypage>
+
+<surveypage maas2>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q4; 2=q5; 3=q6]
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</surveypage>
+
+<surveypage maas3>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q7; 2=q8; 3=q9]
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</surveypage>
+
+<surveypage maas4>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q10; 2=q11; 3=q12]
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</surveypage>
+
+<surveypage maas5>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q13; 2=q14; 3=q15]
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to retain a digital copy of the filled in questionnaire pages, set /screencapture = true
+(only works for Inquisit Lab)
+<survey maas>
+/ pages = [
+	1=maas1; 
+	2=maas2; 
+	3=maas3;
+	4=maas4;
+	5=maas5;
+	]
+/ screencapture = false
+/ showquestionnumbers = true
+/ showpagenumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

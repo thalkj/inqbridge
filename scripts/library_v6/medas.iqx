@@ -1,0 +1,405 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Mediterranean Diet Assessment (MEDAS)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 09-19-2023
+last updated:  09-19-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 09-19-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements Millisecond's computerized version of the Mediterranean Diet Assessment (MEDAS).
+
+*Reference*:
+
+Martínez-González, M. A., et al (2012). A 14-item Mediterranean diet assessment tool and obesity indexes among high-risk subjects: 
+the PREDIMED trial. PloS One, 7(8), e43134–e43134. 
+https://doi.org/10.1371/journal.pone.0043134
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+self-report measure consisting of 14 questions
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minute to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'medas.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (almost never) - 4 (almost always)
+								R: reversed coded questions (if any)
+									
+q*_latency:						how much time (in ms) the participant spent on the surveyPage with this particular 
+								question (the last time this particular surveyPage was visited)
+
+(2) Summary data file: 'medas_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+							
+//summary score
+medas_total:				the total score (range 0-14) based on the translated raw responses
+							
+
+//translated raw responses
+q1 - q14:					the translated raw responses (max 1 point)
+								point distribution in table 1 in Martínez-González et al (2012)
+
+//raw responses
+radioButtons.q1.response,
+textbox.q2.response,
+textbox.q3.response,
+textbox.q4.response,
+textbox.q5.response,
+textbox.q6.response,
+textbox.q7.response,
+textbox.q8.response,
+textbox.q9.response,
+textbox.q10.response,
+textbox.q11.response,
+textbox.q12.response,
+radioButtons.q13.response,
+textbox.q14.response								
+
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/ canvasaspectratio =   (4,3)
+/ minimumversion =   "6.6.1.0"
+/ fontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor =   white
+/ txcolor =   (0, 0, 0)
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns =   (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+//summary score
+expressions.medas_total
+
+//translated raw responses
+values.q1,values.q2,values.q3,values.q4,values.q5, 
+values.q6,values.q7,values.q8,values.q9,values.q10, 
+values.q11,values.q12,values.q13,values.q14, 
+
+//raw responses
+radioButtons.q1.response,
+textbox.q2.response,
+textbox.q3.response,
+textbox.q4.response,
+textbox.q5.response,
+textbox.q6.response,
+textbox.q7.response,
+textbox.q8.response,
+textbox.q9.response,
+textbox.q10.response,
+textbox.q11.response,
+textbox.q12.response,
+radioButtons.q13.response,
+textbox.q14.response
+)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES/EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/ q1 = 0
+/ q2 = 0
+/ q3 = 0
+/ q4 = 0
+/ q5 = 0
+/ q6 = 0
+/ q7 = 0
+/ q8 = 0
+/ q9= 0
+/ q10 = 0
+/ q11 = 0
+/ q12 = 0
+/ q13 = 0
+/ q14 = 0
+</values>
+
+
+<expressions>
+/ medas_total = return (values.q1 + values.q2 + values.q3 + values.q4 + values.q5 + 
+values.q6 + values.q7 + values.q8 + values.q9 + values.q10 + 
+values.q11 + values.q12 + values.q13 + values.q14)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radioButtons q1>
+/ caption =   "1. Do you use olive oil as main culinary fat?"
+/ options =   ("yes", "no")
+/ optionvalues =   ("1", "0")
+/ required =   true
+/ orientation =   vertical
+</radioButtons>
+
+<textbox q2>
+/ caption = "2. How much olive oil do you consume in a given day (including oil used for frying, salads, out-of-house meals, etc.) (in tbsp)?"
+/ required = true
+/ mask = decimal
+</textbox>
+
+<textbox q3>
+/ caption = "3. How many vegetable servings do you consume per day? (1 serving : 200 g [consider side dishes as half a serving])"
+/ required = true
+/ mask = decimal
+</textbox>
+
+<textbox q4>
+/ caption = "4. How many fruit units (including natural fruit juices) do you consume per day?"
+/ required = true
+/ mask = decimal
+</textbox>
+
+<textbox q5>
+/ caption = "5. How many servings of red meat, hamburger, or meat products (ham, sausage, etc.) do you consume per day? (1 serving: 100–150 g)"
+/ required = true
+/ mask = decimal
+</textbox>
+
+<textbox q6>
+/ caption = "6. How many servings of butter, margarine, or cream do you consume per day? (1 serving: 12 g)"
+/ required = true
+/ mask = decimal
+</textbox>
+
+<textbox q7>
+/ caption = "7. How many sweet or carbonated beverages do you drink per day?"
+/ required = true
+/ mask = decimal
+</textbox>
+
+<textbox q8>
+/ caption = "8. How much wine do you drink per week?"
+/ required = true
+/ mask = decimal
+</textbox>
+
+<textbox q9>
+/ caption = "9. How many servings of legumes do you consume per week? (1 serving : 150 g)"
+/ required = true
+/ mask = decimal
+</textbox>
+
+<textbox q10>
+/ caption = "10. How many servings of fish or shellfish do you consume per week? (1 serving 100–150 g of fish or 4–5 units or 200 g of shellfish)"
+/ required = true
+/ mask = decimal
+</textbox>
+
+<textbox q11>
+/ caption = "11. How many times per week do you consume commercial sweets or pastries (not homemade), such as cakes, cookies, biscuits, or custard?"
+/ required = true
+/ mask = decimal
+</textbox>
+
+<textbox q12>
+/ caption = "12. How many servings of nuts (including peanuts) do you consume per week? (1 serving 30 g)"
+/ required = true
+/ mask = decimal
+</textbox>
+
+<radioButtons q13>
+/ caption =   "13. Do you preferentially consume chicken, turkey, or rabbit meat instead of veal, pork, hamburger, or sausage?"
+/ options =   ("yes", "no")
+/ optionvalues =   ("1", "0")
+/ required =   true
+/ orientation =   vertical
+</radioButtons>
+
+<textbox q14>
+/ caption = "14. How many times per week do you consume vegetables, pasta, rice, or other dishes seasoned with sofrito (sauce made with tomato and onion, leek, or garlic and simmered with olive oil)?"
+/ required = true
+/ mask = decimal
+</textbox>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveyPage medas_1>
+/ caption =   "We are interested in learning about your eating habits. Please answer the following diet-related questions as best as you can."
+/ subcaption =   ""
+/ questions =   [1 = q1, q2, q3, q4]
+/ onTrialEnd = [
+	values.q1 = radioButtons.q1.response;
+	values.q2 = 0;
+	if (textbox.q2.response >= 4 ){
+		values.q2 = 1;
+	}
+	values.q3 = 0;
+	if (textbox.q3.response >= 2 ){
+		values.q3 = 1;
+	}
+	values.q4 = 0;
+	if (textbox.q4.response >= 3){
+		values.q4 = 1;
+	}
+]
+</surveyPage>
+
+<surveyPage medas_2>
+/ caption =   "Please answer the following diet-related questions as best as you can."
+/ subcaption =   ""
+/ questions =   [1 = q5, q6, q7, q8]
+/ onTrialEnd = [
+	values.q5 = 0;
+	if (textbox.q5.response < 1 ){
+		values.q5 = 1;
+	}
+	values.q6 = 0;
+	if (textbox.q6.response < 1 ){
+		values.q6 = 1;
+	}
+	values.q7 = 0;
+	if (textbox.q7.response < 1 ){
+		values.q7 = 1;
+	}
+	values.q8 = 0;
+	if (textbox.q8.response >= 7){
+		values.q8 = 1;
+	}
+]
+</surveyPage>
+
+<surveyPage medas_3>
+/ caption =   "We are interested in learning about your eating habits. Please answer the following diet-related questions as best as you can."
+/ subcaption =   ""
+/ questions =   [1 = q9, q10, q11, q12]
+/ onTrialEnd = [
+	values.q9 = 0;
+	if (textbox.q9.response >= 3 ){
+		values.q9 = 1;
+	}
+	values.q10 = 0;
+	if (textbox.q10.response >= 3 ){
+		values.q10 = 1;
+	}
+	values.q11 = 0;
+	if (textbox.q11.response < 3 ){
+		values.q11 = 1;
+	}
+	values.q12 = 0;
+	if (textbox.q12.response >= 3){
+		values.q12 = 1;
+	}
+]
+</surveyPage>
+
+<surveyPage medas_4>
+/ caption =   "We are interested in learning about your eating habits. Please answer the following diet-related questions as best as you can."
+/ subcaption =   ""
+/ questions =   [1 =  q13, q14]
+/ onTrialEnd = [
+	values.q13 = radioButtons.q13.response;
+
+	values.q14 = 0;
+	if (textbox.q14.response >= 2 ){
+		values.q14 = 1;
+	}
+]
+</surveyPage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveyPages
+
+<survey medas>
+/ pages =   [
+	1 = medas_1;
+	2 = medas_2;
+	3 = medas_3;
+	4 = medas_4;
+]
+/ screencapture =   false
+/ fontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle =   ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle =   ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ showpagenumbers =   false
+/ showquestionnumbers =   false
+/ navigationbuttonfontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize =   (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition =   (70%, 90%)
+/ finishlabel =   "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

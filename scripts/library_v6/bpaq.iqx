@@ -1,0 +1,908 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									*Buss Perry Aggression Questionnaire*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 12-17-2020
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the Buss Perry Aggression Questionnaire.
+
+Reference
+Buss, A.H. and Perry, M.P. (1992). The Aggression Questionnaire. 
+Journal of Personality and Social Psychology, 63, 452-459.
+
+Note: 
+"No permission is needed if the questionnaire is used for research purposes."
+(Buss & Perry, 1992, p. 453)
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+29 5-point Likert style questions on 4 scales:
+Physical Aggression, Verbal Aggression, Anger, and Hostility.
+
+As per recommendation by Buss & Perry (1992, p.453) this script presents the questions in random order
+(randomized anew for each run). To change presentation go to section EDITABLE PARAMETER.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2.5 minutes to complete
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'bpaq.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale: 1 (extremely uncharacteristic) to 5 (extremely characteristic)
+									R = automatically reversed scored questions
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'bpaq_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+																										
+bpaq_numberMissingItems:	the number of questions that have not been answered 
+Note: by default settings, all questions are required to be answered. However, that setting can be changed.
+If default setting is changed, the above variable can be used as a flag.
+
+BPAQ_total:					the sum of all responses (Range: 29 - 145)
+physicalAggression:			the sum of all responses to Physical Aggression (PA) questions (Range: 9-45)
+verbalAggression, :			the sum of all responses to Verbal Aggression (VA) questions (Range: 5-25) 
+Anger:						the sum of all responses to Anger (A) questions (Range: 7-35)  
+Hostility:					the sum of all responses to Hostility (H) questions (Range: 8-40) 									
++ z-scores and percentiles if applicable	
+	
++ individual responses to all 29 questions									
+									
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________								
+	
+29 5-point Likert style questions on 4 scales:
+Physical Aggression, Verbal Aggression, Anger, and Hostility.
+As per recommendation by Buss & Perry (1992, p.453), the order of the questions was randomized for this script.
+
+Scoring:
+Each question is scored on a scale 1 (extremely uncharacteristic) to 5 (extremely characteristic)
+(Note: two questions are automatically reversed-scored).
+A subscale score is computed for each of the 4 subscales based on the sum of the individual responses.
+The Total BPAQ score is based on the sum of all responses.
+
+Norms are calculated (if gender is provided) by default based on data (means and standard deviations)
+provided by Buss & Perry (1992, p.455, table 3). 
+Check out section Editable Parameters to turn off the demographic questions (and norm calculations).
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+</usermanual>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ calculateGenderNorms = true		//true = the script collects gender information and calculates z-scores and percentiles based on reported gender
+									//false = the script does not collect gender information (and does not calculate z-scores/percentiles)
+</parameters>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed,
+values.bpaq_numberMissingItems,
+
+radiobuttons.gender.response, textbox.age.response,
+expressions.BPAQ_total, values.BPAQ_z_score, values.BPAQ_percentile,
+expressions.physicalAggression, values.P_z_score, values.P_percentile,
+expressions.verbalAggression, values.V_z_score, values.V_percentile,
+expressions.Anger, values.A_z_score, values.A_percentile,
+expressions.Hostility, values.H_z_score, values.H_percentile,
+
+radiobuttons.q1_P.response, radiobuttons.q2_P.response, radiobuttons.q3_P.response, radiobuttons.q4_P.response,
+radiobuttons.q5_P.response, radiobuttons.q6_P.response, radiobuttons.q7R_P.response, radiobuttons.q8_P.response, 
+radiobuttons.q9_P.response,
+radiobuttons.q1_V.response, radiobuttons.q2_V.response, radiobuttons.q3_V.response, radiobuttons.q4_V.response, 
+radiobuttons.q5_V.response,
+radiobuttons.q1_A.response, radiobuttons.q2_A.response, radiobuttons.q3_A.response, radiobuttons.q4R_A.response, 
+radiobuttons.q5_A.response, radiobuttons.q6_A.response, radiobuttons.q7_A.response, 
+radiobuttons.q1_H.response, radiobuttons.q2_H.response, radiobuttons.q3_H.response, radiobuttons.q4_H.response, 
+radiobuttons.q5_H.response, radiobuttons.q6_H.response, radiobuttons.q7_H.response, radiobuttons.q8_H.response)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/bpaq_numberMissingItems = 0
+</values>
+
+//Norming Data (Buss & Perry, 1992, p.455)
+<values>
+/mean_F_P = 17.9
+/SD_F_P = 6.6
+/mean_F_V = 13.5
+/SD_F_V = 3.9
+/mean_F_A = 16.7
+/SD_F_A = 5.8
+/mean_F_H = 20.2
+/SD_F_H = 6.3
+/mean_F_bpaq = 68.2
+/SD_F_bpaq = 17.0
+
+/mean_M_P = 24.3
+/SD_M_P = 7.7
+/mean_M_V = 15.2
+/SD_M_V = 3.9
+/mean_M_A = 17.0
+/SD_M_A = 5.6
+/mean_M_H = 21.3
+/SD_M_H = 5.5
+/mean_M_bpaq = 77.8
+/SD_M_bpaq = 16.5
+
+/BPAQ_z_score = "not calculated"
+/BPAQ_percentile = "not calculated"
+
+/P_z_score = "not calculated"
+/P_percentile = "not calculated"
+/V_z_score = "not calculated"
+/V_percentile = "not calculated"
+/A_z_score = "not calculated"
+/A_percentile = "not calculated"
+/H_z_score = "not calculated"
+/H_percentile = "not calculated"
+</values>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/physicalAggression = radiobuttons.q1_P.response + radiobuttons.q2_P.response + radiobuttons.q3_P.response + 
+radiobuttons.q4_P.response + radiobuttons.q5_P.response + radiobuttons.q6_P.response + 
+radiobuttons.q7R_P.response + radiobuttons.q8_P.response + radiobuttons.q9_P.response
+
+/verbalAggression = radiobuttons.q1_V.response + radiobuttons.q2_V.response + radiobuttons.q3_V.response + 
+radiobuttons.q4_V.response + radiobuttons.q5_V.response
+
+/Anger = radiobuttons.q1_A.response + radiobuttons.q2_A.response + radiobuttons.q3_A.response + 
+radiobuttons.q4R_A.response + radiobuttons.q5_A.response + radiobuttons.q6_A.response + 
+radiobuttons.q7_A.response
+
+/Hostility = radiobuttons.q1_H.response + radiobuttons.q2_H.response + radiobuttons.q3_H.response + 
+radiobuttons.q4_H.response + radiobuttons.q5_H.response + radiobuttons.q6_H.response + 
+radiobuttons.q7_H.response + radiobuttons.q8_H.response
+
+/BPAQ_total = expressions.Anger + expressions.Hostility + expressions.physicalAggression + expressions.verbalAggression
+
+/generateNorms = {
+	if (radiobuttons.gender.response == "Female"){
+		values.BPAQ_z_score = (expressions.BPAQ_total - values.mean_F_bpaq)/values.SD_F_bpaq;
+		values.BPAQ_percentile = pofz(values.BPAQ_z_score);
+		
+		values.P_z_score = (expressions.physicalAggression - values.mean_F_P)/values.SD_F_P;
+		values.P_percentile = pofz(values.P_z_score);		
+		
+		values.V_z_score = (expressions.verbalAggression - values.mean_F_V)/values.SD_F_V;
+		values.V_percentile = pofz(values.V_z_score);
+
+		values.A_z_score = (expressions.Anger - values.mean_F_A)/values.SD_F_A;
+		values.A_percentile = pofz(values.A_z_score);
+
+		values.H_z_score = (expressions.Hostility - values.mean_F_H)/values.SD_F_H;
+		values.H_percentile = pofz(values.H_z_score);			
+		
+	} else if (radiobuttons.gender.response == "Male"){
+		values.BPAQ_z_score = (expressions.BPAQ_total - values.mean_M_bpaq)/values.SD_M_bpaq;
+		values.BPAQ_percentile = pofz(values.BPAQ_z_score);
+		
+		values.P_z_score = (expressions.physicalAggression - values.mean_M_P)/values.SD_M_P;
+		values.P_percentile = pofz(values.P_z_score);		
+		
+		values.V_z_score = (expressions.verbalAggression - values.mean_M_V)/values.SD_M_V;
+		values.V_percentile = pofz(values.V_z_score);
+
+		values.A_z_score = (expressions.Anger - values.mean_M_A)/values.SD_M_A;
+		values.A_percentile = pofz(values.A_z_score);
+
+		values.H_z_score = (expressions.Hostility - values.mean_M_H)/values.SD_M_H;
+		values.H_percentile = pofz(values.H_z_score);			
+		
+	}
+}
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = true
+
+<radiobuttons q1_P>
+/caption = "Once in a while I can't control the urge to strike another person."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_P>
+/caption = "Given enough provocation, I may hit another person."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_P>
+/caption = "If somebody hits me, I hit back."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_P>
+/caption = "I get into fights a little more than the average person."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_P>
+/caption = "If I have to resort to violence to protect my rights, I will."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_P>
+/caption = "There are people who pushed me so far that we came to blows."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q7R_P>
+/caption = "I can think of no good reason for ever hitting a person."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q8_P>
+/caption = "I have threatened people I know."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q9_P>
+/caption = "I have become so mad that I have broken things."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q1_V>
+/caption = "I tell my friends openly when I disagree with them."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_V>
+/caption = "I often find myself disagreeing with people."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_V>
+/caption = "When people annoy me, I may tell them what I think of them."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_V>
+/caption = "I can't help getting into arguments when people disagree with me."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_V>
+/caption = "My friends say that I'm somewhat argumentative."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q1_A>
+/caption = "I flare up quickly but get over it quickly."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_A>
+/caption = "When frustrated, I let my irritation show."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_A>
+/caption = "I sometimes feel like a powder keg ready to explode."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4R_A>
+/caption = "I am an even-tempered person."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_A>
+/caption = "Some of my friends think I'm a hothead."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_A>
+/caption = "Sometimes I fly off the handle for no good reason."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_A>
+/caption = "I have trouble controlling my temper."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q1_H>
+/caption = "I am sometimes eaten up with jealousy."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_H>
+/caption = "At times I feel I have gotten a raw deal out of life."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_H>
+/caption = "Other people always seem to get the breaks."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_H>
+/caption = "I wonder why sometimes I feel so bitter about things."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_H>
+/caption = "I know that 'friends' talk about me behind my back."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_H>
+/caption = "I am suspicious ofoverly friendly strangers."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_H>
+/caption = "I sometimes feel that people are laughing at me behind my back."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_H>
+/caption = "When people are especially nice, I wonder what they want."
+/ options = (
+"extremely~nuncharacteristic~nof me", 
+"somewhat~nuncharacteristic~nof me", 
+"neither~nuncharacteristic~nnor characteristic~nof me", 
+"somewhat~ncharacteristic~nof me", 
+"extremely~ncharacteristic~nof me")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons gender>
+/ caption = "What is your gender?"
+/ options = ("Female", "Male", "Other", "I prefer not to answer")
+/ required = true
+</radiobuttons>
+
+<textbox age>
+/ caption = "What is your age?"
+/ mask = positiveintegerorzero
+/ required = false
+</textbox>
+
+
+
+<caption end>
+/ caption = "- END OF QUESTIONNAIRE -"
+/ position = (45%, 93%)
+/ fontstyle = ("Arial", 2%, false, true, false, false, 5, 1)
+/ txcolor = gray
+</caption>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage bpaq_1>
+/ caption = "Please indicate how uncharacteristic or characteristic each of the following statements is in describing you.
+"
+/ questions = [1 = q6_A, q1_V, q4R_A ]
+</surveypage>
+
+<surveypage bpaq_2>
+/ caption = "Please indicate how uncharacteristic or characteristic each of the following statements is in describing you.
+"
+/ questions = [1 = q1_P, q2_V, q2_A]
+</surveypage>
+
+<surveypage bpaq_3>
+/ caption = "Please indicate how uncharacteristic or characteristic each of the following statements is in describing you.
+"
+/ questions = [1 = q9_P, q1_A, q3_H]
+</surveypage>
+
+<surveypage bpaq_4>
+/ caption = "Please indicate how uncharacteristic or characteristic each of the following statements is in describing you.
+"
+/ questions = [1 = q3_V, q1_H, q2_P]
+</surveypage>
+
+<surveypage bpaq_5>
+/ caption = "Please indicate how uncharacteristic or characteristic each of the following statements is in describing you.
+"
+/ questions = [1 = q7R_P, q3_P, q6_H]
+</surveypage>
+
+<surveypage bpaq_6>
+/ caption = "Please indicate how uncharacteristic or characteristic each of the following statements is in describing you.
+"
+/ questions = [1 = q8_P, q7_H, q4_V]
+</surveypage>
+
+<surveypage bpaq_7>
+/ caption = "Please indicate how uncharacteristic or characteristic each of the following statements is in describing you.
+"
+/ questions = [1 = q5_H, q8_H, q7_A]
+</surveypage>
+
+<surveypage bpaq_8>
+/ caption = "Please indicate how uncharacteristic or characteristic each of the following statements is in describing you.
+"
+/ questions = [1 = q5_V, q5_P, q4_H]
+</surveypage>
+
+<surveypage bpaq_9>
+/ caption = "Please indicate how uncharacteristic or characteristic each of the following statements is in describing you.
+"
+/ questions = [1 = q3_A, q5_A, q2_H]
+</surveypage>
+
+<surveypage bpaq_10>
+/ caption = "Please indicate how uncharacteristic or characteristic each of the following statements is in describing you.
+"
+/ questions = [1 = q4_P, q6_P]
+</surveypage>
+
+<surveypage bpaq_demographics>
+/ caption = "Please answer the following questions."
+
+/ skip = [
+	parameters.calculateGenderNorms == false;
+]
+/ questions = [1 = age, gender, end]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey bpaq>
+/pages = [
+	1 = bpaq_1;
+	2 = bpaq_2;
+	3 = bpaq_3;
+	4 = bpaq_4;	
+	5 = bpaq_5;	
+	6 = bpaq_6;
+	7 = bpaq_7;
+	8 = bpaq_8;
+	9 = bpaq_9;	
+	10 = bpaq_10;	
+	11 = bpaq_demographics;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.0%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = true
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Submit"
+/ onblockend = [
+	if (radiobuttons.q1_P.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}
+	if (radiobuttons.q2_P.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q3_P.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q4_P.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q5_P.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q6_P.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q7R_P.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q8_P.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q9_P.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	
+	if (radiobuttons.q1_V.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}
+	if (radiobuttons.q2_V.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q3_V.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q4_V.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q5_V.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	
+	if (radiobuttons.q1_A.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}
+	if (radiobuttons.q2_A.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q3_A.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q4R_A.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q5_A.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q6_A.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q7_A.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+
+	if (radiobuttons.q1_H.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}
+	if (radiobuttons.q2_H.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q3_H.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q4_H.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q5_H.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q6_H.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q7_H.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	if (radiobuttons.q8_H.response == ""){
+		values.bpaq_numberMissingItems += 1;
+	}	
+	
+	expressions.generateNorms;
+]
+</survey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

@@ -1,0 +1,1466 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+							Delay & Probability Discounting Procedure (Richards et al., 1999)
+___________________________________________________________________________________________________________________	
+
+Script Author:  Meticulously handcrafted from the finest code by David Nitz (nitz.david@gmail.com) for Millisecond Software, LLC.
+last updated:  02-21-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-21-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a Delay and Probability Discounting Procedure to establish
+a) the hypothetical payoffs at which people start to discount higher monetary rewards
+in favor of shorter wait periods (Delay Discounting)
+b) the fictional payoffs at which people start to discount high monetary rewards of unsure events
+in favor of lower monetary rewards of sure wins (Probability Discounting)
+
+The implemented procedure is based on:
+
+Richards, J. B., Zhang, L., Mitchell, S. H., & De Wit, H. (1999). Delay or probability 
+discounting in a model of impulsive behavior: Effect of alcohol. Journal of the Experimental
+Analysis of Behavior, 71(2), 121-143.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants choose between a standard amount of money ($10) with different time/probability delays 
+or a variable amount with no delay until an indifference point for each delay is found or until
+the maximum number of trials has been run for each delay (default: 30).
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 15 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'dpdt_richards_raw*.iqdat'
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block.
+									
+trialcount							Total number of trials run (including distractor trials).
+
+latency								the participant’s response latency (in ms) for the current trial (in ms)
+response							the selected response of the participant for the current trial (for most trials: A or B)
+text.question.currentItem:			the actual decision question presented to participant
+questiontype:						1 = temporal delay question; 2 = probabilistic delay question
+text.subjectquestion.currentItem:	the question that was randomly selected to determine participant’s reward
+text.subjectanswer.currentItem:		The participant’s response to the win question
+var:								'Variable' amount of money offered in the current trial. This value is computed according to the proper bottom and top limits (see below) by expressions 		't1_var' through 'p5_var'.
+std:								'Standard' amount of money to use throughout the task. Default is 10.
+
+The following variable is only relevant for trials with Question Type = 1	
+t:				Value of the current temporal delay used in a given trial. 
+
+The following variable is only relevant for trials with Question Type = 2	
+p:				Value of the current probabilistic 'delay' used in a given trial. 
+
+The following variables are only relevant for trials trialcode = “t1”
+
+t1_bmax:							The respective maximum bottom limits for temporal delay t1. Used to determine the variable amount of money offered in a given t1 trial and to adjust the limits for subsequent t1 trials.
+t1_bmin:							The respective minimum bottom limits for temporal delay t1. Used to determine the variable amount of money offered in a given t1 trial and to adjust the limits for subsequent t1 trials.
+t1_tmin:							The respective minimum top limits for the temporal delay t1. Used to determine the variable amount of money offered in a given t1 trial and to adjust the limits for subsequent t1 trials.
+t1_tmax:							The respective maximum top limits for the temporal delay t1. Used to determine the variable amount of money offered in a given t1 trial and to adjust the limits for subsequent t1 trials.
+t1_var:								'variable' amount for temporal delays t1. The valid range is restricted by the respective maximum bottom and maximum top limits. Values returned lie between those limits in 0.5 increments.
+t1_count:							Number of trials for temporal delay t1.
+t1_ip_found:						Value reflecting whether an indifference point has been successfully determined ('1') or not ('0') for temporal delay t1.
+t1_ip:								Obtained indifference point estimate for temporal delay t1
+parameters.t1:						Predetermined value for temporal delay t1 questions in this script (t1 = 0) 
+
+(same for all temporal delays t2-t5)
+
+The following variables are only relevant for trials trialcode = “p1”	
+p1_bmax:							The respective maximum bottom limits for probabilistic ‘delay’ p1. Used to determine the variable amount of money offered in a given p1 trial and to adjust the limits for subsequent p1 trials.
+p1_bmin:							The respective minimum bottom limits for probabilistic ‘delay’ p1. Used to determine the variable amount of money offered in a given p1 trial and to adjust the limits for subsequent p1 trials.
+p1_tmin:							The respective minimum top limits for the probabilistic ‘delay’ p1. Used to determine the variable amount of money offered in a given p1 trial and to adjust the limits for subsequent p1 trials.
+p1_tmax:							The respective maximum top limits for the probabilistic ‘delay’ p1. Used to determine the variable amount of money offered in a given p1 trial and to adjust the limits for subsequent p1 trials.
+p1_var:								'variable' amount for probabilistic ‘delay’ p1. The valid range is restricted by the respective maximum bottom and maximum top limits. Values returned lie between those limits in 0.5 increments.
+p1_count:							Number of trials for probabilistic ‘delay’ p1.
+p1_ip_found:						Value reflecting whether an indifference point has been successfully determined ('1') or not ('0') for probabilistic ‘delay’ p1.
+p1_ip:								Obtained indifference point estimate for probabilistic ‘delay’ p1
+p1:									Predetermined value for probabilistic ‘delay’ for p1-questions in this script (p1 = 100) 
+
+(same for all probabilistic delays p2-p5)
+
+Relevant for all trials	
+nips:							The total number of successfully determined indifference points. 
+								The procedure determines a total of 10 different indifference points 
+								(for five temporal delays, 't1' to 't5', and five probabilistic 'delays', 'p1' to 'p5'). 
+								The procedure is stopped as soon as 'expressions.nips' returns 10, i.e. when all 
+								indifference points at question have been obtained.
+								
+distractorstart:				Number of trials to run *before* distractor trials should be added to the mix. 
+								Default is 70, i.e. after 70 experimental trials ('t1' to 'p5') have been run, 
+								every second trial will be a distractor trial ('d0').
+								
+d0_count:						Total number of distractor trials run
+
+d0_var:							Computes a random 'variable' amount to be used in distractor trials ('d0'). 
+								The value returned always lies between 0 and the defined 'standard' amount ($10) in 0.5 increments
+								
+(2) Summary data file: 'dpdt_richards_summary*.iqdat'
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+nips							The total number of successfully determined indifference points. The procedure determines a total of 10 different indifference points (for five temporal delays, 't1' to 't5', and five probabilistic 'delays', 'p1' to 'p5'). The procedure is stopped as soon as 'expressions.nips' returns 10, i.e. when all indifference points at question have been obtained.
+
+t1_ip_found:					Value reflecting whether an indifference point has been successfully determined ('1') or not ('0') for temporal delay t1.
+t1_ip:							Obtained indifference point estimate for temporal delay t1
+
+t2_ip_found:					Value reflecting whether an indifference point has been successfully determined ('1') or not ('0') for temporal delay t2.
+t2_ip:							Obtained indifference point estimate for temporal delay t2
+
+t3_ip_found:					Value reflecting whether an indifference point has been successfully determined ('1') or not ('0') for temporal delay t3.	
+t3_ip:							Obtained indifference point estimate for temporal delay t3
+
+t4_ip_found:					Value reflecting whether an indifference point has been successfully determined ('1') or not ('0') for temporal delay t4.	
+t4_ip:							Obtained indifference point estimate for temporal delay t4
+
+t5_ip_found:					Value reflecting whether an indifference point has been successfully determined ('1') or not ('0') for temporal delay t5.
+t5_ip:							Obtained indifference point estimate for temporal delay t5
+
+p1_ip_found:					Value reflecting whether an indifference point has been successfully determined ('1') or not ('0') for probabilistic delay p1.	
+p1_ip:							Obtained indifference point estimate for probabilistic ‘delay’ p1
+
+p2_ip_found:					Value reflecting whether an indifference point has been successfully determined ('1') or not ('0') for probabilistic delay p2.	
+p2_ip:							Obtained indifference point estimate for probabilistic ‘delay’ p2
+
+p3_ip_found:					Value reflecting whether an indifference point has been successfully determined ('1') or not ('0') for probabilistic delay p3.		
+p3_ip:							Obtained indifference point estimate for probabilistic ‘delay’ p3
+
+p4_ip_found:					Value reflecting whether an indifference point has been successfully determined ('1') or not ('0') for probabilistic delay p4.		
+p4_ip:							Obtained indifference point estimate for probabilistic ‘delay’ p4
+
+p5_ip_found:					Value reflecting whether an indifference point has been successfully determined ('1') or not ('0') for probabilistic delay p5.		
+p5_ip:							Obtained indifference point estimate for probabilistic ‘delay’ p5
+
+text.subjectquestion.currentItem:			the question that was randomly selected to determine participant’s reward
+text.subjectanswer.currentItem:				The participant’s response to the win question
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+* 5 temporal delays and 5 probability "delays"; tested within in a mixed design
+	temporal delays are 0, 2, 30, 180 and 365 days
+	probability delays are: 100, 90, 75, 50 and 25 percent
+	=> change delays under section EDITABLE PARAMETERS
+* 1 standard amount (10), variable amounts between 0 <=variable amount <= 10
+* once an indifference point is found for a particular delay, that delay is not run any further
+* potentially 30 trials can be run for each delay -> can be edited under block.DPDT
+* after a predetermined amount of trials (see EDITABLE PARAMETERS), a distractor trial is run after each test trial
+* script stops if an indifference point has been found for all delays or the maximum number of trials 
+has been run for each delay (default: 30).
+
+
+	Description of the adjustment procedure:
+	
+	If a subject picks the 'variable' amount on a given trial, the respective top and the bottom 
+	limits are decreased according to the following three rules: 
+	(a) If the 'variable' amount is less than the minimum top limit, the minimum top limit is set to
+	equal the 'variable' amount. The maximum top limit is set equal to the previous minimum top 
+	limit. 
+	(b) If the 'variable' amount is greater than the minimum top limit, the maximum top limit is 
+	set to equal the 'variable' amount. The minimum top limit is left unchanged.
+	(c) If the 'variable' amount is less than the minimum bottom limit, the minimum bottom limit 
+	is set to equal the 'variable' amount. The maximum bottom limit is set equal to $0.
+
+	If a subject picks the 'standard' amount ($10) on a given trial, the respective top and bottom
+	limits are increased according to the following three rules:
+	(a) If the 'variable' amount is greater than the minimum bottom limit, the minimum bottom 
+	limit is set to equal the 'variable' amount. The maximum bottom limit is set equal to the 
+	previous minimum bottom limit.
+	(b) If the 'variable' amount is less than the minimum bottom limit, the maximum bottom limit 
+	is set to equal the 'variable' amount. The minimum bottom limit is left unchanged.
+	(c) If the 'variable' amount is greater than the minimum top limit, the minimum top limit is 
+	set to equal to the current 'variable' amount. The maximum top limit is set to equal the 
+	'standard' amount ($10). 
+
+	As soon as the difference between the respective maximum bottom limit and maximum top 
+	limit reaches $0.50, the corresponding variable amount is recorded as estimate of the 
+	respective indifference point. 
+	After an indifference point has been successfully determined for a particular temporal or
+	probabilistic delay, no more trials of that type will be run.
+
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see section EDITABLE INSTRUCTIONS
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+	pretrialdelay:							Adjustable pretrialpause in milliseconds. Change as needed.
+	posttrialdelay:							Adjustable posttrialpause in milliseconds. Change as needed.
+	
+	distractorstart:						Number of trials to run *before* distractor trials should be 
+											added to the mix. Default is 70, i.e. after 70 experimental
+											trials ('t1' to 'p5') have been run, every second trial will be a
+											distractor trial ('d0').
+											
+	std:									'Standard' amount of money to use throughout the task.
+											Default is 10.
+											
+	t1 to t5:								Values for the five temporal delays. The procedure estimates
+											indifference points for five different temporal delays. Defaults
+											are 0, 2, 30, 180 and 365 days.
+											
+	p1 to p5:								Values for the five probabilistic 'delays'. The procedure 
+											estimates indifference points for five different probabilities.
+											Defaults are 100, 90, 75, 50 and 25 percent.
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ pretrialdelay = 500
+/ posttrialdelay = 0
+/ distractorstart = 70
+/ std = 10
+/ t1 = 0 
+/ t2 = 2
+/ t3 = 30
+/ t4 = 180
+/ t5 = 365
+/ p1 = 100
+/ p2 = 90
+/ p3 = 75
+/ p4 = 50
+/ p5 = 25
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item questions>
+/ 1 = "Would you rather have ~r(a) $<%values.var%> now or (b) $<%parameters.std%> in <%values.t%> days?"
+/ 2 = "Would you rather have ~r(a) $<%values.var%> for sure or (b) $<%parameters.std%> with a <%values.p%>% chance?"
+</item>
+
+<item finalpayoffinfo>
+/ 1 = "Question & Answer on Trial #<%values.payoffquestion%>:"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3%, false)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ inputdevice = mouse
+</instruct>
+
+<page intro1>
+<h1>Welcome!</h1><hr><br>
+In this session, you will have the opportunity to choose between different amounts of money available after
+different delays or with different chances. The test consists of about 110 questions, such as the
+following:<br><br>
+<center>"Would you rather have $2 now or $10 for sure in 30 days?"<br>
+or<br>
+"Would you rather have $5 for sure or $10 with a 25% chance?"</center><br><br><br>
+Click 'Continue' to see the next page!
+</page>
+
+<page intro2>
+<br>At the end of the session, one of the choices you made will be selected at random and you
+will receive whatever you chose in response to that question.<br><br>
+&bull; If on that trial you selected an <u>immediate amount</u> of money, you will receive the money in
+cash at the end of the session.<br><br>
+&bull; If you selected <u>delayed money</u>, the money will be placed in an envelope with your name on it,
+and it will be available to you when the time has elapsed.<br><br>
+&bull; If you selected a <u>probabilistic amount</u>, you will select a token from a bag containing two colors
+of tokens in the proportion that reflects the probability. For example, if the trial you selected
+was $10 with a 25% chance, you will select one token from a bag containing 1 green token
+representing "get $10" and 3 yellow tokens representing "get $0".You will receive the amount of
+money indicated by the color of the token immediately in cash.<br><br><br>
+Click 'Start' to start the task!
+</page>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ position = (50%, 85%)
+/ size = (50%, 4%)
+/ vjustify = center
+</text>
+
+<button exit>
+/ caption = "EXIT"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (20%, 5%)
+</button>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ inputdevice = mouse
+/ fontstyle = ("Arial", 3.75%, true)
+/ minimumversion = "6.5.2.0"
+/ halign = center
+/ valign = center
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Custom Data Output
+**************************************************************************************************************
+**************************************************************************************************************
+
+****************************
+raw data
+****************************
+
+<data DPDT>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum, 
+values.trialcount,
+
+	latency, response, text.question.currentItem, values.questiontype, 
+	text.subjectquestion.currentItem, text.subjectanswer.currentItem,
+	values.var, parameters.std, values.t,values.p,
+	values.t1_bmax, values.t1_bmin, values.t1_tmin, values.t1_tmax, expressions.t1_var,
+	values.t1_count, values.t1_ip_found, values.t1_ip, parameters.t1,
+	values.t2_bmax, values.t2_bmin, values.t2_tmin, values.t2_tmax, expressions.t2_var,
+	values.t2_count, values.t2_ip_found, values.t2_ip, parameters.t2,
+	values.t3_bmax, values.t3_bmin, values.t3_tmin, values.t3_tmax, expressions.t3_var,
+	values.t3_count, values.t3_ip_found, values.t3_ip, parameters.t3,
+	values.t4_bmax, values.t4_bmin, values.t4_tmin, values.t4_tmax, expressions.t4_var,
+	values.t4_count, values.t4_ip_found, values.t4_ip, parameters.t4,
+	values.t5_bmax, values.t5_bmin, values.t5_tmin, values.t5_tmax, expressions.t5_var,
+	values.t5_count, values.t5_ip_found, values.t5_ip, parameters.t5,
+	values.p1_bmax, values.p1_bmin, values.p1_tmin, values.p1_tmax, expressions.p1_var,
+	values.p1_count, values.p1_ip_found, values.p1_ip, parameters.p1,
+	values.p2_bmax, values.p2_bmin, values.p2_tmin, values.p2_tmax, expressions.p2_var,
+	values.p2_count, values.p2_ip_found, values.p2_ip, parameters.p2,
+	values.p3_bmax, values.p3_bmin, values.p3_tmin, values.p3_tmax, expressions.p3_var,
+	values.p3_count, values.p3_ip_found, values.p3_ip, parameters.p3,
+	values.p4_bmax, values.p4_bmin, values.p4_tmin, values.p4_tmax, expressions.p4_var,
+	values.p4_count, values.p4_ip_found, values.p4_ip, parameters.p4,
+	values.p5_bmax, values.p5_bmin, values.p5_tmin, values.p5_tmax, expressions.p5_var,
+	values.p5_count, values.p5_ip_found, values.p5_ip, parameters.p5,
+	expressions.nips, parameters.distractorstart, values.d0_count, expressions.d0_var)
+</data>
+
+********************************
+summary data
+********************************
+
+<summarydata DPDT>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.nips, 
+	values.t1_ip_found, values.t1_ip, values.t2_ip_found, values.t2_ip, values.t3_ip_found, values.t3_ip, 
+	values.t4_ip_found, values.t4_ip, values.t5_ip_found, values.t5_ip,
+	values.p1_ip_found, values.p1_ip, values.p2_ip_found, values.p2_ip, values.p3_ip_found, values.p3_ip, 
+	values.p4_ip_found, values.p4_ip, values.p5_ip_found, values.p5_ip, 
+	text.subjectquestion.currentItem, text.subjectanswer.currentItem)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	The remaining entries are updated at runtime / used for data recording and should *not* be 
+	changed, unless you really know what you are doing. Entries of interest are explained below.
+**************************************************************************************************************
+**************************************************************************************************************
+
+	var:									'Variable' amount of money offered in the current trial. This 
+											value is computed according to the proper bottom and top 
+											limits (see below) by expressions 't1_var' through 'p5_var'.
+	t:										Value of the current temporal delay used in a given trial.
+	p:										Value of the current probabilistic 'delay' in a given trial.
+	payoffquestion:							Number of randomly determined question at the end of the 
+											task. The subject is compensated for participation according
+											to her/his answer to this question.
+	questiontype:							Switch to alternate between different question phrasings for 
+											temporal vs. probabilistic delay trials. Value is determined
+											at runtime.
+	trialcount:								Total number of trials run (including distractor trials).
+	t1_ip to t5_ip:							Obtained indifference point estimates for the five different
+											temporal delays ('t1' to 't5').
+	p1_ip to p5_ip:							Obtained indifference point estimates for the five different
+											probabilistic 'delays' ('p1' to 'p5').
+	t1_ip_found to t5_ip_found:				Value reflecting whether an indifference point has been
+											successfully determined ('1') or not ('0') for each of the five 
+											different temporal delays ('t1' to 't5').
+	p1_ip_found to p5_ip_found:				Value reflecting whether an indifference point has been
+											successfully determined ('1') or not ('0') for each of the five 
+											different probabilistic 'delays' ('p1' to 'p5').
+	t1_count to t5_count:					Number of trials for each of the five different temporal delays
+											('t1' to 't5').
+	p1_count to p5_count:					Number of trials for each of the five different probabilistic 
+											'delays' ('t1' to 't5').
+	t1_tmin to t5_tmin:						The respective minimum top limits for the different temporal 
+											delays. Used to determine the variable amount of money
+											offered in a given trial and to adjust the limits for subsequent
+											trials.
+	t1_tmax to t5_tmax:						The respective maximum top limits for the different temporal 
+											delays. Used to determine the variable amount of money
+											offered in a given trial and to adjust the limits for subsequent
+											trials.
+	t1_bmin to t5_bmin:						The respective minimum bottom limits for the different 
+											temporal delays. Used to determine the variable amount of 
+											money offered in a given trial and to adjust the limits for 
+											subsequent trials.
+	t1_bmax to t5_bmax:						The respective maximum bottom limits for the different 
+											temporal delays. Used to determine the variable amount of 
+											money offered in a given trial and to adjust the limits for 
+											subsequent trials.
+	p1_tmin to p5_tmin:						The respective minimum top limits for the different 
+											probabilistic 'delays'. Used to determine the variable amount of 
+											money offered in a given trial and to adjust the limits for 
+											subsequent trials.
+	p1_tmax to p5_tmax:						The respective maximum top limits for the different 
+											probabilistic 'delays'. Used to determine the variable amount of 
+											money offered in a given trial and to adjust the limits for 
+											subsequent trials.
+	p1_bmin to p5_bmin:						The respective minimum bottom limits for the different 
+											probabilistic 'delays'. Used to determine the variable amount of 
+											money offered in a given trial and to adjust the limits for 
+											subsequent trials.
+	p1_bmax to p5_bmax:						The respective maximum bottom limits for the different 
+											probabilistic 'delays'. Used to determine the variable amount of 
+											money offered in a given trial and to adjust the limits for 
+											subsequent trials.
+	d0_count:								Total number of distractor trials.
+
+**************************************************************************************************************
+**************************************************************************************************************
+<values taskparams>
+/ var = 0
+/ t = 0
+/ p = 0
+/ questiontype = 0
+/ payoffquestion = 0
+/ t1_count = 0
+/ t1_ip = 0
+/ t1_ip_found = 0
+/ t1_tmin = 0
+/ t1_tmax = 0
+/ t1_bmin = 0
+/ t1_bmax = 0
+/ t2_count = 0
+/ t2_ip = 0
+/ t2_ip_found = 0
+/ t2_tmin = 0
+/ t2_tmax = 0
+/ t2_bmin = 0
+/ t2_bmax = 0
+/ t3_count = 0
+/ t3_ip = 0
+/ t3_ip_found = 0
+/ t3_tmin = 0
+/ t3_tmax = 0
+/ t3_bmin = 0
+/ t3_bmax = 0
+/ t4_count = 0
+/ t4_ip = 0
+/ t4_ip_found = 0
+/ t4_tmin = 0
+/ t4_tmax = 0
+/ t4_bmin = 0
+/ t4_bmax = 0
+/ t5_count = 0
+/ t5_ip = 0
+/ t5_ip_found = 0
+/ t5_tmin = 0
+/ t5_tmax = 0
+/ t5_bmin = 0
+/ t5_bmax = 0
+/ p1_count = 0
+/ p1_ip = 0
+/ p1_ip_found = 0
+/ p1_tmin = 0
+/ p1_tmax = 0
+/ p1_bmin = 0
+/ p1_bmax = 0
+/ p2_count = 0
+/ p2_ip = 0
+/ p2_ip_found = 0
+/ p2_tmin = 0
+/ p2_tmax = 0
+/ p2_bmin = 0
+/ p2_bmax = 0
+/ p3_count = 0
+/ p3_ip = 0
+/ p3_ip_found = 0
+/ p3_tmin = 0
+/ p3_tmax = 0
+/ p3_bmin = 0
+/ p3_bmax = 0
+/ p4_count = 0
+/ p4_ip = 0
+/ p4_ip_found = 0
+/ p4_tmin = 0
+/ p4_tmax = 0
+/ p4_bmin = 0
+/ p4_bmax = 0
+/ p5_count = 0
+/ p5_ip = 0
+/ p5_ip_found = 0
+/ p5_tmin = 0
+/ p5_tmax = 0
+/ p5_bmin = 0
+/ p5_bmax = 0
+/ d0_count = 0
+/ trialcount = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Expressions
+**************************************************************************************************************
+**************************************************************************************************************
+
+	t1_var to t5_var:					Compute a random 'variable' amount for each of the five different
+										temporal delays ('t1' to 't5'). The valid range is restricted by the 
+										respective maximum bottom and maximum top limits. Values 
+										returned lie between those limits in 0.5 increments.
+	p1_var to p5_var:					Compute a random 'variable' amount for each of the five different
+										probabilistic 'delays' ('p1' to 'p5'). The valid range is restricted by the 
+										respective maximum bottom and maximum top limits. Values 
+										returned lie between those limits in 0.5 increments.
+	d0_var:								Compute a random 'variable' amount to be used in distractor trials
+										('d0'). The value returned always lies between 0 and the defined
+										'standard' amount ($10) in 0.5 increments.
+	nips:								The total number of successfully determined indifference points.
+										The procedure determines a total of 10 different indiffernce points
+										(for five temporal delays, 't1' to 't5', and five probabilistic 'delays', 'p1'
+										 to 'p5'). The procedure is stopped as soon as 'expressions.nips' 
+										returns 10, i.e. when all indifference points at question have been
+										obtained.
+
+**************************************************************************************************************
+**************************************************************************************************************
+<expressions>
+/ t1_var = (round(rand(2*values.t1_bmax, 2*values.t1_tmax))/2)
+/ t2_var = (round(rand(2*values.t2_bmax, 2*values.t2_tmax))/2)
+/ t3_var = (round(rand(2*values.t3_bmax, 2*values.t3_tmax))/2)
+/ t4_var = (round(rand(2*values.t4_bmax, 2*values.t4_tmax))/2)
+/ t5_var = (round(rand(2*values.t5_bmax, 2*values.t5_tmax))/2)
+/ p1_var = (round(rand(2*values.p1_bmax, 2*values.p1_tmax))/2)
+/ p2_var = (round(rand(2*values.p2_bmax, 2*values.p2_tmax))/2)
+/ p3_var = (round(rand(2*values.p3_bmax, 2*values.p3_tmax))/2)
+/ p4_var = (round(rand(2*values.p4_bmax, 2*values.p4_tmax))/2)
+/ p5_var = (round(rand(2*values.p5_bmax, 2*values.p5_tmax))/2)
+/ d0_var = (round(rand(0, 2*parameters.std))/2)
+/ nips = (values.t1_ip_found+values.t2_ip_found+values.t3_ip_found+values.t4_ip_found+values.t5_ip_found+
+	values.p1_ip_found+values.p2_ip_found+values.p3_ip_found+values.p4_ip_found+values.p5_ip_found)
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Block Elements
+**************************************************************************************************************
+**************************************************************************************************************
+	Main Procedure Block
+**************************************************************************************************************
+**************************************************************************************************************
+<block DPDT>
+/ stop = [expressions.nips>=10]
+/ onblockbegin = [
+	values.t1_tmax=parameters.std; 
+	values.t1_tmin=parameters.std; 
+	values.t2_tmax=parameters.std; 
+	values.t2_tmin=parameters.std;
+	values.t3_tmax=parameters.std; 
+	values.t3_tmin=parameters.std;
+	values.t4_tmax=parameters.std; 
+	values.t4_tmin=parameters.std;
+	values.t5_tmax=parameters.std; 
+	values.t5_tmin=parameters.std;
+	values.p1_tmax=parameters.std; 
+	values.p1_tmin=parameters.std; 
+	values.p2_tmax=parameters.std; 
+	values.p2_tmin=parameters.std;
+	values.p3_tmax=parameters.std; 
+	values.p3_tmin=parameters.std;
+	values.p4_tmax=parameters.std; 
+	values.p4_tmin=parameters.std;
+	values.p5_tmax=parameters.std; 
+	values.p5_tmin=parameters.std;
+]
+/ trials = [1-300=noreplacenorepeat(t1,t2,t3,t4,t5,p1,p2,p3,p4,p5)]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Block for Determining Subject Payoff
+**************************************************************************************************************
+**************************************************************************************************************
+<block payoff>
+/ trials = [1=getpayoff]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Experiment Definition
+**************************************************************************************************************
+**************************************************************************************************************
+<expt DPDT>
+/ preinstructions = (intro1, intro2)
+/ blocks = [
+	1=DPDT; 
+	2=payoff;
+]
+</expt>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Trial Elements
+**************************************************************************************************************
+**************************************************************************************************************
+	Description of the adjustment procedure:
+	
+	If a subject picks the 'variable' amount on a given trial, the respective top and the bottom 
+	limits are decreased according to the following three rules: 
+	(a) If the 'variable' amount is less than the minimum top limit, the minimum top limit is set to
+	equal the 'variable' amount. The maximum top limit is set equal to the previous minimum top 
+	limit. 
+	(b) If the 'variable' amount is greater than the minimum top limit, the maximum top limit is 
+	set to equal the 'variable' amount. The minimum top limit is left unchanged.
+	(c) If the 'variable' amount is less than the minimum bottom limit, the minimum bottom limit 
+	is set to equal the 'variable' amount. The maximum bottom limit is set equal to $0.
+
+	If a subject picks the 'standard' amount ($10) on a given trial, the respective top and bottom
+	limits are increased according to the following three rules:
+	(a) If the 'variable' amount is greater than the minimum bottom limit, the minimum bottom 
+	limit is set to equal the 'variable' amount. The maximum bottom limit is set equal to the 
+	previous minimum bottom limit.
+	(b) If the 'variable' amount is less than the minimum bottom limit, the maximum bottom limit 
+	is set to equal the 'variable' amount. The minimum bottom limit is left unchanged.
+	(c) If the 'variable' amount is greater than the minimum top limit, the minimum top limit is 
+	set to equal to the current 'variable' amount. The maximum top limit is set to equal the 
+	'standard' amount ($10). 
+
+	As soon as the difference between the respective maximum bottom limit and maximum top 
+	limit reaches $0.50, the corresponding variable amount is recorded as estimate of the 
+	respective indifference point. 
+	After an indifference point has been successfully determined for a particular temporal or
+	probabilistic delay, no more trials of that type will be run.
+
+	The adjustment procedure is identical for all trial elements ('t1' to 't5' and 'p1' to 'p5').
+	Response 'A' always maps to the 'variable' amount, response 'B' always maps to the 'standard'
+	amount.
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Temporal Delay Estimation
+**************************************************************************************************************
+**************************************************************************************************************
+	Trial T1: Obtaining the Indifference Point for T1
+**************************************************************************************************************
+**************************************************************************************************************
+<trial t1>
+/ skip = [values.t1_ip_found==1]
+/ pretrialpause = parameters.pretrialdelay
+/ posttrialpause = parameters.posttrialdelay
+/ ontrialbegin = [
+	values.t=parameters.t1; 
+	values.var=expressions.t1_var; 
+	values.questiontype=1;
+	values.t1_count+=1; 
+	values.trialcount+=1;
+]
+/ stimulusframes = [1=clearScreen, question, A, B]
+/ validresponse = (A, B)
+/ responsemessage = ("A", Aclick, 200)
+/ responsemessage = ("B", Bclick, 200)
+/ ontrialend = [
+	if (trial.t1.response=="A"){
+		if (values.var>values.t1_tmin){
+			values.t1_tmax=values.var;
+		} else if(values.var<=values.t1_tmin){
+			values.t1_tmax=values.t1_tmin; 
+			values.t1_tmin=values.var;
+		} else if(values.var<values.t1_bmin){
+			values.t1_bmax=0; 
+			values.t1_bmin=values.var;
+		}
+	} else if (trial.t1.response=="B"){
+		if (values.var<=values.t1_bmin){
+			values.t1_bmax=values.var;
+		} else if (values.var>values.t1_bmin){
+			values.t1_bmax=values.t1_bmin; 
+			values.t1_bmin=values.var;
+		} else if (values.var>values.t1_tmin){
+			values.t1_tmax=parameters.std; 
+			values.t1_tmin=values.var;
+		}
+	}
+	
+	if(values.t1_tmax-values.t1_bmax<=0.50){
+		values.t1_ip=values.var; 
+		values.t1_ip_found=1;
+	}
+	item.subjectquestions.items=text.question.currentItem;
+	item.subjectanswers=trial.t1.response;
+]
+/ branch = [
+	if (values.trialcount>=parameters.distractorstart){
+		return trial.d0;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Trial T2: Obtaining the Indifference Point for T2
+**************************************************************************************************************
+**************************************************************************************************************
+<trial t2>
+/ skip = [values.t2_ip_found==1]
+/ pretrialpause = parameters.pretrialdelay
+/ posttrialpause = parameters.posttrialdelay
+/ ontrialbegin = [
+	values.t=parameters.t2; 
+	values.var=expressions.t2_var; 
+	values.questiontype=1;
+	values.t2_count+=1; 
+	values.trialcount+=1;
+]
+/ stimulusframes = [1=clearScreen, question, A, B]
+/ validresponse = (A, B)
+/ responsemessage = ("A", Aclick, 200)
+/ responsemessage = ("B", Bclick, 200)
+/ ontrialend = [
+	if (trial.t2.response=="A"){
+		if (values.var>values.t2_tmin){
+			values.t2_tmax=values.var;
+		} else if(values.var<=values.t2_tmin){
+			values.t2_tmax=values.t2_tmin; 
+			values.t2_tmin=values.var;
+		} else if(values.var<values.t2_bmin){
+			values.t2_bmax=0; 
+			values.t2_bmin=values.var;
+		}
+	} else if (trial.t2.response=="B"){
+		if (values.var<=values.t2_bmin){
+			values.t2_bmax=values.var;
+		} else if (values.var>values.t2_bmin){
+			values.t2_bmax=values.t2_bmin; 
+			values.t2_bmin=values.var;
+		} else if (values.var>values.t2_tmin){
+			values.t2_tmax=parameters.std; 
+			values.t2_tmin=values.var;
+		}
+	}
+	
+	if(values.t2_tmax-values.t2_bmax<=0.50){
+		values.t2_ip=values.var; 
+		values.t2_ip_found=1;
+	}
+	item.subjectquestions.items=text.question.currentItem;
+	item.subjectanswers=trial.t2.response;
+]
+/ branch = [
+	if (values.trialcount>=parameters.distractorstart){
+		return trial.d0;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Trial T3: Obtaining the Indifference Point for T3
+**************************************************************************************************************
+**************************************************************************************************************
+<trial t3>
+/ skip = [values.t3_ip_found==1]
+/ pretrialpause = parameters.pretrialdelay
+/ posttrialpause = parameters.posttrialdelay
+/ ontrialbegin = [
+	values.t=parameters.t3; 
+	values.var=expressions.t3_var; 
+	values.questiontype=1;
+	values.t3_count+=1; 
+	values.trialcount+=1;
+]
+/ stimulusframes = [1=clearScreen, question, A, B]
+/ validresponse = (A, B)
+/ responsemessage = ("A", Aclick, 200)
+/ responsemessage = ("B", Bclick, 200)
+/ ontrialend = [
+	if (trial.t3.response=="A"){
+		if (values.var>values.t3_tmin){
+			values.t3_tmax=values.var;
+		} else if(values.var<=values.t3_tmin){
+			values.t3_tmax=values.t3_tmin; 
+			values.t3_tmin=values.var;
+		} else if(values.var<values.t3_bmin){
+			values.t3_bmax=0; 
+			values.t3_bmin=values.var;
+		}
+	} else if (trial.t3.response=="B"){
+		if (values.var<=values.t3_bmin){
+			values.t3_bmax=values.var;
+		} else if (values.var>values.t3_bmin){
+			values.t3_bmax=values.t3_bmin; 
+			values.t3_bmin=values.var;
+		} else if (values.var>values.t3_tmin){
+			values.t3_tmax=parameters.std; 
+			values.t3_tmin=values.var;
+		}
+	}
+	
+	if(values.t3_tmax-values.t3_bmax<=0.50){
+		values.t3_ip=values.var; 
+		values.t3_ip_found=1;
+	}
+	item.subjectquestions.items=text.question.currentItem;
+	item.subjectanswers=trial.t3.response;
+]
+/ branch = [
+	if (values.trialcount>=parameters.distractorstart){
+		return trial.d0;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Trial T4: Obtaining the Indifference Point for T4
+**************************************************************************************************************
+**************************************************************************************************************
+<trial t4>
+/ skip = [values.t4_ip_found==1]
+/ pretrialpause = parameters.pretrialdelay
+/ posttrialpause = parameters.posttrialdelay
+/ ontrialbegin = [
+	values.t=parameters.t4; 
+	values.var=expressions.t4_var; 
+	values.questiontype=1;
+	values.t4_count+=1; 
+	values.trialcount+=1;
+]
+/ stimulusframes = [1=clearScreen, question, A, B]
+/ validresponse = (A, B)
+/ responsemessage = ("A", Aclick, 200)
+/ responsemessage = ("B", Bclick, 200)
+/ ontrialend = [
+	if (trial.t4.response=="A"){
+		if (values.var>values.t4_tmin){
+			values.t4_tmax=values.var;
+		} else if(values.var<=values.t4_tmin){
+			values.t4_tmax=values.t4_tmin; 
+			values.t4_tmin=values.var;
+		} else if(values.var<values.t4_bmin){
+			values.t4_bmax=0; 
+			values.t4_bmin=values.var;
+		}
+	} else if (trial.t4.response=="B"){
+		if (values.var<=values.t4_bmin){
+			values.t4_bmax=values.var;
+		} else if (values.var>values.t4_bmin){
+			values.t4_bmax=values.t4_bmin; 
+			values.t4_bmin=values.var;
+		} else if (values.var>values.t4_tmin){
+			values.t4_tmax=parameters.std; 
+			values.t4_tmin=values.var;
+		}
+	}
+	
+	if(values.t4_tmax-values.t4_bmax<=0.50){
+		values.t4_ip=values.var; 
+		values.t4_ip_found=1;
+	}
+	item.subjectquestions.items=text.question.currentItem;
+	item.subjectanswers=trial.t4.response;
+]
+/ branch = [
+	if (values.trialcount>=parameters.distractorstart){
+		return trial.d0;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Trial T5: Obtaining the Indifference Point for T5
+**************************************************************************************************************
+**************************************************************************************************************
+<trial t5>
+/ skip = [values.t5_ip_found==1]
+/ pretrialpause = parameters.pretrialdelay
+/ posttrialpause = parameters.posttrialdelay
+/ ontrialbegin = [
+	values.t=parameters.t5; 
+	values.var=expressions.t5_var; 
+	values.questiontype=1;
+	values.t5_count+=1; 
+	values.trialcount+=1;
+]
+/ stimulusframes = [1=clearScreen, question, A, B]
+/ validresponse = (A, B)
+/ responsemessage = ("A", Aclick, 200)
+/ responsemessage = ("B", Bclick, 200)
+/ ontrialend = [
+	if (trial.t5.response=="A"){
+		if (values.var>values.t5_tmin){
+			values.t5_tmax=values.var;
+		} else if(values.var<=values.t5_tmin){
+			values.t5_tmax=values.t5_tmin; 
+			values.t5_tmin=values.var;
+		} else if(values.var<values.t5_bmin){
+			values.t5_bmax=0; 
+			values.t5_bmin=values.var;
+		}
+	} else if (trial.t5.response=="B"){
+		if (values.var<=values.t5_bmin){
+			values.t5_bmax=values.var;
+		} else if (values.var>values.t5_bmin){
+			values.t5_bmax=values.t5_bmin; 
+			values.t5_bmin=values.var;
+		} else if (values.var>values.t5_tmin){
+			values.t5_tmax=parameters.std; 
+			values.t5_tmin=values.var;
+		}
+	}
+	
+	if(values.t5_tmax-values.t5_bmax<=0.50){
+		values.t5_ip=values.var; 
+		values.t5_ip_found=1;
+	}
+	item.subjectquestions.items=text.question.currentItem;
+	item.subjectanswers=trial.t5.response;
+]
+/ branch = [
+	if (values.trialcount>=parameters.distractorstart){
+		return trial.d0;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Probabilistic Delay Estimation
+**************************************************************************************************************
+**************************************************************************************************************
+	Trial P1: Obtaining the Indifference Point for P1
+**************************************************************************************************************
+**************************************************************************************************************
+<trial p1>
+/ skip = [values.p1_ip_found==1]
+/ pretrialpause = parameters.pretrialdelay
+/ posttrialpause = parameters.posttrialdelay
+/ ontrialbegin = [
+	values.p=parameters.p1; 
+	values.var=expressions.p1_var; 
+	values.questiontype=2;
+	values.p1_count+=1; 
+	values.trialcount+=1;
+]
+/ stimulusframes = [1=clearScreen, question, A, B]
+/ validresponse = (A, B)
+/ responsemessage = ("A", Aclick, 200)
+/ responsemessage = ("B", Bclick, 200)
+/ ontrialend = [
+	if (trial.p1.response=="A"){
+		if (values.var>values.p1_tmin){
+			values.p1_tmax=values.var;
+		} else if(values.var<=values.p1_tmin){
+			values.p1_tmax=values.p1_tmin; 
+			values.p1_tmin=values.var;
+		} else if(values.var<values.p1_bmin){
+			values.p1_bmax=0; 
+			values.p1_bmin=values.var;
+		}
+	} else if (trial.p1.response=="B"){
+		if (values.var<=values.p1_bmin){
+			values.p1_bmax=values.var;
+		} else if (values.var>values.p1_bmin){
+			values.p1_bmax=values.p1_bmin; 
+			values.p1_bmin=values.var;
+		} else if (values.var>values.p1_tmin){
+			values.p1_tmax=parameters.std; 
+			values.p1_tmin=values.var;
+		}
+	}
+	
+	if(values.p1_tmax-values.p1_bmax<=0.50){
+		values.p1_ip=values.var; 
+		values.p1_ip_found=1;
+	}
+	item.subjectquestions.items=text.question.currentItem;
+	item.subjectanswers=trial.p1.response;
+]
+/ branch = [
+	if (values.trialcount>=parameters.distractorstart){
+		return trial.d0;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Trial P2: Obtaining the Indifference Point for P2
+**************************************************************************************************************
+**************************************************************************************************************
+<trial p2>
+/ skip = [values.p2_ip_found==1]
+/ pretrialpause = parameters.pretrialdelay
+/ posttrialpause = parameters.posttrialdelay
+/ ontrialbegin = [
+	values.p=parameters.p2; 
+	values.var=expressions.p2_var; 
+	values.questiontype=2;
+	values.p2_count+=1; 
+	values.trialcount+=1;
+]
+/ stimulusframes = [1=clearScreen, question, A, B]
+/ validresponse = (A, B)
+/ responsemessage = ("A", Aclick, 200)
+/ responsemessage = ("B", Bclick, 200)
+/ ontrialend = [
+	if (trial.p2.response=="A"){
+		if (values.var>values.p2_tmin){
+			values.p2_tmax=values.var;
+		} else if(values.var<=values.p2_tmin){
+			values.p2_tmax=values.p2_tmin; 
+			values.p2_tmin=values.var;
+		} else if(values.var<values.p2_bmin){
+			values.p2_bmax=0; 
+			values.p2_bmin=values.var;
+		}
+	} else if (trial.p2.response=="B"){
+		if (values.var<=values.p2_bmin){
+			values.p2_bmax=values.var;
+		} else if (values.var>values.p2_bmin){
+			values.p2_bmax=values.p2_bmin; 
+			values.p2_bmin=values.var;
+		} else if (values.var>values.p2_tmin){
+			values.p2_tmax=parameters.std; 
+			values.p2_tmin=values.var;
+		}
+	}
+	
+	if(values.p2_tmax-values.p2_bmax<=0.50){
+		values.p2_ip=values.var; 
+		values.p2_ip_found=1;
+	}
+	item.subjectquestions.items=text.question.currentItem;
+	item.subjectanswers=trial.p2.response;
+]
+/ branch = [
+	if (values.trialcount>=parameters.distractorstart){
+		return trial.d0;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Trial P3: Obtaining the Indifference Point for P3
+**************************************************************************************************************
+**************************************************************************************************************
+<trial p3>
+/ skip = [values.p3_ip_found==1]
+/ pretrialpause = parameters.pretrialdelay
+/ posttrialpause = parameters.posttrialdelay
+/ ontrialbegin = [
+	values.p=parameters.p3; 
+	values.var=expressions.p3_var; 
+	values.questiontype=2;
+	values.p3_count+=1; 
+	values.trialcount+=1;
+]
+/ stimulusframes = [1=clearScreen, question, A, B]
+/ validresponse = (A, B)
+/ responsemessage = ("A", Aclick, 200)
+/ responsemessage = ("B", Bclick, 200)
+/ ontrialend = [
+	if (trial.p3.response=="A"){
+		if (values.var>values.p3_tmin){
+			values.p3_tmax=values.var;
+		} else if(values.var<=values.p3_tmin){
+			values.p3_tmax=values.p3_tmin; 
+			values.p3_tmin=values.var;
+		} else if(values.var<values.p3_bmin){
+			values.p3_bmax=0; 
+			values.p3_bmin=values.var;
+		}
+	} else if (trial.p3.response=="B"){
+		if (values.var<=values.p3_bmin){
+			values.p3_bmax=values.var;
+		} else if (values.var>values.p3_bmin){
+			values.p3_bmax=values.p3_bmin; 
+			values.p3_bmin=values.var;
+		} else if (values.var>values.p3_tmin){
+			values.p3_tmax=parameters.std; 
+			values.p3_tmin=values.var;
+		}
+	}
+	
+	if(values.p3_tmax-values.p3_bmax<=0.50){
+		values.p3_ip=values.var; 
+		values.p3_ip_found=1;
+	}
+	item.subjectquestions.items=text.question.currentItem;
+	item.subjectanswers=trial.p3.response;
+]
+/ branch = [
+	if (values.trialcount>=parameters.distractorstart){
+		return trial.d0;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Trial P4: Obtaining the Indifference Point for P4
+**************************************************************************************************************
+**************************************************************************************************************
+<trial p4>
+/ skip = [values.p4_ip_found==1]
+/ pretrialpause = parameters.pretrialdelay
+/ posttrialpause = parameters.posttrialdelay
+/ ontrialbegin = [
+	values.p=parameters.p4; 
+	values.var=expressions.p4_var; 
+	values.questiontype=2;
+	values.p4_count+=1; 
+	values.trialcount+=1;
+]
+/ stimulusframes = [1=clearScreen, question, A, B]
+/ validresponse = (A, B)
+/ responsemessage = ("A", Aclick, 200)
+/ responsemessage = ("B", Bclick, 200)
+/ ontrialend = [
+	if (trial.p4.response=="A"){
+		if (values.var>values.p4_tmin){
+			values.p4_tmax=values.var;
+		} else if(values.var<=values.p4_tmin){
+			values.p4_tmax=values.p4_tmin; 
+			values.p4_tmin=values.var;
+		} else if(values.var<values.p4_bmin){
+			values.p4_bmax=0; 
+			values.p4_bmin=values.var;
+		}
+	} else if (trial.p4.response=="B"){
+		if (values.var<=values.p4_bmin){
+			values.p4_bmax=values.var;
+		} else if (values.var>values.p4_bmin){
+			values.p4_bmax=values.p4_bmin; 
+			values.p4_bmin=values.var;
+		} else if (values.var>values.p4_tmin){
+			values.p4_tmax=parameters.std; 
+			values.p4_tmin=values.var;
+		}
+	}
+	
+	if(values.p4_tmax-values.p4_bmax<=0.50){
+		values.p4_ip=values.var; 
+		values.p4_ip_found=1;
+	}
+	item.subjectquestions.items=text.question.currentItem;
+	item.subjectanswers=trial.p4.response;
+]
+/ branch = [
+	if (values.trialcount>=parameters.distractorstart){
+		return trial.d0;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Trial P5: Obtaining the Indifference Point for P5
+**************************************************************************************************************
+**************************************************************************************************************
+<trial p5>
+/ skip = [values.p5_ip_found==1]
+/ pretrialpause = parameters.pretrialdelay
+/ posttrialpause = parameters.posttrialdelay
+/ ontrialbegin = [
+	values.p=parameters.p5; 
+	values.var=expressions.p5_var; 
+	values.questiontype=2;
+	values.p5_count+=1; 
+	values.trialcount+=1;
+]
+/ stimulusframes = [1=clearScreen, question, A, B]
+/ validresponse = (A, B)
+/ responsemessage = ("A", Aclick, 200)
+/ responsemessage = ("B", Bclick, 200)
+/ ontrialend = [
+	if (trial.p5.response=="A"){
+		if (values.var>values.p5_tmin){
+			values.p5_tmax=values.var;
+		} else if(values.var<=values.p5_tmin){
+			values.p5_tmax=values.p5_tmin; 
+			values.p5_tmin=values.var;
+		} else if(values.var<values.p5_bmin){
+			values.p5_bmax=0; 
+			values.p5_bmin=values.var;
+		}
+	} else if (trial.p5.response=="B"){
+		if (values.var<=values.p5_bmin){
+			values.p5_bmax=values.var;
+		} else if (values.var>values.p5_bmin){
+			values.p5_bmax=values.p5_bmin; 
+			values.p5_bmin=values.var;
+		} else if (values.var>values.p5_tmin){
+			values.p5_tmax=parameters.std; 
+			values.p5_tmin=values.var;
+		}
+	}
+	
+	if(values.p5_tmax-values.p5_bmax<=0.50){
+		values.p5_ip=values.var; 
+		values.p5_ip_found=1;
+	}
+	item.subjectquestions.items=text.question.currentItem;
+	item.subjectanswers=trial.p5.response;
+]
+/ branch = [
+	if (values.trialcount>=parameters.distractorstart){
+		return trial.d0;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	distractor Trial
+**************************************************************************************************************
+**************************************************************************************************************
+<trial d0>
+/ pretrialpause = parameters.pretrialdelay
+/ posttrialpause = parameters.posttrialdelay
+/ ontrialbegin = [
+	values.questiontype=replace(1,2); 
+	values.var=expressions.d0_var; 
+	values.d0_count+=1; values.trialcount+=1;
+
+	if(values.questiontype==1){
+		values.t=replace(parameters.t1, parameters.t2, parameters.t3, parameters.t4, parameters.t5);
+	} else if(values.questiontype==2){
+		values.p=replace(parameters.p1, parameters.p2, parameters.p3, parameters.p4, parameters.p5);
+	}
+]
+/ stimulusframes = [1=clearScreen, question, A, B]
+/ validresponse = (A, B)
+/ responsemessage = ("A", Aclick, 200)
+/ responsemessage = ("B", Bclick, 200)
+/ ontrialend = [
+	item.subjectquestions.items=text.question.currentItem;
+	item.subjectanswers=trial.d0.response;
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Payoff Trial
+**************************************************************************************************************
+**************************************************************************************************************
+<trial getpayoff>
+/ ontrialbegin = [
+	values.payoffquestion=round(rand(1, values.trialcount));
+	text.subjectquestion.items.1=item.subjectquestions.item(values.payoffquestion);
+	text.subjectanswer.items.1=item.subjectanswers.item(values.payoffquestion);
+]
+/ stimulusframes = [1=trialnumber, subjectquestion, subjectanswer, finish, exit]
+/ validresponse = (exit)
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Text Elements
+**************************************************************************************************************
+**************************************************************************************************************
+	Temporal Discounting Example:
+	"Would you rather have (a) $6 now or (b) $10 in 30 days?"
+
+	Probability Discounting Example:
+	"Would you rather have (a) $4 for sure or (b) $10 with a 50% chance?"
+**************************************************************************************************************
+**************************************************************************************************************
+<text question>
+/ items = questions
+/ size = (90%, 20%)
+/ position = (50%, 45%)
+/ select = values.questiontype
+/ erase = false
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	General Purpose Text & Stimulus Elements
+**************************************************************************************************************
+**************************************************************************************************************
+<text A>
+/ items = ("A")
+/ fontstyle = ("Arial", 5.00%, true)
+/ txcolor = white
+/ txbgcolor = black
+/ size = (9%, 12%)
+/ position = (40%, 70%)
+/ vjustify = center
+/ erase = false
+</text>
+
+<text Aclick>
+/ items = ("A")
+/ fontstyle = ("Arial", 5.00%, true)
+/ txcolor = blue
+/ txbgcolor = black
+/ size = (9%, 12%)
+/ position = (40%, 70%)
+/ vjustify = center
+/ erase = false
+</text>
+
+<text B>
+/ items = ("B")
+/ txcolor = white
+/ txbgcolor = black
+/ fontstyle = ("Arial", 5.00%, true)
+/ size = (9%, 12%)
+/ position = (60%, 70%)
+/ vjustify = center
+/ erase = false
+</text>
+
+<text Bclick>
+/ items = ("B")
+/ txcolor = blue
+/ txbgcolor = black
+/ fontstyle = ("Arial", 5.00%, true)
+/ size = (9%, 12%)
+/ position = (60%, 70%)
+/ vjustify = center
+/ erase = false
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Empty Item Elements Storing Individual Questions & Answers
+**************************************************************************************************************
+**************************************************************************************************************
+<item subjectquestions>
+</item>
+
+<item subjectanswers>
+</item>
+
+<text subjectquestion>
+/ items = (" ")
+/ size = (90%, 20%)
+/ position = (50%, 45%)
+/ erase = false
+</text>
+
+<text subjectanswer>
+/ items = (" ")
+/ size = (10%, 10%)
+/ position = (50%, 55%)
+/ erase = false
+</text>
+
+<text trialnumber>
+/ items = finalpayoffinfo
+/ select = 1
+/ size = (90%, 10%)
+/ position = (50%, 30%)
+/ erase = false
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	On-Screen Debug Items
+**************************************************************************************************************
+**************************************************************************************************************
+	These text items let you follow the script's adjustment procedure on-screen for debugging
+	purposes. They are set to be invisible by default. To view these items, add these text stimuli to
+	the /stimulusframes of the relevant trials.
+**************************************************************************************************************
+**************************************************************************************************************
+<text debug>
+/ items = ("
+T1=<%parameters.t1%> | BMin=<%values.t1_bmin%> | BMax=<%values.t1_bmax%> | TMin=<%values.t1_tmin%> | TMax=<%values.t1_tmax%> | Indifference Point=<%values.t1_ip%> | Estimate found=<%values.t1_ip_found%> | Ntrials=<%values.t1_count%>
+T2=<%parameters.t2%> | BMin=<%values.t2_bmin%> | BMax=<%values.t2_bmax%> | TMin=<%values.t2_tmin%> | TMax=<%values.t2_tmax%> | Indifference Point=<%values.t2_ip%> | Estimate found=<%values.t2_ip_found%> | Ntrials=<%values.t2_count%>
+T3=<%parameters.t3%> | BMin=<%values.t3_bmin%> | BMax=<%values.t3_bmax%> | TMin=<%values.t3_tmin%> | TMax=<%values.t3_tmax%> | Indifference Point=<%values.t3_ip%> | Estimate found=<%values.t3_ip_found%> | Ntrials=<%values.t3_count%>
+T4=<%parameters.t4%> | BMin=<%values.t4_bmin%> | BMax=<%values.t4_bmax%> | TMin=<%values.t4_tmin%> | TMax=<%values.t4_tmax%> | Indifference Point=<%values.t4_ip%> | Estimate found=<%values.t4_ip_found%> | Ntrials=<%values.t4_count%>
+T5=<%parameters.t5%> | BMin=<%values.t5_bmin%> | BMax=<%values.t5_bmax%> | TMin=<%values.t5_tmin%> | TMax=<%values.t5_tmax%> | Indifference Point=<%values.t5_ip%> | Estimate found=<%values.t5_ip_found%> | Ntrials=<%values.t5_count%>
+P1=<%parameters.p1%> | BMin=<%values.p1_bmin%> | BMax=<%values.p1_bmax%> | TMin=<%values.p1_tmin%> | TMax=<%values.p1_tmax%> | Indifference Point=<%values.p1_ip%> | Estimate found=<%values.p1_ip_found%> | Ntrials=<%values.p1_count%>
+P2=<%parameters.p2%> | BMin=<%values.p2_bmin%> | BMax=<%values.p2_bmax%> | TMin=<%values.p2_tmin%> | TMax=<%values.p2_tmax%> | Indifference Point=<%values.p2_ip%> | Estimate found=<%values.p2_ip_found%> | Ntrials=<%values.p2_count%>
+P3=<%parameters.p3%> | BMin=<%values.p3_bmin%> | BMax=<%values.p3_bmax%> | TMin=<%values.p3_tmin%> | TMax=<%values.p3_tmax%> | Indifference Point=<%values.p3_ip%> | Estimate found=<%values.p3_ip_found%> | Ntrials=<%values.p3_count%>
+P4=<%parameters.p4%> | BMin=<%values.p4_bmin%> | BMax=<%values.p4_bmax%> | TMin=<%values.p4_tmin%> | TMax=<%values.p4_tmax%> | Indifference Point=<%values.p4_ip%> | Estimate found=<%values.p4_ip_found%> | Ntrials=<%values.p4_count%>
+P5=<%parameters.p5%> | BMin=<%values.p5_bmin%> | BMax=<%values.p5_bmax%> | TMin=<%values.p5_tmin%> | TMax=<%values.p5_tmax%> | Indifference Point=<%values.p5_ip%> | Estimate found=<%values.p5_ip_found%> | Ntrials=<%values.p5_count%>
+NTotal=<%values.trialcount%> | NIPs=<%expressions.nips%>")
+/ size = (95%, 25%)
+/ fontstyle = ("Arial", 2.00%, true)
+/ txcolor = white
+/ position = (50%, 15%)
+/ hjustify = left
+/ erase = false
+</text>
+
+<text distractor>
+/ items = ("!!!_DISTRACTOR_!!!")
+/ txcolor = white
+/ position = (50%, 85%)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	End Of File
+**************************************************************************************************************
+**************************************************************************************************************

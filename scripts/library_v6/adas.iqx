@@ -1,0 +1,955 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								ALZHEIMER'S DISEASE ASSESSMENT SCALE (ADAS)
+___________________________________________________________________________________________________________________	
+
+Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 11-22-2013
+last updated:  02-16-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-16-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Alzheimer's Disease Assessment Scale (ADAS) as originally described in:
+
+(a) Rosen, W.G, Mohs, R.C & Davis, K.L. (1984). A new rating scale for Alzheimer’s disease.
+American Journal of Psychiatry, 141: 1356-1364.
+
+order of Noncognitive items from:
+(b) Mohs RC & Cohen L (1988). Alzheimer’s Disease Assessment Scale (ADAS). Psychopharmacology Bulletin, 24: 627-628.
+
+Word items (if not specified in Rosen et al, 1984) and order of Cognitive Behavior questions can be taken from:
+(c) Schultz, R.R, Siviero, M.O, & Bertolucci, P.H.F. (2001). The cognitive subscale of the “Alzheimer’s Disease Assessment Scale” 
+in a Brazilian sample. Brazilian Journal of Medical and Biological Research, 34, 1295-1302.
+
+Notes: 
+(1) The main purpose of this script is to help keep track of scoring. For many of these tasks, the evaluation of the
+patient's responses has to be done by an experienced examiner.
+(2) The examiner -not the patient- fills out the ADAS based on evaluation of patient
+(4) Test administration guidelines are provided in Rosen et al (1984).
+(5) Examiner has options to choose to run the cognitive and noncognitive assessment or only one of the two
+(-> Editable parameter)
+(6) Rosen et al (1984) describe many of the scoring scales on a 1(mild)-5(severe) scale without a 0 category (= no impairment). 
+Millisecond Software added the 0-categories to the scales (see also Mohs & Cohen, 1988).
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'adas.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'adas_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+
+ADAS_totalscore:				sum of Cogn_Score48, Memory_Score22, NonCogn_Score50
+cogn_score70:					sum of all cognitive behavior assessment items (Max: 70)
+cogn_score48:					sum of Cognitive Behavior Assessment scores (minus Memory Scores) (Max: 48)
+memory_score22:					sum of Recall and Recognition Scores (Max: 22)
+noncogn_score50:				sum of NonCognitive Behavior Assessment scores (Max: 50)
+
+recall -
+recognition:					assigned scores for Cognitive Assessment Scores
+
+tearful-
+appetite:						assigned scores for Non-Cognitive Assessment Scores
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/skipCognAssessment:				true: skips Cognitive Behavior Assessment Items
+								false: runs Cognitive Behavior Assessment Items (default)
+										
+/NonskipCognAssessment:			true: skips NonCognitive Behavior Assessment Items
+								false: runs NonCognitive Behavior Assessment Items  (default)
+
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/skipCognAssessment = false
+/skipNonCognAssessment = false
+</parameters>
+
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+summary data
+********************
+				
+<summarydata>
+/columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, script.completed, 
+expressions.ADAS_totalscore,
+expressions.cogn_score70, expressions.cogn_score48, expressions.memory_score22, expressions.noncogn_score50,
+expressions.recall, expressions.fingerobjects, expressions.commands, expressions.constructionalpraxis, expressions.ideationalpraxis,
+expressions.orientation, expressions.recognition, expressions.recalltestinstructions, expressions.spokenlanguageability,
+expressions.wordfindingdifficulty, expressions.comprehension,
+expressions.tearful, expressions.depression, expressions.concentration, expressions.uncooperative,
+expressions.delusions, expressions.hallucinations, expressions.pacing, expressions.motoractivity,
+expressions.tremors, expressions.appetite)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/Recall -
+/Recognition:			assigned scores for Cognitive Assessment Scores
+
+/tearful-
+/appetite:				assigned scores for Non-Cognitive Assessment Scores
+
+/Cogn_Score48:			sum of Cognitive Behavior Assessment scores (minus Memory Scores) (Max: 48)
+/Memory_Score22:		sum of Recall and Recognition Scores (Max: 22)
+/Cogn_Score70:			sum of all cognitive behavior assessment items (Max: 70)
+/NonCogn_Score50:		sum of NonCognitive Behavior Assessment scores (Max: 50)
+
+/ADAS_totalscore:		sum of Cogn_Score48, Memory_Score22, NonCogn_Score50
+
+<expressions>
+/Recall = (textbox.wordrecall1.response + textbox.wordrecall2.response + textbox.wordrecall3.response)/3
+/FingerObjects = radiobuttons.objectandfingers.response
+/Commands = radiobuttons.commands.response
+/RecallTestInstructions = radiobuttons.recall_testinstructions.response
+/SpokenLanguageAbility = radiobuttons.spokenlanguage.response
+/WordFindingDifficulty = radiobuttons.wordfinding.response
+/Comprehension = radiobuttons.comprehension.response
+/ConstructionalPraxis = radiobuttons.constructionalpraxis.response
+/IdeationalPraxis = radiobuttons.ideationalpraxis.response
+
+/orientation_1 = if (checkboxes.orientation.selected.1 == 1) 0 else 1
+/orientation_2 = if (checkboxes.orientation.selected.2 == 1) 0 else 1
+/orientation_3 = if (checkboxes.orientation.selected.3 == 1) 0 else 1
+/orientation_4 = if (checkboxes.orientation.selected.4 == 1) 0 else 1
+/orientation_5 = if (checkboxes.orientation.selected.5 == 1) 0 else 1
+/orientation_6 = if (checkboxes.orientation.selected.6 == 1) 0 else 1
+/orientation_7 = if (checkboxes.orientation.selected.7 == 1) 0 else 1
+/orientation_8 = if (checkboxes.orientation.selected.8 == 1) 0 else 1
+/orientation = expressions.orientation_1 + expressions.orientation_2 + expressions.orientation_3 + expressions.orientation_4 +
+				expressions.orientation_5 + expressions.orientation_6 + expressions.orientation_7 + expressions.orientation_8
+
+/Recognition = (textbox.wordrecognition1.response + textbox.wordrecognition2.response + textbox.wordrecognition3.response)/3
+/tearful = radiobuttons.tearful.response
+/depression = radiobuttons.depression.response
+/concentration = radiobuttons.concentration.response
+/uncooperative = radiobuttons.uncooperative.response
+/delusions = radiobuttons.delusions.response
+/hallucinations = radiobuttons.hallucinations.response
+/pacing = radiobuttons.pacing.response
+/motoractivity = radiobuttons.motoractivity.response
+/tremors = radiobuttons.tremors.response
+/appetite = radiobuttons.appetite.response
+
+/Cogn_Score48 = expressions.commands + expressions.comprehension + expressions.constructionalpraxis + expressions.fingerobjects + expressions.ideationalpraxis +
+expressions.orientation + expressions.spokenlanguageability + expressions.wordfindingdifficulty + expressions.recalltestinstructions
+/Memory_Score22 = expressions.recall + expressions.recognition
+/Cogn_Score70 = expressions.cogn_score48 + expressions.memory_score22
+/NonCogn_Score50 = expressions.tearful + expressions.depression + expressions.concentration + expressions.uncooperative + expressions.delusions + 
+expressions.hallucinations + expressions.pacing + expressions.motoractivity + expressions.tremors + expressions.appetite
+
+/ADAS_totalscore = expressions.cogn_score48 + expressions.memory_score22 + expressions.noncogn_score50
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	COGNITIVE BEHAVIOR ASSESSMENT QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+***********************************************************************
+General Notes:
+* Order of cognitive assessment questions based on Schultz et al (2001)
+* added response category NONE for several questions
+***********************************************************************
+
+**************************************
+
+Note: Rosen et al (1984)
+"The patient reads 10 high-imagery words exposed for 2 seconds each. The patient then recalls the words aloud.
+Three trials of reading and recall are given. The score equals the mean number of words not recalled on three 
+trials (maximum = 10)"
+
+=> no specific list of words is provided by Rosen et al (1984)
+=> Schultz et al (2001) provide a list of word
+=> computer calculates mean score
+
+<caption wordrecall_instruct>
+/caption = "1. Word Recall Task: 
+Type in number of items that were NOT recalled for each trial separately (Max. 10)"
+</caption>
+
+<textbox wordrecall1>
+/caption = "Trial1:"
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ responsefontstyle = ("Courier New", 3%, false, false, false, false, 5, 1)
+/ txcolor = black
+/ mask = integer
+/range = (0,10)
+/required = true
+/ monkeyresponse = ("0","1","2","3","4","5","6","7","8","9","10")
+/ textboxsize = (3.5%, 3.25%)
+</textbox>
+
+<textbox wordrecall2>
+/caption = "Trial2:"
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ responsefontstyle = ("Courier New", 3%, false, false, false, false, 5, 1)
+/ txcolor = black
+/ mask = integer
+/range = (0,10)
+/required = true
+/ monkeyresponse = ("0","1","2","3","4","5","6","7","8","9","10")
+/ textboxsize = (3.5%, 3.25%)
+</textbox>
+
+<textbox wordrecall3>
+/caption = "Trial3:"
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ responsefontstyle = ("Courier New", 3%, false, false, false, false, 5, 1)
+/ txcolor = black
+/ mask = integer
+/range = (0,10)
+/required = true
+/ monkeyresponse = ("0","1","2","3","4","5","6","7","8","9","10")
+/ textboxsize = (3.5%, 3.25%)
+</textbox>
+
+
+Note: Rosen et al (1984)
+"The patient names the fingers of his/her dominant hand. The patient names 12 randomly presented
+real objects, whose frequence values (27) differ from are high, medium, or low. Objects and
+their frequency are: 
+
+High: Flower (plastic), Bed (doll-house furniture), Whistle, Pencil
+Medium: Raffle, Mask, Scissors, Comb
+Low: Wallet, Harmonica, Stethoscope, Tongs"
+
+=> option "5: other" added (According to Rosen et al 1984, the max total score
+of the Cognitive Behavior score (minus memory tasks) is 48 which requires
+a 5 point scale for this item; this would also be consistent with Schultz et al (2001))
+
+<radiobuttons ObjectandFingers>
+/caption = "2. Naming Objects and Fingers: 
+Select score based on patient's performance"
+/options = ("0 = all correct; one finger incorrect and/or one object incorrect",
+"1 = two-three fingers and/or two objects incorrect",
+"2 = two or more fingers and three-five objects incorrect",
+"3 = three or more fingers and six-seven objects incorrect",
+"4 = three or more fingers and eight-nine objects incorrect",
+"5 = other")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/required = true
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"Following commands. Receptive speech is assessed also on the patient's ability to carry out one - to
+five-step commands (26).[...].
+Each underlined element represents a single step. The command may be repeated once in its entirety.
+Each command scored is as a whole. Ratings correspond to the highest level of command correctly performed.
+0 = five steps correct
+1 = four steps correct
+2 = three steps correct
+3 = two steps correct
+4 = one step correct
+5 = cannot do one step correctly"
+
+<radiobuttons commands>
+/caption = "3. Commands:
+Select score based on patient's performance"
+/options = ("0 = five steps correct",
+"1 = four steps correct",
+"2 = three steps correct",
+"3 = two steps correct",
+"4 = one step correct",
+"5 = cannot do one step correctly")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"The ability to copy four geometric forms is assessed. These forms, in the order of presentation are
+circle: app. 20cm in diameter; 
+two overlapping rectangles. The vertical rectangle is 20cm x 25cm, the horizontal
+rectangle is 10cm x 35cm, 
+rhombus - each side is 20cm. Acute = 50degrees, obtuse = 130 degrees. 
+Cube. Each side is 20cm. Internal lines are present. 
+Each form is located in the upper middle of a 5 1/2 '' x 8 1/2'' of white paper. 
+The patient is instructed 'Do you see this figure? Make one that looks like this one anywhere on the paper. 
+Two attempts are permitted.
+
+0 = all four drawings correct
+1 = one form incorrect
+2 = two forms incorrect
+3 = three forms incorrect
+4 = closing in (draws over or around model or uses parts of model); four forms incorrect
+5 = no figure drawn; scribbels; parts of forms; words instead of form"
+
+=> Further instructions on how to score attempts are describted in Rosen et al (1984)
+
+<radiobuttons constructionalpraxis>
+/caption = "4. Constructional Praxis:
+Select score based on patient's performance"
+/options = ("0 = all four drawings correct",
+"1 = one form incorrect",
+"2 = two forms incorrect",
+"3 = three forms incorrect",
+"4 = closing in (draws over or around model or uses parts of model); four forms incorrect",
+"5 = no figure drawn; scribbels; parts of forms; words instead of form")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"The patient is given an 8 1/2 '' x 11'' sheet of paper and a long envelope. The patient is instructed to pretend to 
+send the letter to himself or herself. The patient is told to put the paper into the envelope, seal it, address it to himself or
+herself, and stamp it. If the patient forgets part of the task, reinstruction is given. Impairment on this item should reflect
+dysfunction in executing an overlearned task only and not recall difficulty. The five components to the task are 1) fold letter,
+2) put letter in envelope, 3) seal envelope, 4) address envelope, 5) put stamp on envelope.
+
+1 = difficulty or failure to perform one component
+2 = difficulty and/or failure to perform two components
+3 = difficulty and/or failure to perform three components
+4 = difficulty and/or failure to perform four components
+5 = difficulty and/or failure to perform five components"
+
+=> option "0 = all correct" added
+
+<radiobuttons ideationalpraxis>
+/caption = "5. Ideational Praxis:
+Select score based on patient's performance"
+/options = ("0 = all correct",
+"1 = difficulty or failure to perform one component",
+"2 = difficulty and/or failure to perform two components",
+"3 = difficulty and/or failure to perform three components",
+"4 = difficulty and/or failure to perform four components",
+"5 = difficulty and/or failure to perform five components")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"The components of orientation are date, month, year, day of the week, season,
+time of day, place, and person. One point is given for each incorrect response (Maximum = 8). 
+Acceptable answers include +/- 1 for the date, within 1 hour for the hour,
+partial name for place, naming of upcoming season within 1 week before its onset, and name of previous season for 2
+weeks after its termination."
+<checkboxes orientation>
+/caption = "6. Orientation: 
+Check each item that patient answered correctly or check 'NONE.'"
+/options = ("Full name", "Month", "Date", "Year", "Day", "Season", "Place", "Time of day", "NONE")
+/required = true
+</checkboxes>
+
+
+Note: Rosen et al (1984)
+"The patient reads aloud 12 high-imagery words. These words are then randomly mixed with 12 words the patient has not seen.
+The patient indicates whether or not the word was shown previously. Then two more trials of reading the original words and recognition are
+given. The score equals the mean number of incorrect responses for three trials (Maximum = 12)."
+
+=> no specific list of words is provided by Rosen et al (1984)
+=> Schultz et al (2001) provide a list of words
+
+<caption wordrecognition_instruct>
+/caption = "7. Word Recognition: 
+Type in number of items that were NOT recognized for each trial separately (Max. 12)"
+</caption>
+
+<textbox wordrecognition1>
+/caption = "Trial1:"
+/ fontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ mask = integer
+/range = (0,12)
+/required = true
+/ monkeyresponse = ("0","1","2","3","4","5","6","7","8","9","10","11","12")
+</textbox>
+
+<textbox wordrecognition2>
+/caption = "Trial2:"
+/ fontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ mask = integer
+/range = (0,12)
+/required = true
+/ monkeyresponse = ("0","1","2","3","4","5","6","7","8","9","10","11","12")
+</textbox>
+
+<textbox wordrecognition3>
+/caption = "Trial3:"
+/ fontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ mask = integer
+/range = (0,12)
+/required = true
+/ monkeyresponse = ("0","1","2","3","4","5","6","7","8","9","10","11","12")
+</textbox>
+
+
+Note: Rosen et al (1984)
+"The patient's ability to remember the requirements of the recognition task is evaluated. On each recognition
+trial, the patient is asked prior to presentation of the first two words, 'Did you see this word before or is this a new word?' 
+For the third word, the patient is asked 'How about this one?' If the patient responds appropriately, i.e., 'yes'
+or 'no,' then recall of instructions is accurate. If the patient fails to respond, this signifies that the instructions have
+been forgotten. Then instruction is repeated. The procedure used for the third word is repeated for words 4-24. Each instance of recall failure 
+is noted."
+*added option 0 = no impairment
+
+<radiobuttons recall_testinstructions>
+/caption = "8. Recall of Test Instructions: 
+Select score based on patient's performance"
+/options = ("0 = no impairment", 
+"1 = very mild; forgets once", 
+"2 = mild; must be reminded two times", 
+"3 = moderate; must be reminded three or four times", 
+"4 = moderately severe; must be reminded five or six times",
+"5 = severe; must be reminded seven or more times")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"This item is a global rating of the quality of speech, i.e. clarity, difficulty in making 
+oneself understood. Quantity is NOT rated on this item."
+* added option 0 = no impairment
+<radiobuttons spokenlanguage>
+/caption = "9. Spoken Language Ability: 
+Select score based on patient's performance"
+/options = ("0 = no impairment",
+"1 = very mild; one instance of lack of understandability",
+"2 = mild", 
+"3 = moderate; subject has difficulty 25%-50% of the time",
+"4 = moderately severe; subject has difficulty 50% of the time",
+"5= severe; one or two word utterances; fluent but empty speech; mute")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"Word Finding Difficulty in Spontaneous Speech. The patient has difficulty in finding the desired
+word in spontaneous speech. The problem may be overcome by circumlocution, i.e., giving explanatory phrases or
+nearly satisfactory synonyms. Do not include finger and object naming in this rating."
+* added 0 = no impairment
+<radiobuttons wordfinding>
+/caption = "10. Word Finding Difficulty in Spontaneous Speech: 
+Select score based on patient's performance"
+/options = ("0 = no impairment", 
+"1 = very mild; one or two instances, not clinically significant", 
+"2 = mild; noticeable circumlocution or synonym substitution", 
+"3 = moderate; loss of words without compensation on occasion", 
+"4 = moderately severe; frequent loss of words without compensation", 
+"5 = severe; nearly total loss of content words; speech sounds empty; one-two word utterances")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/required = true
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"This item evaluates the patient's ability to understand speech. Do not include responses to commands."
+* added 0 = no impairment
+<radiobuttons comprehension>
+/caption = "11. Comprehension of Spoken Language: 
+Select score based on patient's performance"
+/options = ("0 = no impairment", 
+"1 = very mild; one instance of misunderstanding",
+"2 = mild", 
+"3 = moderate", 
+"4 = moderately severe; requires several repetitions and rephrasing.",
+"5 = severe; patient rarely responds to questions appropriately, not due to poverty of speech.")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	NON-COGNITIVE BEHAVIOR ASSESSMENT QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: Rosen et al (1984)
+"The time period for evaluation includes the entire week before the interview for the following
+items:
+
+1. Appers or reports feeling sad, down, hopeless, discouraged
+2. Tearful
+3. Delusions
+4. Hallucinations
+5. Pacing
+6. Increased motor activity
+7. Increase/decrease in appetite"
+
+Note: Rosen et al (1984)
+"Patient/informant is asked about the frequency of occurrence of tearfulness"
+
+=> option '0 = NONE' was added
+<radiobuttons tearful>
+/caption = "Tearful:
+Select score based on patient evaluation"
+/options = ("0 = NONE", "1 = very mild; occurs one time during week or during test session only",
+"2 = mild; occurs two-three times during the week", 
+"3 = moderate",
+"4 = moderately severe; frequent crying spells nearly every day",
+"5 = severe; frequent and prolonged crying spells every day")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"The patient of informatn is asked if the patient has been sad, discouraged, down.
+If a positive response is given, further inquiry into the severity and pervasiveness
+of the mood, loss of interest or pleasure in activities, and reactivity to 
+environmental events is made. The interviewer also assesses the patient for
+depressed facies and the ability to respond to encouragement and jokes"
+
+=> Option '0 = NONE' was added
+<radiobuttons depression>
+/caption = "Depression:
+Select score based on patient evaluation"
+/options = ("0 = NONE",
+"1 = feels slightly dysphoric; clinicially significant",
+"2 = mild; appears and reports mild dysphoric modd, reactivity present, some loss of interest",
+"3 = moderate; feels moderately dysphoric often",
+"4 = moderately severe; feels dysphoric almost all the time with considerable loss of reactivity and interest"
+"5 = severe; pervasive and severe degree of dysphoric mood; total lack of reactivity; pervasive loss of interest or pleasure")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+Note: Rosen et al (1984)
+"This item rates the frequency with which the patient is distracted by irrelevant stimuli
+and/or must be reoriented to the ongoing task because of loss of train of thought or the
+frequency with which the patient appears to be caught up in his or her own thoughts."
+
+=> option '0 = no impairment' added
+<radiobuttons concentration>
+/caption = "Concentration/Distractability:
+Select score based on patient evaluation"
+/options = ("0 = no impairment",
+"1 = very midl; one instance of poor concentration",
+"2 = mild; two-three instances of poor concentration or distractibility",
+"3 = moderate",
+"4 = moderately severe; poor concentration throughout much of intervieew and/or frequent instances of distractibility",
+"5 = severe; extreme difficulty in concentration and numerous instances of distractibility")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+Note: Rosen et al (1984)
+"This item rates the degree to which the patient objects to some aspects of the interview"
+
+=> option '0 = no impairment' added
+<radiobuttons uncooperative>
+/caption = "Uncooperative to Testing:
+Select score based on patient evaluation"
+/options = ("0 = no impairment",
+"1 = very mild; one instance of lack of cooperation",
+"2 = mild",
+"3 = moderate",
+"4 = moderately severe; needs frequent cajoling to complete interview"
+"5 = severe; refuses to continue interview")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"This item rates the extent and conviction of the patient's belief in ideas that
+are almost certainly not true. In rating severity, consider conviction in delusions,
+preoccupation, and effect they have on the patient's action"
+
+=> option '0 = no impairment' added
+
+<radiobuttons delusions>
+/caption = "Delusions:
+Select score based on patient evaluation"
+/options = ("0 = no impairment",
+"1 = very mild; one transient delusional belief",
+"2 = mild; delusion definitely present but subject questions his or her belief",
+"3 = moderate; patient convinced of delusion but it does not affect behavior",
+"4 = moderately severe; delusion has effect on behavior"
+"5 = severe; significat actions based on delusions")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"Inquiry about visual, auditory, and tactile hallucinations is made. The frequency and degree of
+disruptiveness of hallucinations are rated"
+
+=> option '0 = NONE' was added
+<radiobuttons hallucinations>
+/caption = "Hallucinations:
+Select score based on patient evaluation"
+/options = ("0 = NONE", 
+"1 = very mild; hears voice saying one word; visual hallucination once",
+"2 = mild",
+"3 = moderates; hallucinates numerous times during day, which interferes with normal functioning",
+"4 = moderately severe",
+"5 = severe; nearly constantly hallucinating, which totally disrupts normal functioning")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"Rating on this item must distinguish between normal physical activity and excessive walking
+back and forth."
+
+=> option '0 = NONE' was added
+<radiobuttons pacing>
+/caption = "Pacing:
+Select score based on patient evaluation"
+/options = ("0 = NONE",
+"1 = very mild; very rare occurence",
+"2 = mild",
+"3 = moderate; paces frequently each day",
+"4 = moderately severe",
+"5 = severe; cannot sit still and must pace excessively")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+Note: Rosen et al (1984)
+"This item is rated relative to the person's normal activity level or previously
+obtained baseling."
+
+=> option '0 = no impairment' was added
+<radiobuttons MotorActivity>
+/caption = "Increased Motor Activity:
+Select score based on patient evaluation"
+/options = ("0 = no impairment",
+"1 = very mild; very slight increase",
+"2 = mild",
+"3 = moderate; significant increase in amount of movement",
+"4 = moderately severe"
+"5 = severe; person must be moving constantly; rarely sits still")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"Patient extends both hands in front of body and spreads the fingers, holding this position for approximately
+10 seconds"
+
+=> option '0 = NONE' was added
+<radiobuttons tremors>
+/caption = "Tremors:
+Select score based on patient evaluation"
+/options = ("0 = NONE",
+"1 = very mild; very slight tremor; barely noticeable",
+"2 = mild, noticeable tremor",
+"3 = moderate",
+"4 = moderately severe"
+"5 = severe; very rapid movements with sizable displacements")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+Note: Rosen et al (1984)
+"This item is included because appetite change may be associated with depression and because clinical observations
+of some Alzheimer patients reveal both increases and decreases in appetite.
+This item is rated relative to the person's normal appetite or previously obtained baseline"
+
+=> option '0 = No change in appetite' was added
+<radiobuttons appetite>
+/caption = "Increased/Decreased Appetite: 
+Select score based on patient evaluation"
+/options = ("0 = No change in appetite",
+"1 = very mild; slight change; probably clinicially significant",
+"2 = mild, noticeable change, patient still eats without encouragement",
+"3 = moderate; marked change; patient needs encouragement to eat; patient asks for more food",
+"4 = moderately severe"
+"5 = severe; patient will not eat and needs to be force-fed; patient complains of constant hunger despite consumption of sufficient quantities")
+/ optionvalues=("0", "1", "2", "3", "4", "5")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+<surveypage CognAssess1>
+/skip = [parameters.skipCognAssessment == true]
+/caption = "ADAS: Cognitive Behavior Assessment"
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/itemfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemspacing = 5%
+/questions = [1 = wordrecall_instruct; 2 = wordrecall1; 3 = wordrecall2; 4 = wordrecall3; 5 = objectandfingers]
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+<surveypage CognAssess2>
+/skip = [parameters.skipCognAssessment == true]
+/caption = "ADAS: Cognitive Behavior Assessment"
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/itemfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemspacing = 5%
+/questions = [1 = commands; 2 = constructionalpraxis]
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+<surveypage CognAssess3>
+/skip = [parameters.skipCognAssessment == true]
+/caption = "ADAS: Cognitive Behavior Assessment"
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/itemfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemspacing = 5%
+/questions = [1 = ideationalpraxis; 2 = orientation]
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+<surveypage CognAssess4>
+/skip = [parameters.skipCognAssessment == true]
+/caption = "ADAS: Cognitive Behavior Assessment"
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/itemfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemspacing = 5%
+/questions = [1  = wordrecognition_instruct; 2 = wordrecognition1; 3 = wordrecognition2; 4 = wordrecognition3]
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+<surveypage CognAssess5>
+/skip = [parameters.skipCognAssessment == true]
+/caption = "ADAS: Cognitive Behavior Assessment"
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/itemfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemspacing = 5%
+/questions = [1 = recall_testinstructions; 2 = spokenlanguage]
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+<surveypage CognAssess6>
+/skip = [parameters.skipCognAssessment == true]
+/caption = "ADAS: Cognitive Behavior Assessment"
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/itemfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemspacing = 5%
+/questions = [1  =  wordfinding; 2 = comprehension]
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+<surveypage NonCognAssess1>
+/skip = [parameters.skipNonCognAssessment == true]
+/caption = "ADAS: Non-Cognitive Behavior Assessment."
+/subcaption = "The time period for evaluation includes the entire week before the interview.
+
+"
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/subcaptionfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemspacing = 5%
+/questions = [1  =  depression; 2 = tearful]
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+
+<surveypage NonCognAssess2>
+/skip = [parameters.skipNonCognAssessment == true]
+/caption = "ADAS: Non-Cognitive Behavior Assessment."
+/subcaption = "The time period for evaluation includes the entire week before the interview.
+
+"
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/subcaptionfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemspacing = 5%
+/questions = [1  = delusions; 2 = hallucinations]
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+<surveypage NonCognAssess3>
+/skip = [parameters.skipNonCognAssessment == true]
+/caption = "ADAS: Non-Cognitive Behavior Assessment."
+/subcaption = "The time period for evaluation includes the entire week before the interview.
+
+"
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/subcaptionfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemspacing = 5%
+/questions = [1  = pacing; 2 = motoractivity]
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+<surveypage NonCognAssess4>
+/skip = [parameters.skipNonCognAssessment == true]
+/caption = "ADAS: Non-Cognitive Behavior Assessment."
+/subcaption = "The time period for evaluation includes the entire week before the interview.
+
+"
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/subcaptionfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemspacing = 5%
+/questions = [1  = tremors; 2 = concentration]
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+<surveypage NonCognAssess5>
+/skip = [parameters.skipNonCognAssessment == true]
+/caption = "ADAS: Non-Cognitive Behavior Assessment."
+/subcaption = "The time period for evaluation includes the entire week before the interview.
+
+"
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/subcaptionfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemspacing = 5%
+/questions = [1  = uncooperative; 2 = appetite]
+/showpagenumbers = false
+/showquestionnumbers = false
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<survey adas>
+/pages = [
+	1 = CognAssess1; 
+	2 = CognAssess2; 
+	3 = CognAssess3; 
+	4 = CognAssess4; 
+	5 = CognAssess5; 
+	6 = CognAssess6;
+	7 = noncognassess1; 
+	8 = noncognassess2; 
+	9 = noncognassess3; 
+	10 = noncognassess4; 
+	11 = noncognassess5;
+]
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</survey>
+
+<expt adas>
+/ blocks = [1 = ADAS]
+</expt>
+
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

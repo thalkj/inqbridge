@@ -1,0 +1,457 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									The Cognitive Failures Questionnaire (CFQ)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-09-2016
+last updated:  01-25-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 01-25-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Cognitive Failures Questionnaire as described in:
+
+Broadbent, D.E., Cooper, P.F., FitzGerald, P., & Parkes, K.R. (1982). 
+The Cognitive Failures Questionnaire (CFQ) and its correlates. 
+British Journal of Clinical Psychology, 21, 1-16.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+25 5-Likert type questions, self-report											  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'cfq.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values: 0-4)
+									0: never
+									4: very often
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'cfq_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)		
+								
+CFQ_Score:					the total score (Range: 0-100)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear on top of the questionnaire
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "The following questions are about minor mistakes which everyone makes from time to time, but some of which happen more often than others. We want to know how often these things have happened to you <u>IN THE PAST 6 MONTHS</u>.  Please select the appropriate response.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+
+<page end>
+Thank you!
+</page>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.CFQ_score)
+</summarydata>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/CFQ_score = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response +
+radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + 
+radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q11.response + radiobuttons.q12.response + 
+radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q15.response + radiobuttons.q16.response +
+radiobuttons.q17.response + radiobuttons.q18.response + radiobuttons.q19.response + radiobuttons.q20.response +
+radiobuttons.q21.response + radiobuttons.q22.response + radiobuttons.q23.response + radiobuttons.q24.response + 
+radiobuttons.q25.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. Do you read something and find you haven’t been thinking about it and must read it again?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Do you find you forget why you went from one part of the house to the other?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Do you fail to notice signposts on the road?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. Do you find you confuse right and left when giving directions?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. Do you bump into people?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Do you find you forget whether you’ve turned off a light or a fire or locked the door?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. Do you fail to listen to people’s names when you are meeting them?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. Do you say something and realize afterwards that it might be taken as insulting?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. Do you fail to hear people speaking to you when you are doing something else?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. Do you lose your temper and regret it?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+<radiobuttons q11>
+/caption = "11. Do you leave important letters unanswered for days?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. Do you find you forget which way to turn on a road you know well but rarely use?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. Do you fail to see what you want in a supermarket (although it’s there)?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "14. Do you find yourself suddenly wondering whether you’ve used a word correctly?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. Do you have trouble making up your mind?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+<radiobuttons q16>
+/caption = "16. Do you find you forget appointments?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. Do you forget where you put something like a newspaper or a book?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "18. Do you find you accidentally throw away the thing you want and keep what you meant to throw away – as in the example of throwing away the matchbox and putting the used match in your pocket?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. Do you daydream when you ought to be listening to something?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20>
+/caption = "20. Do you find you forget people’s names?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21>
+/caption = "21. Do you start doing one thing at home and get distracted into doing something else (unintentionally)?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "22. Do you find you can’t quite remember something although it’s “on the tip of your tongue”?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23>
+/caption = "23. Do you find you forget what you came to the shops to buy?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q24>
+/caption = "24. Do you drop things?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q25>
+/caption = "25. Do you find you can’t think of anything to say?"
+/ options = ("Very Often", "Quite Often", "Occasionally", "Very Rarely", "Never")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage CFQ1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage CFQ2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage CFQ3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage CFQ4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage CFQ5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage CFQ6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q16, q17, q18]
+</surveypage>
+
+<surveypage CFQ7>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q19, q20 q21]
+</surveypage>
+
+<surveypage CFQ8>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q22, q23, q24]
+</surveypage>
+
+<surveypage CFQ9>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q25]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey CFQ>
+/pages = [
+	1 = CFQ1; 
+	2 = CFQ2; 
+	3 = CFQ3; 
+	4 = CFQ4; 
+	5 = CFQ5;
+	6 = CFQ6;
+	7 = CFQ7;
+	8 = CFQ8;
+	9 = CFQ9;	
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

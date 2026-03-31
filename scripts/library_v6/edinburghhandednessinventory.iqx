@@ -1,0 +1,456 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*Edinburgh Handedness Inventory*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a handedness survey based on the Edinburgh Handedness Inventory (Oldfield, 1971).
+
+Reference:
+
+Oldfield, R.C. (1971). The assessment and analysis of handedness: The Edinburgh inventory. 
+Neuropsychologia, 9, 97-113.
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+10* 5-point Likert choice questions that ask about handedness.
+The response scale -2, -1-, 0, 1, 2 mimics the 
+
+* the last two questions from Oldfield (1971) were dropped from the default Inquisit implementation
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'edinburghhandednessinventory.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		 with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values) for q1-q10
+									Scale: -2 (strong left preference) - +2 (strong right preference)								
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'edinburghhandednessinventory_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+ehi_countMissingitems:				the number of questions that have not been answered 
+Note: by default settings, all questions are required to be answered. However, that setting can be changed.
+If default setting is changed, the above variable can be used as a flag.
+	
+//see Oldsfield (1971, p.99, p.112) for scoring
+	
+leftScore:							the sum of all "+" for the left hand 
+Note: 
+-a score of "-2" adds 2 to the number of "+" for the left hand
+-a score of "-1" adds 1 to the number of "+" for the left hand
+-a score of "0" adds 1 to the number of "+" for the left hand
+
+rightScore: 						the sum of all "+" for the right hand
+Note: 
+-a score of "2" adds 2 to the number of "+" for the right hand
+-a score of "1" adds 1 to the number of "+" for the right hand
+-a score of "0" adds 1 to the number of "+" for the right hand
+
+ehi_LQ:								the Laterality Quotient (= 100 * [(rightScore-leftScore)/(rightScore+leftScore)])
+									Range: 
+									-100 (strong left preference)
+									-50 (left preference)
+									0 (no preference)
+									+50 (right preference)
+									+100 (strong right preference)
+									
+																	
++ individual responses to all 10 questions									
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________								
+
+10 5-point Likert choice questions that ask about handedness.
+The response scale is selected to mimic "++" for indicating a 'strong' hand preference
+and "+" for a simple hand preference .
+No preference (0) leads to adding a "+" to either handscore. (see Oldsfield, 1971, p.99/112)
+
+
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed, values.ehi_numberMissingItems,
+values.leftScore, values.rightScore, values.ehi_LQ,
+radiobuttons.q1.response, radiobuttons.q2.response, radiobuttons.q3.response,
+radiobuttons.q4.response, radiobuttons.q5.response, radiobuttons.q6.response,
+radiobuttons.q7.response, radiobuttons.q8.response, radiobuttons.q9.response,
+radiobuttons.q10.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES/EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<values>
+/ehi_numberMissingItems = 0
+/leftScore = 0
+/rightScore = 0
+/ehi_LQ = ""
+</values>
+
+<expressions>
+/Scoring = {
+
+	if (radiobuttons.q1.response < 0){
+		values.leftScore += abs(radiobuttons.q1.response);
+	} else if (radiobuttons.q1.response > 0){
+		values.rightScore += radiobuttons.q1.response;
+	} else {
+		values.leftScore += 1;
+		values.rightScore += 1;
+	}
+	
+	if (radiobuttons.q2.response < 0){
+		values.leftScore += abs(radiobuttons.q2.response);
+	} else if (radiobuttons.q2.response > 0){
+		values.rightScore += radiobuttons.q2.response;
+	} else {
+		values.leftScore += 1;
+		values.rightScore += 1;
+	}
+	
+	if (radiobuttons.q3.response < 0){
+		values.leftScore += abs(radiobuttons.q3.response);
+	} else if (radiobuttons.q3.response > 0){
+		values.rightScore += radiobuttons.q3.response;
+	} else {
+		values.leftScore += 1;
+		values.rightScore += 1;
+	}
+
+	if (radiobuttons.q4.response < 0){
+		values.leftScore += abs(radiobuttons.q4.response);
+	} else if (radiobuttons.q4.response > 0){
+		values.rightScore += radiobuttons.q4.response;
+	} else {
+		values.leftScore += 1;
+		values.rightScore += 1;
+	}
+
+	if (radiobuttons.q5.response < 0){
+		values.leftScore += abs(radiobuttons.q5.response);
+	} else if (radiobuttons.q5.response > 0){
+		values.rightScore += radiobuttons.q5.response;
+	} else {
+		values.leftScore += 1;
+		values.rightScore += 1;
+	}
+
+	if (radiobuttons.q6.response < 0){
+		values.leftScore += abs(radiobuttons.q6.response);
+	} else if (radiobuttons.q6.response > 0){
+		values.rightScore += radiobuttons.q6.response;
+	} else {
+		values.leftScore += 1;
+		values.rightScore += 1;
+	}
+
+	if (radiobuttons.q7.response < 0){
+		values.leftScore += abs(radiobuttons.q7.response);
+	} else if (radiobuttons.q7.response > 0){
+		values.rightScore += radiobuttons.q7.response;
+	} else {
+		values.leftScore += 1;
+		values.rightScore += 1;
+	}
+
+	if (radiobuttons.q8.response < 0){
+		values.leftScore += abs(radiobuttons.q8.response);
+	} else if (radiobuttons.q8.response > 0){
+		values.rightScore += radiobuttons.q8.response;
+	} else {
+		values.leftScore += 1;
+		values.rightScore += 1;
+	}
+
+	if (radiobuttons.q9.response < 0){
+		values.leftScore += abs(radiobuttons.q9.response);
+	} else if (radiobuttons.q9.response > 0){
+		values.rightScore += radiobuttons.q9.response;
+	} else {
+		values.leftScore += 1;
+		values.rightScore += 1;
+	}
+
+	if (radiobuttons.q10.response < 0){
+		values.leftScore += abs(radiobuttons.q10.response);
+	} else if (radiobuttons.q10.response > 0){
+		values.rightScore += radiobuttons.q10.response;
+	} else {
+		values.leftScore += 1;
+		values.rightScore += 1;
+	}
+
+	values.ehi_LQ = 100 * ((values.rightScore - values.leftScore)/(values.rightScore + values.leftScore));	
+}
+</expressions>
+
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default, all questions are 'required' to be answered.
+To change: set /required = false
+
+<radiobuttons q1>
+/caption = "1. Writing:"
+/ options = ("Left hand~nstrongly preferred", "Left hand~npreferred", "No hand~npreference", "Right hand~npreferred", "Right hand~nstrongly preferred")
+/ optionvalues = ("-2", "-1", "0", "1", "2")
+/ required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Drawing:"
+/ options = ("Left hand~nstrongly preferred", "Left hand~npreferred", "No hand~npreference", "Right hand~npreferred", "Right hand~nstrongly preferred")
+/ optionvalues = ("-2", "-1", "0", "1", "2")
+/ required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Throwing:"
+/ options = ("Left hand~nstrongly preferred", "Left hand~npreferred", "No hand~npreference", "Right hand~npreferred", "Right hand~nstrongly preferred")
+/ optionvalues = ("-2", "-1", "0", "1", "2")
+/ required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. Scissors:"
+/ options = ("Left hand~nstrongly preferred", "Left hand~npreferred", "No hand~npreference", "Right hand~npreferred", "Right hand~nstrongly preferred")
+/ optionvalues = ("-2", "-1", "0", "1", "2")
+/ required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. Toothbrush:"
+/ options = ("Left hand~nstrongly preferred", "Left hand~npreferred", "No hand~npreference", "Right hand~npreferred", "Right hand~nstrongly preferred")
+/ optionvalues = ("-2", "-1", "0", "1", "2")
+/ required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Knife (without fork):"
+/ options = ("Left hand~nstrongly preferred", "Left hand~npreferred", "No hand~npreference", "Right hand~npreferred", "Right hand~nstrongly preferred")
+/ optionvalues = ("-2", "-1", "0", "1", "2")
+/ required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. Spoon:"
+/ options = ("Left hand~nstrongly preferred", "Left hand~npreferred", "No hand~npreference", "Right hand~npreferred", "Right hand~nstrongly preferred")
+/ optionvalues = ("-2", "-1", "0", "1", "2")
+/ required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. Broom (upper hand):"
+/ options = ("Left hand~nstrongly preferred", "Left hand~npreferred", "No hand~npreference", "Right hand~npreferred", "Right hand~nstrongly preferred")
+/ optionvalues = ("-2", "-1", "0", "1", "2")
+/ required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. Striking match (match):"
+/ options = ("Left hand~nstrongly preferred", "Left hand~npreferred", "No hand~npreference", "Right hand~npreferred", "Right hand~nstrongly preferred")
+/ optionvalues = ("-2", "-1", "0", "1", "2")
+/ required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. Opening box (lid):"
+/ options = ("Left hand~nstrongly preferred", "Left hand~npreferred", "No hand~npreference", "Right hand~npreferred", "Right hand~nstrongly preferred")
+/ optionvalues = ("-2", "-1", "0", "1", "2")
+/ required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<caption end>
+/ caption = "- END OF QUESTIONNAIRE -"
+/ position = (45%, 93%)
+/ fontstyle = ("Arial", 2%, false, true, false, false, 5, 1)
+/ txcolor = gray
+</caption>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage ehi_1>
+/ caption ="Please indicate your hand preference for the following activities or objects:
+"
+/ questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage ehi_2>
+/ caption ="Please indicate your hand preference for the following activities or objects:
+"
+/ questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage ehi_3>
+/ caption ="Please indicate your hand preference for the following activities or objects:
+"
+/ questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage ehi_4>
+/ caption ="Please indicate your hand preference for the following activities or objects:
+"
+/ questions = [1 = q10, end]
+</surveypage>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey edinburghhandednessinventory>
+/pages = [
+	1 = ehi_1;
+	2 = ehi_2;
+	3 = ehi_3;
+	4 = ehi_4;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Submit"
+/ onblockend = [
+	if (radiobuttons.q1.response == ""){
+		values.ehi_numberMissingItems += 1;
+	}
+	if (radiobuttons.q2.response == ""){
+		values.ehi_numberMissingItems += 1;
+	}
+	if (radiobuttons.q3.response == ""){
+		values.ehi_numberMissingItems += 1;
+	}
+	if (radiobuttons.q4.response == ""){
+		values.ehi_numberMissingItems += 1;
+	}
+	if (radiobuttons.q5.response == ""){
+		values.ehi_numberMissingItems += 1;
+	}
+	if (radiobuttons.q6.response == ""){
+		values.ehi_numberMissingItems += 1;
+	}
+	if (radiobuttons.q7.response == ""){
+		values.ehi_numberMissingItems += 1;
+	}
+	if (radiobuttons.q8.response == ""){
+		values.ehi_numberMissingItems += 1;
+	}
+	if (radiobuttons.q9.response == ""){
+		values.ehi_numberMissingItems += 1;
+	}
+	if (radiobuttons.q10.response == ""){
+		values.ehi_numberMissingItems += 1;
+	}
+	
+	expressions.Scoring;
+]
+</survey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

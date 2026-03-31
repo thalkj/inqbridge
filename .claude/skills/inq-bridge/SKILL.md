@@ -22,6 +22,27 @@ After setup, if the user is not in "allow all" mode, run a quick warmup that exe
 
 ---
 
+## Experiment Discovery (do after setup)
+
+On skill invocation, scan the `experiments/` directory for existing experiments:
+
+1. List all subdirectories under `experiments/` that contain an `EXPERIMENT.md`.
+2. For each, read the `Status` line from `EXPERIMENT.md`.
+3. Present the list to the user:
+   ```
+   Found existing experiments:
+   • flower_prediction — Status: human-tested
+   • my_stroop — Status: building
+
+   Would you like to continue one of these, or start a new experiment?
+   ```
+4. If the user picks an existing experiment, read its full `EXPERIMENT.md` to understand context before proceeding.
+5. If starting new, proceed to the Pre-Coding Intake Checklist.
+
+If no `experiments/` folder exists or it's empty, skip straight to the intake checklist.
+
+---
+
 ## Core Principles
 
 1. Treat the runner as authoritative and the MCP wrapper as thin.

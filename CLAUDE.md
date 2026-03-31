@@ -44,20 +44,6 @@ Tell the user upfront: *"I'll run a quick warmup sequence that touches each tool
 
 If the user has already granted broad permissions, skip this step.
 
-## Git Branching Convention
-
-**master** is for InqBridge platform code only: runner, MCP server, CLAUDE.md, SKILL.md, library fragments, docs, setup infrastructure. Never commit experiment-specific files to master.
-
-**Experiments live on their own branches**, named `experiments/<experiment-name>` (e.g., `experiments/flower-prediction`). Each experiment branch is based on master and contains its `.iqx` files, stimuli, and run data under `experiments/<name>/`.
-
-When working on an experiment, Claude should:
-1. Create or check out the `experiments/<name>` branch
-2. Keep all experiment files under `experiments/<name>/`
-3. If infrastructure changes are discovered during experiment work (e.g., CLAUDE.md improvements, pyproject.toml fixes), commit those to master **separately** before or after the experiment commit
-4. Never mix platform commits with experiment commits
-
-When the user says "commit", ask if they want experiment and platform changes committed separately if both are present. When they say "merge", only merge platform changes to master — experiments stay on their branches unless the user explicitly says to merge them.
-
 ## Experiment Quality Rules
 - **Do not set `/ required = true` on survey questions** unless the user explicitly asks or the response value is needed downstream (piping, branching, group allocation). Default to `/ required = false`.
 - Never rely on console output alone.
@@ -182,6 +168,38 @@ Pre-built include fragments in `includes/library/`: demographics, consent, debri
 - Use `generate_spec` to understand any script's structure before modifying it.
 - Use `decompose_script` to split a large monolithic script into testable modules.
 - Use `prepare_delivery` for final packaging — it strips screenCapture, removes debug elements, validates, and packages.
+
+## Experiment Folder Convention
+
+Each experiment lives in its own folder under `experiments/`. This keeps experiment work separate from platform code without requiring git knowledge.
+
+### Folder structure
+```
+experiments/
+  flower_prediction/
+    EXPERIMENT.md        ← Required: status, plan, changelog, known issues
+    main.iqx             ← Entry point
+    config_inc.iqx       ← Shared config
+    *_inc.iqx            ← Module includes
+    stimuli/             ← Images, sounds, etc.
+    data/                ← Inquisit output (auto-created)
+```
+
+### EXPERIMENT.md (required per experiment)
+Every experiment folder must have an `EXPERIMENT.md` with:
+- **Status**: `planning` | `building` | `monkey-tested` | `human-tested` | `delivered`
+- **Description**: One paragraph explaining the experiment
+- **Plan**: Design decisions and module breakdown
+- **Modules**: Table of files and their roles
+- **Stimuli**: Table of stimuli files, their source (generated/provided/placeholder), and notes
+- **Changelog**: Dated entries tracking what changed and why
+- **Known Issues**: Anything unresolved
+
+### Rules
+- **Platform changes go in the project root** (CLAUDE.md, SKILL.md, runner/, mcp_server/, etc.)
+- **Experiment changes go in experiments/<name>/** — never mix platform and experiment changes in the same commit
+- **Do not delete experiment folders** — mark status as `abandoned` if no longer needed
+- **Stimuli stay inside the experiment folder** — keeps each experiment self-contained
 
 ## Safety Guardrails
 - Do not change task logic, scoring formulas, or response logic without explicit approval.

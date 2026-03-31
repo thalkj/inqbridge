@@ -214,8 +214,9 @@ Inquisit.exe "scriptpath" -s <subjectid> -g <groupid> -m <monkey|human>
 The Inquisit path is auto-discovered from `local.json`. Exit codes: **1 = success**, **0 = failure**. Screen captures go to `data/screencaptures/` as .png files.
 
 ## Inquisit Documentation
-Reference docs are in `docs/`. Do NOT read these on startup — they are large. Search them with Grep when you need syntax help.
-- `docs/inquisit_programmers_manual.txt` — Full programmer's manual (88 pages)
+Reference docs are in `docs/`. Search them with Grep when you need syntax help.
+- **`docs/inquisit_cheat_sheet.txt`** — **READ THIS FIRST** before writing any experiment code. 20 syntax patterns with minimal working examples, plus common mistakes. ~250 lines, fast to read.
+- `docs/inquisit_programmers_manual.txt` — Full programmer's manual (88 pages). Search with Grep, don't read end-to-end.
 - `docs/script_notes_examples.txt` — Real experiment script examples
 
 ### Quick Inquisit Tips

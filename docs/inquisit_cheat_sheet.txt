@@ -1,0 +1,423 @@
+INQUISIT 6 SYNTAX CHEAT SHEET
+==============================
+Read this BEFORE writing any experiment code.
+All examples are from working Millisecond library scripts.
+
+
+1. DEFAULTS — global display settings
+--------------------------------------
+<defaults>
+/ canvasaspectratio = (4, 3)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ screencolor = white
+/ txcolor = black
+/ inputdevice = keyboard
+</defaults>
+
+Notes:
+- fontstyle args: (name, size, bold, italic, underline, strikeout, charset, smoothing)
+- Use % for sizes (resolution-independent). Never raw pixels.
+
+
+2. VALUES and EXPRESSIONS
+--------------------------
+<values>
+/ score = 0
+/ current_word = ""
+/ trial_count = 0
+</values>
+
+<expressions>
+/ total_score = values.score / values.trial_count
+/ percent_correct = (values.correct_count / values.trial_count) * 100
+</expressions>
+
+Notes:
+- values = mutable, set via ontrialbegin/ontrialend
+- expressions = computed on read, cannot be set directly
+
+
+3. TEXT — display text stimulus
+-------------------------------
+<text instructions>
+/ items = ("Press the SPACEBAR to begin.")
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+</text>
+
+<text stimulus>
+/ items = stimwords
+/ select = noreplace
+/ position = (50%, 50%)
+</text>
+
+<item stimwords>
+/ 1 = "happy"
+/ 2 = "angry"
+/ 3 = "neutral"
+</item>
+
+
+4. PICTURE — show an image
+---------------------------
+<picture target>
+/ items = ("stimuli/chart.png")
+/ position = (50%, 50%)
+/ size = (40%, 40%)
+</picture>
+
+Notes:
+- Path is relative to the .iqx file location
+- Use / size to control display dimensions
+
+
+5. SHAPE — fixation cross, rectangle, circle
+---------------------------------------------
+<shape fixation>
+/ shape = cross
+/ color = black
+/ size = (3%, 3%)
+/ position = (50%, 50%)
+</shape>
+
+<shape blank>
+/ shape = rectangle
+/ color = white
+/ size = (100%, 100%)
+/ position = (50%, 50%)
+</shape>
+
+
+6. TRIAL with stimulustimes — sequential presentation
+------------------------------------------------------
+<trial test>
+/ stimulustimes = [0 = fixation; 500 = blank; 750 = stimulus]
+/ beginresponsetime = 750
+/ responseinterrupt = immediate
+/ validresponse = ("d", "k")
+/ correctresponse = (values.correct_key)
+/ posttrialpause = 250
+</trial>
+
+Notes:
+- stimulustimes = [ms_from_start = element_name]
+- beginresponsetime = when responses start being accepted
+- responseinterrupt = immediate means trial ends on response
+
+
+7. TRIAL with response scoring
+-------------------------------
+<trial scored>
+/ stimulustimes = [0 = target]
+/ validresponse = ("d", "k")
+/ correctresponse = ("d")
+/ ontrialend = [
+    values.score = values.score + trial.scored.correct;
+]
+</trial>
+
+With custom validation:
+<trial custom_scored>
+/ stimulustimes = [0 = target]
+/ validresponse = ("d", "k")
+/ iscorrectresponse = [
+    return (trial.custom_scored.responsetext == values.expected_key);
+]
+</trial>
+
+
+8. TRIAL auto-advancing (no response needed)
+---------------------------------------------
+<trial fixation_display>
+/ stimulustimes = [0 = fixation]
+/ trialduration = 500
+/ recorddata = false
+</trial>
+
+Notes:
+- Just set / trialduration. Do NOT add / validresponse = (noresponse) alone.
+- If you use noresponse, you MUST also set / timeout or / trialduration.
+
+
+9. BLOCK — group trials together
+----------------------------------
+<block practice>
+/ preinstructions = (practice_intro)
+/ trials = [1-10 = practice_trial]
+/ onblockend = [
+    values.practice_accuracy = values.correct_count / 10;
+]
+</block>
+
+<block test>
+/ preinstructions = (test_intro)
+/ trials = [1-40 = test_trial]
+</block>
+
+Notes:
+- / trials = [positions = trialname] — positions are 1-indexed
+- / preinstructions and / postinstructions reference <page> elements
+
+
+10. PAGE — instruction screens
+-------------------------------
+<page welcome>
+^Welcome to this experiment.
+^^You will see words on the screen and respond using the keyboard.
+^^Press D for LEFT and K for RIGHT.
+^^^Press the spacebar to continue.
+</page>
+
+Notes:
+- ^ = line break (start of each line)
+- ^^ = blank line + text
+- ^^^ = extra spacing
+- Pages are shown via block / preinstructions = (welcome)
+
+
+11. INSTRUCT — instruction container
+--------------------------------------
+<instruct>
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = black
+/ nextlabel = "Continue"
+/ prevlabel = ""
+</instruct>
+
+Notes:
+- <instruct> sets appearance for ALL pages shown via preinstructions/postinstructions
+- Set / prevlabel = "" to hide the back button
+- Blocks reference <page> elements, NOT <instruct> elements
+
+
+12. EXPT — experiment structure
+--------------------------------
+<expt main>
+/ blocks = [
+    1 = instructions;
+    2 = practice;
+    3 = test;
+    4 = demographics;
+    5 = debrief;
+]
+/ groupassignment = groupnumber
+</expt>
+
+Notes:
+- Block numbers are sequential execution order
+- / groupassignment = groupnumber for between-subjects
+
+
+13. SURVEYPAGE with form elements
+-----------------------------------
+<surveypage demographics>
+/ caption = "Please answer the following questions."
+/ questions = [1 = age; 2 = gender; 3 = education]
+</surveypage>
+
+<textbox age>
+/ caption = "What is your age?"
+/ range = (18, 99)
+/ required = false
+</textbox>
+
+<radiobuttons gender>
+/ caption = "What is your gender?"
+/ options = ("Male", "Female", "Non-binary", "Prefer not to say")
+/ orientation = vertical
+/ required = false
+</radiobuttons>
+
+<dropdown education>
+/ caption = "What is your highest level of education?"
+/ options = ("High school", "Some college", "Bachelor's degree",
+    "Master's degree", "Doctoral degree")
+/ required = false
+</dropdown>
+
+Notes:
+- Do NOT set / required = true unless the value is needed for piping/branching
+- / mask = integer restricts textbox to numbers
+
+
+14. LIKERT — rating scale
+---------------------------
+<likert rating>
+/ stimulusframes = [1 = item_text]
+/ numpoints = 7
+/ anchors = ("Strongly disagree", "Strongly agree")
+/ position = (50%, 70%)
+</likert>
+
+Alternative with labels:
+<likert labeled_rating>
+/ stimulusframes = [1 = item_text]
+/ numpoints = 5
+/ labels = ("Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree")
+/ position = (50%, 70%)
+</likert>
+
+
+15. OPENENDED — text input with validation
+--------------------------------------------
+<openended response>
+/ stimulusframes = [1 = prompt_text]
+/ buttonlabel = "Submit"
+/ required = true
+/ responsefontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+</openended>
+
+With numeric validation:
+<openended numeric_response>
+/ stimulusframes = [1 = prompt_text]
+/ buttonlabel = "Submit"
+/ required = true
+/ isvalidresponse = [
+    return (evaluate(openended.numeric_response.response) >= 0 &&
+            evaluate(openended.numeric_response.response) <= 100);
+]
+/ monkeyresponse = ("42", "50", "75")
+</openended>
+
+Notes:
+- / monkeyresponse provides values for monkey-mode testing
+- evaluate() converts string response to number for comparison
+
+
+16. LIST — random/sequential item selection
+---------------------------------------------
+Random without replacement:
+<list random_items>
+/ items = ("apple", "banana", "cherry", "date", "elderberry")
+/ selectionrate = always
+/ select = noreplace
+</list>
+
+Sequential:
+<list ordered_items>
+/ items = (1, 2, 3, 4, 5)
+/ selectionrate = always
+/ select = sequence
+</list>
+
+Usage in ontrialbegin:
+/ ontrialbegin = [
+    values.current_item = list.random_items.nextvalue;
+]
+
+!! GOTCHA: list.X.nextvalue returns the SAME value if called multiple
+!! times in the same ontrialbegin block. For independent draws,
+!! use SEPARATE list elements (list.items1, list.items2, etc.)
+
+
+17. DATA — export custom columns
+----------------------------------
+<data>
+/ columns = (build, date, time, subject, group, session,
+    blockcode, blocknum, trialcode, trialnum,
+    stimulusitem, response, correct, latency,
+    values.score, values.condition, values.rt)
+</data>
+
+Notes:
+- Without <data>, only built-in columns appear in .iqdat
+- Custom values.* MUST be listed here to appear in output
+
+
+18. ONTRIALBEGIN — set values, conditional logic
+--------------------------------------------------
+<trial dynamic>
+/ ontrialbegin = [
+    values.trial_count += 1;
+    if (values.condition == 1) {
+        values.correct_key = "d";
+    } else {
+        values.correct_key = "k";
+    };
+]
+/ stimulustimes = [0 = stimulus]
+/ validresponse = ("d", "k")
+/ correctresponse = (values.correct_key)
+</trial>
+
+Notes:
+- Semicolons after EVERY statement including the closing } of if/else
+- Multiple ontrialbegin blocks on the same trial are allowed
+
+
+19. BRANCH — conditional trial branching
+------------------------------------------
+<trial check>
+/ stimulustimes = [0 = feedback]
+/ trialduration = 1000
+/ branch = [
+    if (values.errors > 3) {
+        return trial.error_message;
+    } else {
+        return trial.next_item;
+    };
+]
+</trial>
+
+Notes:
+- branch returns the next trial to execute
+- return trial.X or return block.X
+- Always use return statement
+
+
+20. ITEM — inline and file-based
+----------------------------------
+Inline:
+<item words>
+/ 1 = "happy"
+/ 2 = "sad"
+/ 3 = "angry"
+</item>
+
+File-based:
+<item wordlist>
+/ inputfile = "stimuli/words.txt"
+</item>
+
+Notes:
+- Items are referenced by text/picture elements: / items = words
+- File-based items: one item per line in the text file
+
+
+==============================================
+COMMON MISTAKES — DO NOT DO THESE
+==============================================
+
+WRONG: / iti = 500
+RIGHT: / posttrialpause = 500
+(There is no / iti attribute in Inquisit 6)
+
+WRONG: / halign = center  or  / valign = middle
+RIGHT: / hposition = 50%   and  / vposition = 50%
+(halign/valign do not exist in Inquisit 6)
+
+WRONG: / size = 20  (on a <block>)
+RIGHT: / trials = [1-20 = mytrial]
+(Blocks have no / size attribute — control count via trial positions)
+
+WRONG: / preinstructions = (my_instruct_element)
+RIGHT: / preinstructions = (my_page_element)
+(Use <page> elements, not <instruct> elements)
+
+WRONG: <trial> with / validresponse = (noresponse) and no timeout
+RIGHT: <trial> with / trialduration = 1000
+(noresponse requires trialduration or timeout)
+
+WRONG: Calling list.X.nextvalue 4 times for 4 independent values
+RIGHT: Use 4 separate <list> elements
+(nextvalue returns same value within one evaluation cycle)
+
+WRONG: Expecting values.* to appear in .iqdat automatically
+RIGHT: Add <data> element with / columns listing your values.*
+(Custom values need explicit <data> columns)
+
+WRONG: ~~ for line breaks in <text> items
+RIGHT: ~n for line breaks in <text> items
+       ^ for line breaks in <page> elements
+(~~ is not a valid line break sequence)

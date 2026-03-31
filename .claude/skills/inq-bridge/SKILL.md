@@ -99,7 +99,8 @@ Use this workflow when building a new experiment. For iterating on an existing s
 1. **Create the experiment folder** `experiments/<name>/` and write an initial `EXPERIMENT.md` with status `planning`, a description, and the design plan.
 2. **Identify experiment components**: demographics, instructions, practice, test blocks, debrief, etc.
 3. **List each module**, its purpose, and its dependencies on other modules.
-4. **Use `scaffold_experiment`** to generate starter files — or start from blank .iqx files.
+4. **Consult the reference library** (`scripts/library_v6/`): Before writing code, grep for matching paradigms or element types. 202 working Inquisit 6 scripts are included. See CLAUDE.md "Reference Library" section for key scripts by paradigm and grep examples.
+5. **Use `scaffold_experiment`** to generate starter files — or start from blank .iqx files.
    - For known paradigms (IAT, Stroop, survey, RT task): scaffold generates realistic reference templates.
    - For novel designs: use `experiment_type = "custom"` for minimal stubs.
    - Templates are starting points, not constraints — modify or discard freely.

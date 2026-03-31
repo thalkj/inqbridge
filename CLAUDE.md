@@ -26,7 +26,9 @@
 
 3. **Inquisit discovery** (`local.json`): This file is **optional** if only one Inquisit version is installed. `runner/config.py` auto-discovers Inquisit from `C:\Program Files\Millisecond Software`. However, if multiple versions are installed, **ask the user which version they are licensed for** — a newer version on disk does not mean the user has a license. Create `local.json` with their chosen path.
 
-4. **MCP server not responding**: If MCP tool calls fail with connection errors after setup, tell the user to restart Claude Code so the MCP server process loads. This is the one step that cannot be automated. In the meantime, use Bash to invoke runner modules directly.
+4. **Reference library**: Check whether `scripts/library_v6/` contains .iqx files. If empty or missing, run via Bash: `.venv/Scripts/python scripts/download_library_v6.py`. These 202 scripts are the primary syntax reference for Claude when building experiments. They are gitignored (too large to track) so each fresh install needs to download them once.
+
+5. **MCP server not responding**: If MCP tool calls fail with connection errors after setup, tell the user to restart Claude Code so the MCP server process loads. This is the one step that cannot be automated. In the meantime, use Bash to invoke runner modules directly.
 
 ## Permission Warming (do after setup)
 
@@ -202,6 +204,7 @@ Every experiment folder must have an `EXPERIMENT.md` with:
 - **Stimuli stay inside the experiment folder** — keeps each experiment self-contained
 
 ## Safety Guardrails
+- **Never modify a user's original .iqx script.** When asked to work on an existing Inquisit file, copy it (or extract the relevant parts) into a new file and work on the copy. The original stays untouched as a reference. Name the copy clearly (e.g., `original_v2.iqx` or copy into a new experiment folder).
 - Do not change task logic, scoring formulas, or response logic without explicit approval.
 - Do not delete data/artifact folders.
 - Do not silently rename elements across files.

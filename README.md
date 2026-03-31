@@ -31,29 +31,25 @@ An MCP bridge that lets LLMs build, run, and iterate on [Inquisit](https://www.m
 
 ## Getting Started
 
-1. Run `setup.bat` — either double-click it, run it from a terminal, or ask Claude to run it for you.
-   This will:
-   - Create a Python virtual environment (`.venv`)
-   - Install all dependencies
-   - Find your Inquisit installation (prompts if multiple versions are found)
-   - Write `local.json` (your Inquisit path) and `.mcp.json` (MCP server config)
+1. Open Claude Code in this folder.
+2. Say `/inq-bridge` or just describe the experiment you want to build.
+3. Claude handles everything: environment setup, Inquisit discovery, building, testing, and iteration.
 
-2. Restart Claude Code so it picks up the MCP server from `.mcp.json`.
+That's it. Claude will create the Python environment, configure the MCP server, and download reference libraries on first run. You'll see a few permission prompts the first time — accept them and the rest of the session flows smoothly.
 
-3. Ask Claude to build an experiment. Example workflow:
-   ```
-   "Create a Stroop task with practice and test blocks"
-   → scaffold_experiment → preflight_check → run_monkey → score_layout → iterate
-   ```
+**Example prompts:**
+- *"Build a Stroop task with practice and test blocks"*
+- *"I have this .iqx script, can you debug it?"*
+- *"Create an IAT measuring attitudes toward healthy food"*
 
 See `CLAUDE.md` for Inquisit-specific knowledge (syntax tips, gotchas, lessons learned).
 
 ## Troubleshooting
 
-If the MCP tools aren't showing up or scripts fail to run:
-- Re-run `setup.bat` to regenerate the config files
-- Check that `local.json` points to a valid Inquisit executable
-- Restart Claude Code after any config changes
+If MCP tools aren't responding:
+- Restart Claude Code (needed once after initial setup so it picks up `.mcp.json`)
+- Check that Inquisit 6 is installed in `C:\Program Files\Millisecond Software`
+- If multiple Inquisit versions are installed, Claude will ask which one you're licensed for
 
 ## Files (not committed, machine-specific)
 

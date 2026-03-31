@@ -139,6 +139,24 @@ Calling `list.X.nextvalue` multiple times in a single `ontrialbegin = [...]` blo
 ### `<data>` element needed to export custom values
 Custom `values.*` fields do not appear in the .iqdat file by default. Add a `<data>` element with `/ columns = [...]` listing the standard columns plus any `values.*` you need. Without this, only built-in columns (latency, response, etc.) are recorded.
 
+### `trial.X.response` returns scancode, NOT key name
+`trial.X.response` returns the numeric keyboard scancode (e.g., 32 for "d", 37 for "k"). To get the key name as a string, use `trial.X.responsetext` (returns "D", "K", etc. — uppercase). **Never compare `.response` with string values like `"d"` — it will always fail silently.**
+
+### `trial.X.responsetext` returns `"0"` on timeout, not empty string
+When a trial times out (no response), `.responsetext` returns the string `"0"`, NOT `""`. So `responsetext != ""` is TRUE on timeout. **For timeout detection, use `trial.X.response == 0` (numeric check).** Reserve `.responsetext` only for reading the actual key name after confirming a response was made.
+
+### `concat()` is binary in Inquisit 6 (takes exactly 2 arguments)
+`concat("a", "b", "c")` does NOT work. Chain calls: `x = concat("a", "b"); x = concat(x, "c");`. Numeric values are auto-converted to strings.
+
+### `/ inputfile` on `<item>` may fail for `<picture>` elements
+Using `/ inputfile = "path/to/list.txt"` with `<picture>` items can cause intermittent "Unable to initialize" errors on different items each run. **Use inline numbered items instead**: `/ 1 = "stimuli/img1.png"` etc. This is more verbose but reliable.
+
+### `<instruct>` element: always set `/ prevlabel = ""`
+Without `/ prevlabel = ""`, Inquisit shows `[]` as the back button text when `/ prevkey = (noresponse)`. Always explicitly set `/ prevlabel = ""` to hide it cleanly.
+
+### Inquisit 7 CLI is identical to Inquisit 6
+Same syntax: `Inquisit.exe "scriptpath" -s <subjectid> -g <groupid> -m <monkey|human>`. Scripts built for v6 should run on v7 CLI without changes. Note: this project is tested on Inquisit 6.
+
 ## Modular Development
 For complex experiments (500+ lines), build and test independent modules before combining. See the SKILL.md workflow for the full pipeline. Use `scaffold_experiment` to generate starter templates and `validate_merge` to check namespace conflicts before combining.
 
@@ -158,7 +176,7 @@ Pre-built include fragments in `includes/library/`: demographics, consent, debri
 - **Run preflight checks before every Inquisit execution.**
 - Use Monkey mode before asking for a human run.
 - Use `fast_mode=True` on `run_monkey` for quick compile/data checks — it collapses all stimulustimes to t=0 and zeros pauses.
-- `auto_capture` is on by default for `run_monkey` — it injects `/ screenCapture = true` into temp copies without modifying the real script.
+- `auto_capture` is on by default for `run_monkey` — it injects `/ screenCapture = true` into temp copies without modifying the real script. **Caution**: For experiments with many trials (>30), auto_capture produces hundreds of screenshots. For layout checks on large experiments, manually read 5-6 representative captures instead of running `score_layout` on the full set. Consider using `auto_capture=false` and manually adding `/ screenCapture = true` to just 1-2 representative trials per screen type.
 - `auto_fix` is on by default — on compile error, it runs preflight, auto-fixes missing files and phantom references, and retries once.
 - Use score_layout only after screen captures exist.
 - Use patch_layout only after score_layout returns concrete issues.
@@ -231,6 +249,10 @@ Reference docs are in `docs/`. Search them with Grep when you need syntax help.
 - **`noresponse` needs a duration** — set `/ trialduration` or `/ timeout`
 - **One `nextvalue` per list per cycle** — use separate `<list>` elements for independent draws
 - **Add `<data>` for custom values** — `values.*` won't appear in .iqdat without explicit `/ columns`
+- **`trial.X.response` = scancode (number), `trial.X.responsetext` = key name (string)** — never compare `.response` with `"d"`, use `.responsetext`
+- **Timeout check: `trial.X.response == 0`** — `.responsetext` returns `"0"` not `""` on timeout
+- **`concat(a, b)` only** — binary, not variadic; chain for 3+ strings
+- **Set `/ prevlabel = ""`** on `<instruct>` — prevents `[]` showing as back button
 
 ### Reference Library — 202 Real Inquisit 6 Scripts
 `scripts/library_v6/` contains 202 complete, working .iqx scripts from the Millisecond test library. These are **the single most valuable resource** for building correct Inquisit syntax. Each file is a standalone experiment (surveys, RT tasks, IATs, cognitive tasks, etc.).

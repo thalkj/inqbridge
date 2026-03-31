@@ -14,7 +14,7 @@
      ```json
      {
        "mcpServers": {
-         "inq-bridge": {
+         "inqbridge": {
            "command": "<PROJECT_ROOT>\\.venv\\Scripts\\python.exe",
            "args": ["-m", "mcp_server.main"],
            "cwd": "<PROJECT_ROOT>"
@@ -22,7 +22,7 @@
        }
      }
      ```
-   - Also ensure `.claude/settings.local.json` exists with `"enableAllProjectMcpServers": true` and `"enabledMcpjsonServers": ["inq-bridge"]`.
+   - Also ensure `.claude/settings.local.json` exists with `"enableAllProjectMcpServers": true` and `"enabledMcpjsonServers": ["inqbridge"]`.
 
 3. **Inquisit discovery** (`local.json`): This file is **optional** if only one Inquisit version is installed. `runner/config.py` auto-discovers Inquisit from `C:\Program Files\Millisecond Software`. However, if multiple versions are installed, **ask the user which version they are licensed for** — a newer version on disk does not mean the user has a license. Create `local.json` with their chosen path.
 

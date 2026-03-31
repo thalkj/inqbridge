@@ -54,18 +54,32 @@ Also included:
 ## Requirements
 
 - Windows 10/11
-- Python 3.12+
+- Python 3.12+ — if not installed, Claude will offer to install it for you during setup
 - Inquisit 6 (from [Millisecond Software](https://www.millisecond.com/)) — a valid license is required
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — available as CLI, desktop app, or IDE extension
 - An Anthropic API key or Claude Pro/Max subscription (for Claude Code)
 
 ## Getting Started
 
-1. Clone or download this repo.
-2. Open Claude Code in the folder.
-3. Say `/inq-bridge` or just describe the experiment you want to build.
+**CLI:**
+```
+git clone https://github.com/thalkj/inqbridge
+cd inqbridge
+claude
+```
 
-That's it. Claude handles environment setup, Inquisit discovery, and the full build-test-iterate workflow. You'll see a few permission prompts the first time — accept them and the rest of the session flows smoothly.
+**Desktop app / web app / IDE extension:**
+1. Clone or download this repo (you can ask Claude to do this for you).
+2. **Start a new Claude Code session in the `inqbridge` folder** — the subfolder that was created by cloning, which contains `CLAUDE.md`. This is important: Claude Code loads its configuration from the working directory root, so the session must be started inside `inqbridge`, not a parent folder.
+3. Describe the experiment you want to build — no slash commands needed.
+
+If you already have Claude Code open and ask it to clone this repo, it will create an `inqbridge` subfolder in your current directory. After cloning completes, **start a new session pointed at that `inqbridge` subfolder** so Claude picks up the project configuration.
+
+Claude handles Python installation (if needed), environment setup, Inquisit discovery, and the full build-test-iterate workflow automatically. You'll see a few permission prompts the first time — accept them and the rest of the session flows smoothly.
+
+> **Tip — `/inqbridge` command:** In the CLI, you can type `/inqbridge` to invoke the experiment workflow skill directly. In the desktop app and web app, just describe what you want in plain language — Claude activates the workflow automatically. The slash command is a convenience shortcut, not a requirement.
+
+> **Note on `setup.bat`:** A `setup.bat` file is included for reference, but you do not need to run it. Claude performs all setup steps automatically. If you prefer manual setup (e.g., for CI or scripting), the bat file creates the virtual environment, installs dependencies, discovers Inquisit, and writes the configuration files.
 
 **Example prompts:**
 - *"Build a Stroop task with practice and test blocks"*
@@ -78,7 +92,7 @@ That's it. Claude handles environment setup, Inquisit discovery, and the full bu
 InqBridge combines three layers:
 
 1. **`CLAUDE.md`** — Project instructions loaded automatically every conversation. Contains setup steps, Inquisit syntax rules, safety guardrails, and lessons learned from hard bugs.
-2. **`SKILL.md`** (`.claude/skills/inq-bridge/`) — Activated when you say `/inq-bridge`. Contains the experiment workflow: intake checklist, build phases, testing gates, and delivery steps.
+2. **`SKILL.md`** (`.claude/skills/inqbridge/`) — The experiment workflow: intake checklist, build phases, testing gates, and delivery steps. Activated automatically when you describe an experiment task, or manually via `/inqbridge` in the CLI.
 3. **MCP server** — 16 tools that Claude calls during the workflow. Runs preflight checks, executes Inquisit scripts, analyzes captures and data, patches layouts, and packages deliverables.
 
 Each experiment lives in its own folder under `experiments/` with an `EXPERIMENT.md` tracking file (status, changelog, known issues). This keeps experiment work separate from platform code.
@@ -89,7 +103,7 @@ InqBridge was built for Claude Code, but the core knowledge is tool-agnostic. Th
 
 **For Codex, Cursor, Windsurf, or similar tools:**
 1. Copy the content from `CLAUDE.md` into your tool's instruction file (e.g., `AGENTS.md` for Codex, `.cursorrules` for Cursor).
-2. Copy the content from `.claude/skills/inq-bridge/SKILL.md` into the same file or provide it as context.
+2. Copy the content from `.claude/skills/inqbridge/SKILL.md` into the same file or provide it as context.
 3. Point your tool at the MCP server: `.venv/Scripts/python -m mcp_server.main` (see `.mcp.json` for the config format).
 4. The reference library (`scripts/library_v6/`), cheat sheet (`docs/inquisit_cheat_sheet.txt`), and docs work regardless of which AI tool reads them.
 
@@ -97,7 +111,15 @@ The only Claude-specific parts are the `.claude/` directory structure and the `C
 
 ## Troubleshooting
 
-If MCP tools aren't responding:
+**Claude doesn't recognize `/inqbridge` or the experiment workflow:**
+- Your working directory is probably a parent folder. Claude Code needs to be running with `inqbridge` as its working directory (the folder containing `CLAUDE.md`). Start a new session pointed at the `inqbridge` folder.
+- In the desktop app or web app, you don't need `/inqbridge` — just describe your experiment and Claude will activate the workflow.
+
+**Python not found:**
+- Claude will offer to install Python for you. Accept the prompt and it handles the rest.
+- If you prefer manual installation: [python.org/downloads](https://www.python.org/downloads/) — check "Add Python to PATH" during installation.
+
+**MCP tools aren't responding:**
 - Restart Claude Code (needed once after initial setup so it picks up `.mcp.json`)
 - Check that Inquisit 6 is installed in `C:\Program Files\Millisecond Software`
 - If multiple Inquisit versions are installed, Claude will ask which one you're licensed for

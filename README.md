@@ -1,10 +1,10 @@
 # InqBridge
 
-An unofficial, AI-assisted tool for building and testing [Inquisit](https://www.millisecond.com/) experiments using [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Write .iqx scripts, run them via Monkey mode, analyze screen captures and data quality, patch layout issues, and deliver tested experiments — all through natural language and MCP tools.
+An unofficial, AI-assisted tool for building and testing [Inquisit](https://www.millisecond.com/) experiments. Write .iqx scripts, run them via Monkey mode, analyze screen captures and data quality, patch layout issues, and deliver tested experiments — all through natural language and MCP tools. Built for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) but adaptable to other AI coding tools (see below).
 
 > **Not affiliated with Millisecond Software.** Inquisit is a product of [Millisecond Software](https://www.millisecond.com/). This tool automates scripting workflows but requires a valid Inquisit license.
 
-> **Not actively maintained.** This was developed as a research tool and is released as-is. Feel free to fork, adapt, and extend to your needs. Issues and pull requests may not be reviewed.
+> **Use at your own risk.** This was developed for personal use and is released as-is. I take no responsibility for any problems you may encounter. This project is not actively maintained — please do not email me with requests or support questions. Feel free to fork and adapt to your needs.
 
 ## Citation
 
@@ -82,6 +82,18 @@ InqBridge combines three layers:
 3. **MCP server** — 16 tools that Claude calls during the workflow. Runs preflight checks, executes Inquisit scripts, analyzes captures and data, patches layouts, and packages deliverables.
 
 Each experiment lives in its own folder under `experiments/` with an `EXPERIMENT.md` tracking file (status, changelog, known issues). This keeps experiment work separate from platform code.
+
+## Using with Other AI Coding Tools
+
+InqBridge was built for Claude Code, but the core knowledge is tool-agnostic. The Inquisit rules, syntax cheat sheet, reference library, and MCP tools work with any AI coding assistant that supports the [MCP protocol](https://modelcontextprotocol.io/).
+
+**For Codex, Cursor, Windsurf, or similar tools:**
+1. Copy the content from `CLAUDE.md` into your tool's instruction file (e.g., `AGENTS.md` for Codex, `.cursorrules` for Cursor).
+2. Copy the content from `.claude/skills/inq-bridge/SKILL.md` into the same file or provide it as context.
+3. Point your tool at the MCP server: `.venv/Scripts/python -m mcp_server.main` (see `.mcp.json` for the config format).
+4. The reference library (`scripts/library_v6/`), cheat sheet (`docs/inquisit_cheat_sheet.txt`), and docs work regardless of which AI tool reads them.
+
+The only Claude-specific parts are the `.claude/` directory structure and the `CLAUDE.md` filename convention. The actual instructions inside are universal Inquisit knowledge.
 
 ## Troubleshooting
 

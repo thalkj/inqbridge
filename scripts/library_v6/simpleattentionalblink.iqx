@@ -1,0 +1,1324 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+											SIMPLE ATTENTIONAL BLINK 
+___________________________________________________________________________________________________________________	
+
+Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 11-04-2013
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a simple Attentional Blink design to study the temporary suppression of visual attention.
+Attentional Blink: Reduced Processing of a second target (T1) that follows in short succession of a first target (T1)
+
+The implemented design is inspired by:
+
+Raymond, J.E.; Shapiro, K. L.; Arnell, K. M. (1992) Temporary suppression of visual processing in an RSVP task: 
+An attentional blink? Journal of Experimental Psychology: Human Perception and Performance, Vol 18(3), 849-860.
+
+and:
+
+Folk, C.L, Leber, A.B., Egeth, H.E. (2002). Made you blink! Contingent attentional capture produces 
+a spatial blink. Perception & Psychophysics, 64, 741-753.
+
+Differences between script and Raymond et al (1992):
+1. script uses constant stream length (see Folk et al, 2002) whereas Raymond et al (1992) used variable stream length 
+2. reduced number of T1 stream positions and a reduced number of T1-T2 lag positions
+3. T2 Task: in Raymond et al (1992) T2 was an X that could either be present or active. In this script, T2 is an X or a Z.
+4. screencolor and color of letters and targets differ from Raymond et al (1992)
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants see a stream of non-repeating 20 letters. One of these letters is a red. This is target T1. 
+It appears at predetermined positions (here: streampositions 5 or 10, editable parameters). 
+Another letter might be an X or a Z.  This is called the T2 stimulus. 
+
+The T2 stimulus appears after the T1 stimulus in the stream at predetermined lags 
+(here: lags 1 or 7, editable parameters). 
+At the end of the sequence,  participants have to recall the red letter (T1) and decide whether 
+they saw an X or a Z.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up takes app. 30 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'simpleattentionalblink_raw*.iqdat'
+
+build:						The specific Inquisit version used (the 'build') that was run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+display.refreshrate:		the refereshrate of the current monitor
+date, time: 				date and time script was run 
+subject, group: 			with the current subject/groupnumber
+session:					with the current session id
+
+blockcode, blocknum:		the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 		the name and number of the currently recorded trial (built-in Inquisit variable)
+								Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+								that do not store data to the data file such as feedback trials. Thus, trialnum 
+								may not reflect the number of main trials run per block. 
+									
+random_lettercolor:			true (default): the regular letters in the stream will be assigned random colors.
+									(with exception of T1_color/T2_color). See list.randomlettercolors for details
+									false: the regular letters will be presented in the color specified under lettercolor									
+									
+t1_streamposition:			holds the current temporal streamposition of the T1 stimulus
+t2_lag:						holds the current T1-T2 lag (Note: lag = 1 => t2 is presented directly after t1)
+t2_streamposition:			holds the current temporal streamposition of the T2 stimulus
+t1_stim:					holds the name of the current T1 stimulus
+t2_stim:					holds the name of the current T2 stimulus
+
+response:					the participant's response (T1 task: openended response; T2 task: scancode for X (45) or Z (44))
+correct:					the correctness of the response (1 = correct; 0 = error)
+latency: 					the response latency (in ms)
+
+letter1-
+letter18:					store the 18 letters in the letter sequence (letters other than T1 and T2)
+							Note: the letters 1-18 are presented in random order
+
++ onsettime of the 20 stream variables (Note: in stimulusFRAMES, not ms)
+
+
+(2) Summary data file: 'simpleattentionalblink_summary*.iqdat'
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)
+
+
+random_lettercolor:			true (default): the regular letters in the stream will be assigned random colors.
+							(with exception of T1_color/T2_color). See list.randomlettercolors for details
+							false: the regular letters will be presented in the color specified under lettercolor	
+								
+T1_meancorr_pos1lag1:		proportion correct responses to T1 task with T1 pos1 = 5 and T2 lag1 = 1
+T1_meancorr_pos1lag2:		proportion correct responses to T1 task with T1 pos1 = 5 and T2 lag2 = 7
+T1_meancorr_pos2lag1:		proportion correct responses to T1 task with T1 pos2 = 10 and T2 lag1 = 1
+T1_meancorr_pos2lag2:		proportion correct responses to T1 task with T1 pos2 = 10 and T2 lag2 = 7
+
+T2_meancorr_pos1lag1:		proportion correct responses to T2 task with T1 pos1 = 5 and T2 lag1 = 1
+T2_meancorr_pos1lag2:		proportion correct responses to T2 task with T1 pos1 = 5 and T2 lag2 = 7
+T2_meancorr_pos2lag1:		proportion correct responses to T2 task with T1 pos2 = 10 and T2 lag1 = 1
+T2_meancorr_pos2lag2:		proportion correct responses to T2 task with T1 pos2 = 10 and T2 lag2 = 7
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+- simple AB design with: 2 T1 streampositions x 2 T1-T2 lag positions x 2 T2 stimuli x 30 repetitions each = 240 trial sequences
+	
+Practice Block
+- 16 practice trial sequences (same as test sequences but with error feedback)
+
+Test Block Set-Up:
+- 240 Trial Sequences
+- random selection of T1 streamposition/lag/T2 with equal distribution of the two T2 across the 4 conditions 
+T1streampositions x t1-t2 lags (see lists under section Editable Parameters)
+- every 60 (default) trial sequences are followed by a rest trial (editable parameter)
+
+		Trial Sequence:
+		- Fixation cross presentation for parameters.fixationduration (editable value)
+		- A stream of 20* (default) white (or randomly colored) letters are presented: letters are randomly selected without replacement
+		- one of the letters in the stream is red (default) => T1
+		- one of the letters following the T1 is either an X or a Z => T2
+		-> participants are asked to recall the T1 at the end of the stream
+		-> participants are asked to press X if T2 = X or press Z if T2 = Z
+
+		!!! Note: LETTER PRESENTATION TIME
+		The letter presentation duration in this script is coded in terms of stimulusframes.
+		On a monitor with a vertical refresh rate of 60Hz, one stimulusframe ~16.7ms.
+
+		Each letter in this script is presented for 1 stimulusframe (~16.7ms on a 60Hz monitor)
+		with a blank stimulus interval of 5 stimulusframes (~83.3ms on a 60Hz monitor)
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+Items can be edited under EDITABLE STIMULI; 
+Text sizes can be edited under EDITABLE PARAMETERS
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+	
+Instructions are provided by Millisecond Software
+as htm/html pages and can be edited by changing the provided htm/html files.
+To edit htm/html-files: open the respective documents in simple Text Editors such as TextEdit (Mac)
+or Notepad (Windows). Additional instructions are listed under section Editable Instructions.
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/restperiods:								ratio of trialsequences to rests (aka there is a rest trial following every
+											60 trial sequences - default)
+											
+Trialnumbers:
+/ practiceTrials:							the number of practice trials run (default: 16)
+/ testTrials:								the number of test trials run (default: 240)											
+											
+Streampositions and lags:											
+/ streampositionT1_1:						streamposition1 tested for T1 (default: 5)
+/ streampositionT1_2:						streamposition1 tested for T1 (default: 10)
+/ lagT2_1:									lag1 tested for T2 (default: 1)
+/ lagT2_2:									lag2 tested for T2 (default: 7)	
+											Note: there are 20 streampositions total, thus 20 is the last position for T2.
+																					
+Duration variables (in ms):
+/restduration:								duration of rest trial in ms (default: 60000ms)
+/fixationduration:							duration of fixation cross in ms (default: 500ms)
+/responsecue_duration:						duration of the response cue in ms (default: 500ms) <= not in original article
+
+Duration variables (in vertical refreshframes)
+/stimDuration:								duration of letters (default: 1 frame)
+/isi:										duration of interstimulus interval (default: 5 frames)
+											!!!Note: on a 60Hz monitor the vertical refreshrate is ~16.67ms per stimulusframe
+											=> 1 frame ~ 16.67ms
+											=> 5 frames ~ 84ms
+									
+Letter/targets:
+/stimulussize_letters:						height of the letters relative to screen height (default: 10%)
+
+/random_lettercolor							true: the regular letters in the stream will be assigned random colors.
+											(with exception of parameters.T1_color/parameters.T2_color). See list.randomlettercolors for details												   
+											false: the regular letters will be presented in the color specified under parameters.lettercolor
+										
+/lettercolor:								specifies the regular letter color if parameters.random_lettercolor == false
+/T1_color:									specifies the color of T1 (default: red)
+/T1_color_label:							the word label for T1 color (default: "RED")
+
+/T2_color:									specifies a particular color for T2 
+											(if left blank = "" => T2 gets the same color as regular stream letters)
+
+/responsekey_T2_1:							response key 1 (default: 'X')	
+/responsekey_T2_2:							response key 2 (default: 'Z')
+
+</usermanual>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ restperiods = 60
+/ streampositionT1_1 = 5
+/ streampositionT1_2 = 10
+/ lagT2_1 = 1
+/ lagT2_2 = 7
+
+//trialnumbers:
+/ practiceTrials = 16
+/ testTrials = 240
+
+//duration parameters
+/ restduration = 0
+/ fixationduration = 17
+/ responsecue_duration = 50
+/ stimDuration = 1					//IMPORTANT: timing defined in terms of refereshframes
+/ isi = 5							//IMPORTANT: timing defined in terms of refereshframes
+									//On a 60Hz monitor; 1 frame ~ 16.67ms
+
+//Stim parameter
+/ stimulussize_letters = 10%
+/ random_lettercolor = true
+/ lettercolor = white
+/ T1_color = red
+/ T1_color_label = "RED"
+/ T2_color = ""
+
+//Responsekey parameters:
+/ responsekey_T2_1 = "X"
+/ responsekey_T2_2 = "Z"
+</parameters>
+
+/ restperiods = 60
+/ streampositionT1_1 = 5
+/ streampositionT1_2 = 10
+/ lagT2_1 = 1
+/ lagT2_2 = 7
+
+//trialnumbers:
+/ practiceTrials = 16
+/ testTrials = 240
+
+//duration parameters
+/ restduration = 60000
+/ fixationduration = 100
+/ responsecue_duration = 500
+/ stimDuration = 1					//IMPORTANT: timing defined in terms of refereshframes
+/ isi = 5							//IMPORTANT: timing defined in terms of refereshframes
+									//On a 60Hz monitor; 1 frame ~ 16.67ms
+
+//Stim parameter
+/ stimulussize_letters = 10%
+/ random_lettercolor = true
+/ lettercolor = white
+/ T1_color = red
+/ T1_color_label = "RED"
+/ T2_color = ""
+
+//Responsekey parameters:
+/ responsekey_T2_1 = "X"
+/ responsekey_T2_2 = "Z"
+
+
+
+
+
+
+//control of streampositions: (!!!Note: poolSize of list is set under blocks to the selected trialnumbers for practice and test 
+//respectively)
+<list streampositions>
+/ items = (parameters.streampositionT1_1,parameters.streampositionT1_1,parameters.streampositionT1_1,parameters.streampositionT1_1,
+parameters.streampositionT1_2,parameters.streampositionT1_2, parameters.streampositionT1_2,parameters.streampositionT1_2)
+/ replace = false
+</list>	
+
+//control of lags:
+//Note: the selection is tied to the currently selected streamposition
+<list lags>
+/items = (parameters.lagT2_1, parameters.lagT2_1, parameters.lagT2_2,parameters.lagT2_2,
+parameters.lagT2_1, parameters.lagT2_1, parameters.lagT2_2,parameters.lagT2_2)
+/ selectionmode = list.streampositions.currentIndex
+</list>
+
+//controls the selection of the T2: half the T2 are Xs the other half are Zs
+//Note: the selection is tied to the currently selected streamposition
+<list T2selection>
+/items = ("X", "Z", "X", "Z", "X", "Z", "X", "Z")
+/ selectionmode = list.streampositions.currentIndex
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+<item fixationcross>
+/ 1 = "+"
+</item>
+
+Note: controls the letter sequence; the letter at T1_streamposition will change
+color
+<list letters>
+/ items = ("A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", 
+"Q", "R", "S", "T", "U", "V", "Y")
+/ replace = false
+/ selectionrate = always
+</list>
+
+<item responsecue>
+/ 1 = "?"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<item taskinstructions>
+/ 1 = "Please enter the T1 letter. If you are unsure, take a guess."
+/ 2 = "What was the T2 letter? If you are unsure, take a guess.
+
+
+<%parameters.responsekey_T2_1%>- key for X 
+<%parameters.responsekey_T2_2%>- key for Z"
+</item>
+
+<item miscellaneous_instruct>
+/ 1 = "Take a break"
+/ 2 = "Error"
+</item>
+
+<instruct>
+/ fontstyle = ("Arial", 2.8%, false, false, false, false, 5, 1)
+</instruct>
+
+Note: these instructions are not originals and are provided as examples.
+
+<htmlpage intro1>
+/ file = "intro1.htm"
+</htmlpage>
+
+Note: depending on the setting of parameter.random_lettercolor a different instruction pic
+is selected for the html-intro page
+<expressions>
+/selectPic = if (parameters.random_lettercolor == true){
+	"<img src='randomcolorsequence.png' style='height:30vh'/><br>"
+} else {
+	"<img src='whitelettersequence.png' style='height:30vh'/><br>"	
+}
+</expressions>
+
+<htmlpage teststart>
+/ file = "teststart.htm"
+</htmlpage>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+**************************************
+Color List for Letters
+**************************************
+Note: selects a random color (other than the one reserved for T1) for the current letter IF parameters.random_lettercolor == true
+
+<list randomlettercolors>
+/ items = (red, blue, yellow, white, green)
+/ not = (parameters.T1_color, parameters.T2_color)
+/ replace = true
+/ selectionrate = always
+</list>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = black
+/ txcolor = black
+/ screencolor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, display.refreshrate, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum,
+parameters.random_lettercolor, 
+values.t1_streamposition, values.t2_lag, values.t2_streamposition,
+values.t1_stim, values.t2_stim, response, correct, latency,
+values.letter1, values.letter2, values.letter3, values.letter4, values.letter5, values.letter6,
+values.letter7, values.letter8, values.letter9, values.letter10, values.letter11, values.letter12,
+values.letter13, values.letter14, values.letter15, values.letter16, values.letter17, values.letter18,
+
+values.T1_onset, values.T2_onset,
+values.distractor1_onset,
+values.distractor2_onset,
+values.distractor3_onset,
+values.distractor4_onset,
+values.distractor5_onset,
+values.distractor6_onset,
+values.distractor7_onset,
+values.distractor8_onset,
+values.distractor9_onset,
+values.distractor10_onset,
+values.distractor11_onset,
+values.distractor12_onset,
+values.distractor13_onset,
+values.distractor14_onset,
+values.distractor15_onset,
+values.distractor16_onset,
+values.distractor17_onset,
+values.distractor18_onset,
+
+
+)
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, display.refreshrate, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+parameters.random_lettercolor,
+expressions.T1_meancorr_pos1lag1, expressions.T1_meancorr_pos1lag2, expressions.T1_meancorr_pos2lag1, expressions.T1_meancorr_pos2lag2,
+expressions.T2_meancorr_pos1lag1, expressions.T2_meancorr_pos1lag2, expressions.T2_meancorr_pos2lag1, expressions.T2_meancorr_pos2lag2)
+</summarydata>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+ VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+These variables change values throughtout the task
+completed:									0 = script was not completed; 1 = script was completed (all conditions run)
+/trialcount_perblock:						tracks how many trial sequences have been run per block
+
+/letter:									stores the current letter in the sequence
+/T1_streamposition:							holds the current temporal streamposition of the T1 stimulus
+/T2_lag:									holds the current T1-T2 lag
+/T2_streamposition:							holds the current temporal streamposition of the T2 stimulus
+
+/T1_stim:									holds the name of the current T1 stimulus
+/T2_stim:									holds the name of the current T2 stimulus
+
+/letter1-
+/letter18:									store the 18 letters in the letter sequence (letters other than T1 and T2)
+/stream:									stream of letters in order of letter presentation				
+
+<values>
+/ totalTrials = 0
+/ trialcount_perblock = 0
+/ T1_streamposition = 0
+/ T2_lag = 0
+/ T2_streamposition = 0
+
+/ T1_stim = ""
+/ T2_stim = ""
+
+/ letter1 = ""
+/ letter2 = ""
+/ letter3 = ""
+/ letter4 = ""
+/ letter5 = ""
+/ letter6 = ""
+/ letter7 = ""
+/ letter8 = ""
+/ letter9 = ""
+/ letter10 = ""
+/ letter11 = ""
+/ letter12 = ""
+/ letter13 = ""
+/ letter14 = ""
+/ letter15 = ""
+/ letter16 = ""
+/ letter17 = ""
+/ letter18 = ""
+/stream = ""
+
+//trialonset variables:
+/T1_onset = 0
+/T2_onset = 0
+/distractor1_onset = 0
+/distractor2_onset = 0
+/distractor3_onset = 0
+/distractor4_onset = 0
+/distractor5_onset = 0
+/distractor6_onset = 0
+/distractor7_onset = 0
+/distractor8_onset = 0
+/distractor9_onset = 0
+/distractor10_onset = 0
+/distractor11_onset = 0
+/distractor12_onset = 0
+/distractor13_onset = 0
+/distractor14_onset = 0
+/distractor15_onset = 0
+/distractor16_onset = 0
+/distractor17_onset = 0
+/distractor18_onset = 0
+</values>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+//calculate the onsettimes of 20 stream items
+<expressions>
+/onsettime_stim1 = 1
+/onsettime_isi1 = expressions.onsettime_stim1 + parameters.stimDuration
+
+/onsettime_stim2 = expressions.onsettime_isi1 + parameters.isi
+/onsettime_isi2 = expressions.onsettime_stim2 + parameters.stimDuration
+
+/onsettime_stim3 = expressions.onsettime_isi2 + parameters.isi
+/onsettime_isi3 = expressions.onsettime_stim3 + parameters.stimDuration
+
+/onsettime_stim4 = expressions.onsettime_isi3 + parameters.isi
+/onsettime_isi4 = expressions.onsettime_stim4 + parameters.stimDuration
+
+/onsettime_stim5 = expressions.onsettime_isi4 + parameters.isi
+/onsettime_isi5 = expressions.onsettime_stim5 + parameters.stimDuration
+
+/onsettime_stim6 = expressions.onsettime_isi5 + parameters.isi
+/onsettime_isi6 = expressions.onsettime_stim6 + parameters.stimDuration
+
+/onsettime_stim7 = expressions.onsettime_isi6 + parameters.isi
+/onsettime_isi7 = expressions.onsettime_stim7 + parameters.stimDuration
+
+/onsettime_stim8 = expressions.onsettime_isi7 + parameters.isi
+/onsettime_isi8 = expressions.onsettime_stim8 + parameters.stimDuration
+
+/onsettime_stim9 = expressions.onsettime_isi8 + parameters.isi
+/onsettime_isi9 = expressions.onsettime_stim9 + parameters.stimDuration
+
+/onsettime_stim10 = expressions.onsettime_isi9 + parameters.isi
+/onsettime_isi10 = expressions.onsettime_stim10 + parameters.stimDuration
+
+/onsettime_stim11 = expressions.onsettime_isi10 + parameters.isi
+/onsettime_isi11 = expressions.onsettime_stim11 + parameters.stimDuration
+
+/onsettime_stim12 = expressions.onsettime_isi11 + parameters.isi
+/onsettime_isi12 = expressions.onsettime_stim12 + parameters.stimDuration
+
+/onsettime_stim13 = expressions.onsettime_isi12 + parameters.isi
+/onsettime_isi13 = expressions.onsettime_stim13 + parameters.stimDuration
+
+/onsettime_stim14 = expressions.onsettime_isi13 + parameters.isi
+/onsettime_isi14 = expressions.onsettime_stim14 + parameters.stimDuration
+
+/onsettime_stim15 = expressions.onsettime_isi14 + parameters.isi
+/onsettime_isi15 = expressions.onsettime_stim15 + parameters.stimDuration
+
+/onsettime_stim16 = expressions.onsettime_isi15 + parameters.isi
+/onsettime_isi16 = expressions.onsettime_stim16 + parameters.stimDuration
+
+/onsettime_stim17 = expressions.onsettime_isi16 + parameters.isi
+/onsettime_isi17 = expressions.onsettime_stim17 + parameters.stimDuration
+
+/onsettime_stim18 = expressions.onsettime_isi17 + parameters.isi
+/onsettime_isi18 = expressions.onsettime_stim18 + parameters.stimDuration
+
+/onsettime_stim19 = expressions.onsettime_isi18 + parameters.isi
+/onsettime_isi19 = expressions.onsettime_stim19 + parameters.stimDuration
+
+/onsettime_stim20 = expressions.onsettime_isi19 + parameters.isi
+/onsettime_isi20 = expressions.onsettime_stim20 + parameters.stimDuration
+
+/onsettime_stim21 = expressions.onsettime_isi20 + parameters.isi
+
+/determineOnsettimes = {
+	values.T1_onset = 0; 
+	values.T2_onset = 0; 
+	list.onsettimes.reset();//reset the selection for each new trial
+	
+	//determine the onsettimes of the T1/T2:
+	values.T1_onset = list.onsettimes.item(values.t1_streamposition);//select the onsettime at position 't1_streamposition' and assign to T1
+	values.T2_onset = list.onsettimes.item(values.t2_streamposition);//select the onsettime at position 't2_streamposition' and assign to T2
+	
+	//determine the onsettimes for the distractor letters
+	//Note: the onsettimes of T1, T2 should be avoided at this point
+	values.distractor1_onset = list.onsettimes.nextValue;
+	values.distractor2_onset = list.onsettimes.nextValue;
+	values.distractor3_onset = list.onsettimes.nextValue;	
+	values.distractor4_onset = list.onsettimes.nextValue;	
+	values.distractor5_onset = list.onsettimes.nextValue;	
+	values.distractor6_onset = list.onsettimes.nextValue;	
+	values.distractor7_onset = list.onsettimes.nextValue;	
+	values.distractor8_onset = list.onsettimes.nextValue;
+	values.distractor9_onset = list.onsettimes.nextValue;
+	values.distractor10_onset = list.onsettimes.nextValue;
+	values.distractor11_onset = list.onsettimes.nextValue;
+	values.distractor12_onset = list.onsettimes.nextValue;
+	values.distractor13_onset = list.onsettimes.nextValue;	
+	values.distractor14_onset = list.onsettimes.nextValue;	
+	values.distractor15_onset = list.onsettimes.nextValue;	
+	values.distractor16_onset = list.onsettimes.nextValue;	
+	values.distractor17_onset = list.onsettimes.nextValue;	
+	values.distractor18_onset = list.onsettimes.nextValue;
+	//at this point all times in list.onsettimes have been assigned to the 20 stimuli...
+}
+</expressions>
+
+
+Summary variables:
+/T1_meancorr_pos1lag1:			proportion correct responses to T1 task with T1 pos = 5 and T2 lag = 1
+/T1_meancorr_pos1lag2:			proportion correct responses to T1 task with T1 pos = 5 and T2 lag = 7
+/T1_meancorr_pos2lag1:			proportion correct responses to T1 task with T1 pos = 10 and T2 lag = 1
+/T1_meancorr_pos2lag2:			proportion correct responses to T1 task with T1 pos = 10 and T2 lag = 7
+
+/T2_meancorr_pos1lag1:			proportion correct responses to T2 task with T1 pos = 5 and T2 lag = 1
+/T2_meancorr_pos1lag2:			proportion correct responses to T2 task with T1 pos = 5 and T2 lag = 7
+/T2_meancorr_pos2lag1:			proportion correct responses to T2 task with T1 pos = 10 and T2 lag = 1
+/T2_meancorr_pos2lag2:			proportion correct responses to T2 task with T1 pos = 10 and T2 lag = 7
+
+<expressions>
+/ T1_meancorr_pos1lag1 = list.ACC_T1_pos1lag1.mean
+/ T1_meancorr_pos1lag2 = list.ACC_T1_pos1lag2.mean
+/ T1_meancorr_pos2lag1 = list.ACC_T1_pos2lag1.mean
+/ T1_meancorr_pos2lag2 = list.ACC_T1_pos2lag2.mean
+
+/ T2_meancorr_pos1lag1 = list.ACC_T2_pos1lag1.mean
+/ T2_meancorr_pos1lag2 = list.ACC_T2_pos1lag2.mean
+/ T2_meancorr_pos2lag1 = list.ACC_T2_pos2lag1.mean
+/ T2_meancorr_pos2lag2 = list.ACC_T2_pos2lag2.mean
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+<text fixation>
+/ items = fixationcross
+/ select = 1
+/ fontstyle = ("Arial", 10%, false, false, false, false, 5, 1)
+/ txcolor = white
+/ txbgcolor = black
+</text>
+
+<text letter1>
+/ items = ("<%values.letter1%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter2>
+/ items = ("<%values.letter2%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter3>
+/ items = ("<%values.letter3%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter4>
+/ items = ("<%values.letter4%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter5>
+/ items = ("<%values.letter5%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter6>
+/ items = ("<%values.letter6%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter7>
+/ items = ("<%values.letter7%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter8>
+/ items = ("<%values.letter8%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter9>
+/ items = ("<%values.letter9%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter10>
+/ items = ("<%values.letter10%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter11>
+/ items = ("<%values.letter11%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter12>
+/ items = ("<%values.letter12%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter13>
+/ items = ("<%values.letter13%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter14>
+/ items = ("<%values.letter14%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter15>
+/ items = ("<%values.letter15%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter16>
+/ items = ("<%values.letter16%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter17>
+/ items = ("<%values.letter17%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text letter18>
+/ items = ("<%values.letter18%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<text T1>
+/ items = ("<%values.t1_stim%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+/ txcolor = red
+</text>
+
+<text T2>
+/ items = ("<%values.t2_stim%>")
+/ fontstyle = ("Arial", parameters.stimulussize_letters, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ txbgcolor = black
+</text>
+
+<shape eraser>		
+/ shape = rectangle		
+/ color = black		
+/ size = (parameters.stimulussize_letters * 1.2, parameters.stimulussize_letters * 1.2)		
+/ position = (50%, 50%)		
+/ erase = false		
+</shape>
+
+********************************
+Stimuli used for Response Trials
+********************************
+<text responsecue>
+/ items = responsecue
+/ select = 1
+/ fontstyle = ("Arial", 50%, false, false, false, false, 5, 1)
+/ txcolor = white
+/ txbgcolor = black
+/ position = (50%, 50%)
+</text>
+
+<text targetnaminginstructions>
+/ items = taskinstructions
+/ select = sequence
+/ txcolor = white
+/ txbgcolor = black
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</text>
+
+**************************************
+rest trial stimuli
+**************************************
+<text restinstructions>
+/ items = miscellaneous_instruct
+/ select = 1
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = white
+/ txbgcolor = black
+/ position = (50%, 50%)
+</text>
+
+<clock restclock>
+/ timeout = parameters.restduration
+/ mode = timer
+/ resetrate = trial
+/ txcolor = white
+/ txbgcolor = blue
+/ position = (50%, 60%)
+/ format = "mm:ss"
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</clock>
+
+**************************************
+Practice Block Error Feedback
+**************************************
+
+<text errorfeedback>
+/ items = miscellaneous_instruct
+/ select = 2
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = red
+/ txbgcolor = black
+/ position = (50%, 50%)
+</text>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	LISTS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+//stores and assigns the 20 onsettimes randomly 
+//skips the timings already assigned to T1 and T2
+<list onsettimes>
+/items = (expressions.onsettime_stim1, expressions.onsettime_stim2, expressions.onsettime_stim3,
+expressions.onsettime_stim4, expressions.onsettime_stim5, expressions.onsettime_stim6,
+expressions.onsettime_stim7, expressions.onsettime_stim8, expressions.onsettime_stim9,
+expressions.onsettime_stim10, expressions.onsettime_stim11, expressions.onsettime_stim12,
+expressions.onsettime_stim13, expressions.onsettime_stim14, expressions.onsettime_stim15,
+expressions.onsettime_stim16, expressions.onsettime_stim17, expressions.onsettime_stim18,
+expressions.onsettime_stim19,expressions.onsettime_stim20)
+/ selectionrate = always
+/ replace = false
+/not = [
+	values.T1_onset; values.T2_onset;
+]
+</list>
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_T1_pos1lag1>
+</list>
+
+<list ACC_T1_pos1lag2>
+</list>
+
+<list ACC_T1_pos2lag1>
+</list>
+
+<list ACC_T1_pos2lag2>
+</list>
+
+<list ACC_T2_pos1lag1>
+</list>
+
+<list ACC_T2_pos1lag2>
+</list>
+
+<list ACC_T2_pos2lag1>
+</list>
+
+<list ACC_T2_pos2lag2>
+</list>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+	
+<trial fixation>
+/ ontrialbegin = [
+	values.trialcount_perblock += 1;
+
+	//determine streampositions of T1 and T2:
+	values.t1_stim = "";
+	values.t2_stim = "";
+	values.t1_streamposition = list.streampositions.nextValue;
+	values.t2_lag = list.lags.nextValue;
+	values.t2_streamposition = values.t1_streamposition + values.t2_lag;
+
+	list.letters.reset();
+	values.letter1 = list.letters.nextValue;
+	values.letter2 = list.letters.nextValue;
+	values.letter3 = list.letters.nextValue;
+	values.letter4 = list.letters.nextValue;
+	values.letter5 = list.letters.nextValue;
+	values.letter6 = list.letters.nextValue;
+	values.letter7 = list.letters.nextValue;
+	values.letter8 = list.letters.nextValue;
+	values.letter9 = list.letters.nextValue;
+	values.letter10 = list.letters.nextValue;
+	values.letter11 = list.letters.nextValue;
+	values.letter12 = list.letters.nextValue;
+	values.letter13 = list.letters.nextValue;
+	values.letter14 = list.letters.nextValue;
+	values.letter15 = list.letters.nextValue;
+	values.letter16 = list.letters.nextValue;
+	values.letter17 = list.letters.nextValue;
+	values.letter18 = list.letters.nextValue;
+	values.T1_stim = list.letters.nextValue;
+	values.t2_stim = list.T2selection.nextValue;
+	if (parameters.random_lettercolor == true) {
+		text.letter1.textColor = list.randomlettercolors.nextValue;
+		text.letter2.textColor = list.randomlettercolors.nextValue;
+		text.letter3.textColor = list.randomlettercolors.nextValue;
+		text.letter4.textColor = list.randomlettercolors.nextValue;
+		text.letter5.textColor = list.randomlettercolors.nextValue;
+		text.letter6.textColor = list.randomlettercolors.nextValue;
+		text.letter7.textColor = list.randomlettercolors.nextValue;
+		text.letter8.textColor = list.randomlettercolors.nextValue;
+		text.letter9.textColor = list.randomlettercolors.nextValue;
+		text.letter10.textColor = list.randomlettercolors.nextValue;
+		text.letter11.textColor = list.randomlettercolors.nextValue;
+		text.letter12.textColor = list.randomlettercolors.nextValue;
+		text.letter13.textColor = list.randomlettercolors.nextValue;
+		text.letter14.textColor = list.randomlettercolors.nextValue;
+		text.letter15.textColor = list.randomlettercolors.nextValue;
+		text.letter16.textColor = list.randomlettercolors.nextValue;
+		text.letter17.textColor = list.randomlettercolors.nextValue;
+		text.letter18.textColor = list.randomlettercolors.nextValue;
+	} else {
+		text.letter1.textColor = parameters.lettercolor;
+		text.letter2.textColor = parameters.lettercolor;
+		text.letter3.textColor = parameters.lettercolor;
+		text.letter4.textColor = parameters.lettercolor;
+		text.letter5.textColor = parameters.lettercolor;
+		text.letter6.textColor = parameters.lettercolor;
+		text.letter7.textColor = parameters.lettercolor;
+		text.letter8.textColor = parameters.lettercolor;
+		text.letter9.textColor = parameters.lettercolor;
+		text.letter10.textColor = parameters.lettercolor;
+		text.letter11.textColor = parameters.lettercolor;
+		text.letter12.textColor = parameters.lettercolor;
+		text.letter13.textColor = parameters.lettercolor;
+		text.letter14.textColor = parameters.lettercolor;
+		text.letter15.textColor = parameters.lettercolor;
+		text.letter16.textColor = parameters.lettercolor;
+		text.letter17.textColor = parameters.lettercolor;
+		text.letter18.textColor = parameters.lettercolor;
+	}
+	if (parameters.T2_color != "")
+		text.t2.textColor = parameters.T2_color
+	else {
+		if (parameters.random_lettercolor == true)
+			text.t2.textColor = list.randomlettercolors.nextValue;
+		else
+			text.t2.textColor = parameters.lettercolor;
+	}
+	
+	expressions.determineOnsettimes;//assign the onset times to the various stimuli
+]
+/ stimulusframes = [1 = fixation]
+/ trialduration = parameters.fixationDuration
+/ branch = [
+	return trial.showstream;
+]
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+
+<trial showstream>
+/ ontrialbegin = [
+
+	//prepare the stimuli for dynamic stimuli insertion:
+	trial.showstream.insertStimulusFrame(text.T1, values.T1_onset);
+	trial.showstream.insertStimulusFrame(text.T2, values.T2_onset);
+	trial.showstream.insertStimulusFrame(text.letter1, values.distractor1_onset);
+	trial.showstream.insertStimulusFrame(text.letter2, values.distractor2_onset);	
+	trial.showstream.insertStimulusFrame(text.letter3, values.distractor3_onset);	
+	trial.showstream.insertStimulusFrame(text.letter4, values.distractor4_onset);	
+	trial.showstream.insertStimulusFrame(text.letter5, values.distractor5_onset);	
+	trial.showstream.insertStimulusFrame(text.letter6, values.distractor6_onset);	
+	trial.showstream.insertStimulusFrame(text.letter7, values.distractor7_onset);
+	trial.showstream.insertStimulusFrame(text.letter8, values.distractor8_onset);
+	trial.showstream.insertStimulusFrame(text.letter9, values.distractor9_onset);
+	trial.showstream.insertStimulusFrame(text.letter10, values.distractor10_onset);
+	trial.showstream.insertStimulusFrame(text.letter11, values.distractor11_onset);
+	trial.showstream.insertStimulusFrame(text.letter12, values.distractor12_onset);	
+	trial.showstream.insertStimulusFrame(text.letter13, values.distractor13_onset);	
+	trial.showstream.insertStimulusFrame(text.letter14, values.distractor14_onset);	
+	trial.showstream.insertStimulusFrame(text.letter15, values.distractor15_onset);	
+	trial.showstream.insertStimulusFrame(text.letter16, values.distractor16_onset);	
+	trial.showstream.insertStimulusFrame(text.letter17, values.distractor17_onset);
+	trial.showstream.insertStimulusFrame(text.letter18, values.distractor18_onset);
+	
+	//prepare 'isi' for dynmaic stimuli insertations
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi1);
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi2);
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi3);
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi4);	
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi5);	
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi6);
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi7);	
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi8);	
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi9);
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi10);
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi11);
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi12);
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi13);
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi14);	
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi15);	
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi16);
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi17);	
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi18);	
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi19);
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_isi20);
+	trial.showstream.insertStimulusFrame(shape.eraser, expressions.onsettime_stim21);	
+	
+]
+/ timeout = 0
+/ responseinterrupt = frames
+/ ontrialend = [
+	trial.showstream.resetStimulusFrames();
+	
+	//store the presented T1, T2, sT1, sT2 images in respective variables for data collection purposes:
+	values.T1_stim = text.T1.currentItem;
+	values.T2_stim = text.T2.currentItem;	
+]
+/ branch = [
+	return trial.responsecue;
+]
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+*****************************************
+Response Trials
+*****************************************
+Note:
+* presents the responsecue
+* calls T1task
+<trial responsecue>
+/ stimulusframes = [1 = responsecue]
+/ recorddata = false
+/ trialduration = parameters.responsecue_duration
+/ recorddata = false
+/ branch = [return openended.t1_task;]
+/ errormessage = false
+</trial>
+
+Note: openended.targetnaming
+collects the response for T1
+<openended T1_Task>
+/ mouse = true
+/ charlimit = 1
+/ mask = alphabetic
+/ stimulusframes = [1 = targetnaminginstructions]
+/ validresponse = (anyresponse)
+/ correctresponse = (values.t1_stim)
+/ monkeyresponse = ("A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V", "Y")
+/ recorddata = true
+/ ontrialend = [
+	
+	if (values.t1_streamposition == 5) {
+		if (values.t2_lag == 1) {
+			list.ACC_T1_pos1lag1.appendItem(openended.t1_task.correct);
+		} else if (values.t2_lag == 7) {
+			list.ACC_T1_pos1lag2.appendItem(openended.t1_task.correct);
+		}
+	} else if (values.t1_streamposition == 10) {
+		if (values.t2_lag == 1) {
+			list.ACC_T1_pos2lag1.appendItem(openended.t1_task.correct);
+		} else if (values.t2_lag == 7) {
+			list.ACC_T1_pos2lag2.appendItem(openended.t1_task.correct);
+		}
+	}	
+		
+]
+/ branch = [return trial.T2_Task;]
+</openended>
+
+Note: collects the response for T2
+<trial T2_task>
+/ stimulusframes = [1 = targetnaminginstructions]
+/ validresponse = (parameters.responsekey_T2_1, parameters.responsekey_T2_2)
+
+/ iscorrectresponse = [
+	if (trial.t2_task.responseText == parameters.responsekey_T2_1){
+		if (values.t2_stim == "X"){
+			return true;
+		} else {
+			return false;
+		}
+	} else if (trial.t2_task.responseText == parameters.responsekey_T2_2) {
+		if (values.t2_stim == "Z"){
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+]
+/ recorddata = true
+/ ontrialend = [
+	if (values.t1_streamposition == parameters.streampositionT1_1) {
+		if (values.t2_lag == parameters.lagT2_1) {
+			list.ACC_T2_pos1lag1.appendItem(trial.T2_task.correct);
+		} else if (values.t2_lag == parameters.lagT2_2) {
+			list.ACC_T2_pos1lag2.appendItem(trial.T2_task.correct);
+		}
+	} else if (values.t1_streamposition == parameters.streampositionT1_2) {
+		if (values.t2_lag == parameters.lagT2_1) {
+			list.ACC_T2_pos2lag1.appendItem(trial.T2_task.correct);
+		} else if (values.t2_lag == parameters.lagT2_2) {
+			list.ACC_T2_pos2lag2.appendItem(trial.T2_task.correct);
+		}
+	}	
+	
+]
+/ branch = [
+	if (mod(values.trialcount_perblock, parameters.restperiods) == 0){
+		return trial.rest;		
+	} else {
+		if (values.trialcount_perblock < values.totalTrials){
+			return trial.fixation;
+		}
+	}
+]					
+</trial>
+
+*****************************************
+Rest Trial
+*****************************************
+
+Note: provides a rest after a specified number of trials (parameters.restperiods)
+<trial rest>
+/ skip = [
+	values.trialcount_perblock >= values.totalTrials;
+]
+
+/ stimulusframes = [1 = restinstructions, restclock]
+/ timeout = clock.restclock.timeout
+/ recorddata = true
+/ errormessage = false
+/ branch = [
+	if (values.trialcount_perblock < values.totalTrials){
+		return trial.fixation;
+	}
+]
+</trial>
+
+*****************************************
+Finish Trial
+*****************************************
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<block practice>
+/ onblockbegin = [
+	values.totalTrials = parameters.practiceTrials;
+	values.trialcount_perblock = 0;
+	list.streampositions.poolSize = parameters.practiceTrials;
+	list.lags.poolSize = parameters.practiceTrials;
+	list.T2selection.poolSize = parameters.practiceTrials;
+]
+/ trials = [1 = fixation]
+/ errormessage = true(errorfeedback, 500)
+</block>
+
+<block AB>
+/ onblockbegin = [
+	values.totalTrials = parameters.testTrials;
+	values.trialcount_perblock = 0;
+	
+	list.ACC_T1_pos1lag1.reset();
+	list.ACC_T1_pos1lag2.reset();
+	list.ACC_T1_pos2lag1.reset();
+	list.ACC_T1_pos2lag2.reset();
+	list.ACC_T2_pos1lag1.reset();
+	list.ACC_T2_pos1lag2.reset();
+	list.ACC_T2_pos2lag1.reset();
+	list.ACC_T2_pos2lag2.reset();	
+	
+	list.streampositions.reset();
+	list.lags.reset();
+	list.T2selection.reset();	
+	
+	list.streampositions.poolSize = parameters.testTrials;
+	list.lags.poolSize = parameters.testTrials;
+	list.T2selection.poolSize = parameters.testTrials;
+]
+/ preinstructions = (teststart)
+/ trials = [1 = fixation]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+<expt a>
+/ preinstructions = (intro1)
+/ blocks = [
+	1 = practice;
+	2 = AB;
+	3 = finish;
+]
+</expt>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

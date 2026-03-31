@@ -1,0 +1,317 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+						The List of Threatening Experiences (LTE) Questionnaire
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-27-2018
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the The List of Threatening Experiences (LTE) Questionnaire as described in:
+
+Brugha TS, Cragg D (1990). The List of Threatening Experiences: the reliability and validity of a brief life
+events questionnaire. Acta Psychiatrica Scandinavica 82, 77–81.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+12 yes-no questions regarding major life events											  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________: 
+The default data stored in the data files are:
+
+(1) Raw data file: 'lte_q_survey.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 0 (negative for threatening life event) - 1 (positive for threatening life event)
+								R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'lte_q_summary_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+LTE_score:						number of affirmed life events
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+see section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "In this questionnaire 12 unpleasant events are listed. 
+Please indicate if you have experienced these events in the past 6 months.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.LTE_score)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/LTE_score = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response +
+radiobuttons.q4.response + radiobuttons.q5.response + radiobuttons.q6.response +
+radiobuttons.q7.response + radiobuttons.q8.response + radiobuttons.q9.response +
+radiobuttons.q10.response + radiobuttons.q11.response + radiobuttons.q12.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. You yourself suffered a serious illness, injury or an assault"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+
+<radiobuttons q2>
+/caption = "2. A serious illness, injury or assault happened to a close relative"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Your parent, child or spouse died"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. A close family friend or another relative (aunt, cousin, grandparent) died"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. You had a separation due to marital difficulties"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. You broke off a steady relationship"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. You had a serious problem with a close friend, neighbor or relative"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. You became unemployed or you were seeking work unsuccessfully for more than one month"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. You were sacked from your job"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. You had a major financial crisis"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. You had problems with the police and a court appearance"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. Something you valued was lost or stolen"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage lte1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage lte2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage lte3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage lte4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10, q11, q12]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey lte_q>
+/pages = [
+	1 = lte1;
+	2 = lte2;
+	3 = lte3;
+	4 = lte4;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

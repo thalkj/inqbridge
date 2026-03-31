@@ -1,0 +1,2522 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+									GARNER INTERFERENCE TASK
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 03-05-2013
+last updated:  05-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 05-24-2022 Millisecond Software
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a Garner Interference Paradigm that systematically varies the dimensions of
+irrelevant information to study interference on the processing of relevant information.
+Ridderinkhof et al (1997) used this paradigm to study the development of attention in children.
+
+The implemented task is based on:
+
+Ridderinkhof, K. R., van der Molen, M. W., Band, P. H., & Bashore, T. R. (1997). Sources of interference 
+from irrelevant information: A developmental study. Journal of Experimental Child Psychology, 65, 315–341.(Experiment1)
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+The two main dimensions used in this paradigm are tilt and color. Sometimes participants have to 
+respond to the tilt of a line, in other cases they respond to the color, either of a surrounding box 
+(in which case color and tilt are SEPARATED dimensions) or the color of the line itself 
+(in which case color and tilt are INTEGRATED dimensions => more interference predicted). 
+In addition, the change in color and tilt is systematically varied. The change can be:
+a) correlated (either the dimensions would require the same response=congruent OR they would require opposite responses=incongruent)
+b) orthogonal (= independent of each other => absence of a correlation)
+c) neutral (= change happens only in one dimension but never in the other).
+																					  
+In each trial, participants view a box in the middle of the screen. Inside the box is a line that can be tilted to the left
+or right.  The color of the box or the color of the line itself can change from red to blue.
+
+Participants are instructed to pay attention to only one dimension (=relevant dimension)
+a) the tilt of the line OR b) the color of either the box (separated condition) or the line itself (integrated condition) 
+and ignore changes in the other (irrelevant) dimension as best as they can. 
+
+The actual task they have to do is a simple categorization task: if the line tilts to the right, press a certain key. 
+If the line tilts to the left, press another key. Same for the color tasks.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 30 minutes to complete
+
+Notes:
+1. The number of trials run per block can easily be reduced/increased (see Editable Parameters)
+2. To run a reduced number of blocks, change the blocks called by the 'expt' elements under section EXPERIMENT
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'garnerinterferencetask_raw*.iqdat'
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+										
+blockcount:							counts the testblocks run										
+practice:							1 = practice blocks; 0 = experimental blocks
+dimension:							target dimension: 1 = color; 2 = tilt
+dim_config: 						1 = integrated; 2 = separated
+variationtype:						1 = orthogonal; 2 = correlated; 3 = control
+target:								"color1" vs. "color2" vs. "tilt1" vs. "tilt2"
+responsekeycongruence:				0 = congruence doesn't apply; 1 = color and tilt response keys congruent; 2 = color and tilt response keys incongruent
+response:							the participant's response (scancode of response button)
+correct:							the correctness of the response (1= correct; 0 = error)
+latency: 							the response latency (in ms); measured from onset of stimuli
+ITI:								stores the current ITI (in ms)
+
+
+(2) Summary data file: 'garnerinterferencetask_summary*.iqdat'
+
+inquisit.version: 					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+																
+									
+overall_PropCorrect:				overall proportion correct (across all trials)
+list.ACC.itemCount:					number of trials run
+overall_RT:							mean latency (in ms) of correct responses (across all trials)
+list.RT.itemCount:					the number of correct responses
+
+
+propCorrect_separated:				proportion correct responses across all 'Separated' trials
+meanrt_separated:					mean latency (in ms) of correct responses across all 'Separated' trials
+propCorrect_Integrated:				proportion correct responses across all 'Integrated' trials
+
+meanrt_integrated:					mean latency (in ms) of correct responses across all 'Integrated' trials
+										=> Garner Interference would predict that you would see less interference in 'Separated' conditions
+										than in 'Integrated' conditions; thus:
+										higher proportion correct/faster mean latency in Separated Condition supports the presence 
+										of Garner Interference in Integrated conditions
+																				
+										
+										
+propCorrect_control:				proportion correct responses across all 'Control' trials
+meanrt_control:						mean latency (in ms) of correct responses across all 'Control' trials										
+propCorrect_ortho:					proportion correct responses across all 'Ortho' trials
+meanrt_ortho:						mean latency (in ms) of correct responses across all 'Ortho' trials	
+propCorrect_correlatedC:			proportion correct responses across all Congruent 'Correlated' trials
+meanrt_correlatedC:					mean latency (in ms) of correct responses across all Congruent 'Correlated' trials									
+propCorrect_correlatedIC:			proportion correct responses across all INcongruent 'Correlated' trials
+
+meanrt_correlatedIC:				mean latency (in ms) of correct responses across all INcongruent 'Correlated' trials
+										=> The presence of Garner interference would predict that
+										a) the (congruent) correlated dimension boosts performance 
+										b) the orthogonal dimension hurts performance compared 
+										to the control condition.
+
+Separated summary scores for all individual conditions:
+propCorrect_color_ortho_separated:	proportion correct responses across all separated, orthogonal color trials
+meanrt_color_ortho_separated:		mean latency (in ms) of correct responses across all separated, orthogonal color trials
+etc.	
+	
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+2 Dimensions (Color vs. Tilt), blocked-format x 
+2 Dimensional Configurations (integrated vs. separated), blocked-format x
+3 Variation Types (control, correlated, orthogonal), blocked-format
+
+(A) Color vs. Tilt: color changes (red <-> blue) vs. changes in the tilt of the line (left <-> right)
+if relevant dimension is color: the color of the unattended configuration (line or box) is yellow
+if relevant dimension is tilt and no color changes should occur at all (control condition): box and line are purple
+(red+blue -> purple)
+	
+(B) Integrated vs. Separated: color changes of the line itself vs. color changes of the box surrounding the line
+
+(C) Control vs. correlated vs. orthogonal:
+Control: only changes in the relevant dimension occur; the irrelevant dimension is held constant
+Correlated: changes in the relevant dimension are tied to (dependent on) changes in the irrelevant dimension
+	2 possible matches: 
+		congruent  -> both changes require the same response or
+		incongruent -> both changes require opposite responses
+Orthogonal: changes in the relevant dimension are independent of changes in the irrelevant dimension
+(half of the combinations are congruent vs. half are incongruent)
+
+=> 16 different block types, tested all within-subjects
+
+EXPERIMENTAL SET-UP
+(a) 4 practice blocks (with error feedback)
+(b) 12 experimental blocks: each block consisted of 24 trials; left/right responses occur equally often (no feedback)
+Note: you can easily reduce the number of trials run per block (see Editable Parameters)
+(c) A rest block in between each block
+
+Notes:
+1. The number of trials run per block can easily be reduced (see Editable Parameters)
+2. To run a reduced number of blocks, change the blocks called by the 'expt' elements under section EXPERIMENT
+
+
+RESPONSE KEYS/STIMULI:
+Use of response keys (default: Y and B keys) is counterbalanced across participants. Assignment is done by groupnumber to 
+any of the 4 possible key combination conditions.
+
+EVEN groupnumbers align the tilt with the location of the left and right response buttons.
+ODD groupnumbers use the opposite location.
+
+!Note: The location of the (default) response keys (right "L" or left "A" on the keyboard) could introduce the potentially 
+unwanted variable  "compatibility with tilt direction". 
+To avoid, use 
+(a) different response keys (change under Editable Parameters, e.g. Y and B)
+(b) different stimuli: A set of possible alternative stimuli is provided under section Editable Stimuli -> item.lines
+The set of alternative stimuli are Vs that differ in whether they are upside down or rightside up (replacing the direction
+of left vs right). The composite stimulus for the color control condition is a diamond as it contains both V directions.
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/line_fontheight:				sets the height of the lines in % screen height (default: 20%)
+
+/responsekeyleft:				the left response key (default: "A")
+/responsekeyright:       		 the right response key (default: "L")
+
+/color1:						sets the first target color (here: red)
+/color2:						sets the second target color (here: blue)
+/alternativecolor1:				sets the first alternative color (here: yellow)
+
+/alternativecolor2:				sets the second alternative color (here: purple), used in control
+								condition when color is held constant and only tilt is changing
+
+/responsetimeout:				sets how much time participants have to respond in ms (here: 5000ms)
+
+/regularresttime:				rest time after each block in ms (default: 30000ms )
+/prolongedresttime:				rest time during specified long rest blocks in ms (default: 150000 => 2.5 minutes)
+/prolongedrest:					determines after how many blocks a prolonged rest block should be given (default:10)
+
+
+/nrTrialsPerPracticeblock:		the number of trials per practice block that should be run (default: 24)
+									Note: 48 is the maximum that will run
+									
+/nrTrialsPerTestblock:			the number of trials per test block that should be run (default: 24)
+									Note: 48 is the maximum that will run
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ line_fontheight = 20%
+
+/ responsekeyleft = "A"
+/ responsekeyright = "L"
+
+/ color1 = red
+/ color2 = blue
+/ alternativecolor1 = yellow
+/ alternativecolor2 = purple
+
+/responsetimeout = 2000
+
+/regularresttime = 30000
+/prolongedresttime = 150000
+/ prolongedrest = 10
+
+/nrTrialsPerPracticeblock = 24
+/nrTrialsPerTestblock = 24
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: Stimuli presented inside the box
+<item lines>
+/ 1 = "/"
+/ 2 = "\"
+/ 3 = "│"
+</item>
+
+Alternative Set of Stimuli where compatibility issues between location of keys on the keyboard
+(left vs. right) and tilt (left vs right) might be avoided:
+
+/1 = "˄"
+/2 = "˅"
+/3 = "◊"
+
+
+<item restinstructions>
+/ 1 = "Take a break"
+</item>
+
+<item feedback>
+/ 1 = "ERROR"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<instruct>
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+</instruct>
+
+
+<item instructions>
+/1 = "Welcome!
+
+This is a study about Attention. In this task you will see a box, such as this, in the middle of the screen. Inside the box there is a line.
+~n~n~n~n~n~n~n~n~n
+The box and the line can change COLOR; the line can change TILT (where it's pointing)."
+/2 = "There are going to be two main tasks: 
+Pay attention to the color OR pay attention to the tilt.
+~n~n~n~n~n~n~n~n~n~n"
+/3 = "TILT TASK:
+
+If you are asked to pay attention to the tilt of the line, you will notice that the line can either be tilted to the RIGHT or the LEFT.
+~n~n~n~n~n~n~n~n~n~n
+When you are asked to pay attention to the TILT of the line, try to IGNORE the COLOR of the line and the COLOR of the box.
+
+Press '<%values.tilt1key%>' if the line tilts to the RIGHT.
+Press '<%values.tilt2key%>' if the line tilts to the LEFT."
+/4 = "COLOR TASK:
+
+If you are asked to pay attention to COLOR, you might be asked to pay attention to the color of the line or the color of the box.
+~n~n~n~n~n~n~n~n~n~n
+When you are asked to pay attention to the color, try to ignore the tilt of the line.
+
+Press '<%values.color1key%>' if the COLOR is RED.
+Press '<%values.color2key%>' if the COLOR is BLUE."
+/5 = "Practice
+
+We will now practice the task.
+There will be four blocks of practice. Before each block starts, you will be told whether you should pay attention to the COLOR or the TILT of the line.
+
+You will also be reminded of the response keys.
+
+Press Spacebar to start practice."
+/6 = "This is the end of practice.
+Press Spacebar to start the actual test."
+</item>
+
+<text continue>
+/ items = ("Spacebar >>")
+/ fontstyle = ("Courier New", 3%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ size = (30%, 5%)
+/ txcolor = white
+/ txbgcolor = lightGray
+/ position = (85%, 95%)
+</text>
+
+<text goback>
+/ items = ("<< B")
+/ fontstyle = ("Courier New", 3%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ size = (30%, 5%)
+/ txcolor = white
+/ txbgcolor = lightGray
+/ position = (15%, 95%)
+</text>
+
+<text start>
+/ items = ("Spacebar to START")
+/ fontstyle = ("Courier New", 3%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ size = (30%, 5%)
+/ txcolor = white
+/ txbgcolor = green
+/ position = (85%, 95%)
+</text>
+
+<text attention_color_line>
+/ items = (
+"Pay Attention to: the COLOR of the LINE")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ size = (80%, 10%)
+/ position = (50%, 15%)
+</text>
+
+<text attention_color_box>
+/ items = (
+"Pay Attention to: the COLOR of the BOX")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ size = (80%, 10%)
+/ position = (50%, 15%)
+</text>
+
+<text attention_tilt>
+/ items = (
+"Pay Attention to: the TILT of the line")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ size = (80%, 10%)
+/ position = (50%, 15%)
+</text>
+
+<text responsekeys_color_line>
+/ items = (
+"RED line = Press the '<%values.color1key%>' key
+BLUE line = Press the '<%values.color2key%>' key")
+/ fontstyle = ("Courier New", 5%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ size = (80%, 15%)
+/ position = (50%, 50%)
+</text>
+
+<text responsekeys_color_box>
+/ items = (
+"RED box= Press the '<%values.color1key%>' key
+BLUE box= Press the '<%values.color2key%>' key")
+/ fontstyle = ("Courier New", 5%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ size = (80%, 15%)
+/ position = (50%, 50%)
+</text>
+
+<text responsekeys_tilt>
+/ items = (
+"RIGHT tilt = Press the '<%values.tilt1key%>' key
+LEFT tilt = Press the '<%values.tilt2key%>' key")
+/ fontstyle = ("Courier New", 5%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ size = (80%, 15%)
+/ position = (50%, 50%)
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text getReady>
+/ items = ("<%expressions.buttoninstruct1%>")
+/ fontstyle = ("Arial", 3.00%, true, false, false, false, 5, 1)
+/ size = (80%, 15%)
+/ vjustify = center
+/ position = (50%, 75%)
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {
+"Put your index fingers over the response buttons now.
+
+Press one of the response buttons to start.";} else {
+"Put your index fingers on the '<%parameters.responsekeyleft%>' and '<%parameters.responsekeyright%>' keys now.
+
+Press one of the keys to start";}
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: samples the intertrialinterval (in ms) randomly with replacement
+To change the list of possible ITI, simply edit the /item list here:
+<list ITI>
+/ items = (500, 600, 700, 800, 900, 1000)
+/ replace = true
+</list>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ txcolor = black
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+values.blockcount, values.practice,
+values.dimension, values.dim_config, values.variationtype, values.target, values.responsekeycongruence, 
+response, correct, latency, values.ITI)
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.overall_PropCorrect, list.ACC.itemCount, expressions.overall_RT, list.RT.itemCount,
+
+expressions.propCorrect_separated, expressions.meanrt_separated,
+expressions.propCorrect_integrated, expressions.meanrt_integrated,
+
+expressions.propCorrect_control, expressions.meanrt_control,
+expressions.propCorrect_ortho, expressions.meanrt_ortho,
+expressions.propCorrect_correlatedC, expressions.meanrt_correlatedC,
+expressions.propCorrect_correlatedIC, expressions.meanrt_correlatedIC,
+
+expressions.propCorrect_color_ortho_separated, expressions.meanrt_color_ortho_separated,
+expressions.propCorrect_color_correlatedC_separated, expressions.meanrt_color_correlatedC_separated,
+expressions.propCorrect_color_correlatedIC_separated, expressions.meanrt_color_correlatedIC_separated,
+expressions.propCorrect_color_control_separated, expressions.meanrt_color_control_separated, 
+expressions.propCorrect_color_ortho_integrated, expressions.meanrt_color_ortho_integrated,
+expressions.propCorrect_color_correlatedC_integrated, expressions.meanrt_color_correlatedC_integrated,
+expressions.propCorrect_color_correlatedIC_integrated, expressions.meanrt_color_correlatedIC_integrated,
+expressions.propCorrect_color_control_integrated, expressions.meanrt_color_control_integrated,
+
+expressions.propCorrect_tilt_ortho_separated, expressions.meanrt_tilt_ortho_separated,
+expressions.propCorrect_tilt_correlatedC_separated, expressions.meanrt_tilt_correlatedC_separated,
+expressions.propCorrect_tilt_correlatedIC_separated, expressions.meanrt_tilt_correlatedIC_separated,
+expressions.propCorrect_tilt_control_separated, expressions.meanrt_tilt_control_separated, 
+expressions.propCorrect_tilt_ortho_integrated, expressions.meanrt_tilt_ortho_integrated,
+expressions.propCorrect_tilt_correlatedC_integrated, expressions.meanrt_tilt_correlatedC_integrated,
+expressions.propCorrect_tilt_correlatedIC_integrated, expressions.meanrt_tilt_correlatedIC_integrated,
+expressions.propCorrect_tilt_control_integrated, expressions.meanrt_tilt_control_integrated)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/completed:									0 = script was not completed; 1 = script was completed (all conditions run)
+/group:										group id (1-4)
+/selectline:								determines which of the lines to present
+/key1 -									
+	/key2	:							sets the response keys (and labels)
+/practice:									1 = practice blocks; 0 = experimental blocks
+/dimension:									target dimension: 1 = color; 2 = tilt
+/variationtype:								1 = orthogonal; 2 = correlated; 3 = control
+/dim_config: 								1 = integrated; 2 = separated
+/responsekeycongruence:						0 = congruence doesn't apply; 1 = color and tilt response keys congruent; 2 = color and tilt response keys incongruent
+/target:									"color1" vs. "color2" vs. "tilt1" vs. "tilt2"
+/ITI:										stores the current ITI
+/helper:									helper variable to select the appropriate correlated condition
+/rt:										current latency
+/correct:									1= correct; 0 = incorrect response
+/resttime:									current resttime
+
+Summary Values:
+/count_color_ortho_integrated (etc):		counts all trials for the varios conditions
+/sumcorrect_color_ortho_integrated (etc):	counts how many correct responses are given to the various conditions
+											(here: color, ortho, integrated)
+/sumRTcorrect_color_ortho_integrated (etc):	sums up the reaction times of the correct responses in a given condition
+
+<values>
+/ completed = 0
+/ group = 0
+/ selectline = 1
+/ key1 = "" 
+/ key2 = ""
+/ practice = 0
+/ dimension = 0
+/ variationtype = 0
+/ dim_config = 0
+/ responsekeycongruence = 0
+/ target = 0
+/ ITI = 0
+/ correlated_integrated = 0
+/ correlated_separated = 0
+/ helper = 0
+
+/ rt = 0
+/ correct = 0
+/ resttime = 0
+/ blockcount = 0
+
+/color1key = ""
+/color2key = ""
+/tilt1key = ""
+/tilt2key = ""
+
+/introtrial = 0
+/nrTrialsPerBlock = 24
+/trialcount = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/meanrt_color_ortho_integrated (etc):		calculates the mean reaction times to correct responses in a given condition
+											(here: color, ortho, integrated)
+/propcorrect_color_ortho_integrated (etc):	calculates the proportion correct in a given condition
+											(here: color, ortho, integrated)
+<expressions>
+/overall_PropCorrect = list.ACC.mean
+/overall_RT = list.RT.mean
+
+/propCorrect_separated = (
+(expressions.propCorrect_color_ortho_separated * list.ACC_color_ortho_separated.itemCount) +
+(expressions.propCorrect_color_correlated_separated * list.ACC_color_correlated_separated.itemCount) +
+(expressions.propCorrect_color_control_separated * list.ACC_color_control_separated.itemCount) + 
+(expressions.propCorrect_tilt_ortho_separated * list.ACC_tilt_ortho_separated.itemCount) +
+(expressions.propCorrect_tilt_correlated_separated * list.ACC_tilt_correlated_separated.itemCount) +
+(expressions.propCorrect_tilt_control_separated * list.ACC_tilt_control_separated.itemCount))/ 
+(list.ACC_color_ortho_separated.itemCount + list.ACC_color_correlated_separated.itemCount + list.ACC_color_control_separated.itemCount +
+list.ACC_tilt_ortho_separated.itemCount + list.ACC_tilt_correlated_separated.itemCount + list.ACC_tilt_control_separated.itemCount)
+
+/meanrt_separated = (
+(expressions.meanrt_color_ortho_separated * list.RT_color_ortho_separated.itemCount) +
+(expressions.meanrt_color_correlated_separated * list.RT_color_correlated_separated.itemCount) +
+(expressions.meanrt_color_control_separated * list.RT_color_control_separated.itemCount) + 
+(expressions.meanrt_tilt_ortho_separated * list.RT_tilt_ortho_separated.itemCount) +
+(expressions.meanrt_tilt_correlated_separated * list.RT_tilt_correlated_separated.itemCount) +
+(expressions.meanrt_tilt_control_separated * list.RT_tilt_control_separated.itemCount))/ 
+(list.RT_color_ortho_separated.itemCount + list.RT_color_correlated_separated.itemCount + list.RT_color_control_separated.itemCount +
+list.RT_tilt_ortho_separated.itemCount + list.RT_tilt_correlated_separated.itemCount + list.RT_tilt_control_separated.itemCount)
+
+/propCorrect_integrated = (
+(expressions.propCorrect_color_ortho_integrated * list.ACC_color_ortho_integrated.itemCount) +
+(expressions.propCorrect_color_correlated_integrated * list.ACC_color_correlated_integrated.itemCount) +
+(expressions.propCorrect_color_control_integrated * list.ACC_color_control_integrated.itemCount) + 
+(expressions.propCorrect_tilt_ortho_integrated * list.ACC_tilt_ortho_integrated.itemCount) +
+(expressions.propCorrect_tilt_correlated_integrated * list.ACC_tilt_correlated_integrated.itemCount) +
+(expressions.propCorrect_tilt_control_integrated * list.ACC_tilt_control_integrated.itemCount))/ 
+(list.ACC_color_ortho_integrated.itemCount + list.ACC_color_correlated_integrated.itemCount + list.ACC_color_control_integrated.itemCount +
+list.ACC_tilt_ortho_integrated.itemCount + list.ACC_tilt_correlated_integrated.itemCount + list.ACC_tilt_control_integrated.itemCount)
+
+/meanrt_integrated = (
+(expressions.meanrt_color_ortho_integrated * list.RT_color_ortho_integrated.itemCount) +
+(expressions.meanrt_color_correlated_integrated * list.RT_color_correlated_integrated.itemCount) +
+(expressions.meanrt_color_control_integrated * list.RT_color_control_integrated.itemCount) + 
+(expressions.meanrt_tilt_ortho_integrated * list.RT_tilt_ortho_integrated.itemCount) +
+(expressions.meanrt_tilt_correlated_integrated * list.RT_tilt_correlated_integrated.itemCount) +
+(expressions.meanrt_tilt_control_integrated * list.RT_tilt_control_integrated.itemCount))/ 
+(list.RT_color_ortho_integrated.itemCount + list.RT_color_correlated_integrated.itemCount + list.RT_color_control_integrated.itemCount +
+list.RT_tilt_ortho_integrated.itemCount + list.RT_tilt_correlated_integrated.itemCount + list.RT_tilt_control_integrated.itemCount)
+
+/ propCorrect_color_ortho_integrated = list.ACC_color_ortho_integrated.mean
+/ propCorrect_color_ortho_separated = list.ACC_color_ortho_separated.mean
+
+/ propCorrect_color_correlated_integrated = list.ACC_color_correlated_integrated.mean
+/ propCorrect_color_correlated_separated = list.ACC_color_correlated_separated.mean
+
+/ propCorrect_color_correlatedC_integrated = list.ACC_color_correlatedC_integrated.mean
+/ propCorrect_color_correlatedC_separated = list.ACC_color_correlatedC_separated.mean
+
+/ propCorrect_color_correlatedIC_integrated = list.ACC_color_correlatedIC_integrated.mean
+/ propCorrect_color_correlatedIC_separated = list.ACC_color_correlatedIC_separated.mean
+
+/ propCorrect_color_control_integrated = list.ACC_color_control_integrated.mean
+/ propCorrect_color_control_separated = list.ACC_color_control_separated.mean
+
+/ propCorrect_tilt_ortho_integrated = list.ACC_tilt_ortho_integrated.mean
+/ propCorrect_tilt_ortho_separated = list.ACC_tilt_ortho_separated.mean
+
+/ propCorrect_tilt_correlated_integrated = list.ACC_tilt_correlated_integrated.mean
+/ propCorrect_tilt_correlated_separated = list.ACC_tilt_correlated_separated.mean
+
+/ propCorrect_tilt_correlatedC_integrated = list.ACC_tilt_correlatedC_integrated.mean
+/ propCorrect_tilt_correlatedC_separated = list.ACC_tilt_correlatedC_separated.mean
+
+/ propCorrect_tilt_correlatedIC_integrated = list.ACC_tilt_correlatedIC_integrated.mean
+/ propCorrect_tilt_correlatedIC_separated = list.ACC_tilt_correlatedIC_separated.mean
+
+/ propCorrect_tilt_control_integrated = list.ACC_tilt_control_integrated.mean
+/ propCorrect_tilt_control_separated = list.ACC_tilt_control_separated.mean
+
+/propCorrect_ortho = (
+(expressions.propCorrect_color_ortho_integrated * list.ACC_color_ortho_integrated.itemCount) +
+(expressions.propCorrect_color_ortho_separated * list.ACC_color_ortho_separated.itemCount) +
+(expressions.propCorrect_tilt_ortho_integrated * list.ACC_tilt_ortho_integrated.itemCount) +
+(expressions.propCorrect_tilt_ortho_separated * list.ACC_tilt_ortho_separated.itemCount))/
+(list.ACC_color_ortho_integrated.itemCount + list.ACC_color_ortho_separated.itemCount + 
+list.ACC_tilt_ortho_integrated.itemCount + list.ACC_tilt_ortho_separated.itemCount)
+
+/propCorrect_correlated = (
+(expressions.propCorrect_color_correlated_integrated * list.ACC_color_correlated_integrated.itemCount) +
+(expressions.propCorrect_color_correlated_separated * list.ACC_color_correlated_separated.itemCount) +
+(expressions.propCorrect_tilt_correlated_integrated * list.ACC_tilt_correlated_integrated.itemCount) +
+(expressions.propCorrect_tilt_correlated_separated * list.ACC_tilt_correlated_separated.itemCount))/
+(list.ACC_color_correlated_integrated.itemCount + list.ACC_color_correlated_separated.itemCount + 
+list.ACC_tilt_correlated_integrated.itemCount + list.ACC_tilt_correlated_separated.itemCount)
+
+/propCorrect_correlatedC = (
+(expressions.propCorrect_color_correlatedC_integrated * list.ACC_color_correlatedC_integrated.itemCount) +
+(expressions.propCorrect_color_correlatedC_separated * list.ACC_color_correlatedC_separated.itemCount) +
+(expressions.propCorrect_tilt_correlatedC_integrated * list.ACC_tilt_correlatedC_integrated.itemCount) +
+(expressions.propCorrect_tilt_correlatedC_separated * list.ACC_tilt_correlatedC_separated.itemCount))/
+(list.ACC_color_correlatedC_integrated.itemCount + list.ACC_color_correlatedC_separated.itemCount + 
+list.ACC_tilt_correlatedC_integrated.itemCount + list.ACC_tilt_correlatedC_separated.itemCount)
+
+/propCorrect_correlatedIC = (
+(expressions.propCorrect_color_correlatedIC_integrated * list.ACC_color_correlatedIC_integrated.itemCount) +
+(expressions.propCorrect_color_correlatedIC_separated * list.ACC_color_correlatedIC_separated.itemCount) +
+(expressions.propCorrect_tilt_correlatedIC_integrated * list.ACC_tilt_correlatedIC_integrated.itemCount) +
+(expressions.propCorrect_tilt_correlatedIC_separated * list.ACC_tilt_correlatedIC_separated.itemCount))/
+(list.ACC_color_correlatedIC_integrated.itemCount + list.ACC_color_correlatedIC_separated.itemCount + 
+list.ACC_tilt_correlatedIC_integrated.itemCount + list.ACC_tilt_correlatedIC_separated.itemCount)
+
+/propCorrect_control = (
+(expressions.propCorrect_color_control_integrated * list.ACC_color_control_integrated.itemCount) +
+(expressions.propCorrect_color_control_separated * list.ACC_color_control_separated.itemCount) +
+(expressions.propCorrect_tilt_control_integrated * list.ACC_tilt_control_integrated.itemCount) +
+(expressions.propCorrect_tilt_control_separated * list.ACC_tilt_control_separated.itemCount))/
+(list.ACC_color_control_integrated.itemCount + list.ACC_color_control_separated.itemCount + 
+list.ACC_tilt_control_integrated.itemCount + list.ACC_tilt_control_separated.itemCount)
+
+/ meanrt_color_ortho_integrated = list.RT_color_ortho_integrated.mean
+/ meanrt_color_ortho_separated = list.RT_color_ortho_separated.mean
+
+/ meanrt_color_correlated_integrated = list.RT_color_correlated_integrated.mean
+/ meanrt_color_correlated_separated = list.RT_color_correlated_separated.mean
+
+/ meanrt_color_correlatedC_integrated = list.RT_color_correlatedC_integrated.mean
+/ meanrt_color_correlatedC_separated = list.RT_color_correlatedC_separated.mean
+
+/ meanrt_color_correlatedIC_integrated = list.RT_color_correlatedIC_integrated.mean
+/ meanrt_color_correlatedIC_separated = list.RT_color_correlatedIC_separated.mean
+
+/ meanrt_color_control_integrated = list.RT_color_control_integrated.mean
+/ meanrt_color_control_separated = list.RT_color_control_separated.mean
+
+/ meanrt_tilt_ortho_integrated = list.RT_tilt_ortho_integrated.mean
+/ meanrt_tilt_ortho_separated = list.RT_tilt_ortho_separated.mean
+
+/ meanrt_tilt_correlated_integrated = list.RT_tilt_correlated_integrated.mean
+/ meanrt_tilt_correlated_separated = list.RT_tilt_correlated_separated.mean
+
+/ meanrt_tilt_correlatedC_integrated = list.RT_tilt_correlatedC_integrated.mean
+/ meanrt_tilt_correlatedC_separated = list.RT_tilt_correlatedC_separated.mean
+
+/ meanrt_tilt_correlatedIC_integrated = list.RT_tilt_correlatedIC_integrated.mean
+/ meanrt_tilt_correlatedIC_separated = list.RT_tilt_correlatedIC_separated.mean
+
+/ meanrt_tilt_control_integrated = list.RT_tilt_control_integrated.mean
+/ meanrt_tilt_control_separated = list.RT_tilt_control_separated.mean
+
+
+/meanrt_ortho = (
+(expressions.meanrt_color_ortho_integrated * list.RT_color_ortho_integrated.itemCount) +
+(expressions.meanrt_color_ortho_separated * list.RT_color_ortho_separated.itemCount) +
+(expressions.meanrt_tilt_ortho_integrated * list.RT_tilt_ortho_integrated.itemCount) +
+(expressions.meanrt_tilt_ortho_separated * list.RT_tilt_ortho_separated.itemCount))/
+(list.RT_color_ortho_integrated.itemCount + list.RT_color_ortho_separated.itemCount + 
+list.RT_tilt_ortho_integrated.itemCount + list.RT_tilt_ortho_separated.itemCount)
+
+/meanrt_correlated = (
+(expressions.meanrt_color_correlated_integrated * list.RT_color_correlated_integrated.itemCount) +
+(expressions.meanrt_color_correlated_separated * list.RT_color_correlated_separated.itemCount) +
+(expressions.meanrt_tilt_correlated_integrated * list.RT_tilt_correlated_integrated.itemCount) +
+(expressions.meanrt_tilt_correlated_separated * list.RT_tilt_correlated_separated.itemCount))/
+(list.RT_color_correlated_integrated.itemCount + list.RT_color_correlated_separated.itemCount + 
+list.RT_tilt_correlated_integrated.itemCount + list.RT_tilt_correlated_separated.itemCount)
+
+/meanrt_correlatedC = (
+(expressions.meanrt_color_correlatedC_integrated * list.RT_color_correlatedC_integrated.itemCount) +
+(expressions.meanrt_color_correlatedC_separated * list.RT_color_correlatedC_separated.itemCount) +
+(expressions.meanrt_tilt_correlatedC_integrated * list.RT_tilt_correlatedC_integrated.itemCount) +
+(expressions.meanrt_tilt_correlatedC_separated * list.RT_tilt_correlatedC_separated.itemCount))/
+(list.RT_color_correlatedC_integrated.itemCount + list.RT_color_correlatedC_separated.itemCount + 
+list.RT_tilt_correlatedC_integrated.itemCount + list.RT_tilt_correlatedC_separated.itemCount)
+
+/meanrt_correlatedIC = (
+(expressions.meanrt_color_correlatedIC_integrated * list.RT_color_correlatedIC_integrated.itemCount) +
+(expressions.meanrt_color_correlatedIC_separated * list.RT_color_correlatedIC_separated.itemCount) +
+(expressions.meanrt_tilt_correlatedIC_integrated * list.RT_tilt_correlatedIC_integrated.itemCount) +
+(expressions.meanrt_tilt_correlatedIC_separated * list.RT_tilt_correlatedIC_separated.itemCount))/
+(list.RT_color_correlatedIC_integrated.itemCount + list.RT_color_correlatedIC_separated.itemCount + 
+list.RT_tilt_correlatedIC_integrated.itemCount + list.RT_tilt_correlatedIC_separated.itemCount)
+
+/meanrt_control = (
+(expressions.meanrt_color_control_integrated * list.RT_color_control_integrated.itemCount) +
+(expressions.meanrt_color_control_separated * list.RT_color_control_separated.itemCount) +
+(expressions.meanrt_tilt_control_integrated * list.RT_tilt_control_integrated.itemCount) +
+(expressions.meanrt_tilt_control_separated * list.RT_tilt_control_separated.itemCount))/
+(list.RT_color_control_integrated.itemCount + list.RT_color_control_separated.itemCount + 
+list.RT_tilt_control_integrated.itemCount + list.RT_tilt_control_separated.itemCount)
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text intro1>
+/ items = instructions
+/ select = 1
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<trial intro1>
+/ stimulusframes = [1 = intro1, outerbox, innerbox, line, continue]
+/ validresponse = (" ")
+/ branch = [
+	return trial.intro2;
+]
+</trial>
+
+<text intro2>
+/ items = instructions
+/ select = 2
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<trial intro2>
+/ stimulusframes = [1 = intro2, outerbox, innerbox, line, continue, goback]
+/ validresponse = ("B", " ")
+/ branch = [
+	if (trial.intro2.responseText == "B" && !monkey.monkeyMode){
+		return trial.intro1;
+	} else {
+		return trial.intro3;
+	}
+]
+</trial>
+
+<text intro3>
+/ items = instructions
+/ select = 3
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<trial intro3>
+/ stimulusframes = [1 = intro3, outerbox, innerbox, line, continue, goback]
+/ validresponse = ("B", " ")
+/ branch = [
+	if (trial.intro3.responseText == "B" && !monkey.monkeyMode){
+		return trial.intro2;
+	} else {
+		return trial.intro4;
+	}
+]
+</trial>
+
+<text intro4>
+/ items = instructions
+/ select = 4
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<trial intro4>
+/ stimulusframes = [1 = intro4, outerbox, innerbox, line, continue, goback]
+/ validresponse = ("B", " ")
+/ branch = [
+	if (trial.intro4.responseText == "B" && !monkey.monkeyMode){
+		return trial.intro3;
+	} else {
+		return trial.intro5;
+	}
+]
+</trial>
+
+<text intro5>
+/ items = instructions
+/ select = 5
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<trial intro5>
+/ stimulusframes = [1 = intro5, start, goback]
+/ validresponse = ("B", " ")
+/ branch = [
+	if (trial.intro5.responseText == "B" && !monkey.monkeyMode){
+		return trial.intro4;
+	}
+]
+</trial>
+
+<trial intro_tilt>
+/ ontrialbegin = [
+	values.introtrial = 1;
+]
+/ stimulusframes = [1 = attention_tilt, responsekeys_tilt, getReady]
+/ validresponse = (parameters.responsekeyleft, parameters.responsekeyright)
+/ recorddata = false
+</trial>
+
+<trial intro_color_line>
+/ ontrialbegin = [
+	values.introtrial = 1;
+]
+/ stimulusframes = [1 = attention_color_line, responsekeys_color_line, getReady]
+/ validresponse = (parameters.responsekeyleft, parameters.responsekeyright)
+/ recorddata = false
+</trial>
+
+<trial intro_color_box>
+/ ontrialbegin = [
+	values.introtrial = 1;
+]
+/ stimulusframes = [1 = attention_color_box, responsekeys_color_box, getReady]
+/ validresponse = (parameters.responsekeyleft, parameters.responsekeyright)
+/ recorddata = false
+</trial>
+
+<text practiceend>
+/ items = instructions
+/ select = 6
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<trial practiceend>
+/ stimulusframes = [1 = practiceend, start]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text line>
+/ items = lines
+/ select = values.selectline
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", parameters.line_fontheight, false, false, false, false, 5, 1)
+/ txcolor = black
+/ txbgcolor = transparent
+</text>
+
+<shape innerbox>
+/ shape = rectangle
+/ position = (50%, 50%)
+/ height = parameters.line_fontheight + 3%
+/ width = (parameters.line_fontheight + 3%) * 3/4
+/ color = white
+</shape>
+
+<shape outerbox>
+/ shape = rectangle
+/ position = (50%, 50%)
+/ height = shape.innerbox.height + 3%
+/ width = shape.innerbox.width + 3%*3/4
+/ color = red
+</shape>
+
+****************************
+rest block stimuli
+****************************
+<text restinstruction>
+/ items = restinstructions
+/ select = 1
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/ position = (50%, 40%)
+</text>
+
+<clock restclock>
+/ mode = timer
+/ resetrate = block
+/ erase = false
+/ txcolor = yellow
+/ txbgcolor = black
+/ timeout = values.resttime
+/ position = (50%, 50%)
+/ format = "mm:ss"
+</clock>
+
+****************************
+rest block stimuli
+****************************
+
+<text errorfeedback>
+/ items = feedback
+/ select = 1
+/ position = (50%, 50%)
+/ txcolor = red
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT>
+</list>
+
+
+<list ACC_color_ortho_integrated>
+</list>
+
+<list ACC_color_ortho_separated>
+</list>
+
+<list ACC_color_control_integrated>
+</list>
+
+<list ACC_color_control_separated>
+</list>
+
+<list ACC_color_correlated_integrated>
+</list>
+
+<list ACC_color_correlatedC_integrated>
+</list>
+
+<list ACC_color_correlatedIC_integrated>
+</list>
+
+<list ACC_color_correlated_separated>
+</list>
+
+<list ACC_color_correlatedC_separated>
+</list>
+
+<list ACC_color_correlatedIC_separated>
+</list>
+
+<list ACC_tilt_ortho_integrated>
+</list>
+
+<list ACC_tilt_ortho_separated>
+</list>
+
+<list ACC_tilt_control_integrated>
+</list>
+
+<list ACC_tilt_control_separated>
+</list>
+
+<list ACC_tilt_correlated_integrated>
+</list>
+
+<list ACC_tilt_correlatedC_integrated>
+</list>
+
+<list ACC_tilt_correlatedIC_integrated>
+</list>
+
+<list ACC_tilt_correlated_separated>
+</list>
+
+<list ACC_tilt_correlatedC_separated>
+</list>
+
+<list ACC_tilt_correlatedIC_separated>
+</list>
+
+
+<list RT_color_ortho_integrated>
+</list>
+
+<list RT_color_ortho_separated>
+</list>
+
+<list RT_color_control_integrated>
+</list>
+
+<list RT_color_control_separated>
+</list>
+
+<list RT_color_correlated_integrated>
+</list>
+
+<list RT_color_correlatedC_integrated>
+</list>
+
+<list RT_color_correlatedIC_integrated>
+</list>
+
+<list RT_color_correlated_separated>
+</list>
+
+<list RT_color_correlatedC_separated>
+</list>
+
+<list RT_color_correlatedIC_separated>
+</list>
+
+<list RT_tilt_ortho_integrated>
+</list>
+
+<list RT_tilt_ortho_separated>
+</list>
+
+<list RT_tilt_control_integrated>
+</list>
+
+<list RT_tilt_control_separated>
+</list>
+
+<list RT_tilt_correlated_integrated>
+</list>
+
+<list RT_tilt_correlatedC_integrated>
+</list>
+
+<list RT_tilt_correlatedIC_integrated>
+</list>
+
+<list RT_tilt_correlated_separated>
+</list>
+
+<list RT_tilt_correlatedC_separated>
+</list>
+
+<list RT_tilt_correlatedIC_separated>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: trial.color1_tilt1
+* presents the combination of color 1 (here: red) and tilt 1 (here: right)
+* depending on values.dim_config it's either the box that is red (separated) or the line itself (integrated)
+* updates summary variables depending on response performance
+<trial color1_tilt1>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.introtrial = 0;
+	values.ITI = list.iti.nextValue;
+	values.selectline = 1;
+	values.responsekeycongruence = 1;
+	if (values.dimension == 1){
+		values.target = "color1";
+	} else {
+		values.target = "tilt1";
+	}
+	if (values.dim_config == 1){
+		text.line.textColor = parameters.color1;
+	} else {
+		shape.outerbox.color = parameters.color1;
+	}
+]
+/ stimulusframes = [1 = outerbox, innerbox, line]
+/ validresponse = (parameters.responsekeyleft, parameters.responsekeyright)
+/ monkeyresponse = (30, 38)
+/ correctresponse = (values.key1)
+/ ontrialend = [
+	if (trial.color1_tilt1.correct){
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+		values.iti = 0;		
+	}
+	values.rt = trial.color1_tilt1.latency;
+	
+	if (values.practice == 1 && values.correct == 0){
+		values.trialcount -= 1;
+	}
+]
+/ branch = [
+	if (values.practice == 1 && values.correct == 0) {
+		return trial.errorfeedback;
+	}
+]
+/ timeout = parameters.responsetimeout
+/ posttrialpause = values.ITI
+</trial>
+
+
+
+Note: trial.color1_tilt2
+* presents the combination of color 1 (here: red) and tilt 2 (here: left)
+* depending on values.dim_config it's either the box that is red (separated) or the line itself (integrated)
+* updates summary variables depending on response performance
+<trial color1_tilt2>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.introtrial = 0;
+	values.ITI = list.iti.nextValue;
+	values.selectline = 2;
+	if (values.dimension == 1){
+		values.target = "color1";
+	} else {
+		values.target = "tilt2";
+	}
+	values.responsekeycongruence = 2;
+	if (values.dim_config == 1){
+		text.line.textColor = parameters.color1;
+	} else {
+		shape.outerbox.color = parameters.color1;
+	}				
+]
+/ stimulusframes = [1 = outerbox, innerbox, line]
+/ validresponse = (parameters.responsekeyleft, parameters.responsekeyright)
+/ iscorrectresponse = [
+	return (
+	(values.dimension == 1 && trial.color1_tilt2.responseText == values.key1) || 
+	(values.dimension == 2 && trial.color1_tilt2.responseText == values.key2));
+]
+/ ontrialend = [
+	if (trial.color1_tilt2.correct){
+		values.correct = 1
+	} else {
+		values.correct = 0;
+		values.iti = 0;		
+	}
+	
+	values.rt = trial.color1_tilt2.latency;
+	if (values.practice == 1 && values.correct == 0){
+		values.trialcount -= 1;
+	}
+]
+/ branch = [
+	if (values.practice == 1 && values.correct == 0) {
+		return trial.errorfeedback;
+	}
+]
+/ timeout = parameters.responsetimeout
+/ posttrialpause = values.ITI
+</trial>
+
+
+
+Note: trial.color2_tilt1
+* presents the combination of color 2 (here: blue) and tilt 1 (here: right)
+* depending on values.dim_config it's either the box that is blue (separated) or the line itself (integrated)
+* updates summary variables depending on response performance
+<trial color2_tilt1>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.introtrial = 0;
+	values.ITI = list.iti.nextValue;
+	values.selectline = 1;
+	if (values.dimension == 1){
+		values.target = "color2";
+	} else {
+		values.target = "tilt1";
+	}
+	values.responsekeycongruence = 2;
+	if (values.dim_config == 1){
+		text.line.textColor = parameters.color2;
+	} else {
+		shape.outerbox.color = parameters.color2;
+	}
+]
+/ stimulusframes = [1 = outerbox, innerbox, line]
+/ validresponse = (parameters.responsekeyleft, parameters.responsekeyright)
+/ monkeyresponse = (30, 38)
+/ iscorrectresponse = [
+	return (
+	(values.dimension == 1 && trial.color2_tilt1.responseText == values.key2) || 
+	(values.dimension == 2 && trial.color2_tilt1.responseText == values.key1));
+]
+/ ontrialend = [
+	if (trial.color2_tilt1.correct){
+		values.correct = 1
+	} else {
+		values.correct = 0;
+		values.iti = 0;		
+	}
+	
+	values.rt = trial.color2_tilt1.latency;
+	if (values.practice == 1 && values.correct == 0){
+		values.trialcount -= 1;
+	}
+]
+/ branch = [
+	if (values.practice == 1 && values.correct == 0) {
+		return trial.errorfeedback;
+	}
+]
+/ timeout = parameters.responsetimeout
+/ posttrialpause = values.ITI
+</trial>
+
+
+Note: trial.color2_tilt2
+* presents the combination of color 2 (here: blue) and tilt 2 (here: left)
+* depending on values.dim_config it's either the box that is blue (separated) or the line itself (integrated)
+* updates summary variables depending on response performance
+<trial color2_tilt2> 
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.introtrial = 0;
+	values.ITI = list.iti.nextValue;
+	values.selectline = 2;
+	if (values.dimension == 1){
+		values.target = "color2";
+	} else {
+		values.target = "tilt2";
+	}
+	values.responsekeycongruence = 1;
+	if (values.dim_config == 1){
+		text.line.textColor = parameters.color2;
+	} else {
+		shape.outerbox.color = parameters.color2;
+	}
+]
+/ stimulusframes = [1 = outerbox, innerbox, line]
+/ validresponse = (parameters.responsekeyleft, parameters.responsekeyright)
+/ monkeyresponse = (30, 38)
+/ correctresponse = (values.key2)
+
+/ ontrialend = [
+	if (trial.color2_tilt2.correct){
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+		values.iti = 0;		
+	}
+	
+	values.rt = trial.color2_tilt2.latency;
+	if (values.practice == 1 && values.correct == 0){
+		values.trialcount -= 1;
+	}
+]
+/ branch = [
+	if (values.practice == 1 && values.correct == 0) {
+		return trial.errorfeedback;
+	}
+]
+
+/ timeout = parameters.responsetimeout
+/ posttrialpause = values.ITI
+</trial>
+
+Note: trial.color1
+* presents color 1 (here: red) and control tilt 
+* depending on values.dim_config it's either the box that is red (separated) or the line itself (integrated)
+* updates summary variables depending on response performance
+<trial color1>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.introtrial = 0;
+	values.ITI = list.iti.nextValue;
+	values.selectline = 3;
+	values.target = "color1";
+	if (values.dim_config == 1){
+		text.line.textColor = parameters.color1;
+	} else {
+		shape.outerbox.color = parameters.color1;
+	}				
+]
+/ stimulusframes = [1 = outerbox, innerbox, line]
+/ validresponse = (parameters.responsekeyleft, parameters.responsekeyright)
+/ correctresponse = (values.key1)
+
+/ ontrialend = [
+	if (trial.color1.correct){
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+		values.iti = 0;		
+	}
+	
+	values.rt = trial.color1.latency;			
+	if (values.practice == 1 && values.correct == 0){
+		values.trialcount -= 1;
+	}
+]
+/ branch = [
+	if (values.practice == 1 && values.correct == 0) {
+		return trial.errorfeedback
+	}
+]
+
+/ timeout = parameters.responsetimeout
+/ posttrialpause = values.ITI
+</trial>
+
+
+
+Note: trial.color2
+* presents color 2 (here: blue) and control tilt 
+* depending on values.dim_config it's either the box that is blue (separated) or the line itself (integrated)
+* updates summary variables depending on response performance
+<trial color2>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.introtrial = 0;
+	values.ITI = list.iti.nextValue;
+	values.selectline = 3;
+	values.target = "color2";
+	if (values.dim_config == 1){
+		text.line.textColor = parameters.color2;
+	} else {
+		shape.outerbox.color = parameters.color2;
+	}
+]
+/ stimulusframes = [1 = outerbox, innerbox, line]
+/ validresponse = (parameters.responsekeyleft, parameters.responsekeyright)
+/ correctresponse = (values.key2)
+
+/ ontrialend = [
+	if (trial.color2.correct){
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+		values.iti = 0;
+	}
+	
+	values.rt = trial.color2.latency;			
+	if (values.practice == 1 && values.correct == 0){
+		values.trialcount -= 1;
+	}
+]
+/ branch = [
+	if (values.practice == 1 && values.correct == 0) {
+		return trial.errorfeedback;
+	}
+]
+/ timeout = parameters.responsetimeout
+/ posttrialpause = values.ITI
+</trial>
+
+
+Note: trial.tilt1
+* presents tilt 1 (here: right) and control color 
+* depending on values.dim_config it's either the box that is control color (separated) or the line itself (integrated)
+* updates summary variables depending on response performance
+<trial tilt1>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.introtrial = 0;
+	values.ITI = list.iti.nextValue;
+	values.selectline = 1;
+	values.target = "tilt1";
+	if (values.dim_config == 1){
+		text.line.textColor = parameters.alternativecolor2;
+	} else {
+		shape.outerbox.color = parameters.alternativecolor2;
+	}
+]
+/ stimulusframes = [1 = outerbox, innerbox, line]
+/ validresponse = (parameters.responsekeyleft, parameters.responsekeyright)
+/ correctresponse = (values.key1)
+
+/ ontrialend = [
+	if (trial.tilt1.correct){
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+		values.iti = 0;
+	}
+	
+	values.rt = trial.tilt1.latency;		
+	if (values.practice == 1 && values.correct == 0){
+		values.trialcount -= 1;
+	}
+]
+/ branch = [
+	if (values.practice == 1 && values.correct == 0) {
+		return trial.errorfeedback;
+	}
+]
+/ timeout = parameters.responsetimeout
+/ posttrialpause = values.ITI
+</trial>
+
+Note: trial.tilt2
+* presents tilt 2 (here: left) and control color 
+* depending on values.dim_config it's either the box that is control color (separated) or the line itself (integrated)
+* updates summary variables depending on response performance
+<trial tilt2>
+/ ontrialbegin = [
+	values.trialcount += 1;
+	values.introtrial = 0;
+	values.ITI = list.iti.nextValue;
+	values.selectline = 2;
+	values.target = "tilt2";
+	if (values.dim_config == 1){
+		text.line.textColor = parameters.alternativecolor2;
+	} else {
+		shape.outerbox.color = parameters.alternativecolor2;
+	}
+				
+]
+/ stimulusframes = [1 = outerbox, innerbox, line]
+/ validresponse = (parameters.responsekeyleft, parameters.responsekeyright)
+/ correctresponse = (values.key2)
+
+/ ontrialend = [
+	if (trial.tilt2.correct){
+		values.correct = 1;
+	} else {
+		values.correct = 0;
+		values.iti = 0;
+	}
+	
+	values.rt = trial.tilt2.latency;				
+	if (values.practice == 1 && values.correct == 0){
+		values.trialcount -= 1;
+	}
+]
+/ branch = [
+	if (values.practice == 1 && values.correct == 0) {
+		return trial.errorfeedback;
+	}
+]
+/ timeout = parameters.responsetimeout
+/ posttrialpause = values.ITI
+</trial>
+
+*****************************
+Resttrial
+*****************************
+<trial resttrial>
+/ stimulusframes = [1 = restinstruction, restclock]
+/ timeout = values.resttime
+/ recorddata = true
+</trial>
+
+*****************************
+Errorfeedback
+*****************************
+<trial errorfeedback>
+/ stimulusframes = [1 = errorfeedback]
+
+//touchscreens: present inactive response buttons to prevent response button 'flickering'
+/ validresponse = (parameters.responsekeyleft, parameters.responsekeyright)
+/ isvalidresponse = [
+	return false;
+]
+
+/ timeout = 500
+/ recorddata = true
+/ ontrialend = [
+	values.trialcount += 1;
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+*************************
+COLOR Blocks: 
+*************************
+
+***************
+ortho
+***************
+<block color_ortho_integrated>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 2) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 3 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 1;
+	values.dim_config = 1;
+	values.variationtype = 1;
+	shape.outerbox.color = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_color_line; 2-49 = noreplace(color1_tilt1, color1_tilt2, color2_tilt1, color2_tilt2)]
+/ ontrialend = [
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_color_ortho_integrated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_color_ortho_integrated.appendItem(values.rt);
+		}	
+	}		
+]
+/ branch = [block.restblock]
+</block>
+
+<block color_ortho_separated>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 2) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 3 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 1;
+	values.dim_config = 2;
+	values.variationtype = 1;
+	text.line.textColor = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_color_box; 2-49 = noreplace(color1_tilt1, color1_tilt2, color2_tilt1, color2_tilt2)]
+
+/ ontrialend = [
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_color_ortho_separated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_color_ortho_separated.appendItem(values.rt);
+		}	
+	}		
+]
+
+/ branch = [return block.restblock]
+</block>
+
+***************
+correlated
+***************
+
+<block color_correlated_integrated_congruent>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 2) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 3 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 1;
+	values.dim_config = 1;
+	values.variationtype = 2;
+	shape.outerbox.color = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_color_line; 2-49 = noreplace(color1_tilt1, color2_tilt2)]
+/ ontrialend = [
+
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_color_correlated_integrated.appendItem(values.correct);
+		list.ACC_color_correlatedC_integrated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_color_correlated_integrated.appendItem(values.rt);
+			list.RT_color_correlatedC_integrated.appendItem(values.rt);		
+		}
+	}		
+]
+/ branch = [return block.restblock]
+</block>
+
+
+<block color_correlated_integrated_incongruent>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 2) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 3 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 1;
+	values.dim_config = 1;
+	values.variationtype = 2;
+	shape.outerbox.color = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_color_line; 2-49 = noreplace(color1_tilt2, color2_tilt1)]
+/ ontrialend = [
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_color_correlated_integrated.appendItem(values.correct);
+		list.ACC_color_correlatedIC_integrated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_color_correlated_integrated.appendItem(values.rt);
+			list.RT_color_correlatedIC_integrated.appendItem(values.rt);		
+		}
+	}			
+]
+/ branch = [return block.restblock;]
+</block>
+
+<block color_correlated_separated_congruent>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 2) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 3 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 1;
+	values.dim_config = 2;
+	values.variationtype = 2;
+	text.line.textColor = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_color_box; 2-49 = noreplace(color1_tilt1, color2_tilt2)]
+/ ontrialend = [
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_color_correlated_separated.appendItem(values.correct);
+		list.ACC_color_correlatedC_separated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_color_correlated_separated.appendItem(values.rt);
+			list.RT_color_correlatedC_separated.appendItem(values.rt);		
+		}	
+	}		
+]
+/ branch = [return block.restblock;]
+</block>
+
+
+<block color_correlated_separated_incongruent>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 2) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 3 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 1;
+	values.dim_config = 2;
+	values.variationtype = 2;
+	text.line.textColor = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_color_box; 2-49 = noreplace(color1_tilt2, color2_tilt1)]
+/ ontrialend = [	
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_color_correlated_separated.appendItem(values.correct);
+		list.ACC_color_correlatedIC_separated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_color_correlated_separated.appendItem(values.rt);
+			list.RT_color_correlatedIC_separated.appendItem(values.rt);		
+		}
+	}		
+]
+/ branch = [return block.restblock;]
+</block>
+
+***************
+control
+***************
+<block color_control_integrated>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 2) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 3 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 1;
+	values.dim_config = 1;
+	values.variationtype = 3;
+	shape.outerbox.color = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_color_line; 2-49 = noreplace(color1, color2)]
+/ ontrialend = [
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_color_control_integrated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_color_control_integrated.appendItem(values.rt);
+		}	
+	}	
+]
+/ branch = [return block.restblock]
+</block>
+
+<block color_control_separated>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 2) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 3 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 1;
+	values.dim_config = 2;
+	values.variationtype = 3;
+	text.line.textColor = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_color_box; 2-49 = noreplace(color1, color2)]
+/ ontrialend = [
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_color_control_separated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_color_control_separated.appendItem(values.rt);
+		}
+	}		
+]
+/ branch = [return block.restblock;]
+</block>
+
+*************************
+TILT Blocks
+*************************
+
+***************
+ortho
+***************
+<block tilt_ortho_integrated>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 3) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 2 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 2;
+	values.dim_config = 1;
+	values.variationtype = 1;
+	shape.outerbox.color = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_tilt; 2-49 = noreplace(color1_tilt1, color1_tilt2, color2_tilt1, color2_tilt2)]
+/ ontrialend = [
+
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_tilt_ortho_integrated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_tilt_ortho_integrated.appendItem(values.rt);
+		}	
+	}		
+]
+/ branch = [return block.restblock]
+</block>
+
+<block tilt_ortho_separated>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 3) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 2 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 2;
+	values.dim_config = 2;
+	values.variationtype = 1;
+	text.line.textColor = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_tilt; 2-49 = noreplace(color1_tilt1, color1_tilt2, color2_tilt1, color2_tilt2)]
+/ ontrialend = [
+
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_tilt_ortho_separated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_tilt_ortho_separated.appendItem(values.rt);
+		}	
+	}		
+]
+/ branch = [return block.restblock]
+</block>
+
+***************
+correlated
+***************
+
+<block tilt_correlated_integrated_congruent>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 3) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 2 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 2;
+	values.dim_config = 1;
+	values.variationtype = 2;
+	shape.outerbox.color = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_tilt; 2-49 = noreplace(color1_tilt1, color2_tilt2)]
+/ ontrialend = [
+
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_tilt_correlated_integrated.appendItem(values.correct);
+		list.ACC_tilt_correlatedC_integrated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_tilt_correlated_integrated.appendItem(values.rt);
+			list.RT_tilt_correlatedC_integrated.appendItem(values.rt);		
+		}
+	}		
+]
+/ branch = [return block.restblock]
+</block>
+
+<block tilt_correlated_integrated_incongruent>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 3) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 2 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 2;
+	values.dim_config = 1;
+	values.variationtype = 2;
+	shape.outerbox.color = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_tilt; 2-49 = noreplace(color1_tilt2, color2_tilt1)]
+/ ontrialend = [
+
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_tilt_correlated_integrated.appendItem(values.correct);
+		list.ACC_tilt_correlatedIC_integrated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_tilt_correlated_integrated.appendItem(values.rt);
+			list.RT_tilt_correlatedIC_integrated.appendItem(values.rt);		
+		}
+	}	
+]
+/ branch = [return block.restblock]
+</block>
+
+<block tilt_correlated_separated_congruent>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 3) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 2 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 2;
+	values.dim_config = 2;
+	values.variationtype = 2;
+	text.line.textColor = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_tilt; 2-49 = noreplace(color1_tilt1, color2_tilt2)]
+/ ontrialend = [	
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_tilt_correlated_separated.appendItem(values.correct);
+		list.ACC_tilt_correlatedC_separated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_tilt_correlated_separated.appendItem(values.rt);
+			list.RT_tilt_correlatedC_separated.appendItem(values.rt);		
+		}
+	}		
+]
+/ branch = [return block.restblock]
+</block>
+
+<block tilt_correlated_separated_incongruent>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 3) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 2 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 2;
+	values.dim_config = 2;
+	values.variationtype = 2;
+	text.line.textColor = parameters.alternativecolor1;
+]
+/ trials = [1 = intro_tilt; 2-49 = noreplace(color1_tilt2, color2_tilt1)]
+/ ontrialend = [	
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_tilt_correlated_separated.appendItem(values.correct);
+		list.ACC_tilt_correlatedIC_separated.appendItem(values.correct);
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_tilt_correlated_separated.appendItem(values.rt);
+			list.RT_tilt_correlatedIC_separated.appendItem(values.rt);		
+		}
+	}		
+]
+/ branch = [return block.restblock]
+</block>
+
+***************
+control
+***************
+
+<block tilt_control_integrated>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 3) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 2 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 2;
+	values.dim_config = 1;
+	values.variationtype = 3;
+	shape.outerbox.color = parameters.alternativecolor2;
+]
+/ trials = [1 = intro_tilt; 2-49 = noreplace(tilt1, tilt2)]
+/ ontrialend = [
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_tilt_control_integrated.appendItem(values.correct);
+	
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_tilt_control_integrated.appendItem(values.rt);
+		}
+	}	
+]
+/ branch = [return block.restblock;]
+</block>
+
+<block tilt_control_separated>
+/ stop = [
+	values.trialcount >= values.nrTrialsPerBlock
+]
+/ onblockbegin = [
+	values.trialcount = 0;
+	if (values.group == 1 || values.group == 3) {
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+		values.key1 = parameters.responsekeyleft;
+		values.key2 = parameters.responsekeyright;
+	} else if (values.group == 2 || values.group == 4) {
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+		values.key1 = parameters.responsekeyright;
+		values.key2 = parameters.responsekeyleft;
+	}
+	values.blockcount += 1;
+	values.dimension = 2;
+	values.dim_config = 2;
+	values.variationtype = 3;
+	text.line.textColor = parameters.alternativecolor2;
+]
+/ trials = [1 = intro_tilt; 2-49 = noreplace(tilt1, tilt2)]
+/ ontrialend = [
+	if (values.introtrial == 0){
+		list.ACC.appendItem(values.correct);
+		list.ACC_tilt_control_separated.appendItem(values.correct);
+	
+		if (values.correct == 1) {
+			list.RT.appendItem(values.rt);
+			list.RT_tilt_control_separated.appendItem(values.rt);
+		}
+	}
+]
+/ branch = [return block.restblock;]
+</block>
+
+*************************
+Practice Blocks
+*************************
+Note: there is no dedicated practice block. 
+There are 4 blocks run for practice followed by block.practiceend that resets
+all variable for the experimental blocks and presents the end of practice instructions.
+
+<block practiceend>
+/ trials = [1 = practiceend]
+/ onblockend = [
+	values.blockcount = 0;
+	values.nrTrialsPerBlock = parameters.nrTrialsPerTestblock;
+
+	list.RT_color_control_integrated.reset();
+	list.RT_color_control_separated.reset();
+	list.RT_color_correlated_integrated.reset();
+	list.RT_color_correlated_separated.reset();
+	list.RT_color_ortho_integrated.reset();
+	list.RT_color_ortho_separated.reset();
+	list.RT_tilt_control_integrated.reset();
+	list.RT_tilt_control_separated.reset();
+	list.RT_tilt_correlated_integrated.reset();
+	list.RT_tilt_correlated_separated.reset();
+	list.RT_tilt_ortho_integrated.reset();
+	list.RT_tilt_ortho_separated.reset();
+	list.ACC_color_ortho_integrated.reset();
+	list.ACC_color_ortho_separated.reset();
+	list.ACC_color_control_integrated.reset();
+	list.ACC_color_control_separated.reset();
+	list.ACC_color_correlated_integrated.reset();
+	list.ACC_color_correlated_separated.reset();
+	list.ACC_tilt_ortho_integrated.reset();
+	list.ACC_tilt_ortho_separated.reset();
+	list.ACC_tilt_control_integrated.reset();
+	list.ACC_tilt_control_separated.reset();
+	list.ACC_tilt_correlated_integrated.reset();
+	list.ACC_tilt_correlated_separated.reset();	
+	
+	list.ACC.reset();
+	list.RT.reset();
+	list.ACC_color_correlatedC_integrated.reset();
+	list.ACC_color_correlatedIC_integrated.reset();	
+	list.ACC_color_correlatedC_separated.reset();
+	list.ACC_color_correlatedIC_separated.reset();	
+	list.ACC_tilt_correlatedC_integrated.reset();
+	list.ACC_tilt_correlatedIC_integrated.reset();	
+	list.ACC_tilt_correlatedC_separated.reset();
+	list.ACC_tilt_correlatedIC_separated.reset();		
+
+	values.practice = 0
+]
+
+</block>
+
+
+*************************
+Rest Block
+*************************
+
+<block restblock>
+/ skip = [values.blockcount == 16]
+/ onblockbegin = [
+	if (mod(values.blockcount, parameters.prolongedrest) == 0){
+		values.resttime = parameters.prolongedresttime;
+	} else {
+		values.resttime = parameters.regularresttime;
+	}
+]
+/ trials = [1 = resttrial]
+</block>
+
+
+*************************
+Intro Block
+*************************
+
+<block intro>
+/ trials = [1 = intro1]
+/ recorddata = false
+/ onblockend = [
+	values.nrTrialsPerBlock = parameters.nrTrialsPerPracticeblock;
+]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+Use of response keys is counterbalanced across participants: 4 conditions;
+the assignment to a particular condition is done by groupnumber
+(responsekeys are conditional on the assigned script.groupId and are assigned at the beginning of each block)
+
+Note:
+color1 (here: red) and tilt1 (here: right) share response keys
+color2 (here: blue) and tilt2 (here: left) share response keys
+=> trials with those combinations are congruent in their response keys
+
+!If tilt is used as one dimension: the location of the default response keys on the keyboard
+might be incompatible with the tilt direction of the line (e.g. left tilt -> L responsekey; right tilt -> A responsekey)
+in this condition
+
+<expt a>
+/ onexptbegin = [
+	values.color1key = parameters.responsekeyleft;
+	values.color2key = parameters.responsekeyright;
+	values.tilt1key = parameters.responsekeyleft;
+	values.tilt2key = parameters.responsekeyright;
+	
+	//for touch devices the navigation buttons don't have to be provided
+	if (computer.touch && !computer.hasKeyboard){
+		text.continue.skip = true;
+		text.goback.skip = true;
+	}
+]
+/ groups = (1 of 4)
+/ onexptbegin = [
+	values.practice = 1;
+	values.group = 1;
+]
+/ blocks = [
+	1 = intro;
+	2-5 = noreplace (color_ortho_integrated, tilt_ortho_separated, color_control_separated, tilt_control_integrated);
+	6 = practiceend;
+	7-22 = noreplace(color_ortho_integrated, color_ortho_separated, color_correlated_integrated_congruent, color_correlated_integrated_incongruent, 
+	color_correlated_separated_congruent, color_correlated_separated_incongruent,color_control_integrated, color_control_separated, 
+	tilt_ortho_integrated, tilt_ortho_separated,
+	tilt_correlated_integrated_congruent, tilt_correlated_integrated_incongruent, tilt_correlated_separated_congruent, tilt_correlated_separated_incongruent, 
+	tilt_control_integrated, tilt_control_separated);
+	23 = finish;
+]
+</expt>
+
+**************************************************
+Change the number/types of blocks run:
+
+Example: run only control vs. orthogonal blocks
+
+/ blocks = [
+	1 = intro;
+	2-5 = noreplace (color_ortho_integrated, tilt_ortho_separated, color_control_separated, tilt_control_integrated);
+	6 = practiceend;
+	7-14 = noreplace(color_ortho_integrated, color_ortho_separated, color_control_integrated, color_control_separated, 
+	tilt_ortho_integrated, tilt_ortho_separated, tilt_control_integrated, tilt_control_separated);
+	15 = finish;
+]
+**************************************************
+
+Note:
+color1 (here: red) and tilt2 (here: left) share response keys
+color2 (here: blue) and tilt1 (here: right) share response keys
+=> trials with those combinations are congruent in their response keys
+
+!If tilt is used as one dimension: the location of the default response keys on the keyboard
+might be compatible with the tilt direction of the line (e.g. left tilt -> A responsekey; right tilt -> L responsekey)
+in this condition
+
+<expt b>
+/ onexptbegin = [
+	values.color1key = parameters.responsekeyleft;
+	values.color2key = parameters.responsekeyright;
+	values.tilt1key = parameters.responsekeyright;
+	values.tilt2key = parameters.responsekeyleft;
+
+	//for touch devices the navigation buttons don't have to be provided
+	if (computer.touch && !computer.hasKeyboard){
+		text.continue.skip = true;
+		text.goback.skip = true;
+	}
+]
+/ groups = (2 of 4)
+/ onexptbegin = [
+	values.practice = 1;
+	values.group = 2;
+]
+/ blocks = [
+	1 = intro;
+	2-5 = noreplace (color_ortho_integrated, tilt_ortho_separated, color_control_separated, tilt_control_integrated);
+	6 = practiceend;
+	7-22 = noreplace(color_ortho_integrated, color_ortho_separated, color_correlated_integrated_congruent, color_correlated_integrated_incongruent, 
+	color_correlated_separated_congruent, color_correlated_separated_incongruent,color_control_integrated, color_control_separated, 
+	tilt_ortho_integrated, tilt_ortho_separated,
+	tilt_correlated_integrated_congruent, tilt_correlated_integrated_incongruent, tilt_correlated_separated_congruent, tilt_correlated_separated_incongruent, 
+	tilt_control_integrated, tilt_control_separated);
+	23 = finish;
+]
+</expt>
+
+Note:
+color1 (here: red) and tilt2 (here: left) share response keys
+color2 (here: blue) and tilt1 (here: right) share response keys
+=> trials with those combinations are congruent in their response keys
+
+!If tilt is used as one dimension: the location of the default response keys on the keyboard
+might be incompatible with the tilt direction of the line (e.g. left tilt -> L responsekey; right tilt -> A responsekey)
+in this condition
+<expt c>
+/ onexptbegin = [
+	values.color1key = parameters.responsekeyright;
+	values.color2key = parameters.responsekeyleft;
+	values.tilt1key = parameters.responsekeyleft;
+	values.tilt2key = parameters.responsekeyright;
+
+	
+	//for touch devices the navigation buttons don't have to be provided
+	if (computer.touch && !computer.hasKeyboard){
+		text.continue.skip = true;
+		text.goback.skip = true;
+	}
+]
+/ groups = (3 of 4)
+/ onexptbegin = [
+	values.practice = 1;
+	values.group = 3;
+]
+/ blocks = [
+	1 = intro;
+	2-5 = noreplace (color_ortho_integrated, tilt_ortho_separated, color_control_separated, tilt_control_integrated);
+	6 = practiceend;
+	7-22 = noreplace(color_ortho_integrated, color_ortho_separated, color_correlated_integrated_congruent, color_correlated_integrated_incongruent, 
+	color_correlated_separated_congruent, color_correlated_separated_incongruent,color_control_integrated, color_control_separated, 
+	tilt_ortho_integrated, tilt_ortho_separated,
+	tilt_correlated_integrated_congruent, tilt_correlated_integrated_incongruent, tilt_correlated_separated_congruent, tilt_correlated_separated_incongruent, 
+	tilt_control_integrated, tilt_control_separated);
+	23 = finish;
+]
+
+</expt>
+
+
+Note:
+color1 (here: red) and tilt1 (here: right) share response keys
+color2 (here: blue) and tilt2 (here: left) share response keys
+=> trials with those combinations are congruent in their response keys
+
+!If tilt is used as one dimension: the location of the default response keys on the keyboard
+might be  compatible with the tilt direction of the line (e.g. left tilt -> A responsekey; right tilt -> L responsekey)
+in this condition
+<expt d>
+/ onexptbegin = [
+	values.color1key = parameters.responsekeyright;
+	values.color2key = parameters.responsekeyleft;
+	values.tilt1key = parameters.responsekeyright;
+	values.tilt2key = parameters.responsekeyleft;
+
+	
+	//for touch devices the navigation buttons don't have to be provided
+	if (computer.touch && !computer.hasKeyboard){
+		text.continue.skip = true;
+		text.goback.skip = true;
+	}
+]
+/ groups = (4 of 4)
+/ onexptbegin = [
+	values.practice = 1;
+	values.group = 4;
+]
+/ blocks = [
+	1 = intro;
+	2-5 = noreplace (color_ortho_integrated, tilt_ortho_separated, color_control_separated, tilt_control_integrated);
+	6 = practiceend;
+	7-22 = noreplace(
+		color_ortho_integrated, color_ortho_separated, color_correlated_integrated_congruent, color_correlated_integrated_incongruent, 
+		color_correlated_separated_congruent, color_correlated_separated_incongruent,color_control_integrated, color_control_separated, 
+		tilt_ortho_integrated, tilt_ortho_separated,
+		tilt_correlated_integrated_congruent, tilt_correlated_integrated_incongruent, tilt_correlated_separated_congruent, tilt_correlated_separated_incongruent, 
+		tilt_control_integrated, tilt_control_separated);
+	23 = finish;
+]
+</expt>
+
+<monkey>
+/ latencydistribution = normal(500, 100)
+</monkey>
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

@@ -1,0 +1,1740 @@
+﻿<usermanual>								
+___________________________________________________________________________________________________________________	
+
+								*Conflict Tactics Scale - Revised*
+___________________________________________________________________________________________________________________
+Script Author: Marisa Okana
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Millisecond Software thanks Marisa Okana for sharing her script!
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+The Revised Conflict Tactics Scales (CTS2; Straus, Hamby, Boney- McCoy, & Sugarman, 1996*) is a widely used 
+measure of intimate partner violence consisting of five subscales: physical violence, psychological violence, 
+sexual violence, negotiation, and physical injury.
+
+Reference:
+Straus, M.A., Hamby, S.L., Boney-McCoy, S. & Sugarman, D.B. (1996). The Revised Conflict Tactics Scales (CTS2): 
+Development and Preliminary Psychometric Data. JOURNALOF FAMILY ISSUES, 17 , 283-316.
+
+PERMISSION FOR RESEARCH USE OF THE CTS2: Do NOT administer this instrument without written permission of the authors.
+'Permission to reproduce the CTS2 will be granted without charge to persons who agree to carry out and 
+report psychometric analyses (such as reliability and factor analyses), or who agree to provide us with data to
+use for psychometric analysis. If data are provided, their use will be limited to psychometric analyses
+and the right to use the data for substantive analyses will rest exclusively with the person or persons providing
+the data. (Straus et al, 1996, p.305)'
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+There are 39 items to be answered by respondent for her/his own actions/behaviors and for partner's actions/behaviors
+(78 items in total)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'RevisedConflictTacticsScale2.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values); see scoring section
+
+The following scale was used to score the initial responses (see Straus et al, 1996, p.305):
+"Once in the past year": 1
+"Twice in the past year": 2 
+"3-5 times in the past year": 4 (suggested midpoint)
+"6-10 times in the past year": 8 (suggested midpoint)
+"11-20 times in the past year": 15 (suggested midpoint)
+"More than 20 times in the past year": 25 (suggested midpoint)
+"Not in the past year, but it did happen before": 0*
+"This has never happened": 0
+
+*'Treatment of response Category 7. Response Category 7 ("Not in the
+past year, but it did happen before") is used in two ways: (a) When scores
+for the previous year are desired (the usual use of the CTS), Category 7 is
+scored as 0; and (b) Category 7 can also be used to obtain a relationship
+prevalence measure of physical assault-that is, did an assault ever occur?
+Respondents who answer 1 through 7 are scored as 1 (yes).' (Straus et al, 1996, p.305)
+
+The following default option values are used in this script 
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+
+!!!!to change scoring to obtain a relationship prevalence measure of physical assault (binary) use the following scoring:
+/ optionvalues = ("1", "1", "1", "1", "1", "1", "1", "0")
+							
+
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'RevisedConflictTacticsScale2_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+PhAssault_self_Max300:			Physical Assault cumulative score for Self
+PhAssault_partner_Max300:		Physical Assault cumulative score for Partner
+									Note: the higher the score, the more Physical Assault used
+
+PsAggr_self_Max200:				Psychological Aggression cumulative score for Self
+PsAggr_partner_Max200:			Psychological Aggression cumulative score for Partner
+									Note: the higher the score, the more Psychological Aggression used
+
+N_self_Max150:					Negotiation cumulative score for Self
+N_partner_Max150:				Negotiation cumulative score for Partner
+									Note: the higher the score, the more Negotiation used (without violence)
+
+I_self_Max150:					Injury cumulative score for Self
+I_partner_Max150:				Injury cumulative score for Partner
+								Note: the higher the score, the more injuries
+
+SC_self_Max175:					Sexual Coercion cumulative score for Self
+SC_partner_Max175:				Sexual Coercion cumulative score for Partner
+									Note: the higher the score, the more Sexual Coercion used
+	
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to further customize your experiment.
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 4%)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ screencolor = lightGray
+</instruct>
+
+<page intro> 
+^No matter how well a couple gets along, there are times when they disagree, get annoyed with the other person, 
+want different things from each other, or just have spats or fights because they are in a bad mood, are tired, 
+or for some other reason. 
+^^Couples also have many different ways of trying to settle their differences. 
+This is a list of things that might happen when you have differences.
+</page>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/fontstyle = ("Arial", 2%)
+/txbgcolor = black
+/screencolor = (214, 214, 214) 
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data: RevisedConflictTacticsScale2.iqdat
+********************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.PhAssault_self_Max300, expressions.PhAssault_partner_Max300,
+expressions.PsAggr_self_Max200, expressions.PsAggr_partner_Max200,
+expressions.I_self_Max150, expressions.I_partner_Max150,
+expressions.SC_self_Max175, expressions.SC_partner_Max175,
+expressions.N_self_Max150, expressions.N_partner_Max150)
+
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS/SCORING
+**************************************************************************************************************
+**************************************************************************************************************
+
+The following scale was used to score the initial responses (see Straus et al, 1996, p.305):
+"Once in the past year": 1
+"Twice in the past year": 2 
+"3-5 times in the past year": 4 (suggested midpoint)
+"6-10 times in the past year": 8 (suggested midpoint)
+"11-20 times in the past year": 15 (suggested midpoint)
+"More than 20 times in the past year": 25 (suggested midpoint)
+"Not in the past year, but it did happen before": 0*
+"This has never happened": 0
+
+*'Treatment of response Category 7. Response Category 7 ("Not in the
+past year, but it did happen before") is used in two ways: (a) When scores
+for the previous year are desired (the usual use of the CTS), Category 7 is
+scored as 0; and (b) Category 7 can also be used to obtain a relationship
+prevalence measure of physical assault-that is, did an assault ever occur?
+Respondents who answer 1 through 7 are scored as 1 (yes).' (Straus et al, 1996, p.305)
+
+The following default option values are used in this script 
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+
+to change category 7 scoring to 1; change all optionvalues to
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "1", "0")
+
+
+
+/PhAssault_self_Max300:			Physical Assault cumulative score for Self
+/PhAssault_partner_Max300:			Physical Assault cumulative score for Partner
+								Note: the higher the score, the more Physical Assault used
+
+/PsAggr_self_Max200:				Psychological Aggression cumulative score for Self
+/PsAggr_partner_Max200:			Psychological Aggression cumulative score for Partner
+								Note: the higher the score, the more Psychological Aggression used
+
+/N_self_Max150:					Negotiation cumulative score for Self
+/N_partner_Max150:					Negotiation cumulative score for Partner
+								Note: the higher the score, the more Negotiation used (without violence)
+
+/I_self_Max150:					Injury cumulative score for Self
+/I_partner_Max150:					Injury cumulative score for Partner
+								Note: the higher the score, the more injuries
+
+/SC_self_Max175:					Sexual Coercion cumulative score for Self
+/SC_partner_Max175:				Sexual Coercion cumulative score for Partner
+								Note: the higher the score, the more Sexual Coercion used
+
+<expressions>
+/PhAssault_self_Max300 = radiobuttons.cq7.response + radiobuttons.cq9.response + radiobuttons.cq17.response +
+radiobuttons.cq21.response + radiobuttons.cq27.response + radiobuttons.cq33.response +
+radiobuttons.cq37.response + radiobuttons.cq43.response + radiobuttons.cq45.response +
+radiobuttons.cq53.response + radiobuttons.cq61.response + radiobuttons.cq73.response
+
+/PhAssault_partner_Max300 = radiobuttons.cq8.response + radiobuttons.cq10.response + radiobuttons.cq18.response +
+radiobuttons.cq22.response + radiobuttons.cq28.response + radiobuttons.cq34.response +
+radiobuttons.cq38.response + radiobuttons.cq44.response + radiobuttons.cq46.response +
+radiobuttons.cq54.response + radiobuttons.cq62.response + radiobuttons.cq74.response
+
+/PsAggr_self_Max200 = radiobuttons.cq5.response + radiobuttons.cq25.response + radiobuttons.cq29.response + 
+radiobuttons.cq35.response + radiobuttons.cq49.response + radiobuttons.cq65.response + 
+radiobuttons.cq67.response + radiobuttons.cq69.response
+
+/PsAggr_partner_Max200 = radiobuttons.cq6.response + radiobuttons.cq26.response + radiobuttons.cq30.response + 
+radiobuttons.cq36.response + radiobuttons.cq50.response + radiobuttons.cq66.response + 
+radiobuttons.cq68.response + radiobuttons.cq70.response
+
+/N_self_Max150 = radiobuttons.cq1.response + radiobuttons.cq3.response + radiobuttons.cq13.response +
+radiobuttons.cq39.response + radiobuttons.cq59.response + radiobuttons.cq77.response
+
+/N_partner_Max150 = radiobuttons.cq2.response + radiobuttons.cq4.response + radiobuttons.cq14.response +
+radiobuttons.cq40.response + radiobuttons.cq60.response + radiobuttons.cq78.response
+
+/I_self_Max150 = radiobuttons.cq11.response + radiobuttons.cq23.response + radiobuttons.cq31.response +
+radiobuttons.cq41.response + radiobuttons.cq55.response + radiobuttons.cq71.response
+
+/I_partner_Max150 = radiobuttons.cq12.response + radiobuttons.cq24.response + radiobuttons.cq32.response +
+radiobuttons.cq42.response + radiobuttons.cq56.response + radiobuttons.cq72.response
+
+/SC_self_Max175 = radiobuttons.cq15.response + radiobuttons.cq19.response + radiobuttons.cq47.response +
+radiobuttons.cq51.response + radiobuttons.cq57.response + radiobuttons.cq63.response +
+radiobuttons.cq75.response
+
+/SC_partner_Max175 = radiobuttons.cq16.response + radiobuttons.cq20.response + radiobuttons.cq48.response +
+radiobuttons.cq52.response + radiobuttons.cq58.response + radiobuttons.cq64.response +
+radiobuttons.cq76.response
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	QUESTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+N
+<radiobuttons Cq1>
+/ caption = "1. I showed my partner I cared even though we disagreed."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq2>
+/ caption = "2. My partner showed care for me even though we disagreed."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+N
+<radiobuttons Cq3>
+/ caption = "3. I explained my side of a disagreement to my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq4>
+/ caption = "4. My partner explained his or her side of a disagreement to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PsA
+<radiobuttons Cq5>
+/ caption = "5. I insulted or swore at my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq6>
+/ caption = "6. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PhA
+<radiobuttons Cq7>
+/ caption = "7. I threw something at my partner that could hurt."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq8>
+/ caption = "8. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PhA
+<radiobuttons Cq9>
+/ caption = "9. I twisted my partner’s arm or hair."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq10>
+/ caption = "10. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+I
+<radiobuttons Cq11>
+/ caption = "11. I had a sprain, bruise, or small cut because of a fight with my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq12>
+/ caption = "12. My partner had a sprain, bruise, or small cut because of a fight with me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+N
+<radiobuttons Cq13>
+/ caption = "13. I showed respect for my partner’s feelings about an issue."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq14>
+/ caption = "14. My partner showed respect for my feelings about an issue."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+SC
+<radiobuttons Cq15>
+/ caption = "15. I made my partner have sex without a condom."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq16>
+/ caption = "16. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PhA
+<radiobuttons Cq17>
+/ caption = "17. I pushed or shoved my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq18>
+/ caption = "18. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+SC
+<radiobuttons Cq19>
+/ caption = "19. I used force (like hitting, holding down, or using a weapon) to make my partner have oral or anal sex."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq20>
+/ caption = "20. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PhA
+<radiobuttons Cq21>
+/ caption = "21. I used a knife or gun on my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq22>
+/ caption = "22. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+I
+<radiobuttons Cq23>
+/ caption = "23. I passed out from being hit on the head by my partner in a fight."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq24>
+/ caption = "24. My partner passed out from being hit on the head in a fight with me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PsA
+<radiobuttons Cq25>
+/ caption = "25. I called my partner fat or ugly."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq26>
+/ caption = "26. My partner called me fat or ugly."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PhA
+<radiobuttons Cq27>
+/ caption = "27. I punched or hit my partner with something that could hurt."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq28>
+/ caption = "28. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PsA
+<radiobuttons Cq29>
+/ caption = "29. I destroyed something belonging to my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq30>
+/ caption = "30. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+I
+<radiobuttons Cq31>
+/ caption = "31. I went to a doctor because of a fight with my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq32>
+/ caption = "32. My partner went to a doctor because of a fight with me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PhA
+<radiobuttons Cq33>
+/ caption = "33. I choked my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq34>
+/ caption = "34. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PsA
+<radiobuttons Cq35>
+/ caption = "35. I shouted or yelled at my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq36>
+/ caption = "36. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PhA
+<radiobuttons Cq37>
+/ caption = "37. I slammed my partner against a wall"
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq38>
+/ caption = "38. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+N
+<radiobuttons Cq39>
+/ caption = "39. I said I was sure we could work out a problem."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq40>
+/ caption = "40. My partner was sure we could work it out."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+I
+<radiobuttons Cq41>
+/ caption = "41. I needed to see a doctor because of a fight with my partner, but I didn’t."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq42>
+/ caption = "42. My partner needed to see a doctor because of a fight with me, but didn’t."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PhA
+<radiobuttons Cq43>
+/ caption = "43. I beat up my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq44>
+/ caption = "44. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PhA
+<radiobuttons Cq45>
+/ caption = "45. I grabbed my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq46>
+/ caption = "46. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+SC
+<radiobuttons Cq47>
+/ caption = "47. I used force (like hitting, holding down, or using a weapon) to make my partner have sex."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq48>
+/ caption = "48. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PsA
+<radiobuttons Cq49>
+/ caption = "49. I stomped out of the room or house or yard during a disagreement."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq50>
+/ caption = "50. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+SC
+<radiobuttons Cq51>
+/ caption = "51. I insisted on sex when my partner did not want to (but did not use physical force)."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq52>
+/ caption = "52. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PhA
+<radiobuttons Cq53>
+/ caption = "53. I slapped my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq54>
+/ caption = "54. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+I
+<radiobuttons Cq55>
+/ caption = "55. I had a broken bone from a fight with my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq56>
+/ caption = "56. My partner had a broken bone from a fight with me"
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+SC
+<radiobuttons Cq57>
+/ caption = "57. I used threats to make my partner have oral or anal sex."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq58>
+/ caption = "58. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+N
+<radiobuttons Cq59>
+/ caption = "59. I suggested a compromise to a disagreement."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq60>
+/ caption = "60. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PhA
+<radiobuttons Cq61>
+/ caption = "61. I burned or scalded my partner on purpose."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq62>
+/ caption = "62. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+SC
+<radiobuttons Cq63>
+/ caption = "63. I insisted my partner have oral or anal sex (but did not use physical force)."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq64>
+/ caption = "64. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PsA
+<radiobuttons Cq65>
+/ caption = "65. I accused my partner of being a lousy lover."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq66>
+/ caption = "66. My partner accused me of this."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PsA
+<radiobuttons Cq67>
+/ caption = "67. I did something to spite my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq68>
+/ caption = "68. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PsA
+<radiobuttons Cq69>
+/ caption = "69. I threatened to hit or throw something at my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq70>
+/ caption = "70. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+I
+<radiobuttons Cq71>
+/ caption = "71. I felt physical pain that still hurt the next day because of a fight with my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq72>
+/ caption = "72. My partner still felt physical pain the next day because of a fight we had."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+PhA
+<radiobuttons Cq73>
+/ caption = "73. I kicked my partner."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq74>
+/ caption = "74. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+SC
+<radiobuttons Cq75>
+/ caption = "75. I used threats to make my partner have sex."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq76>
+/ caption = "76. My partner did this to me."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+N
+<radiobuttons Cq77>
+/ caption = "77. I agreed to try a solution to a disagreement my partner suggested."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+<radiobuttons Cq78>
+/ caption = "78. My partner agreed to try a solution I suggested."
+/ options = ("Once in the past year", "Twice in the past year", 
+"3-5 times in the past year", "6-10 times in the past year", 
+"11-20 times in the past year", "More than 20 times in the past year", 
+"Not in the past year, but it did happen before", "This has never happened")
+/ optionvalues = ("1", "2", "4", "8", "15", "25", "0", "0")
+/ fontstyle = ("Arial", 2%, true, false, false, false, 5, 1)
+/ txcolor = (147, 112, 219)
+/ orientation = Vertical
+/ required = true
+</radiobuttons>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	SURVEYPAGES	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<surveypage CTS1_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq1, Cq2]
+</surveypage>
+
+<surveypage CTS2_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq3, Cq4]
+</surveypage>
+
+<surveypage CTS3_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq5, Cq6]
+</surveypage>
+
+<surveypage CTS4_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq7, Cq8]
+</surveypage>
+
+<surveypage CTS5_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ subcaptionfontstyle = ("Arial", 2%, false, true, false, false, 5, 0)
+/ showquestionnumbers = false
+/ showpagenumbers = false
+/ questions = [1 = Cq9, Cq10]
+/ itemspacing = 6%
+</surveypage>
+
+<surveypage CTS6_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq11, Cq12]
+</surveypage>
+
+<surveypage CTS7_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq13, Cq14]
+</surveypage>
+
+<surveypage CTS8_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq15, Cq16]
+</surveypage>
+
+<surveypage CTS9_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq17, Cq18]
+</surveypage>
+
+<surveypage CTS10_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq19, Cq20]
+</surveypage>
+
+<surveypage CTS11_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq21, Cq22]
+</surveypage>
+
+<surveypage CTS12_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq23, Cq24]
+</surveypage>
+
+<surveypage CTS13_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq25, Cq26]
+</surveypage>
+
+<surveypage CTS14_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq27, Cq28]
+</surveypage>
+
+<surveypage CTS15_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq29, Cq30]
+</surveypage>
+
+<surveypage CTS16_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq31, Cq32]
+</surveypage>
+
+<surveypage CTS17_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq33, Cq34]
+</surveypage>
+
+<surveypage CTS18_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq35, Cq36]
+</surveypage>
+
+<surveypage CTS19_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq37, Cq38]
+</surveypage>
+
+<surveypage CTS20_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq39, Cq40]
+</surveypage>
+
+<surveypage CTS21_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq41, Cq42]
+</surveypage>
+
+<surveypage CTS22_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq43, Cq44]
+</surveypage>
+
+<surveypage CTS23_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ subcaptionfontstyle = ("Arial", 2%, false, true, false, false, 5, 0)
+/ showquestionnumbers = false
+/ showpagenumbers = false
+/ questions = [1 = Cq45, Cq46]
+/ itemspacing = 6%
+</surveypage>
+
+<surveypage CTS24_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq47, Cq48]
+</surveypage>
+
+<surveypage CTS25_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq49, Cq50]
+</surveypage>
+
+<surveypage CTS26_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq51, Cq52]
+</surveypage>
+
+<surveypage CTS27_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq53, Cq54]
+</surveypage>
+
+<surveypage CTS28_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq55, Cq56]
+</surveypage>
+
+<surveypage CTS29_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq57, Cq58]
+</surveypage>
+
+<surveypage CTS30_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq59, Cq60]
+</surveypage>
+
+<surveypage CTS31_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq61, Cq62]
+</surveypage>
+
+<surveypage CTS32_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq63, Cq64]
+</surveypage>
+
+<surveypage CTS33_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq65, Cq66]
+</surveypage>
+
+<surveypage CTS34_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq67, Cq68]
+</surveypage>
+
+<surveypage CTS35_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq69, Cq70]
+</surveypage>
+
+<surveypage CTS36_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq71, Cq72]
+</surveypage>
+
+<surveypage CTS37_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq73, Cq74]
+</surveypage>
+
+<surveypage CTS38_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq75, Cq76]
+</surveypage>
+
+<surveypage CTS39_S>
+/ subcaption = "
+Directions:
+Please choose the response that indicates how many times you did each of these things in the past year, 
+and how many times your partner did them in the past year."
+/ questions = [1 = Cq77, Cq78]
+</surveypage>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	SURVEY
+**************************************************************************************************************
+**************************************************************************************************************
+
+<survey RevisedConflictTacticsScale2>
+/ pages = [
+	1 = CTS1_S; 
+	2 = CTS2_S; 
+	3 = CTS3_S; 
+	4 = CTS4_S; 
+	5 = CTS5_S; 
+	6 = CTS6_S; 
+	7 = CTS7_S; 
+	8 = CTS8_S; 
+	9 = CTS9_S; 
+	10 = CTS10_S; 
+	11 = CTS11_S; 
+	12 = CTS12_S; 
+	13 = CTS13_S; 
+	14 = CTS14_S; 
+	15 = CTS15_S; 
+	16 = CTS16_S; 
+	17 = CTS17_S; 
+	18 = CTS18_S; 
+	19 = CTS19_S; 
+	20 = CTS20_S; 
+	21 = CTS21_S; 
+	22 = CTS22_S;
+	23 = CTS23_S; 
+	24 = CTS24_S; 
+	25 = CTS25_S; 
+	26 = CTS26_S; 
+	27 = CTS27_S; 
+	28 = CTS28_S; 
+	29 = CTS29_S; 
+	30 = CTS30_S; 
+	31 = CTS31_S; 
+	32 = CTS32_S; 
+	33 = CTS33_S; 
+	34 = CTS34_S; 
+	35 = CTS35_S; 
+	36 = CTS36_S;
+	37 = CTS37_S; 
+	38 = CTS38_S; 
+	39 = CTS39_S;
+]
+/ subcaptionfontstyle = ("Arial", 2%, false, true, false, false, 5, 0)
+/ showquestionnumbers = false
+/ showpagenumbers = false
+/ itemspacing = 6%
+/ itemfontstyle = ("Arial", 2.33%, true, false, false, false, 5, 0)
+/ responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 0)
+/ screencolor = (214, 214, 214)
+/ showbackbutton = false
+/ finishlabel = "Thank you!"
+/ navigationbuttonsize = (10%, 3%)
+/ navigationbuttonfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 0)
+</survey>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt CTS2>
+/ blocks = [1 = RevisedConflictTacticsScale2]
+/ preinstructions = (intro)
+</expt>
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

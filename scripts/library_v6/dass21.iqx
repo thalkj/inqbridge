@@ -1,0 +1,425 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							DEPRESSION ANXIETY STRESS SCALE (DASS) - 21 items
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-15-2013
+last updated:  02-21-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-21-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the short version of the Depression Anxiety and Stress Scale (DASS) with 21 items 
+as published on: http://www2.psy.unsw.edu.au/groups/dass/
+
+This script uses the American version published.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+From Website: http://www2.psy.unsw.edu.au/groups/dass/
+
+"General description of the scales
+
+The DASS is a set of three self-report scales designed to measure the negative emotional states of 
+depression, anxiety and stress.  The DASS was constructed not merely as another set of scales to measure conventionally 
+defined emotional states,  but to further the process of defining, understanding, and measuring the 
+ubiquitous and clinically significant emotional states usually described as depression, anxiety and stress. 
+The DASS should thus meet the requirements of both researchers and scientist-professional clinicians.[...]"
+
+There are two versions: a long version with 42 items (DASS42.iqx) and a short version with 21 items (DASS21.iqx).
+
+Compared to the long version, the short version contains 7 items per subscale.
+
+"The Depression scale assesses dysphoria, hopelessness, devaluation of life, self-deprecation, 
+lack of interest/involvement, anhedonia, and inertia. 
+The Anxiety scale assesses autonomic arousal, skeletal muscle effects, situational anxiety, 
+and subjective experience of anxious affect. 
+The Stress scale is sensitive to levels of chronic non-specific arousal. It assesses difficulty relaxing, 
+nervous arousal, and being easily upset/agitated, irritable/over-reactive and impatient. 
+
+Subjects are asked to use 4-point severity/frequency scales to rate the extent to which they have 
+experienced each state over the past week. Scores for Depression, Anxiety and Stress are calculated 
+by summing the scores for the relevant items.[...]"
+
+21 4-point Likert scale to assess Anxiety, Depression and Stress over the past week.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'dass21.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		 with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values: 0-3)
+									0 = did not apply
+									3 = applied to me to a considerable degree
+									(no reversed scored items)
+									
+q*_latency:							how much time in ms the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'dass21_summary*.iqdat'
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+totalscore:							calculates the total score (double the sum of all scores for the short version)
+Depression/Anxiety/Stress Score:	subscale scores (double the sum of all scores for a particular subscale for the short version)
+
+</usermanual>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+********************
+raw data
+********************
+The raw questionnaire data are saved under "DASS21.iqdat"
+
+********************
+summary data
+********************
+
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.totalscore, expressions.Depression, expressions.Anxiety, expressions.stress)
+</summarydata>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+totalscore:								calculates the total score
+Depression/Anxiety/Stress:				subscale scores
+
+<expressions>
+/totalscore =  2 * (radiobuttons.q1_S.response + radiobuttons.q2_A.response + radiobuttons.q3_D.response + 
+radiobuttons.q4_A.response + radiobuttons.q5_D.response +
+radiobuttons.q6_S.response + radiobuttons.q7_A.response + radiobuttons.q8_S.response + 
+radiobuttons.q9_A.response + radiobuttons.q10_D.response +
+radiobuttons.q11_S.response + radiobuttons.q12_S.response + radiobuttons.q13_D.response + 
+radiobuttons.q14_S.response + radiobuttons.q15_A.response + radiobuttons.q16_D.response + 
+radiobuttons.q17_D.response + radiobuttons.q18_S.response + radiobuttons.q19_A.response + 
+radiobuttons.q20_A.response + radiobuttons.q21_D.response)
+
+/Depression = 2 * (radiobuttons.q3_D.response + radiobuttons.q5_D.response + radiobuttons.q10_D.response + 
+radiobuttons.q13_D.response + radiobuttons.q16_D.response + radiobuttons.q17_D.response + radiobuttons.q21_D.response)
+
+/Anxiety = 2 * (radiobuttons.q2_A.response+ radiobuttons.q4_A.response + radiobuttons.q7_A.response + 
+radiobuttons.q9_A.response + radiobuttons.q15_A.response + radiobuttons.q19_A.response + radiobuttons.q20_A.response)
+
+/Stress = 2 * (radiobuttons.q1_S.response + radiobuttons.q6_S.response + radiobuttons.q8_S.response + 
+radiobuttons.q11_S.response + radiobuttons.q12_S.response + radiobuttons.q14_S.response + radiobuttons.q18_S.response)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: by default all questions are required to be answered to move on.
+To change, set /required = true to /required = false
+
+<radiobuttons q1_S>
+/caption = "1. I found it hard to wind down"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q2_A>
+/caption = "2. I was aware of dryness of my mouth"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q3_D>
+/caption = "3. I couldn't seem to experience any positive feeling at all"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q4_A>
+/caption = "4. I experienced breathing difficulty (eg, excessively rapid breathing, breathlessness in the absence of physical exertion)"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q5_D>
+/caption = "5. I found it difficult to work up the initiative to do things"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q6_S>
+/caption = "6. I tended to over-react to situations"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q7_A>
+/caption = "7. I experienced trembling (eg, in the hands)"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q8_S>
+/caption = "8. I felt that I was using a lot of nervous energy"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q9_A>
+/caption = "9. I was worried about situations in which I might panic and make a fool of myself"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q10_D>
+/caption = "10. I felt that I had nothing to look forward to"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q11_S>
+/caption = "11. I found myself getting agitated"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q12_S>
+/caption = "12. I found it difficult to relax"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q13_D>
+/caption = "13. I felt down-hearted and blue"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q14_S>
+/caption = "14. I was intolerant of anything that kept me from getting on with what I was doing"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q15_A>
+/caption = "15. I felt I was close to panic"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q16_D>
+/caption = "16. I was unable to become enthusiastic about anything"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q17_D>
+/caption = "17. I felt I wasn't worth much as a person"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q18_S>
+/caption = "18. I felt that I was rather touchy"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q19_A>
+/caption = "19. I was aware of the action of my heart in the absence of physical exertion (eg, sense of heart rate increase, heart missing a beat)"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q20_A>
+/caption = "20. I felt scared without any good reason"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q21_D>
+/caption = "21. I felt that life was meaningless"
+/ options = ("Did not apply ~nto me at all", "Applied to me ~nto some degree, ~nor some of the time", "Applied to me ~nto a considerable degree, ~nor a good part of time", "Applied to me very much, ~nor most of the time")
+/ optionvalues = ("0"; "1"; "2"; "3")
+/orientation =horizontalequal
+/required = true
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+<surveypage DASS1>
+/ caption ="Please read each statement and indicate how much the statement applied to you over the past week.  There are no right or wrong answers.  Do not spend too much time on any statement.
+"
+/ questions = [1 = q1_S, q2_A, q3_D]
+</surveypage>
+
+
+<surveypage DASS2>
+/ caption ="Please read each statement and indicate how much the statement applied to you over the past week.  There are no right or wrong answers.  Do not spend too much time on any statement.
+"
+/ questions = [1 = q4_A, q5_D, q6_S]
+</surveypage>
+
+<surveypage DASS3>
+/ caption ="Please read each statement and indicate how much the statement applied to you over the past week.  There are no right or wrong answers.  Do not spend too much time on any statement.
+"
+/ questions = [1 = q7_A, q8_s, q9_A]
+</surveypage>
+
+
+<surveypage DASS4>
+/ caption ="Please read each statement and indicate how much the statement applied to you OVER THE PAST WEEK.  There are no right or wrong answers.  Do not spend too much time on any statement.
+"
+/ questions = [1 = q10_D, q11_s, q12_s]
+</surveypage>
+
+<surveypage DASS5>
+/ caption ="Please read each statement and indicate how much the statement applied to you OVER THE PAST WEEK.  There are no right or wrong answers.  Do not spend too much time on any statement.
+"
+/ questions = [1 = q13_d, q14_s, q15_a]
+</surveypage>
+
+<surveypage DASS6>
+/ caption ="Please read each statement and indicate how much the statement applied to you OVER THE PAST WEEK.  There are no right or wrong answers.  Do not spend too much time on any statement.
+"
+/ questions = [1 = q16_d, q17_d, q18_s]
+</surveypage>
+
+<surveypage DASS7>
+/ caption ="Please read each statement and indicate how much the statement applied to you OVER THE PAST WEEK.  There are no right or wrong answers.  Do not spend too much time on any statement.
+"
+/ questions = [1 = q19_a, q20_a, q21_d]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+<survey DASS21>
+/ pages = [
+	1 = DASS1; 
+	2 = DASS2; 
+	3 = DASS3; 
+	4 = DASS4; 
+	5 = DASS5;
+	6 = DASS6;
+	7 = DASS7;
+]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ showquestionnumbers = false
+/ showpagenumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

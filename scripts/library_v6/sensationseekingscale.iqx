@@ -1,0 +1,643 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									  *SENSATION SEEKING SCALE*
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-15-2013
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of the Sensation Seeking Scale as made available by:
+http://www.emcdda.europa.eu/html.cfm/index86974EN.html
+
+The SSS was originally published by:
+Zuckerman, Marvin, Kolin, Elizabeth A., Price, Leah, & Zoob, Ina. (1964). Development of a sensation-seeking scale. 
+Journal of Consulting Psychology, 28(6), 477-482. 
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+40 yes-no questions, self-report
+											
+The SSS yields 4 primary scales and one total score.
+
+Disinhibition (SSS_DIS): 	This scale represents the desire for social and sexual disinhibition
+as expressed in social drinking, partying, and variety in sexual partners
+1R, 12, 13, 25, 29R, 30, 32R, 33, 35, 36R
+
+Boredom Susceptibility (SSS_BOR): 	This scale represents an aversion to repetition, routine, and dull
+people, and restlessness when things are unchanging.
+2, 5R, 7, 8R, 15, 24R, 27, 31, 34R, 39R
+
+Thrill and Adventure Seeking (SSS_THR): This scale contains items expressing a desire to engage in sports
+or other activities involving speed or danger.
+3R, 11, 16R, 17R, 20, 21, 23R, 28R, 38, 40
+
+Experience Seeking (SSS_EXP):	This scale represents the seeking of experiences through the mind
+and senses, travel, and a nonconforming life-style.
+4, 6R, 9R, 10, 14R, 18R, 19, 22R, 26, 37
+
+(descriptions from: http://dionysus.psych.wisc.edu/Wiki/index.php?title=Sensation_Seeking_Scale_(SSS)
+Note: webpage does not exist anymore as of 5/23/2019)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'sss.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values) -> reversed coding applied where appropriate
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'snsationseekingscale_summary*.iqdat'
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+									
+
+totalscore:							calculates the total SSS score (range: 0-40)
+
+//Subscale Scores (see section Overview for a description):
+sss_bor
+sss_dis
+sss_exp
+sss_thr:							subscale scores (range: 0-10)
+
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+
+</usermanual>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file: SSS.iqdat
+***********************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.totalscore, expressions.sss_bor, expressions.sss_dis, expressions.sss_exp, expressions.sss_thr)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+totalscore:								calculates the total score
+SSS_DIS/SSS_BOR/SSS_THR/SSS_EXP:		subscale score
+
+<expressions>
+/totalscore =  expressions.SSS_DIS + expressions.SSS_BOR + expressions.SSS_THR + expressions.SSS_EXP
+
+/SSS_DIS = radiobuttons.q1R_DIS.response + radiobuttons.q12_DIS.response + radiobuttons.q13_DIS.response + 
+radiobuttons.q25_DIS.response + radiobuttons.q29R_DIS.response + 
+radiobuttons.q30_DIS.response + radiobuttons.q32R_DIS.response + 
+radiobuttons.q33_DIS.response + radiobuttons.q35_DIS.response + radiobuttons.q36R_DIS.response
+
+/SSS_BOR = radiobuttons.q2_BOR.response + radiobuttons.q5R_BOR.response + radiobuttons.q7_BOR.response + 
+radiobuttons.q8R_BOR.response + radiobuttons.q15_BOR.response + radiobuttons.q24R_BOR.response +  
+radiobuttons.q27_BOR.response +  radiobuttons.q31_BOR.response +  radiobuttons.q34R_BOR.response +  radiobuttons.q39R_BOR.response
+
+/SSS_THR = radiobuttons.q3R_THR.response + radiobuttons.q11_THR.response +  radiobuttons.q16R_THR.response + 
+radiobuttons.q17R_THR.response +  radiobuttons.q20_THR.response + radiobuttons.q21_THR.response + 
+radiobuttons.q23R_THR.response + radiobuttons.q28R_THR.response +  radiobuttons.q38_THR.response + radiobuttons.q40_THR.response
+
+/SSS_EXP = radiobuttons.q4_EXP.response + radiobuttons.q6R_EXP.response + radiobuttons.q9R_EXP.response + 
+radiobuttons.q10_EXP.response + radiobuttons.q14R_EXP.response + radiobuttons.q18R_EXP.response + radiobuttons.q19_EXP.response +
+radiobuttons.q22R_EXP.response + radiobuttons.q26_EXP.response + radiobuttons.q37_EXP.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<radiobuttons q1R_DIS>
+/caption = "1."
+/ options = ("A.   I like 'wild' uninhibited parties.", "B.   I prefer quiet parties with good conversation.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q2_BOR>
+/caption = "2."
+/ options = ("A.   There are some movies I enjoy seeing a second or even a third time.", "B.   I can't stand watching a movie I've seen before.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q3R_THR>
+/caption = "3."
+/ options = ("A.   I often wish I could be a mountain climber.", "B.   I can't understand people who risk their necks climbing mountains.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q4_EXP>
+/caption = "4."
+/ options = ("A.   I dislike all body odors.", "B.   I like some of the earthy body smells.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q5R_BOR>
+/caption = "5."
+/ options = ("A.   I get bored seeing the same old faces.", "B.   I like the comfortable familiarity of everyday friends.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q6R_EXP>
+/caption = "6."
+/ options = ("A.   I like to explore a strange city or section of town by myself, even if it means getting lost.", "B.   I prefer a guide when I am in a place I don't know well.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q7_BOR>
+/caption = "7."
+/ options = ("A.   I dislike people who do or say things just to shock or upset other people.", 
+"B.   When you can predict almost everything a person will do and say he or she must be a bore.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q8R_BOR>
+/caption = "8."
+/ options = ("A.   I usually don't enjoy a movie or a play where I can predict what will happen in advance.", "B.   I don't mind watching a movie or play where I can predict what will happen in advance.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q9R_EXP>
+/caption = "9."
+/ options = ("A.   I have tried marijuana or would like to.", "B.   I would never smoke marijuana.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q10_EXP>
+/caption = "10."
+/ options = ("A.   I would not like to try any drug which might produce strange and dangerous effects on me.", "
+B.   I would like to try some of the new drugs that produce hallucinations.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q11_THR>
+/caption = "11."
+/ options = ("A.   A sensible person avoids activities that are dangerous.", "B.   I sometimes like to do things that are a little frightening.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q12_DIS>
+/caption = "12."
+/ options = ("A.   I dislike 'swingers' (people who are uninhibited and free about sex).", "B.   I enjoy the company of real 'swingers.'")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q13_DIS>
+/caption = "13."
+/ options = ("A.   I find that stimulants make me uncomfortable.", "B.   I often like to get high (drinking liquor or smoking marijuana).")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q14R_EXP>
+/caption = "14."
+/ options = ("A.   I like to try new foods that I have never tasted before.", "B.   I order the dishes with which I am familiar, so as to avoid disappointment and unpleasantness.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q15_BOR>
+/caption = "15."
+/ options = ("A.   I enjoy looking at home movies, travel slides, or home videos.", "B.   Looking at someone's home movies, travel slides, or home videos bores me tremendously.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q16R_THR>
+/caption = "16."
+/ options = ("A.   I would like to take up the sport of water-skiing.", "B.   I would not like to take up water-skiing.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q17R_THR>
+/caption = "17."
+/ options = ("A.   I would like to try surf-board riding.", "B.   I would not like to try surf-board riding.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q18R_EXP>
+/caption = "18."
+/ options = ("A.   I would like to take off on a trip with no pre-planned or definite routes, or timetable.", "B.   When I go on a trip I like to plan my route and timetable fairly carefully.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q19_EXP>
+/caption = "19."
+/ options = ("A.   I prefer the 'down-to-earth' kinds of people as friends.", 
+"B.   I would like to make friends in some of the 'far-out' groups like artists or 'punks.'")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q20_THR>
+/caption = "20."
+/ options = ("A.   I would not like to learn to fly an airplane.", "B.   I would like to learn to fly an airplane.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q21_THR>
+/caption = "21."
+/ options = ("A.   I prefer the surface of the water to the depths.", "B.   I would like to go scuba diving.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q22R_EXP>
+/caption = "22."
+/ options = ("A.   I would like to meet some persons who are homosexual (men or women).", 
+"B.   I stay away from anyone I suspect of being 'gay' or 'lesbian.'")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q23R_THR>
+/caption = "23."
+/ options = ("A.   I would like to try parachute jumping.", "B.   I would never want to try jumping out of a plane with or without a parachute.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q24R_BOR>
+/caption = "24."
+/ options = ("A.   I prefer friends who are excitingly unpredictable. ", "B.   I prefer friends who are reliable and predictable.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q25_DIS>
+/caption = "25."
+/ options = ("A.   I am not interested in experience for its own sake.", "B.   I like to have new and exciting experiences and sensations even if they are a little frightening, unconventional, or illegal.  ")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q26_EXP>
+/caption = "26."
+/ options = ("A.   The essence of good art is in its clarity, symmetry of form and harmony of colors.", 
+"B.   I often find beauty in the 'clashing' colors and irregular forms of modern paintings.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q27_BOR>
+/caption = "27."
+/ options = ("A.   I enjoy spending time in the familiar surroundings of home.", "B.   I get very restless if I have to stay around home for any length of time.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q28R_THR>
+/caption = "28."
+/ options = ("A.   I like to dive off the high board.", "B.   I don't like the feeling I get standing on the high board (or I don't go near it at all).")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q29R_DIS>
+/caption = "29."
+/ options = ("A.   I like to date members of the opposite sex who are physically exciting.", "B.   I like to date members of the opposite sex who share my values.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q30_DIS>
+/caption = "30."
+/ options = ("A.   Heavy drinking usually ruins a party because some people get loud and boisterous.", "B.   Keeping the drinks full is the key to a good party.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q31_BOR>
+/caption = "31."
+/ options = ("A.   The worst social sin is to be rude.", "B.   The worst social sin is to be a bore.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q32R_DIS>
+/caption = "32."
+/ options = ("A.   A person should have considerable sexual experience before marriage.", "B.   It's better if two married persons begin their sexual experience with each other.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q33_DIS>
+/caption = "33."
+/ options = ("A.   Even if I had the money I would not care to associate with flighty rich persons in the 'jet set.'", 
+"B.   I could conceive of myself seeking pleasures around the world with the 'jet set.'")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q34R_BOR>
+/caption = "34."
+/ options = ("A.   I like people who are sharp and witty even if they do sometimes insult others.", "B.   I dislike people who have their fun at the expense of hurting the feelings of others.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q35_DIS>
+/caption = "35."
+/ options = ("A.   There is altogether too much portrayal of sex in movies.", "B.   I enjoy watching many of the 'sexy' scenes in the movies.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q36R_DIS>
+/caption = "36."
+/ options = ("A.   I feel best after taking a couple of drinks.", "B.   Something is wrong with people who need liquor to feel good.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q37_EXP>
+/caption = "37."
+/ options = ("A.   People should dress according to some standards of taste, neatness, and style.", "B.   People should dress in individual ways even if the effects are sometimes strange.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q38_THR>
+/caption = "38."
+/ options = ("A.   Sailing long distances in small sailing crafts is foolhardy.", "B.   I would like to sail a long distance in a small but seaworthy sailing craft.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+<radiobuttons q39R_BOR>
+/caption = "39."
+/ options = ("A.   I have no patience with dull or boring persons.", "B.   I find something interesting in almost every person I talk with.")
+/orientation =vertical
+/required = true
+/optionvalues = ("1", "0")
+</radiobuttons>
+
+<radiobuttons q40_THR>
+/caption = "40."
+/ options = ("A.   Skiing fast down a high mountain slope is a good way to end up on crutches.", "B.   I think I would enjoy the sensations of skiing very fast down a high mountain slope.")
+/orientation =vertical
+/required = true
+/optionvalues = ("0", "1")
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage SSS1>
+/ caption = "Each of the items below contains two choices, A and B.  Please click the letter of the choice which most describes your likes or the way you feel.  In some cases you may find items in which both choices describe your likes or feelings.  Please choose the one which better describes your likes or feelings.  In some cases you may find items in which you do not like either choice.  In these cases mark the choice you dislike least.  Do not leave any items blank.
+
+It is important you respond to all items with only one choice, A or B.  We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q1R_DIS, q2_BOR]
+</surveypage>
+
+
+<surveypage SSS2>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q3R_THR, q4_EXP, q5R_BOR]
+</surveypage>
+
+
+<surveypage SSS3>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q6R_EXP, q7_BOR, q8R_BOR]
+</surveypage>
+
+<surveypage SSS4>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q9R_EXP, q10_EXP, q11_THR]
+</surveypage>
+
+<surveypage SSS5>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q12_DIS, q13_DIS, q14R_EXP]
+</surveypage>
+
+<surveypage SSS6>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q15_BOR, q16R_THR, q17R_THR]
+</surveypage>
+
+
+<surveypage SSS7>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q18R_EXP, q19_EXP, q20_THR]
+</surveypage>
+
+
+<surveypage SSS8>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q21_THR, q22R_EXP, q23R_THR]
+</surveypage>
+
+
+<surveypage SSS9>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q24R_BOR, q25_DIS, q26_EXP]
+</surveypage>
+
+<surveypage SSS10>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q27_BOR, q28R_THR, q29R_DIS]
+</surveypage>
+
+<surveypage SSS11>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q30_DIS, q31_BOR, q32R_DIS]
+</surveypage>
+
+<surveypage SSS12>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q33_DIS, q34R_BOR, q35_DIS]
+</surveypage>
+
+<surveypage SSS13>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q36R_DIS, q37_EXP, q38_THR]
+</surveypage>
+
+<surveypage SSS14>
+/ caption = "We are interested only in your likes or feelings, not in how others feel about these things or how one is supposed to feel.  There are not right or wrong answers as in other kinds of tests.  Be frank and give your honest appraisal of yourself.
+"
+/ questions = [1 = q39R_BOR, q40_THR]
+</surveypage>
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<survey SensationSeekingScale>
+/ pages = [
+	1 = SSS1; 
+	2 = SSS2; 
+	3 = SSS3; 
+	4 = SSS4; 
+	5 = SSS5; 
+	6 = SSS6; 
+	7 = SSS7; 
+	8 = SSS8; 
+	9 = SSS9; 
+	10 = SSS10;
+	11 = SSS11;
+	12 = SSS12;
+	13 = SSS13;
+	14 = SSS14;
+]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

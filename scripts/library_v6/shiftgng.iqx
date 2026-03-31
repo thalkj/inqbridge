@@ -1,0 +1,937 @@
+<userManual>
+___________________________________________________________________________________________________________________	
+
+								Shift GoNogo (Shift GNG) with X and Y Stimuli
+___________________________________________________________________________________________________________________	
+
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 08-14-2024
+last updated:  10-04-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-04-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a basic shift go/nogo paradigm with X and Y stimuli, in which the go trials
+are shift trials (shifting from one type of stimuli to another) and the nogo trials are the 'stay' trials
+(repeated stimuli). 
+In general, Go/Nogo Tasks are used as behavioral measures of inhibition and cognitive control. 	
+The shifting component adds further complexity.
+
+///Reference:											
+
+Claus, E. D., & Hendershot, C. S. (2015). Moderating effect of working memory capacity on acute alcohol 
+effects on BOLD response during inhibition and error monitoring in male heavy drinkers. 
+Psychopharmacology, 232(4), 765–776. 
+https://doi.org/10.1007/s00213-014-3711-2
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+
+Participants see a string of X and Y, presented one-by-one, in the center of the screen.
+They are asked to press the spacebar whenever the stimulus they see is different than the
+previous one (Example: X->Y, go trials). If the stimulus remains the same, they should refrain from
+responding (Example: X->X, nogo trials).
+
+The default task runs 100 fixed test trials with 10% nogo trials 
+(trial order as well as frequency of go/nogo trials can be edited)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'shiftgng_raw*.iqdat'
+
+build:						The specific Inquisit version used (the 'build') that was run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+date, time: 				date and time script was run 
+subject:					with the current subject id
+group: 						with the current group id
+session:					with the current session id
+
+blockcode, blocknum:		the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 		the name and number of the currently recorded trial (built-in Inquisit variable)
+								Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+								that do not store data to the data file. 
+								
+								
+goTrialDef:					the preset definition of a go trial: either 'different' trials (shift trials)
+							or 'same' trials (remain trials)
+							
+blockCounter: 				tracks the number of test blocks run
+trialCounterPerBlock:		tracks the number of test trials run per block
+
+trialType: 					1 = go trial
+							0 = nogo trial
+							999 = other trial run during a test block (e.g. rest and start trials)
+							
+currentStim:				the currently presented stimulus
+								
+response:					the response of participant (scancode of response button)
+							57 = spacebar
+							0 = no response
+							
+respCategory:				go trials: "hit", "omission", 
+							nogo trials: "commission", "corr reject"							
+
+correct:					correctness of response (1 = correct, 0 = error)
+
+latency:					response latency (in ms); measured from: onset of stim
+
+
+(2) Summary data file: 'shiftgng_summary*.iqdat'
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startdate:					date script was run
+starttime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedtime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)
+
+//the following summary variables are based on test trial performance only:							
+							
+propCorrect:				overall proportion correct responses across go and nogo trials
+
+numberGoTrials:				the number of go trials run
+hitRate: 					proportion correct go trials
+missRate:					proportion incorrect go trials
+hitRT:						mean correct go trial response time
+
+numberNoGoTrials:			the number of nogo trials run
+comRate: 					proportion errors in nogo trials (commission errors/false alarms)
+crRate:						proportion correct rejections in nogo trials
+comRT:						mean incorrect nogo trial response time (commission response time)
+
+
+Note: the following expressions calculate z-scores based on hit and FA rate.(see Gregg & Sedikides, 2010, p.148)
+If the hitrate or FA rate is 0 => 0.005 is used instead
+IF the hitrate or FA rate is 1.0 => 0.995 is used instead
+
+Reference:
+Gregg, A. & Sedikides, C. (2010). Narcissistic Fragility:
+Rethinking Its Links to Explicit and Implicit Self-esteem, Self and Identity, 9:2, 142-161 (p.148)
+
+zHitRate: 					the z-score of the hitRate
+zComRate: 					the z-score of the comRate (commission rate/false alarms)
+
+dprime:						difference btw. (zHitRate - zComRate): measure of Sensitivity
+								=> Range (in this script): 
+								-5.1516586840152740479 <= dprime <= 5.1516586840152740479 (=perfect performance)
+								=> The higher the value, the better signals were overall distinguished from noise 
+								(d' = 0: chance performance; negative d-primes: participant treated nontargets as targets and targets as nontargets)	
+
+c: 			c-criterion in signal detection:The absolute value of c provides an indication of the strength of
+			the response bias/response style
+			negative: participant more likely to report that signal (go stims) is present (liberal response style);
+			may favor faster responding in speed-accuracy trade-off response paradigms
+			positive: favoring caution (conservative response style)							
+							
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+(1) Demo Block (optional, see section Editable Parameters)
+- 10 trials (+ start); 5 shift and 5 stay trials (order is randomized, see list.demoTrials)
+- demo trials provide response instructions 
+- stimuli are presented longer than for test trials
+- demo can be repeated if needed
+
+(2) Test Block(s)
+- each test blocks start with a START trial that randomly selects the first stim
+
+- each test blocks then runs as many TEST trials as listed in list.trialOrder
+- list.trialOrder further controls whether the trialtypes (go and nogo trials)
+are presented in a fixed (default) or random order
+=> The default script runs: a fixed order with 90 go-trials and 10-nogo trials (=> 10% nogo trials)
+
+- A REST trial is run after 50 test trials (basically breaking up the one block into 2, see editable parameters).
+The trial immediately following a rest trial is another START trial (not a test trial).
+
+Trial Sequence:
+Stim for 700ms (editable parameter) -> fixation (editable parameter) -> ....
+- The response window is as long as the stimulus presentation duration
+- a response does NOT cut down on stimulus presentation duration 
+(so each stimulus is presented the same amount of time regardless of response.
+Note: script provides a quick visual response feedback on keyboard devices 
+if a spacebar press is detected in time.)
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+
+provided by Millisecond Software - can be edited under section 'Editable Stimuli'
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+
+provided by Millisecond Software - can be edited under section 'Editable Instructions'
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+//design elements:
+/ goTrialDef = "different"			//choose from "same" (go trials are the repeat trials) or "different" (go trials are the shift trials)
+
+/ runDemo = true
+/ numberTestBlocks = 1				//number of test blocks to run. 
+									//Currently all test blocks use list.trialOrder
+									//See below to fine-tune number of trials, number of go/nogo trials
+									//and trial order in list.trialOrder
+																		
+/ restTrials = 50					//number of test trials before a rest trial is run
+									//Note: the first trial after a rest trial is NOT considered one of 
+									//the test trials
+//stims
+/ stim1 = "X"
+/ stim2 = "Y"
+/ stimHeightPct = 15%				//proportional height (relative to canvas) of the stims
+/ fixationStim = "+"				//the fixation stimulus presented (can be left blank)
+/ fixationHeightPct = 5%			//proportional height (relative to canvas) of the fixation stimulus
+
+//timing parameters
+/ getreadyDurationMS = 2000			//the duration (ms) of the get-ready trial at the start of each test block
+/ stimPresentationDemoMS = 3000 	//the duration (ms) that the stims are presented during the demo session (also the response window)
+/ stimPresentationMS = 700			//the duration (ms) that the stims are presented during the test session (also the response window)
+/ stimIsiMS = 300					//the duration (ms) of the interstimulus interval (presents the fixationStim)
+/
+//responseKeys:
+/ responseKey = " " 				//" " => space bar 
+/ responseKeyLabel = "[space]"
+
+
+Note: trialOrder (of go/nogo trials can also be edited under section Editable Lists)
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+//design elements:
+/ goTrialDef = "different"			//choose from "same" (go trials are the repeat trials) or "different" (go trials are the shift trials)
+
+/ runDemo = true
+/ numberTestBlocks = 1				//number of test blocks to run. 
+									//Currently all test blocks use list.trialOrder
+									//See below to fine-tune number of trials, number of go/nogo trials
+									//and trial order in list.trialOrder
+																		
+/ restTrials = 50					//number of test trials before a rest trial is run
+									//Note: the first trial after a rest trial is NOT considered one of 
+									//the test trials
+//stims
+/ stim1 = "X"
+/ stim2 = "Y"
+/ stimHeightPct = 15%				//proportional height (relative to canvas) of the stims
+/ fixationStim = "+"				//the fixation stimulus presented (can be left blank)
+/ fixationHeightPct = 5%			//proportional height (relative to canvas) of the fixation stimulus
+
+//timing parameters
+/ getreadyDurationMS = 3000			//the duration (ms) of the get-ready trial at the start of each test block
+/ stimPresentationDemoMS = 3000 	//the duration (ms) that the stims are presented during the demo session (also the response window)
+/ stimPresentationMS = 700			//the duration (ms) that the stims are presented during the test session (also the response window)
+/ stimIsiMS = 300					//the duration (ms) of the interstimulus interval (presents the fixationStim)
+
+//responseKeys:
+/ responseKey = " " 				//" " => space bar 
+/ responseKeyLabel = "[space]"
+</parameters>
+
+******************************************************
+	EDITABLE LISTS: change editable lists here
+******************************************************
+
+Note: this list controls 
+- the selection order of go (1) and nogo trials (0) (run after the start trial)
+- the frequency of go (1) and nogo trials (0) => and thus the total number of trials run
+
+Default list: 100 trials with 90 go trials (1) and 10 nogo trials (0)
+<list trialOrder>
+/ items = (
+1,1,0,1,1,1,1,1,1,1,
+1,0,1,0,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,
+0,1,1,1,0,1,1,1,1,1,
+1,1,1,1,1,0,1,1,1,1,
+1,1,1,1,1,1,1,1,0,1,
+1,0,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,0,1,1,
+1,1,0,1,1,1,1,1,1,1)
+/ selectionMode = sequence //to run a random order use '/ replace = false' instead
+// replace = false
+/ resetInterval = 0
+</list>
+
+Note: list controls the selection of go (1) and nogo (0) trials during a demo block
+<list demoTrials>
+/ items = (1,1,1,1,1,0,0,0,0,0)
+/ replace = false
+/ resetInterval = 0
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+currently presents a little yellow 'flash' on the bottom of the screen
+when a spacebar press is detected during the response Window
+<text responseFeedback>
+/ items = ("  ")//could contain a message
+/ fontStyle = ("Courier New", 5%, false, false, false, false, 5, 1)
+/ txBGColor = yellow
+/ position = (50%, 90%)
+</text>
+
+<text demoInstructions>
+/ items = ("The letter <b>changed</b>, press <b><%parameters.responseKeyLabel%></b>",
+"The letter stayed the <b>same</b>, do <b>NOT</b> respond!",
+"The letter <b>changed</b>, do <b>NOT</b> respond!",
+"The letter stayed the <b>same</b>, press <b><%parameters.responseKeyLabel%></b>",
+"First stimulus - just wait for the next")
+/ select = values.selectDemoInstructions
+/ fontStyle = ("Courier New", 4%, false, false, false, false, 5, 1)
+/ txColor = orange
+/ position = (50%, 40%)
+</text>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontStyle = ("Arial", 3.25%, false, false, false, false, 5, 1)
+/ navigationButtonFontStyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</instruct>
+
+//////////////////////////////////////////////////////////////////////
+//Intro
+//////////////////////////////////////////////////////////////////////
+
+NOte: page automatically adapts if the demo is not run
+<page intro>
+<h1>Welcome!</h1>
+In this task you will be presented with a steady stream of <%parameters.stim1%> and <%parameters.stim2%>s, one letter at a time in the middle
+of your screen.<br><br>
+<center><div style='background-color:powderblue;'>
+<%expressions.taskInstructions%></div><br></center>
+Try to be as fast as possible without making too many errors.<br><br>
+<%expressions.demoInstruct%>
+</page>
+
+<expressions>
+//depending on whether go trials are shift or repeat trials, different instructions
+//are provided
+/ taskInstructions = {
+	if (parameters.goTrialDef == "different"){
+		return "Your task will be to press <%parameters.responseKeyLabel%> anytime<br>
+the letter changes from an <%parameters.stim1%> to a <%parameters.stim2%> or vice versa.<br><br>
+<i>If the letter stays the same, don't do anything, just wait for the next letter.</i>";
+	} else {
+		return "Your task will be to press <%parameters.responseKeyLabel%> anytime<br>
+the next letter is the same as the one before it.<br><nr>
+<i>If the letter changes from an <%parameters.stim1%> to a <%parameters.stim2%> or vice versa, don't do anything, just wait for the next letter.</i>"
+	}
+}
+//depending on whether a demo block should be run, different instructions
+//are provided
+/ demoInstruct = {
+	if (parameters.runDemo){
+		return "Let's try a short demo. The demo will guide you through several trials."
+	} else {
+		return "Start when you are ready."
+	}
+}
+</expressions>
+
+//////////////////////////////////////////////////////////////////////
+//Demo Repeat Trial
+//////////////////////////////////////////////////////////////////////
+
+<text demoRepeat>
+/ items = ("<center><h3>Do you want to repeat the demo?</h3><br><br>
+Press [Y] for Yes<br>
+Press [N] for No")
+/ fontStyle = ("Arial", 4%, false, false, false, false, 5, 1)
+</text>
+
+<trial demoRepeat>
+/ stimulusTimes = [0 = demoRepeat]
+/ validResponse = ("Y", "N")
+/ monkeyResponse = ("N")
+</trial>
+
+//////////////////////////////////////////////////////////////////////
+//Test Start (only run after demo)
+//////////////////////////////////////////////////////////////////////
+
+<page testStart>
+<h1>Test Start</h1>
+The demo is over and the actual test begins. The task stays the same but there will be no more response guiding and
+the letters will disappear faster.<br><br>
+<center><div style='background-color:powderblue;'>
+<%expressions.taskInstructions%></div><br></center>
+Try to be as fast as possible without making too many errors.<br><br>
+Start when you are ready.
+</page>
+
+//////////////////////////////////////////////////////////////////////
+//get-ready trial
+//////////////////////////////////////////////////////////////////////
+
+<text getReady>
+/ items = ("
+<center><h2>Get ready!</h2><br>
+<%expressions.getReadyInstruct%></center>")
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</text>
+
+<expressions>
+/ getReadyInstruct = {
+	if (!computer.haskeyboard && computer.touch){
+		"Place your response finger over the <%parameters.responseKeyLabel%> response button"
+	} else {
+		"Put your index finger on <%parameters.responseKeyLabel%>"
+	}
+}
+</expressions>
+
+
+<trial getReady>
+/ stimulusframes = [1 = getReady]
+/ timeout = parameters.getreadyDurationMS
+/ validresponse = (parameters.responseKey)
+/ isvalidresponse = [//for touchscreen devices the keys should already be presented, albeit inactive
+	return false;
+]
+/ errormessage = false
+/ recorddata = false
+/ postTrialPause = parameters.stimIsiMS
+</trial>
+
+//////////////////////////////////////////////////////////////////////
+//rest trial
+//////////////////////////////////////////////////////////////////////
+
+<text restInstructions>
+/ items = ("Take a break - continue with [space].")
+</text>
+
+//////////////////////////////////////////////////////////////////////
+//finish trial
+//////////////////////////////////////////////////////////////////////
+
+<text finish>
+/ items = ("<center><h1>Thank you!</h1></center>")
+/ fontStyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+</text>
+
+<trial finish>
+/ stimulusFrames = [1 = clearscreen, finish]
+/ timeout = 500
+/ recordData = true
+</trial>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit "6.6.1.0" or higher
+
+<defaults>
+/ canvasAspectRatio = (4,3)
+/ minimumVersion = "6.6.1.0"
+/ fontStyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txBGColor = white
+/ txColor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session,  
+blockcode, blocknum, trialcode, trialnum, parameters.goTrialDef,
+values.blockCounter, values.trialCounterPerBlock,
+values.trialType, values.currentStim, values.correctResp,
+response, values.respCategory, correct, latency)	
+</data>
+
+********************
+summary data
+********************
+
+<summaryData>
+/ columns = (inquisit.version, computer.platform, script.startdate, script.starttime, 
+script.subjectid, script.groupid, script.sessionid, parameters.goTrialDef,
+script.elapsedtime, script.completed,
+expressions.propCorrect,
+expressions.numberGoTrials, expressions.hitRate, expressions.missRate, expressions.hitRT,
+expressions.numberNoGoTrials, expressions.comRate, expressions.crRate, expressions.comRT,
+expressions.zHitRate, expressions.zComRate, expressions.dprime,expressions.c)
+</summarydata>
+	
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<values>
+/ blockCounter = 0
+/ trialCounterPerBlock = 0
+/ trialType = null
+/ prevStim = null
+/ currentStim = null
+/ correctResp = null
+/ respCategory = null
+/ demo = null
+/ selectDemoInstructions = 1
+/ trialDuration = null
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/ propCorrect = return list.acc.mean
+
+/ numberGoTrials = return list.hits.itemCount
+/ hitRate = return list.hits.mean
+/ missRate = return (1-expressions.hitRate)
+/ hitRT = return list.hitRT.mean
+
+/ numberNoGoTrials = return list.commissions.itemCount
+/ comRate = return list.commissions.mean
+/ crRate = return (1-expressions.comRate)
+/ comRT = return list.commissionRT.mean
+
+/ zHitRate = {
+	if (expressions.hitRate == 0){
+		return zofp(expressions.hitRate + 0.005)		
+	} else if (expressions.hitRate == 1){
+		return zofp(expressions.hitRate - 0.005)
+	} else {
+		return zofp(expressions.hitRate);	
+	}
+}
+/ zComRate = {
+	if (expressions.comRate == 0){
+		return zofp(expressions.comRate + 0.005)		
+	} else if (expressions.comRate == 1){
+		return zofp(expressions.comRate - 0.005)
+	} else {
+		return zofp(expressions.comRate)	
+	}	
+}
+/ dprime = return (expressions.zHitRate - expressions.zComRate)
+/ c = return (-1*((expressions.zHitRate + expressions.zComRate)/2))
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	LISTS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+******************************************************
+Data Lists
+
+accuracy: store 1 for each correct trial; 0 = otherwise
+latency: store the latency of correct responses
+******************************************************
+
+<list acc>
+</list>
+
+<list hitRT> //response times for go trials
+</list>
+
+<list hits> //1 = hit; 0 = miss for go trials
+</list>
+
+<list commissions> //1 = false alarm; 0 = correct rejection for nogo trials
+</list>
+
+<list commissionRT>
+</list>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<text stim>
+/ items = ("<%values.currentStim%>")
+/ fontStyle = ("Arial", parameters.stimHeightPct, true, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text fixation>
+/ items = ("<%parameters.fixationStim%>")
+/ fontStyle = ("Arial", parameters.fixationHeightPct, false, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+The first trial to run in demo and Test blocks
+<trial start>
+/ onTrialBegin = [
+	values.trialType = 999; //start trial; not part of the testtrial count
+	values.currentStim = replace(parameters.stim1, parameters.stim2); //randomly select the start stim
+	values.correctResp = parameters.responseKey; //not important for the start trial
+	values.respCategory = null;
+	
+	values.selectDemoInstructions = 5;
+	if (!values.demo){
+		text.demoInstructions.skip = true; //no demo instructions during test trials
+		values.trialDuration = parameters.stimPresentationMS;
+	} else {
+		values.trialDuration = parameters.stimPresentationDemoMS;
+	}
+	
+	//dynamic stimulus insertion:
+	trial.start.resetStimulusFrames();
+	trial.start.insertStimulusTime(clearScreen, values.trialDuration);
+	trial.start.insertStimulusTime(text.fixation, values.trialDuration);	
+]
+/ stimulusTimes = [0 = clearScreen, stim, demoInstructions]
+/ beginResponseTime = 0 //response time is measured from stim onset
+/ responseInterrupt = frames //stims do not get erased with a positive response but are presented until the last frame is called
+/ validResponse = (parameters.responseKey)
+/ correctResponse = (parameters.responseKey,0)
+/ responseMessage = (parameters.responseKey, text.responseFeedback, 17)
+/ timeout = values.trialDuration //response Window is the stimulus presentation duration
+/ postTrialPause = parameters.stimIsiMS //adds the time the fixation cross is presented
+/ branch = [
+	if (values.demo){
+		return trial.demo;
+	} else {
+		return trial.test;		
+	}
+]
+</trial>
+
+////////////////////////////////
+//demo
+////////////////////////////////
+
+<trial demo>
+/ onTrialBegin = [
+	values.trialCounterPerBlock += 1;
+	values.trialType = list.demoTrials.nextValue;
+	values.prevStim = values.currentStim;
+	if (values.trialType == 1){//go trial
+		values.correctResp = parameters.responseKey;
+		if (parameters.goTrialDef == "same"){
+			values.currentStim = values.prevStim;			
+		} else {
+			if (values.prevStim == parameters.stim1){
+				values.currentStim = parameters.stim2;
+			} else {
+				values.currentStim = parameters.stim1;
+			}
+		}
+	} else {//nogo trial
+		values.correctResp = 0; //0 = noresponse
+		if (parameters.goTrialDef == "same"){//nogo trials are therefore 'different' trials
+			if (values.prevStim == parameters.stim1){
+				values.currentStim = parameters.stim2;
+			} else {
+				values.currentStim = parameters.stim1;
+			}			
+		} else {
+			values.currentStim = values.prevStim;	
+		}		
+	}
+	
+	//select demo instructions
+	if (values.trialType == 1){
+		if (parameters.goTrialDef == "different"){
+			values.selectDemoInstructions = 1;
+		} else {
+			values.selectDemoInstructions = 3;
+		}
+	} else {
+		if (parameters.goTrialDef == "different"){
+			values.selectDemoInstructions = 2;
+		} else {
+			values.selectDemoInstructions = 4;
+		}		
+	}
+	
+	
+	//dynamic stimulus insertion:
+	trial.demo.resetStimulusFrames();
+	trial.demo.insertStimulusTime(clearScreen, parameters.stimPresentationDemoMS);
+	trial.demo.insertStimulusTime(text.fixation, parameters.stimPresentationDemoMS);	
+]
+/ stimulusTimes = [0 = clearScreen, stim, demoInstructions]
+/ beginResponseTime = 0 //response time is measured from stim onset
+/ responseInterrupt = frames //stims do not get erased with a positive response but are presented until the last frame is called
+/ validResponse = (parameters.responseKey)
+/ isCorrectResponse = [
+	return (trial.demo.responseText == values.correctResp);
+]
+/ responseMessage = (parameters.responseKey, text.responseFeedback, 17)
+/ timeout = parameters.stimPresentationDemoMS //response Window is the stimulus presentation duration
+/ postTrialPause = parameters.stimIsiMS //adds the time the fixation cross is presented
+/ branch = [
+	if (values.trialCounterPerBlock < list.demoTrials.itemCount){
+		return trial.demo;
+	}
+	return null;
+]
+</trial>
+
+////////////////////////////////
+//test
+////////////////////////////////
+
+<trial test>
+/ onTrialBegin = [
+	values.trialCounterPerBlock += 1;
+	values.prevStim = values.currentStim;
+	
+	//determine current Stim and correct Response:
+	values.trialType = list.trialOrder.nextValue;
+	if (values.trialType == 1){//go trial
+		values.correctResp = parameters.responseKey;
+		if (parameters.goTrialDef == "different"){				
+			if (values.prevStim == parameters.stim1){
+				values.currentStim = parameters.stim2;
+			} else {
+				values.currentStim = parameters.stim1;
+			}
+		} else {
+			values.currentStim = values.prevStim;		
+		}
+	} else {//nogo trial
+		values.correctResp = 0; //0 = noresponse
+		if (parameters.goTrialDef == "different"){ //and nogo trials are therefore 'same' trials
+			values.currentStim = values.prevStim;
+		} else {			
+			if (values.prevStim == parameters.stim1){
+				values.currentStim = parameters.stim2;
+			} else {
+				values.currentStim = parameters.stim1;
+			}			
+		}		
+	}
+	
+	//dynamic stimulus insertion:
+	trial.test.insertStimulusTime(clearScreen, parameters.stimPresentationMS);
+	trial.test.insertStimulusTime(text.fixation, parameters.stimPresentationMS);	
+]
+/ stimulusTimes = [0 = clearScreen, stim]
+/ beginResponseTime = 0 //response time is measured from stim onset
+/ responseInterrupt = frames //stims do not get erased with a positive response but are presented until the last frame is called
+/ validResponse = (parameters.responseKey)
+/ iscorrectresponse = [
+	return (trial.test.responseText == values.correctResp)
+]
+/ responseMessage = (parameters.responseKey, text.responseFeedback, 17)
+/ timeout = parameters.stimPresentationMS //response Window is the stimulus presentation duration
+/ postTrialPause = parameters.stimIsiMS //adds the time the fixation cross is presented
+
+/ onTrialEnd = [
+	trial.test.resetStimulusFrames();
+	
+	//summary variables:
+	list.acc.appendItem(trial.test.correct);
+	if (values.trialType == 1){//go trial
+		list.hits.appendItem(trial.test.correct);
+		if (trial.test.correct){
+			list.hitRT.appendItem(trial.test.latency);
+			values.respCategory = "hit";
+		} else {
+			values.respCategory = "omission";
+		}
+	} else {//nogo trial
+		list.commissions.appendItem(trial.test.error);
+		if (trial.test.error){
+			list.commissionRT.appendItem(trial.test.latency);
+			values.respCategory = "commission";
+		} else {
+			values.respCategory = "correct reject";
+		}
+	}	
+]
+/ branch = [
+	if (mod(values.trialCounterPerBlock, parameters.restTrials)==0 && values.trialCounterPerBlock < list.trialOrder.itemCount){
+		return trial.rest;
+	} else if (values.trialCounterPerBlock < list.trialOrder.itemCount){
+		return trial.test;
+	} else {
+		return null;
+	}
+]
+</trial>
+
+//presents a rest trial after a predetermined number of trials in a block
+<trial rest>
+/ onTrialBegin = [
+	values.trialType = 999; //rest trial; not part of the testtrial count
+	values.correctResp = null;
+	values.prevStim = null;
+	values.currentStim = null;
+	values.respCategory = null;
+]
+/ stimulusTimes = [0 = clearScreen, restInstructions]
+/ validResponse = (" ")
+/ postTrialPause = parameters.stimIsiMS
+/ branch = [
+	return trial.start;
+]
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<block intro>
+/ preInstructions = (intro)
+</block>
+
+<block demo>
+/ skip = [
+	return (!parameters.runDemo)
+]
+/ onBlockBegin = [
+	values.demo = 1;
+	values.trialCounterPerBlock = 0;
+]
+/ trials = [1 = getReady; 2 = start; 3 = demoRepeat]
+/ branch = [
+	if (trial.demoRepeat.responseText == "Y"){
+		return block.demo;
+	}
+	return null;
+]
+</block>
+
+<block testStart>
+/ skip = [
+	return (!parameters.runDemo)
+]
+/ preInstructions = (testStart)
+</block>
+
+
+<block test>
+/ onBlockBegin = [
+	values.demo = 0;
+	values.blockCounter += 1;
+	values.trialCounterPerBlock = 0;
+	
+	//reset variables:
+	values.trialType = null;
+	values.correctResp = null;
+	values.currentStim = null;
+	values.prevStim = null;
+	values.respCategory = null;
+	list.trialOrder.reset();
+]
+/ trials = [1 = getReady; 2 = start]
+/ branch = [
+	if (values.blockCounter < parameters.numberTestBlocks){
+		return block.test;
+	}
+	return null;
+]
+</block>
+
+<block finish>
+/ onTrialBegin = [
+	//reset variables:
+	values.trialType = null;
+	values.correctResp = null;
+	values.currentStim = null;
+	values.prevStim = null;
+	values.respCategory = null;
+]
+/ trials = [1 = finish]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expt a>
+/ onexptbegin = [
+	if (!computer.haskeyboard){//touchscreen devices provide response buttons with inherent response feedback
+		text.responseFeedback.skip = true;
+	}
+]
+/ blocks = [
+	1 = intro;
+	2 = demo;
+	3 = testStart;
+	4 = test;
+	5 = finish;
+]
+</expt>
+
+<monkey>
+/ latencyDistribution = normal(100, 80)
+</monkey>
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

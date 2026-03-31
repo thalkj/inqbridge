@@ -1,0 +1,1011 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									ERROR AWARENESS TASK (EAT)
+___________________________________________________________________________________________________________________	
+
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 10-24-2013
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+
+Millisecond Software thanks Dr. Hester et al for generously providing assistance with 
+script development/clarifications!
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Error Awareness Task (EAT), a specialized motor Go/NoGo response inhibition
+task to study error awareness of commission errors. The EAT uses competing rules for Go-Nogo Responses
+to increase the likelihood of commission errors.
+
+The implemented procedure is based on:											
+
+Hester, R, Simões-Franklin, C., & Garavan, H. (2007). Post-error behavior in active cocaine users: 
+poor awareness  of errors in the presence of intact performance adjustments. 
+Neuropsychopharmacology, 32, 1974–1984.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+Participants are presented with a stream of words (one at a time) in different colors at a constant pace.
+They are instructed to press the Go-response button if word meaning and color font match AND if 
+the combo (word/font color) is different than the one preceding it (GO trials).
+They are instructed to withhold the response if word meaning and color font do NOT match (Stroop NOGO) OR if
+the presented combo (word/font color) repeats the one preceding it (Repeat NOGO). To indicate 
+error awareness participants are asked to press the Go button twice during the Go trials
+following any commission errors done during the NoGo trials
+(Note: a pregenerated sequence of trialtypes is used in which there are at least 2-15 Go trials
+in between NoGo trials)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 30 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'errorawarenesstask_raw*.iqdat'
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+
+practice:							1 = practiceA; 2= PracticeB; 0 = test
+
+nexttrial:							stores the trialtype of the next trial
+									1 = Go trial; 2 = Stroop; 3 = Repeat
+
+trialtype:							1 = Go trial; 2 = Stroop; 3 = Repeat
+									stores the name of the trialtype
+									"Go", "Go afterNoGo", "Stroop NoGo", "Repeat NoGo"
+								
+counttrials:						counts the trials in a given block
+stimulusitem:						the presented stimuli in order of trial presentation
+
+response:							the participant's first response (scancode)
+										57: spacebar
+										0: no response
+										
+ACC:								stores the accuracy of the given response
+									1 = correct response for Go-trial (response key was pressed) and NoGo trial (response was suppressed)
+									0 = incorrect response for Go-trial (no response key was pressed) and NoGo trial (response key was pressed)
+								
+latency:							stores the response latency in ms (if no response: it's empty)
+										Note: in error awareness response trials, it's the latency of the first response
+
+variables to track error awareness response:
+go_response1:						stores the first response in a "Go afterNoGo" trial (scancode of response; 57 = spacebar)
+go_response1rt:						stores the latency of the first response in a "Go afterNoGo" trial
+go_response2:						stores the second response in a "Go afterNoGo" trial (scancode of response; 57 = spacebar)
+go_response2rt: 					stores the latency of the second response in a "Go afterNoGo" trial
+
+prevcorrect:						accuracy of the preceding trial
+
+errorawarenessresponse:				stores whether an error awareness response (aka double response) has been given
+									0 = no double response 
+									1 = error awareness after NoGo trial (given in Go trial)
+									2 = error awareness after Go trial (given in Go trial)
+									3 = double response given in NoGo trial
+									
+correct_errorawareness:				1 = the given error awareness response was correct (participant err-ed on the previous trial)
+									0 = the given awareness response was incorrect (no error awareness response was indicated during the current trial)
+									empty = N/A as no error awareness response was given
+								
+count_failedsuppression:			counts the number of NoGo failed suppression errors across all test blocks
+count_nogoerrorawareness:			counts the number of correct error awareness responses for commission errors across all test blocks
+count_omission:						counts the number of omission errors in Go trials across all test blocks
+
+count_go:							go trial count
+count_nogo:							nogo trial count
+
+
+(2) Summary data file: 'errorawarenesstask_summary*.iqdat'
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+percent_failedsuppression: 			percent failed suppressions in NoGo trials (=commission errors) across test blocks
+
+percent_nogoerrorawareness:			percent correct error awareness responses after failed suppression in NoGo trials (=commission errors)
+									across all test blocks
+									
+percent_omission:					percent omissions in Go trials across test blocks
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+* 3 different types of trials
+	Go trials:		congruent word and font color; combination does not repeat previous target => require response
+	Stroop NoGo:		incongruent word and font color => require suppression of response
+	Repeat NoGo:	repeat of previous word and font color => require suppression of response
+
+	Note: 	words can never be repeated unless by Repeat NoGo trials. Colors are chosen randomly in Stroop
+			trials and could therefore repeat the color of the previous Go trial (but not the word). Similarly,
+			Go trials could repeat the color of the preceding Stroop trial (but not the word).
+
+* Error Awareness Response: double clicking the response button in the Go trial following the commission error in
+	NoGo trials
+
+* 900 trials total
+	=> In this script:
+			700 Go trials
+			50 Stroop trials (followed by 50 Go_afternogo trials)
+			50 Repeat trials (followed by 50 Go_afternogo trials)
+
+* 4 blocks of 225 trials: the sequence of Go and NoGo trials is predetermined and the same for each participant.
+							(EDITABLE CODE -> Editable Lists -> list.trialsequence)
+	- Each block contains roughly the same number of NoGo trials (odd blocks contain 12 Stroop/13 Repeat NoGo trials,
+	even blocks contain 13 Stroop/12 Repeat NoGo trials) and 200 Go trials
+	- there are 2-15 Go trials in between 2 NoGo trials in each block
+	
+PRACTICE
+A practice block is provided (not original to Hester et al, 2007): 70 trials (controlled by list.trialsequence_practice)
+Participants receive errorfeedback 
+a) after incorrect suppression of responses in Go trials and
+b) after incorrectly responding to NoGo trials. This feedback further includes a reminder to press the response key 
+twice during the next trial to practice the error awareness response
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+are not original. Edit under EDITABLE CODE -> Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/responsekey:						the response key (default: " " -> spacebar)
+
+/fontsize_target:					fontsize of the targets in screen height percentages (default: 10%)
+/fontsize_fixation:					fontsize of the fixation mark in screen height percentages (default: 3%)
+
+/stimulusduration:					presentation duration of the targets (default: 900ms)
+
+/ISIduration:						interstimulus interval (default: 600ms)
+									Note: in this script participants have stimulusduration + ISIduration to respond
+											
+/skippractice:						true = practice block is skipped
+									false = practice block is run
+									
+/trialsperblock:					the number of trials in a block; computer uses this value to stop each block
+									(default: 225)
+									Note: if this number is changed, list.trialsequence might need to get updated accordingly
+
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/responsekey = " "
+/fontsize = 10%
+
+/stimulusduration = 1000
+/ISIduration = 600
+/errorfeedbackduration = 1000
+
+/skippractice = true 
+/trialsperblock = 225
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item words>
+/1 = "RED"
+/2 = "YELLOW"
+/3 = "GREEN"
+/4 = "BLUE"
+</item>
+
+Note: not original - customize if needed
+<item errorfeedback>
+/1 = "Wrong!
+Give Error Awareness Response: press the Spacebar twice on next trial"
+/2 = "Response was required"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 2.8%, false, false, false, false, 5, 1)
+/ txcolor = black
+</instruct>
+
+
+Note: these are NOT the original instructions; please customize for your experimental set-up
+
+
+page.intro1 - page.intro3 are called by the expt-element
+<htmlpage intro1>
+/ file = "intro1.htm"
+</htmlpage>
+
+<htmlpage intro2>
+/ file = "intro2.htm"
+</htmlpage>
+
+<htmlpage intro3>
+/ file = "intro3.htm"
+</htmlpage>
+
+<htmlpage practiceintro1>
+/ file = "practiceintro1.htm"
+</htmlpage>
+
+<htmlpage practiceend>
+/ file = "practiceend.htm"
+</htmlpage>
+
+Note: this page is presented before each new block.eat
+<page EATblock>
+This is the <%block.eat.count + 1%>. Block.
+
+^^^Press <Spacebar> when you are ready to start. 
+</page>
+
+<page end>
+You have reached the end of the task.
+^^Thank you!
+</page>
+
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"button";} else {"key";}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note:
+pregenerated trialsequences for 4 blocks of 225 trials each. To generate the list
+trialtypes were sampled randomly with the following constraints:
+(1) 	odd blocks: Stroop: 12; Repeat: 13; Go: 200
+		even blocks: Stroop: 13; Repeat: 12; Go: 200
+(2) 2-15 Go trials in between NoGo trials
+(3) first and last trial should be Go trials
+
+this list is used continuously across blocks and is set to reset after
+4 blocks. Trialtypes are sampled sequentially => all participants
+receive the same order.
+
+sequence is not original to Hester et al (2007) but was generated using
+similar constraints.
+<list trialsequence>
+/items = (1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,3,1,1,
+1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,1,2,1,1,1,1,1,1,
+1,1,3,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,
+2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,1,3,1,1,1,1,1,1,1,1,1,1,
+1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,2,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,2,1,1,2,1,1,1,1,1,2,1,1,3,1,1,1,3,1,1,2,
+1,1,1,3,1,1,1,1,1,1,1,1,3,1,1,1,1,3,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,3,1,1,1,
+1,1,1,2,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,
+2,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,
+1,1,1,2,1,1,1,3,1,1,1,1,1,3,1,1,2,1,1,1,1,1,1,1,1,1,3,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,3,1,1,1,3,1,1,1,1,1,1,1,1,1,2,
+1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,2,1,1,1,1,1,1,1,1,2,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+2,1,1,1,3,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,
+1,1,2,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,3,
+1,1,1,3,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,3,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,3,1,1,2,1,1,1,1,1,3,1,
+1,1,3,1,1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,
+1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,3,1,1,1,1,1,1,3,1,1,1,1,2,1,
+1,2,1,1,1,2,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,3,1,1,3,1,1,1,1,2,1,1,1,3,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,
+3,1,1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,
+1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,2,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,
+1,1,1,1,1,1,2,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,
+1,1,1,2,1,1,3,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,1,1,1,1,2,1,1,1,1,
+3,1,1,1,1,1,2,1,1,1,1,3,1)
+/selectionmode = sequence
+/resetinterval = 4
+</list>
+
+Note: this is the pre-determined trialsequence provided for practice A
+(practice: participants get alerted when they make a mistake during NoGo trials
+and are reminded to provide the error awareness response during the next Go trial. 
+They also receive feedback if they incorrectly surpress the response for Go trials)
+
+Not original to Hester et al (2007)
+
+<list trialsequence_practice>
+/items = (
+1,1,1,2,1,1,3,1,1,2,
+1,1,3,1,1,1,2,1,1,2,
+1,1,3,1,1,1,1,3,1,1,
+2 1,1,3,1,1,1,3,1,1,
+2,1,1,1,2,1,1,3,1,1,
+1,1,1,1,1,1,1,1,1,1,
+1,1,1,3,1,1,1,2,1,1)
+/selectionmode = sequence
+</list>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+values.practice, values.nexttrial, values.trialtype, values.counttrials, 
+stimulusitem, values.colorname, 
+values.firstResponse, values.ACC, values.latency,
+values.go_response1, values.go_response1rt, values.go_response2, values.go_response2rt,
+values.prevcorrect, values.errorawarenessresponse, values.correct_errorawareness, 
+values.count_failedsuppression, values.count_nogoerrorawareness, values.count_omission,
+values.count_go, values.count_nogo)
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.percent_failedsuppression, expressions.percent_nogoerrorawareness, expressions.percent_omission)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+/completed:							0 = script was not completed; 1 = script was completed (all conditions run)
+
+/nexttrial:							stores the trialtype of the next trial
+									1 = Go trial; 2 = Stroop; 3 = Repeat
+/trialtype:							stores the name of the trialtype
+									"Go", "Go afterNoGo", "Stroop NoGo", "Repeat NoGo"
+/prevtrialtype:						stores the name of the preceding trialtype
+/color:								stores the color code of the current word
+/previouscolor:						stores the color code of the preceding word
+/colorname:							stores the name of the current color code
+/colorindex:						stores the index number of the color word in the list of items
+/selectword:						stores the itemnumber of the currently selected word
+/previousword:						stores the itemnumber of the preceding word
+
+/latency:							stores the response latency
+										Note: in error awareness response trials, it's the latency of the first response
+
+/response:							saves the first response (if a response is given)
+
+variables to track error awareness response:
+/GO_response1:						stores the first response in a "Go afterNoGo" trial
+/GO_response1rt:					stores the latency of the first response in a "Go afterNoGo" trial
+/GO_response2:						stores the second response in a "Go afterNoGo" trial
+/GO_response2rt: 					stores the latency of the second response in a "Go afterNoGo" trial
+
+/errorawarenessresponse:			stores whether an error awareness response (aka double response) has been given during a Go trial
+									0 = no double response 
+									1 = error awareness after NoGo trial (given in Go trial)
+									2 = error awareness after Go trial (given in Go trial)
+									3 = double response given in NoGo trial
+/correct_errorawareness:			1 = the given error awareness response was correct (participant err-ed on the previous trial)
+									0 = the given awareness response was incorrect (no error awareness response was indicated during the current trial)
+									empty = N/A as no error awareness response was given
+/practice:							1 = practice; 0 = test
+/correct:							stores the accuracy of the given response
+									1 = correct response for Go-trial (response key was pressed) and NoGo trial (response was suppressed)
+									0 = incorrect response for Go-trial (no response key was pressed) and NoGo trial (response key was pressed)
+
+/prevcorrect:						accuracy of the preceding trial
+
+/counttrials:						counts the trials in a given block
+/count_Go:							counts Go trials across blocks (resets after practice)
+/count_NoGo:						counts Go trials across blocks (resets after practice)
+
+/count_failedsuppression:			counts the number of NoGo failed suppression errors across all test blocks 
+/count_omission:					counts the number of omission errors in Go trials across all test blocks
+/count_NoGoerrorawareness:			counts the number of correct error awareness responses for failed suppressions for all test blocks
+
+/errorfeedbackselect:				determines the feedback text to be presented
+
+<values>
+/completed = 0
+/nexttrial = 0
+/trialtype = ""
+/prevtrialtype = ""
+/color = 0
+/previouscolor = 0
+/colorname = ""
+/colorindex = 0
+/selectword = 0
+/previousword = ""
+
+/latency = ""
+
+/firstResponse = 0
+/GO_response1 = 0
+/GO_response1rt = 0
+/GO_response2 = 0
+/GO_response2rt = 0
+
+/errorawarenessresponse = 0
+/correct_errorawareness = 0
+/practice = 0
+/ACC = 0
+/prevcorrect = 0
+
+/counttrials = 0
+/count_Go = 0
+/count_NoGo = 0
+/count_failedsuppression = 0
+/count_omission = 0
+/count_NoGoerrorawareness = 0
+
+/errorfeedbackselect = 0
+</values>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/percent_failedsuppression: 	percent failed suppressions in NoGo trials across test blocks
+/percent_omission:				percent omissions in Go trials across test blocks
+/percent_NoGoerrorawareness:	percent correct error awareness responses after failed suppression in NoGo trials
+								across all test blocks
+
+<expressions>
+/percent_failedsuppression = (values.count_failedsuppression/ values.count_nogo) * 100
+/percent_omission = (values.count_omission/values.count_go) * 100
+/percent_NoGoerrorawareness = (values.count_nogoerrorawareness/values.count_failedsuppression) * 100
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<text word>
+/items = words
+/select = values.selectword
+/position = (50%, 50%)
+/ fontstyle = ("Arial", parameters.fontsize, false, false, false, false, 5, 1)
+</text>
+
+<shape eraser>
+/shape = rectangle
+/size = (100%, 100%)
+/color = white
+/position = (50%, 50%)
+</shape>
+
+Note: this is a debug text element that can be presented whenever a Stroop trial is presented
+<text stroop>
+/items = ("STROOP")
+/position = (50%, 80%)
+/ fontstyle = ("Arial", 8%, false, false, false, false, 5, 1)
+</text>
+
+*********************************************
+Error Feedback for Practice
+*********************************************
+
+<text errorfeedback>
+/items = errorfeedback
+/select = values.errorfeedbackselect
+/position = (50%, 80%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txcolor = black
+</text>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	LISTS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: list is used for Go trials and Stroop Nogo's trial
+* selects any itemnumber but the previously used one
+=> words cannot repeat UNLESS it's a repeat trial
+
+<list GOworditemnumber>
+/items = (1, 2, 3, 4)
+/replace = true
+/not = (values.previousword)
+</list>
+
+**********************************
+Color Selection for Go Trial
+**********************************
+<list GOcolor>
+/items = (red, yellow, green, blue)
+/ selectionmode = values.selectword
+</list>
+
+**********************************
+Color Selection for Stroop Trial
+**********************************
+
+Note: this list selects the index number for the Stroop color randomly with replacement
+Constraint: the sampled index cannot match the index of the selected word (values.selectword)
+<list StroopcolorA>
+/items = (1, 2, 3, 4)
+/replace = true
+/not = (values.selectword)
+</list>
+
+Note: this lists selects the actual color for the Stroop word according to the currently sampled color index
+<list StroopcolorB>
+/items = (red, yellow, green, blue)
+/selectionmode = values.colorindex
+</list>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+Note: trial selects the next trialtype from the relevant list
+<trial selecttrialtype>
+/ontrialbegin = [
+	values.counttrials += 1;
+	if (values.practice == 0) {
+		values.nexttrial = list.trialsequence.nextValue;
+	} else if (values.practice == 1) {
+		values.nexttrial = list.trialsequence_practice.nextValue;
+	}
+]
+/ validresponse = (parameters.responsekey)//for touchscreens: present inactive response button
+/ isvalidresponse = [
+	return false;
+]
+
+/trialduration = 0
+/recorddata = false
+/branch = [
+	if (values.nexttrial == 1) {
+		return trial.go;
+	} else if (values.nexttrial == 2) {
+		return trial.stroopnogo;
+	} else if (values.nexttrial == 3) {
+		return trial.repeatnogo;
+	}
+]
+/errormessage = false
+</trial>
+
+Note:
+* go trial: presents words in congruent color
+* allows for error awareness response: double clicking of the Go-button => go response and error awareness 
+* if error awareness -> evaluates the correctness of the error awareness response (and also if error
+awareness was following a Go or a NoGo trial)
+* participant can respond until the next trial starts (response duration = parameters.stimulusduration + parameters.ISIduration)
+<trial GO>
+/ontrialbegin = [
+	values.count_go += 1;
+	values.previousword = values.selectword; 
+	values.previouscolor = values.color;
+	values.prevtrialtype = values.trialtype;
+
+	values.go_response1 = 0; 
+	values.go_response2 = 0; 
+	values.errorawarenessresponse = 0; 
+	values.correct_errorawareness = "";
+	values.go_response1rt = 0; 
+	values.go_response2rt = 0; 
+	values.latency = "";
+	values.prevcorrect = values.ACC;
+	
+	if (values.prevtrialtype == "Repeat NoGo" || values.prevtrialtype == "Stroop NoGo") {
+		values.trialtype = "Go after NoGo";
+	} else {
+		values.trialtype = "Go";
+	}
+
+	values.selectword = list.goworditemnumber.nextValue;
+	values.color = list.GOcolor.nextValue;
+	text.word.textColor = values.color;
+	if (values.color == red) {
+		values.colorname = "RED";
+	} else if (values.color == yellow) {
+		values.colorname = "YELLOW";
+	} else if (values.color == green) {
+		values.colorname = "GREEN";
+	} else if (values.color == blue) {
+		values.colorname = "BLUE";
+	}
+
+	trial.GO.insertStimulusTime(shape.eraser, parameters.stimulusduration);
+]
+/stimulustimes = [0 = word]
+/responseinterrupt = frames
+/ beginresponsetime = 0
+/trialduration = (parameters.stimulusduration + parameters.ISIduration)
+/validresponse = (parameters.responsekey)
+/isvalidresponse = [
+	if (values.go_response1 != 0){
+		if (trial.GO.responseText == parameters.responsekey) {
+			values.go_response2 = trial.GO.response; 
+			values.go_response2rt = trial.go.latency;
+		}
+	} else if (values.go_response1 == 0) {
+		if (trial.GO.responseText == parameters.responsekey) {
+			values.go_response1 = trial.GO.response; 
+			values.go_response1rt = trial.go.latency; 
+			values.latency = values.go_response1rt;
+		}
+	}
+
+	return (values.go_response1 != 0 && values.go_response2 != 0);
+]
+
+/monkeyresponse = (0, " ")
+/iscorrectresponse = [return (values.latency !="");]
+/ontrialend = [
+	trial.GO.resetStimulusFrames();
+	values.firstResponse = values.go_response1;
+		
+	if (values.go_response2 !=0){
+		if (values.trialtype == "Go after NoGo") {
+			values.errorawarenessresponse = 1;
+		} else if (values.trialtype == "Go") {
+			values.errorawarenessresponse = 2;
+		}
+	}
+	
+	if (values.errorawarenessresponse != 0){
+		if (values.prevcorrect == 0){
+			if (values.counttrials > 1) {
+				values.correct_errorawareness = 1;
+			} else if (values.counttrials == 1) {
+				values.correct_errorawareness = 0;
+			}
+		} else if (values.prevcorrect == 1) {
+			values.correct_errorawareness = 0;
+		}
+	} else if (values.errorawarenessresponse == 0) {
+		values.correct_errorawareness = "";
+	}
+		
+	if (values.correct_errorawareness == 1 && values.errorawarenessresponse == 1) {
+		values.count_nogoerrorawareness += 1;
+	}
+	
+	if (trial.go.correct) {
+		values.ACC = 1;
+	} else {
+		values.ACC = 0;
+		values.count_omission += 1;
+	}
+]
+/branch = [
+	if (values.practice == 1 && values.ACC == 0) {
+		values.errorfeedbackselect = 2; 
+		return trial.errorfeedback;
+	} else {
+		return trial.selecttrialtype;
+	}
+]
+/recorddata = true
+</trial>
+
+
+Note:
+* NoGo trial (requires suppression of response)
+* selects words in incongruent color
+* participant can respond until the next trial starts (response duration = parameters.stimulusduration + parameters.ISIduration)
+<trial StroopNOGO>
+/ontrialbegin = [
+	values.count_nogo += 1;
+	values.previousword = values.selectword; values.previouscolor = values.color;
+	values.prevtrialtype = values.trialtype;
+	values.go_response1 = 0; 
+	values.go_response2 = 0; 
+	values.errorawarenessresponse = 0; 
+	values.correct_errorawareness = "";
+	values.go_response1rt = 0; 
+	values.go_response2rt = 0; 
+	values.latency = "";
+	values.prevcorrect = values.ACC;
+	values.trialtype = "Stroop NoGo";
+
+	values.selectword = list.goworditemnumber.nextValue;
+	values.colorindex = list.stroopcolora.nextValue;
+	values.color = list.stroopcolorb.nextValue;
+
+	text.word.textColor = values.color;
+	if (values.color == red) {
+		values.colorname = "RED";
+	} else if (values.color == yellow) {
+		values.colorname = "YELLOW";
+	} else if (values.color == green) {
+		values.colorname = "GREEN";
+	} else if (values.color == blue) {
+		values.colorname = "BLUE";
+	}
+	trial.stroopnogo.insertStimulusTime(shape.eraser, parameters.stimulusduration);
+]
+/stimulustimes = [0 = word]
+/responseinterrupt = frames
+/ beginresponsetime = 0
+/trialduration = (parameters.stimulusduration + parameters.ISIduration)
+/ validresponse = (parameters.responsekey)
+/isvalidresponse = [
+	if (values.go_response1 != 0){
+		if (trial.stroopnogo.responseText == parameters.responsekey) {
+			values.go_response2 = trial.stroopnogo.response; 
+			values.go_response2rt = trial.stroopnogo.latency;
+		}
+	} else if (values.go_response1 == 0){
+		if (trial.stroopnogo.responseText == parameters.responsekey) {
+			values.go_response1 = trial.stroopnogo.response; 
+			values.go_response1rt = trial.stroopnogo.latency; 
+			values.latency = values.go_response1rt;
+		}
+	}
+
+	return (values.go_response1 != 0 && values.go_response2 != 0);
+]
+/monkeyresponse = (0, " ")
+/iscorrectresponse = [return (values.latency =="");]
+/ontrialend = [
+	trial.stroopnogo.resetStimulusFrames();
+	
+	values.firstResponse = values.go_response1;
+	if (values.go_response2 !=0) {
+		values.errorawarenessresponse = 3;
+	}
+	if (trial.stroopnogo.correct) {
+		values.ACC = 1;
+	} else {
+		values.ACC = 0;
+		values.count_failedsuppression += 1;
+	}
+]
+/branch = [
+	if (values.practice == 1 && values.ACC == 0) {
+		values.errorfeedbackselect = 1; 
+		return trial.errorfeedback;
+	} else {
+		return trial.selecttrialtype;
+	}
+]
+/recorddata = true
+</trial>
+
+Note:
+* NoGo trial (requires suppression of response)
+* repeats the exact word/color combo as was presented before
+* participant can respond until the next trial starts (response duration = parameters.stimulusduration + parameters.ISIduration)
+<trial RepeatNOGO>
+/ontrialbegin = [
+	values.count_nogo += 1;
+	values.previousword = values.selectword; values.previouscolor = values.color;
+	values.prevtrialtype = values.trialtype;
+	values.go_response1 = 0; 
+	values.go_response2 = 0; 
+	values.errorawarenessresponse = 0; 
+	values.correct_errorawareness = "";
+	values.go_response1rt = 0; 
+	values.go_response2rt = 0; 
+	values.latency = "";
+	values.prevcorrect = values.ACC;
+	values.trialtype = "Repeat NoGo";
+	text.word.textColor = values.color;
+	if (values.color == red) {
+		values.colorname = "RED";
+	} else if (values.color == green) {
+		values.colorname = "GREEN";
+	} else if (values.color == yellow) {
+		values.colorname = "YELLOW";
+	} else if (values.color == blue) {
+		values.colorname = "BLUE";
+	}
+	trial.repeatnogo.insertStimulusTime(shape.eraser, parameters.stimulusduration);
+]
+/stimulustimes = [0 = word]
+/responseinterrupt = frames
+/beginresponsetime = -1
+/trialduration = (parameters.stimulusduration + parameters.ISIduration)
+/ validresponse = (parameters.responsekey)
+/isvalidresponse = [
+	if (values.go_response1 != 0){
+		if (trial.repeatnogo.responseText == parameters.responsekey) {
+			values.go_response2 = trial.repeatnogo.response; 
+			values.go_response2rt = trial.repeatnogo.latency;
+		}
+	} else if (values.go_response1 == 0){
+		if (trial.repeatnogo.responseText == parameters.responsekey){
+			values.go_response1 = trial.repeatnogo.response; 
+			values.go_response1rt = trial.repeatnogo.latency; 
+			values.latency = values.go_response1rt;
+		}
+	}
+
+	return (values.go_response1 != 0 && values.go_response2 != 0);
+]
+/monkeyresponse = (0, " ")
+/iscorrectresponse = [return (values.latency =="");]
+/ontrialend = [
+	trial.repeatnogo.resetStimulusFrames();
+
+	values.firstResponse = values.go_response1;
+	if (values.go_response2 !=0) {
+		values.errorawarenessresponse = 3;
+	}
+	if (trial.repeatnogo.correct) {
+		values.ACC = 1;
+	} else {
+		values.ACC = 0;
+		values.count_failedsuppression += 1;
+	}
+]
+/branch = [
+	if (values.practice == 1 && values.ACC == 0) {
+		values.errorfeedbackselect = 1; 
+		return trial.errorfeedback;
+	} else {
+		return trial.selecttrialtype;
+	}
+]
+/recorddata = true
+</trial>
+
+<trial errorfeedback>
+/ontrialbegin = [
+	values.go_response1 = 0; 
+	values.go_response2 = 0; 
+	values.errorawarenessresponse = 0; 
+	values.correct_errorawareness = "";
+	values.go_response1rt = 0; 
+	values.go_response2rt = 0; 
+	values.latency = ""; 
+	values.ACC = 0; 
+	values.firstResponse = 0;
+]
+/stimulusframes = [1 = errorfeedback]
+/ validresponse = (parameters.responsekey)//for touchscreens: present inactive response button
+/ isvalidresponse = [
+	return false;
+]
+
+/trialduration = parameters.errorfeedbackduration
+/branch = [return trial.selecttrialtype;]
+/recorddata = false
+</trial>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: practice blocks presents 70 trials with a higher ratio of NoGo:Go trials than during the actual task
+- stops after 71 trial.selecttrialtype (a "silent" trial that updates values.counttrials in order to stop block.practice
+but doesn't present any stimuli)
+<block practice>
+/stop = [(values.counttrials - 1)  == list.trialsequence_practice.poolSize]
+/preinstructions = (practiceintro1)
+/postinstructions = (practiceend)
+/onblockbegin = [
+	values.practice = 1;
+	values.counttrials = 0;
+]
+/trials = [1 = selecttrialtype]
+/onblockend = [
+	values.count_failedsuppression = 0; 
+	values.count_nogoerrorawareness = 0; 
+	values.count_omission = 0;
+	values.count_go = 0; 
+	values.count_nogo = 0;
+]
+</block>
+
+
+Note: each block.EAT presents a total of 225 trials
+- stops after 226 trial.selecttrialtype (a "silent" trial that updates values.counttrials in order to stop block.eat
+but doesn't present any stimuli)
+<block EAT>
+/preinstructions = (eatblock)
+/stop = [(values.counttrials - 1) == parameters.trialsperblock]
+/onblockbegin = [
+	values.practice = 0;
+	values.counttrials = 0;
+]
+/trials = [1 = selecttrialtype]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+<expt a>
+/preinstructions = (intro1, intro2, intro3)
+/blocks = [
+	1 = practice; 
+	2-5 = EAT;
+]
+</expt>
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

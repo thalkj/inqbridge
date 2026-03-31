@@ -1,0 +1,947 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+									*SUBLIMINAL PRIMING PROCEDURE*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-25-2013
+last updated:  03-01-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 03-01-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a Subliminal Priming Procedure.
+
+In general, priming procedures are simple response-timed binary categorization tasks of items from two target
+categories  (e.g. positive vs. negative adjectives). Priming Procedures are based on the assumption that 
+people respond faster if the target category was already 'mentally activated' by briefly presenting items 
+(called 'primes') that are closely connected in one's mind. For example, a person should be faster to quickly 
+categorize the target word 'good' as 'positive' after the brief presentation of the prime word 'ice-cream' than
+after the brief presentation of the prime word 'famine'. Priming Procedure can thus be used to study 
+implicit attitudes. Faster reaction times to targets after primes from a specific category are interpreted 
+as indicative of an existing  relationship/association between  the categories in the person's mind.
+
+If the primes are presented with a temporal duration that can be consciously processed, the primes are
+called 'supraliminal'. If the duration of the primes is so short that they are outside one's conscious 
+awareness the primes are called 'subliminal'. This script uses subliminal primes.
+
+In this script, the primes that are used have been previously be conditioned to be a positive or a negative
+condition stimulus (CS). Without the conditioning the default primes used in this script have likely
+no affect on target categorization.
+
+Reference:
+
+Michael A. Olson, M.A. & Fazio, R.H. (2002). Implicit acquisition and manifestation of classically 
+conditioned attitudes. Social Cognition, 20, 89-103.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+
+After seeing an alphanumeric mask (that is very briefly "interrupted" by a subliminal prime), 
+participants are asked to categorize adjectives as positive or negative.
+Two primes are used that have been conditioned to be a positive and a negative CS in a prior study
+(for more info on the conditioning part of the study see Olson & Fazio, 2002).
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'subliminalpriming_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.
+										
+prime1:							stores the assigned prime1 item
+prime2:							stores the assigned prime2 item
+										
+selectprime1/					store the assignment (itemnumber) of primes to prime1 and prime2
+selectprime2:
+
+targetindex:					stores the targetindex of the current target adjective
+
+response:						the participant's response (scancode of response button)
+								30 = A
+								38 = L
+								57 = spacebar
+								0 = no response
+										
+correct:						the correctness of the response (1 = correct; 0 = incorrect)
+latency: 						the response latency (in ms); measured from onset of target word
+
+							
+(2) Summary data file: 'subliminalpriming_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+display.refreshrate:			refreshrate of monitor									
+									
+propcorrect:					overall proportion correct (test trials only)
+meanRT:							overall correct mean latency in ms (test trials only)
+
+//see prime1 & prime2 for which prime was assigned prime1 and prime2
+prime1:							stores the assigned prime1 item
+prime2:							stores the assigned prime2 item	
+
+propcorrect_prime1pos:			proportion correct in Prime1-Positive Adjective Pairings
+propcorrect_prime1neg:			proportion correct in Prime1-Negative Adjective Pairings
+propcorrect_prime2pos:			proportion correct in Prime2-Positive Adjective Pairings
+propcorrect_prime2neg:			proportion correct in Prime2-Negative Adjective Pairings
+
+meanrt_prime1pos:				correct mean latency (in ms) in Prime1-Positive Adjective Pairings
+meanrt_prime1neg:				correct mean latency (in ms) in Prime1-Negative Adjective Pairings
+meanrt_prime2pos:				correct mean latency (in ms) in Prime2-Positive Adjective Pairings
+meanrt_prime2neg:				correct mean latency (in ms) in Prime2-Negative Adjective Pairings
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+* 2 primes (Shelder vs. Metapod) x 2 adjective valence (positive vs. negative) 
+=> 4 experimental trial conditions
+* 16 positive and 16 negative adjectives
+
+Blocks:
+1) Practice Block: runs 16 trials (8 with positive and 8 with negative adjectives) with a pseudo "prime" 
+to achieve a similar "look" as the experimental trials (Olson and Fazio (2002) may not have used a pseudo "prime")
+2) 2 Experimental Blocks of 32 trials: 
+- across all 64 experimental trials, each prime is paired once with each of the 32 adjectives.
+- all 32 adjectives are sampled ONCE during each block (no repeats); see LISTS for more details
+
+Trials: stimulus durations taken from Olson & Fazio (2002)
+- pre-mask consisting of a string of alphanumeric characters for 56ms
+- followed by a prime for 28ms
+- post-mask (same alphanumeric string) for 42ms
+- 98ms later: adjective
+=> timeline: 0ms: premask; 56ms: prime; 84ms: postmask; 126ms: postmask eraser; 224ms: adjective
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+most of the stimuli used in this script are not the originals; 
+they can be edited under section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+the instructions used in this script are not originals;
+they can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/fontheight:						sets the height of the font for all text stimuli (default: 5%)
+
+Responsekeys:						good/bad response keys get assigned by groupnumber	
+										more info under EXPERIMENT
+										
+/responsekey_left:					the left responsekey (default: "A")
+/responsekey_right:					the right responsekey (default: "L")
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/fontheight = 5%
+
+/responsekey_left = "A"
+/responsekey_right = "L"
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Change any of the stimuli to customize your experiment
+
+<item primes>
+/1 = "Metapod"
+/2 = "Shelder"
+</item>
+
+Note: not original; Olson & Fazio (2002) do not report using a practiceprime,
+however, in order for the practice trials to "appear" similar to the experimental trials,
+this script uses a practiceprime
+<item practiceprime>
+/1 = "Bcdfghi"
+</item>
+
+Note: the positive and negative adjectives are NOT original
+<item positive>
+/1 = "attractive"
+/2 = "likable"
+/3 = "wonderful"
+/4 = "cheerful"
+/5 = "fantastic"
+/6 = "happy"
+/7 = "superb"
+/8 = "beautiful"
+/9 = "adorable"
+/10 = "delightful"
+/11 = "enjoyable"
+/12 = "outstanding"
+/13 = "appealing"
+/14 = "terrific"
+/15 = "spectacular"
+/16 = "magnificent"
+</item>
+
+<item negative>
+/1 = "disgusting"
+/2 = "offensive"
+/3 = "annoying"
+/4 = "terrible"
+/5 = "horrible"
+/6 = "abrasive"
+/7 = "abusive"
+/8 = "boring"
+/9 = "resentful"
+/10 = "callous"
+/11 = "foolish"
+/12 = "ruthless"
+/13 = "malicious"
+/14 = "spiteful"
+/15 = "painful"
+/16 = "nauseating"
+</item>
+
+Note: the mask is NOT original to Olson & Fazio (2002)
+<item mask>
+/1="BQ7H39P"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 2.50%, false, false, false, false, 5, 1)
+</instruct>
+
+<item instructions>
+/ 1 = "Positive and negative adjectives appear in the middle of the screen and have to be sorted into the two categories above.
+~nFor example, adjective 'awesome' would be sorted into the category GOOD. Adjective 'ugly' would be sorted into the category BAD.
+~nPress the <%values.posLocation%> '<%values.pos_responsekey%>' <%expressions.buttoninstruct1%> for GOOD.
+press the <%values.negLocation%> '<%values.neg_responsekey%>' <%expressions.buttoninstruct1%> for BAD.
+
+A string of numbers and letters will act as a SIGNAL that the adjective is soon to appear. Both signal and adjective will appear right in the center of the screen.
+
+This is a timed sorting task. GO AS FAST AS YOU CAN while making as few mistakes as possible. If you make a mistake a red X appears on screen.
+
+Press the Spacebar to start a practice session."
+
+/2 = "Practice is over and the actual task is about to start.
+The actual task is just like the practice: you will see a signal that is followed by an adjective.
+~nPress the <%values.posLocation%> '<%values.pos_responsekey%>' <%expressions.buttoninstruct1%> for GOOD.
+press the <%values.negLocation%> '<%values.neg_responsekey%>' <%expressions.buttoninstruct1%> for BAD.
+
+This is a timed sorting task. GO AS FAST AS YOU CAN while making as few mistakes as possible. If you make a mistake a red X appears on screen.
+
+Press the Spacebar to start."
+</item>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/items = ("Get Ready:
+~n<%expressions.buttoninstruct2%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"response button";} else {"key";}
+/buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"Place your index fingers over the left and right response buttons";} else {"Place your index fingers on the <%parameters.responsekey_left%> and <%parameters.responsekey_right%> keys";}
+</expressions>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = black
+/ txcolor = white
+/screencolor = black
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, display.refreshrate, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum,
+values.prime1, values.prime2, values.selectprime1, values.selectprime2, values.targetindex, response, correct, latency) 
+</data>
+
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, display.refreshrate
+expressions.propcorrect, expressions.meanRT,
+values.prime1, values.prime2, 
+expressions.propcorrect_prime1pos, expressions.propcorrect_prime1neg, 
+expressions.propcorrect_prime2pos, expressions.propcorrect_prime2neg
+expressions.meanrt_prime1pos, expressions.meanrt_prime1neg, 
+expressions.meanrt_prime2pos, expressions.meanrt_prime2neg,
+)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/pos_responsekey:					 	stores the scancode of responsekey used for positive responses
+/neg_responsekey:						stores the scancode of the responsekey used for the negative responses
+										Note: the responsekeys get assigned in the expt element
+
+/countblock:							counts the experimental blocks
+/posLocation-
+/negLocation:							store 'left' or 'right'
+
+/targetindex:							stores the targetindex of the current target adjective
+/selectprime1:							store the assignment (itemnumber) of primes to prime1 and prime2
+/selectprime2:
+
+<values>
+/pos_responsekey = 0
+/neg_responsekey = 0
+/countblock = 0
+/posLocation = ""
+/negLocation = ""
+
+/targetindex = 0
+/selectprime1 = 0
+/selectprime2 = 0
+/posinstruct_x = 0
+/neginstruct_x = 0
+/prime1 = ""
+/prime2 = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/propcorrect:				overall proportion correct (test trials only)
+/meanRT:					overall correct mean latency in ms (test trials only)
+
+/meanRT_prime1pos:			correct mean latency (in ms) in Prime1-Positive Adjective Pairings
+/meanRT_prime1neg:			correct mean latency (in ms) in Prime1-Negative Adjective Pairings
+/meanRT_prime2pos:			correct mean latency (in ms) in Prime2-Positive Adjective Pairings
+/meanRT_prime2neg:			correct mean latency (in ms) in Prime2-Negative Adjective Pairings
+
+/propcorrect_prime1pos:		proportion correct in Prime1-Positive Adjective Pairings
+/propcorrect_prime1neg:		proportion correct in Prime1-Negative Adjective Pairings
+/propcorrect_prime2pos:		proportion correct in Prime2-Positive Adjective Pairings
+/propcorrect_prime2neg:		proportion correct in Prime2-Negative Adjective Pairings
+
+<expressions>
+/propcorrect = list.accuracy.mean
+/meanRT = list.latencies.mean
+
+/meanRT_prime1pos = list.latencies_Pr1P.mean
+/meanRT_prime1neg = list.latencies_Pr1N.mean
+/meanRT_prime2pos = list.latencies_Pr2P.mean
+/meanRT_prime2neg = list.latencies_Pr2N.mean
+
+/propcorrect_prime1pos = list.accuracy_Pr1P.mean
+/propcorrect_prime1neg = list.accuracy_Pr1N.mean
+/propcorrect_prime2pos = list.accuracy_Pr2P.mean
+/propcorrect_prime2neg = list.accuracy_Pr2N.mean
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text instructions>
+/ items = instructions
+/ select = sequence
+/ fontstyle = ("Arial", 3.25%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (90%, 90%)
+/ resetinterval = 0
+</text>
+
+<trial instructions>
+/ stimulusframes = [1 = instructions, goodinstruct, badinstruct]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+
+This trial is used when participants are asked to place their fingers on specific response
+buttons. On the touchscreen, this trial presents the (inactive) response buttons to the participants.
+<trial getReady>
+/ stimulusframes = [1 = getReady, goodinstruct, badinstruct]
+/ trialduration = 5000
+/ validresponse = (parameters.responsekey_left, parameters.responsekey_right)
+/ beginresponsetime = 5000
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text prime1>
+/items = primes
+/select = values.selectprime1
+/ fontstyle = ("Courier New", parameters.fontheight, false, false, false, false, 5, 1)
+/ txcolor = white
+/txbgcolor = black
+/position = (50%, 50%)
+</text>
+
+<text prime2>
+/items = primes
+/select = values.selectprime2
+/ fontstyle = ("Courier New", parameters.fontheight, false, false, false, false, 5, 1)
+/ txcolor = white
+/txbgcolor = black
+/position = (50%, 50%)
+</text>
+
+<text mask>
+/items = mask
+/select = 1
+/ fontstyle = ("Courier New", parameters.fontheight, false, false, false, false, 5, 1)
+/ txcolor = white
+/txbgcolor = black
+/position = (50%, 50%)
+</text>
+
+<text maskeraser>
+/items = mask
+/select = 1
+/ fontstyle = ("Courier New", parameters.fontheight, false, false, false, false, 5, 1)
+/ txcolor = black
+/txbgcolor = black
+/position = (50%, 50%)
+</text>
+
+<text positivetarget>
+/items = positive
+/select = values.targetindex
+/ fontstyle = ("Courier New", parameters.fontheight, false, false, false, false, 5, 1)
+/ txcolor = white
+/txbgcolor = black
+/position = (50%, 50%)
+</text>
+
+<text negativetarget>
+/items = negative
+/select = values.targetindex
+/ fontstyle = ("Courier New", parameters.fontheight, false, false, false, false, 5, 1)
+/ txcolor = white
+/txbgcolor = black
+/position = (50%, 50%)
+</text>
+
+<text errorfeedback>
+/items = ("X")
+/ fontstyle = ("Courier New", 10%, true, false, false, false, 5, 1)
+/ txcolor = red
+/txbgcolor = black
+/position = (50%, 70%)
+</text>
+
+<text practiceprime>
+/items = practiceprime
+/select = 1
+/ fontstyle = ("Courier New", parameters.fontheight, false, false, false, false, 5, 1)
+/ txcolor = white
+/txbgcolor = black
+/position = (50%, 50%)
+</text>
+
+**************************
+key reminders
+**************************
+
+<text goodinstruct>
+/items = ("GOOD")
+/position = (values.posinstruct_x, 10%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = gray
+/txbgcolor = black
+/ erase = false
+</text>
+
+<text badinstruct>
+/items = ("BAD")
+/position = (values.neginstruct_x, 10%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txcolor = gray
+/txbgcolor = black
+/ erase = false
+</text>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	LISTS
+*******************************************************************************************************************
+*******************************************************************************************************************
+The following lists control the selection of stimuli for block 1 and block 2. Together they ensure that
+* both primes are presented with each of the 32 adjectives (16 positive, 16 negative)
+* NO repeats of adjectives in a block
+
+
+Note: these lists are shared by both primes during block 1;
+=> items are sampled without replacement
+=> ensures that no adjective is repeated during block 1
+<list indices_block1_pos>
+/items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
+/replace = false
+</list>
+
+<list indices_block1_neg>
+/items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
+/replace = false
+</list>
+
+
+Note: these lists get filled automatically during runtime (block 1)
+=> the indices selected by prime1 get stored under prime2 lists and vice versa
+=> the items are selected without replacement from each list
+=> ensures that both primes are presented with all 32 adjectives
+=> ensures that no adjective is repeated during block 2
+
+<list indices_block2_prime1_pos>
+/replace = false
+</list>
+
+<list indices_block2_prime1_neg>
+/replace = false
+</list>
+
+<list indices_block2_prime2_pos>
+/replace = false
+</list>
+
+<list indices_block2_prime2_neg>
+/replace = false
+</list>
+
+
+*************************************************
+Data Lists: used for descriptive statistics
+store latencies/accuracy data
+fill up during runtime
+*************************************************
+
+<list accuracy>
+</list>
+
+<list latencies>
+</list>
+
+<list accuracy_Pr1P>
+</list>
+
+<list latencies_Pr1P>
+</list>
+
+<list accuracy_Pr1N>
+</list>
+
+<list latencies_Pr1N>
+</list>
+
+<list accuracy_Pr2P>
+</list>
+
+<list latencies_Pr2P>
+</list>
+
+<list accuracy_Pr2N>
+</list>
+
+<list latencies_Pr2N>
+</list>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************************
+Experimental Trials: with primes
+********************************
+Note:
+*selects next target
+*presents the mask, the prime, the mask, a maskeraser, and finally the positivetarget
+-> presentation times taken from Olson & Fazio (2002)
+*trial aborts when response is given
+(Note: responses before 224ms -target presentation time- are invalid)
+* summary statistics are updated 
+
+<trial prime1_positive>
+/ontrialbegin = [
+	if (values.countblock == 1){
+		values.targetindex = list.indices_block1_pos.nextValue;
+		list.indices_block2_prime2_pos.insertItem(values.targetindex, (trial.prime1_positive.trialcount+1));
+	} else{
+		values.targetindex = list.indices_block2_prime1_pos.nextValue;		
+	}
+]
+/stimulustimes = [0 = mask; 56 = prime1; 84 = mask; 126 = maskeraser; 224 = positivetarget]
+/validresponse = (values.pos_responsekey, values.neg_responsekey)
+/correctresponse = (values.pos_responsekey)
+/beginresponsetime = 224
+
+/ontrialend = [
+	list.accuracy.appendItem(trial.prime1_positive.correct);
+	list.accuracy_Pr1P.appendItem(trial.prime1_positive.correct);
+	
+	if (trial.prime1_positive.correct) {
+		list.latencies.appendItem(trial.prime1_positive.latency);
+		list.latencies_Pr1P.appendItem(trial.prime1_positive.latency);
+	}
+]
+</trial>
+
+<trial prime1_negative>
+/ontrialbegin = [
+	if (values.countblock == 1){
+		values.targetindex = list.indices_block1_neg.nextValue;
+		list.indices_block2_prime2_neg.insertItem(values.targetindex, (trial.prime1_negative.trialcount+1));	
+	} else {
+		values.targetindex = list.indices_block2_prime1_neg.nextValue;	
+	}
+]
+/stimulustimes = [0 = mask; 56 = prime1; 84 = mask; 126 = maskeraser; 224 = negativetarget]
+/validresponse = (values.pos_responsekey, values.neg_responsekey)
+/correctresponse = (values.neg_responsekey)
+/beginresponsetime = 224
+/ontrialend = [
+	list.accuracy.appendItem(trial.prime1_negative.correct);
+	list.accuracy_Pr1N.appendItem(trial.prime1_negative.correct);
+	
+	if (trial.prime1_negative.correct) {
+		list.latencies.appendItem(trial.prime1_negative.latency);
+		list.latencies_Pr1N.appendItem(trial.prime1_negative.latency);
+	}
+]
+</trial>
+
+<trial prime2_positive>
+/ontrialbegin = [
+	if (values.countblock == 1) {
+		values.targetindex = list.indices_block1_pos.nextValue;	
+		list.indices_block2_prime1_pos.insertItem(values.targetindex, (trial.prime2_positive.trialcount+1));	
+	} else {
+		values.targetindex = list.indices_block2_prime2_pos.nextValue;		
+	}
+]
+/stimulustimes = [0 = mask; 56 = prime2; 84 = mask; 126 = maskeraser; 224 = positivetarget]
+/validresponse = (values.pos_responsekey, values.neg_responsekey)
+/correctresponse = (values.pos_responsekey)
+/beginresponsetime = 224
+/ontrialend = [
+	list.accuracy.appendItem(trial.prime2_positive.correct);
+	list.accuracy_Pr2P.appendItem(trial.prime2_positive.correct);
+	
+	if (trial.prime2_positive.correct) {
+		list.latencies.appendItem(trial.prime2_positive.latency);
+		list.latencies_Pr2P.appendItem(trial.prime2_positive.latency);
+	}
+]
+</trial>
+
+<trial prime2_negative>
+/ontrialbegin = [
+	if (values.countblock == 1) {
+		values.targetindex = list.indices_block1_neg.nextValue;	
+		list.indices_block2_prime1_neg.insertItem(values.targetindex, (trial.prime2_negative.trialcount+1));
+	} else {
+		values.targetindex = list.indices_block2_prime2_neg.nextValue;	
+	}
+]
+/stimulustimes = [0 = mask; 56 = prime2; 84 = mask; 126 = maskeraser; 224 = negativetarget]
+/validresponse = (values.pos_responsekey, values.neg_responsekey)
+/correctresponse = (values.neg_responsekey)
+/beginresponsetime = 224
+/ontrialend = [
+	list.accuracy.appendItem(trial.prime2_negative.correct);
+	list.accuracy_Pr2N.appendItem(trial.prime2_negative.correct);
+	
+	if (trial.prime2_negative.correct) {
+		list.latencies.appendItem(trial.prime2_negative.latency);
+		list.latencies_Pr2N.appendItem(trial.prime2_negative.latency);
+	}
+]
+</trial>
+
+
+*****************************
+Practice Trials: without primes (but in this script with pseudo prime)
+*****************************
+Note: Olson & Fazio (2002) do not report using a practiceprime,
+however, in order for the practice trials to "appear" similar, this script
+uses a pseudo prime
+
+<trial practice_positive>
+/ontrialbegin = [
+	values.targetindex = list.indices_block1_pos.nextValue;
+]
+/stimulustimes = [0 = mask; 56 = practiceprime; 84 = mask; 126 = maskeraser; 224 = positivetarget]
+/validresponse = (values.pos_responsekey, values.neg_responsekey)
+/correctresponse = (values.pos_responsekey)
+/beginresponsetime = 224
+/errormessage = true(errorfeedback, 500)
+</trial>
+
+<trial practice_negative>
+/ontrialbegin = [
+	values.targetindex = list.indices_block1_neg.nextValue;
+]
+/stimulustimes = [0 = mask; 56 = practiceprime; 84 = mask; 126 = maskeraser; 224 = negativetarget]
+/validresponse = (values.pos_responsekey, values.neg_responsekey)
+/correctresponse = (values.neg_responsekey)
+/beginresponsetime = 224
+/errormessage = true(errorfeedback, 500)
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<block practice>
+/trials = [
+	1 = instructions;
+	2 = getReady; 
+	3-18 = noreplace(practice_positive, practice_negative);
+	19 = instructions;
+]
+/onblockend = [
+	list.indices_block1_neg.reset();
+	list.indices_block1_pos.reset();
+]
+</block>
+
+<block SubliminalPriming>
+/onblockbegin = [
+	values.countblock += 1;
+]
+/trials = [
+	1 = getReady; 
+	2-33 = noreplace(prime1_positive, prime1_negative, prime2_positive, prime2_negative);
+]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+odd groupnumber vs. even groupnumbers: counterbalance prime1 and prime2 assignment
+group1/2 vs. group3/4: counterbalance responsekey assignment 
+
+Assignment by groupnumber
+
+<expt a>
+/groups = (1 of 4)
+/onexptbegin = [
+	values.pos_responsekey = parameters.responsekey_left; 
+	values.neg_responsekey = parameters.responsekey_right; 
+	values.posLocation = "left";
+	values.negLocation = "right";
+	values.posinstruct_x = 20%; 
+	values.neginstruct_x = 80%;
+	values.selectprime1 = 1; 
+	values.selectprime2 = 2;
+	values.prime1 = item.primes.item(values.selectprime1);
+	values.prime2 = item.primes.item(values.selectprime2);
+]
+/blocks = [
+	1 = practice; 
+	2-3 = SubliminalPriming;
+	4 = finish;
+]
+</expt>
+
+<expt b>
+/groups = (2 of 4)
+/onexptbegin = [
+	values.pos_responsekey = parameters.responsekey_left; 
+	values.neg_responsekey = parameters.responsekey_right; 
+	values.posinstruct_x = 20%; 
+	values.neginstruct_x = 80%;
+	values.selectprime1 = 2; 
+	values.selectprime2 = 1;
+	values.posLocation = "left";
+	values.negLocation = "right";
+	values.prime1 = item.primes.item(values.selectprime1);
+	values.prime2 = item.primes.item(values.selectprime2);
+]
+/blocks = [
+	1 = practice; 
+	2-3 = SubliminalPriming;
+	4 = finish;
+]
+</expt>
+
+<expt c>
+/groups = (3 of 4)
+/onexptbegin = [
+	values.pos_responsekey = parameters.responsekey_right; 
+	values.neg_responsekey = parameters.responsekey_left; 
+	values.posinstruct_x = 80%; 
+	values.neginstruct_x = 20%;
+	values.selectprime1 = 1; 
+	values.selectprime2 = 2;
+	values.posLocation = "right";
+	values.negLocation = "left";	
+	values.prime1 = item.primes.item(values.selectprime1);
+	values.prime2 = item.primes.item(values.selectprime2);
+]
+/blocks = [
+	1 = practice; 
+	2-3 = SubliminalPriming;
+	4 = finish;
+]
+</expt>
+
+<expt d>
+/groups = (4 of 4)
+/onexptbegin = [
+	values.pos_responsekey = parameters.responsekey_right; 
+	values.neg_responsekey = parameters.responsekey_left; 
+	values.posinstruct_x = 80%; 
+	values.neginstruct_x = 20%;
+	values.selectprime1 = 2; 
+	values.selectprime2 = 1;
+	values.posLocation = "right";
+	values.negLocation = "left";		
+	values.prime1 = item.primes.item(values.selectprime1);
+	values.prime2 = item.primes.item(values.selectprime2);
+]
+/blocks = [
+	1 = practice; 
+	2-3 = SubliminalPriming;
+	4 = finish;
+]
+</expt>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

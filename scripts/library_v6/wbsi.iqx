@@ -1,0 +1,315 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							 WHITE BEAR SUPPRESSION INVENTORY (WBSI)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-14-2013
+last updated:  03-02-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 03-02-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+
+This script implements the White Bear Suppression Inventory (WBSI); a survey to assess thought suppression.
+Thought suppression is related to obsessive thinking and anxiety.
+
+Reference:
+Wegner, D. M., & Zanakos, S. (1994). Chronic thought suppression. Journal of
+Personality, 62, 615–640.
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+15 questions with 5 response options (A-E; scored 1-5 respectively)
+Totalscore: Min = 15; Max = 75
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'wbsi.iqdat' 
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	   	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (strongly disagree) - 5 (strongly agree)
+								(no reversed questions)
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+								
+								
+(2) Summary data file: 'wbsi_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+
+WBSI_totalscore:				the Totalscore, Min = 15; Max = 75
+
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,  expressions.WBSI_totalscore)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/WBSI_totalscore = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response + radiobuttons.q5.response + 
+radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + radiobuttons.q9.response + radiobuttons.q10.response + 
+radiobuttons.q11.response + radiobuttons.q12.response + radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q15.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: change 
+/required = true to /required = false if partipants should be able to skip questions
+
+<radiobuttons q1>
+/caption =  "There are things I prefer not to think about."
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q2>
+/caption =  "Sometimes I wonder why I have the thoughts I do. "
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q3>
+/caption =  "I have thoughts that I cannot stop."
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q4>
+/caption =  "There are images that come to mind that I cannot erase. "
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q5>
+/caption =  "My thoughts frequently return to one idea. "
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q6>
+/caption =  "I wish I could stop thinking of certain things. "
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q7>
+/caption =  "Sometimes my mind races so fast I wish I could stop it. "
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q8>
+/caption =  "I always try to put problems out of mind. "
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+
+<radiobuttons q9>
+/caption =  "There are thoughts that keep jumping into my head. "
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q10>
+/caption =  "There are things that I try not to think about. "
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q11>
+/caption =  "Sometimes I really wish I could stop thinking. "
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q12>
+/caption =  " I often do things to distract myself from my thoughts. "
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q13>
+/caption =  "I have thoughts that I try to avoid. "
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q14>
+/caption =  "There are many thoughts that I have that I don't tell anyone. "
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q15>
+/caption =  "Sometimes I stay busy just to keep thoughts from intruding on my mind."
+/options = ("Strongly Disagree", "Disagree", "Neutral or Don't know", "Agree", "Strongly Agree")
+/optionvalues = ("1", "2", "3", "4", "5")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage WBSI1>
+/caption = "This survey is about thoughts. There are no right or wrong answers, so please respond honestly to each of the items below. Be sure to answer every item by clicking the appropriate answer.
+"
+/questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage WBSI2>
+/caption = "This survey is about thoughts. There are no right or wrong answers, so please respond honestly to each of the items below. Be sure to answer every item by clicking the appropriate answer.
+"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage WBSI3>
+/caption = "This survey is about thoughts. There are no right or wrong answers, so please respond honestly to each of the items below. Be sure to answer every item by clicking the appropriate answer.
+"
+/questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage WBSI4>
+/caption = "This survey is about thoughts. There are no right or wrong answers, so please respond honestly to each of the items below. Be sure to answer every item by clicking the appropriate answer.
+"
+/questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage WBSI5>
+/caption = "This survey is about thoughts. There are no right or wrong answers, so please respond honestly to each of the items below. Be sure to answer every item by clicking the appropriate answer.
+"
+/questions = [1 =  q13, q14, q15]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<survey WBSI>
+/ pages = [
+	1 = WBSI1; 
+	2 = WBSI2; 
+	3 = WBSI3;
+	4 = WBSI4;
+	5 = WBSI5;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = true
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Finish - Thank you!"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

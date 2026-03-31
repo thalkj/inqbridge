@@ -1,0 +1,455 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+						THE CLINICAL IMPAIRMENT ASSESSMENT QUESTIONNAIRE (CIA)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 06-10-2014
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a computer version of the paper-and-pencil version CIA as published by:
+
+Bohn K, & Fairburn CG. The Clinical Impairment Assessment Questionnaire (CIA 3.0). In Fairburm CG (ed).
+Cognitive Behavior Therapy and Eating Disorders. New York: Guilford Press, 2008.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+From Appendix III:
+"The Clinical Impairment Assessment questionnaire (CIA) is a 16-item self-report measure of 
+the severity of psychological impairment due to eating disorder features (Bohn and Fairburn, 2008). 
+It focuses on the past 28 days. The 16 items cover impairment in domains of life that are typically affected by
+eating disorder psychopathology: mood and self-perception, cognitive functioning, interpersonal functioning and work performance.
+The purpose of the CIA is to provide a simple single index of the severity of psychosocial impairmente secondary to 
+eating disorder features."
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'cia.iqdat' 
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values: 0 - 3)
+								Scale: 0 = not at all - 3 = a lot
+								no reversed coded questions
+									
+q*_latency:						how much time the participant spent on the surveypage with this particular question
+								(the last time this particular surveypage was visited) (in ms)
+
+(2) Summary data file: 'cia_summary*.iqdat'
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)	
+
+countresponses:				counts how many questions a participant answered 
+totalscore:					total of all answered questions (independent of number of responses)
+meanscore:					mean score based on all answered questions
+
+CIA_impairmentscore:		stores the global CIA impairment score (0-48) 
+							IF at least 12 questions were answered (in the case of missing questions (max. 4), the
+							meanscore is used to estimate the missing values)
+							IF fewer than 12 questions were answered, the stored value will be
+							'not calculated - too few responses' (see Bohn & Fairburn, 2008)
+
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP
+___________________________________________________________________________________________________________________	
+The 16 questions are set up as radiobutton questions with 4 answer choices.
+There are 4 questions per surveypage - participants can go back and forth.
+No answer is required.
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+Instructions are originals with minor edits to refer to the computer set-up.
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+/quitinstructions:			the instructions to quit the questionnaire (default: none given)
+								Note: the quitcommand can be changed under DEFAULTS
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please select the answer choice which best describes how your eating habits, exercising or feelings about your eating, shape or weight have affected your life over the past four weeks (28 days). Thank you."
+</parameters>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ quitcommand = (Alt+18)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+raw data: CIA.iqx
+********************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+values.countresponses, expressions.totalscore, expressions.meanscore, values.CIA_impairmentscore)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES
+*******************************************************************************************************************
+*******************************************************************************************************************
+/countresponses:			counts how many questions a participant did answer
+/CIA_impairmentscore:		stores the global CIA impairment score (0-48) 
+								IF at least 12 questions were answered (in the case of missing questions (max. 4) , the
+								mean response score is used to estimate the missing values)
+								IF fewer than 12 questions were answered, the stored value will be
+								'not calculated - too few responses'
+								(see Bohn & Fairburn, 2008)
+
+<values>
+/countresponses = 0
+/CIA_impairmentscore = ""
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/calculate_numberof_responses:	expression that determines values.countresponses
+/totalscore:					totalscore of all answered questions (independent of number of responses)
+/meanscore:						mean score based on all answered questions
+/calculateCIA_impairmentscore:	expression that determines values.cia_impairmentscore
+ 
+<expressions>
+/calculate_numberof_responses = 
+	if (radiobuttons.q1.response != "") values.countresponses += 1;
+	if (radiobuttons.q2.response != "") values.countresponses += 1;
+	if (radiobuttons.q3.response != "") values.countresponses += 1;
+	if (radiobuttons.q4.response != "") values.countresponses += 1;
+	if (radiobuttons.q5.response != "") values.countresponses += 1;
+	if (radiobuttons.q6.response != "") values.countresponses += 1;
+	if (radiobuttons.q7.response != "") values.countresponses += 1;
+	if (radiobuttons.q8.response != "") values.countresponses += 1;
+	if (radiobuttons.q9.response != "") values.countresponses += 1;
+	if (radiobuttons.q10.response != "") values.countresponses += 1;
+	if (radiobuttons.q11.response != "") values.countresponses += 1;
+	if (radiobuttons.q12.response != "") values.countresponses += 1;
+	if (radiobuttons.q13.response != "") values.countresponses += 1;
+	if (radiobuttons.q14.response != "") values.countresponses += 1;
+	if (radiobuttons.q15.response != "") values.countresponses += 1;
+	if (radiobuttons.q16.response != "") values.countresponses += 1
+/totalscore = if (values.countresponses > 0)
+	radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response + 
+	radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + 
+	radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q11.response + radiobuttons.q12.response + 
+	radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q15.response + radiobuttons.q16.response
+	else ""
+/meanscore = expressions.totalscore/values.countresponses
+/calculateCIA_impairmentscore = 
+	if (radiobuttons.q1.response != "") values.CIA_impairmentscore += radiobuttons.q1.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q2.response != "") values.CIA_impairmentscore += radiobuttons.q2.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q3.response != "") values.CIA_impairmentscore += radiobuttons.q3.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q4.response != "") values.CIA_impairmentscore += radiobuttons.q4.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q5.response != "") values.CIA_impairmentscore += radiobuttons.q5.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q6.response != "") values.CIA_impairmentscore += radiobuttons.q6.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q7.response != "") values.CIA_impairmentscore += radiobuttons.q7.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q8.response != "") values.CIA_impairmentscore += radiobuttons.q8.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q9.response != "") values.CIA_impairmentscore += radiobuttons.q9.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q10.response != "") values.CIA_impairmentscore += radiobuttons.q10.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q11.response != "") values.CIA_impairmentscore += radiobuttons.q11.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q12.response != "") values.CIA_impairmentscore += radiobuttons.q12.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q13.response != "") values.CIA_impairmentscore += radiobuttons.q13.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q14.response != "") values.CIA_impairmentscore += radiobuttons.q14.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q15.response != "") values.CIA_impairmentscore += radiobuttons.q15.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (radiobuttons.q16.response != "") values.CIA_impairmentscore += radiobuttons.q16.response else values.CIA_impairmentscore += expressions.meanscore;
+	if (values.countresponses < 12) values.CIA_impairmentscore = "not calculated - too few responses"
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<caption instruct>
+/caption = "
+Over the past <u><b>28 days</b></u>, to what extent have your<br>
+. ... eating habits<br>
+. ... exercising<br>
+or feelings about your eating, shape or weight. ... "
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+</caption>
+
+
+<radiobuttons q1>
+/caption = "1. ... made it difficult to concentrate?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. ... made you feel critical of yourself?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. ... stopped you going out with others?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. ... affected your work performance (if applicable)?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. ...  made you forgetful?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. ... affected your ability to make everyday decisions?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. ... interfered with meals with family or friends?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. ... made you upset?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. ... made you feel ashamed of yourself?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. ... made it difficult to eat out with others?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. ... made you feel guilty?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. ... interfered with you doing things you used to enjoy?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. ... made you absent-minded?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "14. ... made you feel a failure?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. ... interfered with your relationships with others?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "16. ... made you worry?"
+/ options = ("A lot", "Quite a bit", "A little", "Not at all")
+/ optionvalues = ("3", "2", "1", "0")
+/required = false
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage CIA1>
+/caption ="<%parameters.pageinstructions%>"
+/ txcolor = black
+/questions = [1 = instruct, q1, q2, q3]
+</surveypage>
+
+<surveypage CIA2>
+/questions = [1 = instruct, q4, q5, q6]
+</surveypage>
+
+<surveypage CIA3>
+/questions = [1 = instruct, q7, q8, q9]
+</surveypage>
+
+<surveypage CIA4>
+/questions = [1 = instruct, q10, q11, q12]
+</surveypage>
+
+<surveypage CIA5>
+/questions = [1 = instruct, q13, q14, q15]
+</surveypage>
+
+<surveypage CIA6>
+/questions = [1 = instruct, q16]
+</surveypage>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey CIA>
+/pages = [
+	1 = CIA1;
+	2 = CIA2;
+	3 = CIA3;
+	4 = CIA4;
+	5 = CIA5;
+	6 = CIA6;
+]
+/screencapture = false
+/onblockend = [
+	expressions.calculate_numberof_responses;
+	expressions.calculateCIA_impairmentscore;
+]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

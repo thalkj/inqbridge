@@ -1,0 +1,1330 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+											*Dots Task*
+										(keyboard version)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-02-2018
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Dots Task. The Dots Task is a spatial incompability task with 
+arbitrary shape stimuli similar to the Simon Task. The Dots Task was designed to 
+target working memory and inhibition.
+
+Dots Task Reference:
+
+M.C. Davidson, D. Amso, L.C. Anderson, A. Diamond (2006). Development of cognitive control and 
+executive functions from 4 to 13 years: Evidence from manipulations of memory, inhibition, 
+and task switching. Neuropsychologia 44, 2037–2078
+
+Simon Task Reference:
+
+Simon, J.R. and Wolf, J.D. (1963). Choice reaction times as a function of angular stimulus-response 
+correspondence and age. Ergonomics, 6, 99-105.
+
+Bialystok, E., Craik, F. I. M., Klein, R., & Viswanathan, M. (2004). Bilingualism, Aging, 
+and Cognitive Control: Evidence From the Simon Task. Psychology and Aging, 19(2), 290-303.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION
+___________________________________________________________________________________________________________________	
+Participants are presented trials with either a red circle or a blue circle that appear to the 
+left or right of a fixation cross.
+If participants see a red circle, they are asked to press the corresponding left or right 
+response key (=congruent trials). For example, if the red circle is left to the fixation cross, 
+participants are asked to press the left 'A' response key.
+If participants see a blue circle, they are asked to press the opposite response key (=incongruent trials).
+For example, if the blue circle is left to the fixation cross, participants are asked to 
+press the right 'L' response key.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'dotstask_mi_raw*.iqdat'*
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.
+										
+practice:						1 = practice block; 
+								0 = test
+									
+position:						1 = stimulus is positioned on the left; 
+								2 = stimulus is positioned on the right
+									
+congruence:						1 = congruent trial; 
+								2 = incongruent trial
+									
+prevCongruence:					the congruence of the previous trial (important for mixed condition only)
+
+switch:							1 = switch trial (trial type changed from congruent to incongruent or vice versa);
+								2 = nonswitch trial (trial type stayed the same)
+									
+countSwitch:					counts the number of switch trials per block									
+									
+stimulusitem:					the presented stimuli in order of trial presentation
+
+response:						scancode of the the participant's response key
+								30 = A = left
+								38 = L = right
+										
+correct:						accuracy of response: 
+								1 = correct response; 
+								0 = otherwise
+										
+Latency: 						the response latency (in ms); measured from: onset of stim
+
+list.ACC_practice.mean:			the proportion correct during the current practice block
+countPractice:					counts the number of practice blocks run
+
+
+(2) Summary data file: 'dotstask_mi_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+///Practice Performance:									
+									
+countPractice:					counts the number of practice blocks run
+practiceACC:					the highest proportion correct in one of the practice blocks (if not run, propCorrect = 0)
+
+practicePass:					1 = participant successfully passed the practice session; 
+								0 = otherwise
+									
+///Test Performance:									
+
+propCorrect:					proportion correct across all test trials
+meanRT:							mean latency of correct responses across all test trials
+									
+propCorrect_switch:				proportion correct across switch trials
+meanRT_switch:					mean latency of correct responses across switch test trials
+								switch trial: switch from congruent to incongruent trial and vice versa
+
+propCorrect_nonswitch:			proportion correct across nonswitch trials
+meanRT_nonswitch:				mean latency of correct responses across nonswitch test trials									
+									
+propCorrect_congruent:			proportion correct across congruent test trials
+meanRT_congruent:				mean latency of correct responses across congruent test trials
+
+propCorrect_incongruent:		proportion correct across incongruent test trials
+meanRT_incongruent:				mean latency of correct responses across incongruent test trials
+
+SimonEffect	:					ms difference in "[mean corrRT Incongruent] - [mean corrRT Congruent]"
+								positive value: participants responded faster when 
+								stimulus location and response button location were congruent 
+								("stimulus-response compatibility") => Simon Effect
+								[negative value: participants responded faster when 
+								stimulus location and response button location 
+								were incongruent]
+									
+									
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+1. Practice Block(s): a maximum of 3 (default, can be set under section Editable Parameters) practice blocks of 
+8 trials. If participants reach a performance of 75% correct (default, can be set under section Editable Parameters) 
+during any of the blocks, the test block is started - otherwise the script is aborted after 3 unsuccessful 
+practice blocks. During practice, participants receive positive feedback for 500ms  if they
+press the correct response button. For incorrect responses as well as noresponses, participants will get a 
+reminder of the rules and have to retry the trial (at this point, only correct responses are accepted to 
+move to the next trial).
+
+2. Test: 10 'red circle' trials (5 red circles left, 5 red circles right), 10 'blue circle' trials 
+(5 blue circle left, 5 blue circle right)
+	=> random order with constraint that max. 3 of the same trials can be run consecutively
+	=> number of switch trials will vary (minimum number of switch trials = 6 for 20 trials)
+		switch trial: switch from congruent to incongruent trial and vice versa	
+	
+Note: number of trials per block can be set under section Editable Parameters
+
+Trial Sequence:
+stimulus (circle)-> max. 1750ms (editable) -> iti: 1000ms (editable)
+(timings can easily be changed under section Editable Parameters)
+	
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/congruentStim:						stores the label used for the congruent stim (default: "RED circle")
+/incongruentStim:					stores the label used for the incongruent stim (default: "BLUE circle")
+									Note: if the stimuli are changed, picture.congruentStim and picture.incongruentStim need
+									to be updated accordingly
+
+/minPracticeACC:					the minimum practice performance (proportion correct) to let participants move from a 
+									practice block to a test block (default: 0.75)
+								
+/maxPracticeRepeats:				number of times a practice blocks can be repeated before the script is aborted (default: 3)
+/numberPracticeTrials:				the number of practice trials per practice block (default: 8)
+
+/numberTestTrials:					the number of test trials per test block (default: 20)
+									Note: the number of trials should be divisible by 4
+									
+/readyDuration:						the duration (in ms) of the get-ready-trial
+/stimDuration:						the duration (in ms) of the stimulus presentation (= response timeout) (default: 1750)
+/iti:								the intertrial interval (in ms) (default: 1000)
+
+/picSize:							the proportional sizing (proportional to canvas height) of the pictures (default: 10%)
+/fixationSize:						the proportional sizing (proportional to canvas height) of the fixation cross (default: 15%)
+/left_x:							the left x-coordinate in canvas percentage (default: 30%)
+/right_x:							the right x-coordinate in canvas percentage (default: 70%)
+									Note: left edge of canvas = 0%, right edge of canvas = 100%
+									(canvas = portion of the screen dedicated for the script)
+
+Key Assignment: 
+/leftKey:							the left response button (default: "A")
+/rightKey:							the the right response button (default: "L")
+									
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/congruentStim = "RED circle"
+/incongruentStim = "BLUE circle"
+
+/minPracticeACC = 0.75
+/maxPracticeRepeats = 3
+/numberPracticeTrials = 8
+/numberTestTrials = 20
+
+/readyDuration = 2000
+/stimDuration = 1750
+/iti = 1000
+
+/picSize = 10%
+/fixationSize = 15%
+/left_x = 30%
+/right_x = 70%
+
+/leftKey = "A"
+/rightKey = "L"
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI:
+**************************************************************************************************************
+**************************************************************************************************************
+
+<picture congruentStim>
+/ items = ("redcircle.png")
+/ size = (parameters.picSize, parameters.picSize)
+/ erase = false
+</picture>
+
+<picture incongruentStim>
+/ items = ("bluecircle.png")
+/ size = (parameters.picSize, parameters.picSize)
+/ erase = false
+</picture>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+</instruct>
+
+<text welcome>
+/ items = ("Welcome!")
+/ fontstyle = ("Arial", 10%, true, false, false, false, 5, 1)
+/ position = (50%, 10%)
+/ vjustify = center
+/ size = (80%, 12%)
+</text>
+
+
+<text intro>
+/ items = ("blue and red circles will appear left or right to a fixation cross")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ position = (50%, 75%)
+/ vjustify = center
+/ size = (80%, 11%)
+</text>
+
+<video demo>
+/ items = ("demo.gif")
+/ position = (50%, 50%)
+/ size = (40%, 40%)
+/ loop = true
+</video>
+
+<text continue>
+/ items = ("<press Spacebar to continue>")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ vjustify = center
+/ hjustify = center
+/ size = (40%, 8%)
+</text>
+
+<text continueLeft>
+/ items = ("Press the left '<%parameters.leftKey%>' <%expressions.buttoninstruct2%> now")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ position = (50%, 83%)
+/ vjustify = center
+/ size = (80%, 8%)
+</text>
+
+<text continueRight>
+/ items = ("Press the right '<%parameters.rightKey%>' <%expressions.buttoninstruct2%> now")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ position = (50%, 83%)
+/ vjustify = center
+/ size = (80%, 8%)
+</text>
+
+<text congruentTask>
+/ items = ("If you see the <%parameters.congruentStim%>: 
+Press the <%expressions.buttoninstruct2%> on the SAME side as the <%parameters.congruentStim%>")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ position = (50%, 15%)
+/ vjustify = center
+/ size = (90%, 23%)
+</text>
+
+<text congruentTask2>
+/ items = ("Here the <%parameters.congruentStim%> appears on the left. The <%expressions.buttoninstruct2%> on the SAME side is the left '<%parameters.leftKey%>' <%expressions.buttoninstruct2%>.")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ position = (50%, 30%)
+/ vjustify = center
+/ size = (80%, 20%)
+</text>
+
+<text incongruentTask>
+/ items = ("If you see the <%parameters.incongruentStim%>: 
+Press the <%expressions.buttoninstruct2%> on the OPPOSITE side of the <%parameters.incongruentStim%>")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ position = (50%, 15%)
+/ vjustify = center
+/ size = (95%, 20%)
+</text>
+
+<text incongruentTask2>
+/ items = ("Here the <%parameters.incongruentStim%> appears on the left. The <%expressions.buttoninstruct2%> on the OPPOSITE side is the right '<%parameters.rightKey%>' <%expressions.buttoninstruct2%>.")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ position = (50%, 30%)
+/ vjustify = center
+/ size = (80%, 15%)
+</text>
+
+<text responsekeys>
+/ items = ("<- <%expressions.buttoninstruct2%>s ->")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ vjustify = center
+/ size = (40%, 5%)
+/ erase = false
+</text>
+
+
+<text PracticeStart>
+/ items = ("Are you ready to play?
+~nRemember:
+Press the <%expressions.buttoninstruct2%> on the SAME side as the <%parameters.congruentStim%>.
+Press the <%expressions.buttoninstruct2%> on the OPPOSITE side of the <%parameters.incongruentStim%>.
+ 
+Try to be fast as you can to press the correct <%expressions.buttoninstruct2%>.
+~n~n~n~nPress SPACEBAR to start a practice session.")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ vjustify = center
+/ size = (90%, 80%)
+</text>
+
+<text start>
+/ items = ("<press SPACEBAR to start")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 65%)
+/ size = (40%, 8%)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+
+<text reminder_congruent>
+/ items = ("Press the <%expressions.buttoninstruct2%> on the SAME side as the <%parameters.congruentStim%>")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ position = (50%, 65%)
+/ vjustify = center
+/ size = (80%, 10%)
+</text>
+
+<text reminder_incongruent>
+/ items = ("Press the <%expressions.buttoninstruct2%> on the OPPOSITE side of the <%parameters.incongruentStim%>")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ position = (50%, 65%)
+/ vjustify = center
+/ size = (80%, 10%)
+</text>
+
+<text Feedback>
+/ items = ("Correct")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ position = (50%, 70%)
+/ vjustify = center
+/ size = (80%, 6%)
+/ txcolor = green
+/ txbgcolor = white
+</text>
+
+<text noResponseText>
+/ items = ("Try to be faster next time")
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (80%, 10%)
+/ vjustify = center
+/ txcolor = blue
+</text>
+
+
+<text teststart>
+/items = ("Good Job! Are you ready for the actual task?
+
+Remember:
+Press the <%expressions.buttoninstruct2%> on the SAME side as the <%parameters.congruentStim%>.
+Press the <%expressions.buttoninstruct2%> on the OPPOSITE side of the <%parameters.incongruentStim%>.
+ 
+Try to be fast as you can to press the correct <%expressions.buttoninstruct2%>.
+
+
+
+Press SPACEBAR to start the test.")
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 70%)
+/ vjustify = center
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/ items = ("Get Ready:
+~n<%expressions.buttoninstruct1%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+/ vjustify = center
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {
+	"Put your index fingers over the left and right response buttons";
+} else {
+	"Put your index fingers on the left <%parameters.leftKey%> and right <%parameters.rightKey%> keys";}
+/buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {
+	"response button";
+} else {
+	"response key";
+}
+</expressions>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+/ inputdevice = keyboard
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+values.practice, values.position, values.congruence, values.prevCongruence, values.switch, values.countSwitch, 
+stimulusitem, response, correct, latency, 
+list.ACC_practice.mean, values.countPractice)
+</data>
+
+
+***********************
+summary data file
+***********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed
+values.countPractice, values.practiceACC, values.practicePass,
+expressions.propCorrect, expressions.meanRT,
+expressions.propCorrect_switch, expressions.meanRT_switch,
+expressions.propCorrect_nonswitch, expressions.meanRT_nonswitch,
+expressions.propCorrect_congruent, expressions.meanRT_congruent,
+expressions.propCorrect_incongruent, expressions.meanRT_incongruent,
+expressions.SimonEffect)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/congruence:			1 = congruent trial; 2 = incongruent trial
+/stimDuration:			the current stim duration (= response timeout) in ms
+/position:				1 = stimulus is positioned on the left; 2 = stimulus is positioned on the right
+
+/prevCongruence:		the congruence of the previous trial (important for mixed condition only)
+/switch:				1 = switch trial (trial type changed from congruent to incongruent or vice versa);
+						2 = nonswitch trial (trial type stayed the same)
+/countSwitch:			counts the number of switch trials per block
+
+/selectTaskInstructions: helper variable to select the correct task instructions/reminder
+
+/practicePass:				1 = participant successfully passed the mixed practice; 0 = otherwise
+/practiceACC:			the highest proportion correct in one of the mixed practice blocks (if not run, propCorrect = 0)
+/countPractice:			counts the number of mixed practice blocks run
+
+<values>
+/congruence = 0
+/stimDuration = 0
+/position = 0
+
+/prevCongruence = 0
+/switch = 0
+/countSwitch = 0
+
+/selectTaskInstructions = 3
+
+/practicePass = 0
+/practiceACC = 0
+/countPractice = 0
+
+/practice = 1
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/propCorrect:				proportion correct across all test trials
+/meanRT:					mean latency of correct responses across all test trials
+
+/propCorrect_congruent:		proportion correct across congruent test trials
+/meanRT_congruent:			mean latency of correct responses across congruent test trials
+
+/propCorrect_incongruent:	proportion correct across incongruent test trials
+/meanRT_incongruent:		mean latency of correct responses across incongruent test trials
+
+/propCorrect_switch:		proportion correct across switch trials in mixed block
+/meanRT_switch:				mean latency of correct responses across switch test trials in mixed block
+								switch trial: switch from congruent to incongruent trial and vice versa
+
+/propCorrect_nonswitch:		proportion correct across nonswitch trials in mixed block
+/meanRT_nonswitch:			mean latency of correct responses across nonswitch test trials in mixed block
+
+
+<expressions>
+/propCorrect = list.ACC.mean
+/meanRT = list.RT.mean
+
+/propCorrect_congruent = list.ACC_congruent.mean
+/meanRT_congruent = list.RT_congruent.mean
+
+/propCorrect_incongruent = list.ACC_incongruent.mean
+/meanRT_incongruent = list.RT_incongruent.mean
+
+/propCorrect_switch = list.ACC_switch.mean
+/meanRT_switch = list.RT_switch.mean
+
+/propCorrect_nonswitch = list.ACC_nonswitch.mean
+/meanRT_nonswitch = list.RT_nonswitch.mean
+
+/SimonEffect = expressions.meanRT_incongruent - expressions.meanRT_congruent
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial intro1>
+/ stimulustimes = [
+	0 = clearScreen, welcome, intro, demo; 
+	5000 = continue;
+]
+/ validresponse = (" ")
+/ beginresponsetime = 5000
+/ recorddata = false
+</trial>
+
+
+<trial intro2>
+/ ontrialbegin = [
+	picture.congruentStim.hposition = parameters.left_x;
+]
+/ stimulustimes = [
+	0 = clearScreen, fixation, congruentTask, congruentTask2, congruentStim, leftResponseKey, rightResponseKey, responsekeys;
+	2000 = leftResponseKey_HL;
+	4000 = continueLeft;
+]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ correctresponse = (parameters.leftKey)
+/ response = correct
+/ beginresponsetime = 0
+/ recorddata = false
+</trial>
+
+<trial intro3>
+/ ontrialbegin = [
+	picture.incongruentStim.hposition = parameters.left_x;
+]
+/ stimulustimes = [
+	0 = clearScreen;
+	500 = incongruentTask, incongruentTask2, fixation, incongruentStim, leftResponseKey, rightResponseKey, responsekeys;
+	2000 = rightResponseKey_HL;
+	4000 = continueRight;
+]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ correctresponse = (parameters.rightKey)
+/ response = correct
+/ recorddata = false
+/ beginresponsetime = 500
+</trial>
+
+<trial intro4>
+/ stimulustimes = [
+	0 = clearScreen, PracticeStart, leftResponseKey, rightResponseKey;
+]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial testStart>
+/ stimulusframes = [1 = teststart, leftResponseKey, rightResponseKey]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial getReady>
+/ stimulusframes = [1 = getReady, leftResponseKey, rightResponseKey]
+/ trialduration = parameters.readyDuration
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ beginresponsetime = parameters.readyDuration
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text fixation>
+/ items = ("+")
+/ fontstyle = ("Arial", parameters.fixationSize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ erase = false
+/ size = (25%, 25%)
+/ vjustify = center
+</text>
+
+<text leftResponseKey>
+/ items = ("<%parameters.leftKey%>")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (25%, 90%)
+/ erase = false
+/ vjustify = center
+/ txcolor = darkgray
+</text>
+
+<text leftResponseKey_HL>
+/ items = ("<%parameters.leftKey%>")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (25%, 90%)
+/ erase = false
+/ vjustify = center
+/ txcolor = yellow
+</text>
+
+<text leftResponseKey_HL2>
+/ items = ("<%parameters.leftKey%>")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (25%, 90%)
+/ erase = false
+/ vjustify = center
+/ txcolor = yellow
+</text>
+
+<text rightResponseKey>
+/ items = ("<%parameters.rightKey%>")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (75%, 90%)
+/ erase = false
+/ vjustify = center
+/ txcolor = darkgray
+</text>
+
+<text rightResponseKey_HL>
+/ items = ("<%parameters.rightKey%>")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (75%, 90%)
+/ erase = false
+/ vjustify = center
+/ txcolor = yellow
+</text>
+
+<text rightResponseKey_HL2>
+/ items = ("<%parameters.rightKey%>")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (75%, 90%)
+/ erase = false
+/ vjustify = center
+/ txcolor = yellow
+</text>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: list randomly (without replacement) selects 1 = left or 2 = right position for congruent trials in a block.
+The poolSize is set under the relevant block. 
+Default: 
+Congruent block - poolSize is 20 (10 red circles on the left, 10 on the right)
+Mixed block - poolSize is 10 (5 red circles on the left, 5 on the right)
+<list positions_congruent>
+/ items = (1, 2)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+Note: list randomly (without replacement) selects 1 = left or 2 = right position for congruent trials in a block.
+The poolSize is set under the relevant block. 
+Default: 
+Congruent block - poolSize is 20 (10 blue circles on the left, 10 on the right)
+Mixed block - poolSize is 10 (5 blue circles on the left, 5 on the right)
+<list positions_incongruent>
+/ items = (1, 2)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+Note: list randomly (without replacement) selects 1 (congruent) and 2 (incongruent) trials for the mixed block
+The poolSize is set under block.
+Default: script runs 10 congruent and 10 incongruent trials
+<list mixed>
+/ items = (1, 2)
+/ replace = false
+/ resetinterval = 0
+/ maxrunsize = 3
+</list>
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_practice>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_congruent>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_congruent>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_incongruent>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_incongruent>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_switch>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_switch>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_nonswitch>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_nonswitch>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS: Practice
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial selectTrial_practice>
+/ stimulustimes = [0 = clearScreen, fixation, leftResponseKey, rightResponseKey]
+
+//for touchscreens: present inactive response buttons
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ isvalidresponse = [
+	return false;
+]
+
+/ branch = [
+	if (list.mixed.nextValue == 1){
+		return trial.congruent_practice;
+	} else {
+		return trial.incongruent_practice;
+	}
+]
+/ trialduration = parameters.iti
+/ recorddata = false
+</trial>
+
+
+<trial congruent_practice>
+/ inputdevice = keyboard
+/ ontrialbegin = [
+	values.prevCongruence = values.congruence;
+	values.congruence = 1;
+	if (values.prevCongruence == values.congruence || values.prevCongruence == 0){
+		values.switch = 0;
+	} else {
+		if (values.prevCongruence)
+		values.switch = 1;
+		values.countSwitch += 1;
+	}
+	values.position = list.positions_congruent.nextValue;
+	if (values.position == 1){
+		picture.congruentStim.hposition = parameters.left_x;
+	} else {
+		picture.congruentStim.hposition = parameters.right_x;
+	}
+	
+]
+/ stimulustimes = [0 = congruentStim, leftResponseKey, rightResponseKey]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ iscorrectresponse = [
+	return (
+	(values.position == 1 && trial.congruent_practice.responseText == parameters.leftKey) ||
+	(values.position == 2 && trial.congruent_practice.responseText == parameters.rightKey));	
+]
+/ ontrialend = [
+	list.ACC_practice.appendItem(trial.congruent_practice.correct);
+
+]
+/ timeout = values.stimDuration
+/ branch = [
+	if (trial.congruent_practice.error){
+		return trial.repeat_congruent;
+	} else {
+		return trial.posFeedback;
+	}
+]
+/ responsemessage = (parameters.leftKey, text.leftResponseKey_HL, 0)
+/ responsemessage = (parameters.rightKey, text.rightResponseKey_HL, 0)
+</trial>
+
+<trial repeat_congruent>
+/ inputdevice = keyboard
+/ ontrialbegin = [
+	if (trial.congruent_practice.response == 0){
+		trial.repeat_congruent.insertStimulusFrame(text.noResponseText, 1);
+	}
+	
+	if (values.position == 1){
+		trial.repeat_congruent.insertStimulusFrame(text.leftResponseKey_HL2, 1);	
+	} else {
+		trial.repeat_congruent.insertStimulusFrame(text.rightResponseKey_HL2, 1);		
+	}
+]
+/ stimulusframes = [1 = reminder_congruent, leftResponseKey, rightResponseKey]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ iscorrectresponse = [
+	return (
+	(values.position == 1 && trial.repeat_congruent.responseText == parameters.leftKey) ||
+	(values.position == 2 && trial.repeat_congruent.responseText == parameters.rightKey));	
+]
+/ ontrialend = [
+	trial.repeat_congruent.resetStimulusFrames();
+]
+/ response = correct
+/ branch = [
+	return trial.posFeedback;
+]
+/ responsemessage = (parameters.leftKey, text.leftResponseKey_HL, 0)
+/ responsemessage = (parameters.rightKey, text.rightResponseKey_HL, 0)
+/ recorddata = false
+</trial>
+
+<trial incongruent_practice>
+/ inputdevice = keyboard
+/ ontrialbegin = [
+	values.prevCongruence = values.congruence;
+	values.congruence = 2;
+	if (values.prevCongruence == values.congruence || values.prevCongruence == 0){
+		values.switch = 0;
+	} else {
+		values.switch = 1;
+		values.countSwitch += 1;
+	}	
+	values.position = list.positions_incongruent.nextValue;
+	if (values.position == 1){
+		picture.incongruentStim.hposition = parameters.left_x;
+	} else {
+		picture.incongruentStim.hposition = parameters.right_x;
+	}
+	
+]
+/ stimulustimes = [0 = incongruentStim, leftResponseKey, rightResponseKey]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ iscorrectresponse = [
+	return (
+	(values.position == 1 && trial.incongruent_practice.responseText == parameters.rightKey) ||
+	(values.position == 2 && trial.incongruent_practice.responseText == parameters.leftKey));	
+]
+/ ontrialend = [
+	list.ACC_practice.appendItem(trial.incongruent_practice.correct);
+]
+/ timeout = values.stimDuration
+/ branch = [
+	if (trial.incongruent_practice.error){
+		return trial.repeat_incongruent;
+	} else {
+		return trial.posFeedback;
+	}
+]
+/ responsemessage = (parameters.leftKey, text.leftResponseKey_HL, 0)
+/ responsemessage = (parameters.rightKey, text.rightResponseKey_HL, 0)
+</trial>
+
+<trial repeat_incongruent>
+/ inputdevice = keyboard
+/ ontrialbegin = [
+	if (trial.incongruent_practice.response == 0){
+		trial.repeat_incongruent.insertStimulusFrame(text.noResponseText, 1);
+	}
+	
+	if (values.position == 1){
+		trial.repeat_incongruent.insertStimulusFrame(text.rightResponseKey_HL2, 1);
+	} else {
+		trial.repeat_incongruent.insertStimulusFrame(text.leftResponseKey_HL2, 1);
+	}
+]
+/ stimulusframes = [1 = reminder_incongruent, leftResponseKey, rightResponseKey]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ iscorrectresponse = [
+	return (
+	(values.position == 1 && trial.repeat_incongruent.responseText == parameters.rightKey) ||
+	(values.position == 2 && trial.repeat_incongruent.responseText == parameters.leftKey));
+]
+/ ontrialend = [
+	trial.repeat_incongruent.resetStimulusFrames();
+]
+/ response = correct
+/ branch = [
+	return trial.posFeedback;
+]
+/ responsemessage = (parameters.leftKey, text.leftResponseKey_HL, 0)
+/ responsemessage = (parameters.rightKey, text.rightResponseKey_HL, 0)
+/ recorddata = false
+</trial>
+
+<trial posFeedback>
+/ stimulusframes = [1 = Feedback]
+
+//for touchscreens: present inactive response buttons
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ isvalidresponse = [
+	return false;
+]
+
+/ beginresponsetime = -1
+/ timeout = 500
+/ branch = [
+	return trial.selectTrial_practice;
+]
+/ recorddata = false
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS: Test	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial selectTrial>
+/ stimulustimes = [0 = clearScreen, fixation, leftResponseKey, rightResponseKey]
+
+//for touchscreens: present inactive response buttons
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ isvalidresponse = [
+	return false;
+]
+
+/ branch = [
+	if (list.mixed.nextValue == 1){
+		return trial.congruent;
+	} else {
+		return trial.incongruent;
+	}
+]
+/ trialduration = parameters.iti
+/ recorddata = false
+</trial>
+
+
+<trial congruent>
+/ inputdevice = keyboard
+/ ontrialbegin = [
+	values.prevCongruence = values.congruence;
+	values.congruence = 1;
+	if (values.prevCongruence == values.congruence || values.prevCongruence == 0){
+		values.switch = 0;
+	} else {
+		if (values.prevCongruence)
+		values.switch = 1;
+		values.countSwitch += 1;
+	}
+	values.position = list.positions_congruent.nextValue;
+	if (values.position == 1){
+		picture.congruentStim.hposition = parameters.left_x;
+	} else {
+		picture.congruentStim.hposition = parameters.right_x;
+	}
+	
+]
+/ stimulustimes = [0 = congruentStim, leftResponseKey, rightResponseKey]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ iscorrectresponse = [
+	return (
+	(values.position == 1 && trial.congruent.responseText == parameters.leftKey) ||
+	(values.position == 2 && trial.congruent.responseText == parameters.rightKey));
+]
+/ ontrialend = [
+	list.ACC.appendItem(trial.congruent.correct);
+	list.ACC_congruent.appendItem(trial.congruent.correct);	
+	if (trial.congruent.correct){
+		list.RT.appendItem(trial.congruent.latency);
+		list.RT_congruent.appendItem(trial.congruent.latency);
+	}
+	
+	if (values.switch == 1){
+		list.ACC_switch.appendItem(trial.congruent.correct);
+		if (trial.congruent.correct){
+			list.RT_switch.appendItem(trial.congruent.latency);
+		}
+	} else {
+		list.ACC_nonswitch.appendItem(trial.congruent.correct);
+		if (trial.congruent.correct){
+			list.RT_nonswitch.appendItem(trial.congruent.latency);
+		}
+	}
+
+]
+/ timeout = values.stimDuration
+/ branch = [
+	return trial.selectTrial;
+]
+/ responsemessage = (parameters.leftKey, text.leftResponseKey_HL, 0)
+/ responsemessage = (parameters.rightKey, text.rightResponseKey_HL, 0)
+</trial>
+
+
+<trial incongruent>
+/ inputdevice = keyboard
+/ ontrialbegin = [
+	values.prevCongruence = values.congruence;
+	values.congruence = 2;
+	if (values.prevCongruence == values.congruence || values.prevCongruence == 0){
+		values.switch = 0;
+	} else {
+		values.switch = 1;
+		values.countSwitch += 1;
+	}	
+	values.position = list.positions_incongruent.nextValue;
+	if (values.position == 1){
+		picture.incongruentStim.hposition = parameters.left_x;
+	} else {
+		picture.incongruentStim.hposition = parameters.right_x;
+	}
+	
+]
+/ stimulustimes = [0 = incongruentStim, leftResponseKey, rightResponseKey]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ iscorrectresponse = [
+	return (
+	(values.position == 1 && trial.incongruent.responseText == parameters.rightKey) ||
+	(values.position == 2 && trial.incongruent.responseText == parameters.leftKey));	
+]
+/ ontrialend = [
+	list.ACC.appendItem(trial.incongruent.correct);
+	list.ACC_incongruent.appendItem(trial.incongruent.correct);	
+	if (trial.incongruent.correct){
+		list.RT.appendItem(trial.incongruent.latency);
+		list.RT_incongruent.appendItem(trial.incongruent.latency);
+	}
+	
+	if (values.switch == 1){
+		list.ACC_switch.appendItem(trial.incongruent.correct);
+		if (trial.incongruent.correct){
+			list.RT_switch.appendItem(trial.incongruent.latency);
+		}
+	} else {
+		list.ACC_nonswitch.appendItem(trial.incongruent.correct);
+		if (trial.incongruent.correct){
+			list.RT_nonswitch.appendItem(trial.incongruent.latency);
+		}
+	}
+	
+]
+/ timeout = values.stimDuration
+/ branch = [
+	return trial.selectTrial;
+]
+/ responsemessage = (parameters.leftKey, text.leftResponseKey_HL, 0)
+/ responsemessage = (parameters.rightKey, text.rightResponseKey_HL, 0)
+</trial>
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block intro>
+/ trials = [
+	1 = intro1; 
+	2 = intro2;
+	3 = intro3;
+	4 = intro4;
+]
+</block>
+
+<block practice>
+/ stop = [
+	trial.selectTrial_practice.trialcount > parameters.numberPracticeTrials;
+]
+/ onblockbegin = [
+	values.practice = 1;
+	values.countPractice += 1;
+	list.ACC_practice.reset();
+	list.positions_incongruent.poolSize = parameters.numberPracticeTrials/2;
+	list.positions_incongruent.reset();
+	list.positions_congruent.poolSize = parameters.numberPracticeTrials/2;
+	list.positions_congruent.reset();	
+	values.stimDuration = parameters.stimDuration;
+	values.congruence = 0;
+]
+/ trials = [1 = getReady; 2 = selectTrial_practice]
+/ onblockend = [
+	if (values.practiceACC < list.ACC_practice.mean){
+		values.practiceACC = list.ACC_practice.mean;	
+	}
+]
+/ branch = [
+	if (list.ACC_practice.mean >= parameters.minPracticeACC){
+		values.practicePass = 1;
+	} else if (list.ACC_practice.mean < parameters.minPracticeACC && values.countPractice < parameters.maxPracticeRepeats){
+		return block.practice;
+	} else if (!monkey.monkeyMode){
+		return block.prematureEnd;
+	}
+	return null;
+]
+</block>
+
+<block test>
+/ stop = [
+	trial.selectTrial.trialcount > parameters.numberTestTrials;
+]
+/ onblockbegin = [
+	values.practice = 0;
+	list.ACC_practice.reset();
+	list.mixed.poolSize = parameters.numberTestTrials;	
+	list.positions_incongruent.poolSize = parameters.numberTestTrials/2;
+	list.positions_incongruent.reset();
+	list.positions_congruent.poolSize = parameters.numberTestTrials/2;
+	list.positions_congruent.reset();	
+	values.stimDuration = parameters.stimDuration;
+	values.congruence = 0;
+	values.countSwitch = 0;
+]
+/ trials = [
+	1 = testStart; 
+	2 = getReady; 
+	3 = selectTrial;
+]
+</block>
+
+<block prematureEnd>
+/ trials = [
+	1 = finish;
+]
+/ onblockend = [
+	script.abort();
+]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt dotsTask>
+/ onexptbegin = [
+	if (computer.touch && !computer.hasKeyboard){
+		text.rightResponseKey.skip = true;
+		text.rightResponseKey_HL.skip = true;
+		text.leftResponseKey.skip = true;
+		text.leftResponseKey_HL.skip = true;
+		text.responsekeys.skip = true;
+	}
+]
+
+/ blocks = [
+	1 = intro;
+	2 = practice;
+	3 = test;
+	4 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

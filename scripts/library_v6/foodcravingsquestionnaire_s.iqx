@@ -1,0 +1,359 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									FOOD CRAVINGS QUESTIONNAIRE-STATE (FCQ-S)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-02-2016
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Food Cravings Questionnaire State (FCQ-S) as described in:
+
+Cepeda-Benito, A., Gleaves, D. H., Williams, T. L., & Erath, S. A. (2000). The
+development and validation of the State and Trait food Cravings Questionnaires.
+Behavior Therapy, 31, 151-173.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+15 5-point Likert questions
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'FCQ_S.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (strongly disagree) - 5 (strongly agree)
+								no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'FCQ_S_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+FCQ_S_Total:		Total Score (Min: 15 - Max: 75)
+Desire:				An Intense Desire to Eat (Points: 3-15)
+Anticipation:		Anticipation of Positive Reinforcement That May Result From Eating (points: 3 - 15)
+Relief:				Anticipation of Relief From Negative States and Feelings as a Result of Eating (points: 3-15)
+LackOfControl:		Lack of Control Over Eating	(points: 3 - 15)		
+Hunger:				Craving as a Physiological State (i.e., Hunger) (points: 3 - 15)
+
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+see section Editable Parameters
+(instructions are not original)
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			instructions that appear at the top
+/targetFoods:				the target food(s) can be changed here (default: [one or more specific foods])
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "Please indicate how much you agree with each of the following 15 statements RIGHT NOW, at this very moment:
+"
+/targetFoods = "[one or more specific foods]"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+expressions.FCQ_S_Total, expressions.Desire, expressions.Anticipation, 
+expressions.Relief, expressions.LackOfControl, expressions.Hunger)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/Desire:						An Intense Desire to Eat (Points: 3-15)
+/Anticipation:					Anticipation of Positive Reinforcement That May Result From Eating (points: 3 - 15)
+/Relief:						Anticipation of Relief From Negative States and Feelings as a Result of Eating (points: 3-15)
+/LackOfControl:					Lack of Control Over Eating	(points: 3 - 15)		
+/Hunger:						Craving as a Physiological State (i.e., Hunger) (points: 3 - 15)
+/FCQ_S_Total:					Total Score (Min: 15 - Max: 75)
+
+<expressions>
+/Desire = radiobuttons.q1_D.response + radiobuttons.q2_D.response + radiobuttons.q3_D.response 
+/Anticipation = radiobuttons.q4_A.response + radiobuttons.q5_A.response + radiobuttons.q6_A.response 
+/Relief = radiobuttons.q7_R.response + radiobuttons.q8_R.response + radiobuttons.q9_R.response 
+/LackOfControl = radiobuttons.q10_C.response + radiobuttons.q11_C.response + radiobuttons.q12_C.response 
+/Hunger = radiobuttons.q13_H.response + radiobuttons.q14_H.response + radiobuttons.q15_H.response 
+/FCQ_S_Total = expressions.Desire + expressions.Anticipation + expressions.Relief + expressions.LackOfControl + expressions.Hunger
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_D>
+/caption = "1. I have an intense desire to eat <%parameters.targetFoods%>."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_D>
+/caption = "2. I'm craving <%parameters.targetFoods%>."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_D>
+/caption = "3. I have an urge for <%parameters.targetFoods%>."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_A>
+/caption = "4. Eating <%parameters.targetFoods%> would make things seem just perfect."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_A>
+/caption = "5. If I were to eat what I am craving, I am sure my mood would improve."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_A>
+/caption = "6. Eating <%parameters.targetFoods%> would feel wonderful."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_R>
+/caption = "7. If I ate something, I wouldn't feel so sluggish and lethargic."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_R>
+/caption = "8. Satisfying my craving would make me feel less grouchy and irritable."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_R>
+/caption = "9. I would feel more alert if I could satisfy my craving."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10_C>
+/caption = "10. If I had <%parameters.targetFoods%>, I could not stop eating it."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11_C>
+/caption = "11. My desire to eat <%parameters.targetFoods%> seems overpowering."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12_C>
+/caption = "12. I know I'm going to keep on thinking about <%parameters.targetFoods%> until I actually have it."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13_H>
+/caption = "13. I am hungry."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14_H>
+/caption = "14. If I ate right now, my stomach wouldn't feel as empty."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15_H>
+/caption = "15. I feel weak because of not eating."
+/ options = ("strongly~ndisagree", "disagree", "neither agree~nnor disagree", "agree", "strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage FCQ_S1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1_D, q2_D, q3_D]
+</surveypage>
+
+<surveypage FCQ_S2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4_A, q5_A, q6_A]
+</surveypage>
+
+<surveypage FCQ_S3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7_R, q8_R, q9_R]
+</surveypage>
+
+<surveypage FCQ_S4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10_C, q11_C, q12_C]
+</surveypage>
+
+<surveypage FCQ_S5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13_H, q14_H, q15_H]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey FCQ_S>
+/pages = [
+	1 = FCQ_S1; 
+	2 = FCQ_S2; 
+	3 = FCQ_S3;
+	4 = FCQ_S4;
+	5 = FCQ_S5;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

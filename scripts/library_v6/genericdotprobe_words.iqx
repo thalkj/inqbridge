@@ -1,0 +1,1044 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+						GENERIC DOT PROBE TASK - with word stimuli (top/bottom)
+										Measure of Attentional Bias
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 06-05-2015
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+
+This script implements a dotprobe procedure to measure attentional bias with word stimuli.
+The implemented procedure is based on:
+
+Miller, M.A. & Fillmore, M.T (2010). The effect of word complexity on attentional bias
+towards alcohol-related words in adult drinkers. Addiction, 105, 883–890.
+
+Note: this dot probe runs with words instead of images and the stimuli are presented on top and bottom of the
+fixation cross (instead of to the left and right)
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+After presentation of a fixation cross in the center of the screen, participants are presented with 
+2 words. The position of the words is randomly chosen to be either bottom or top to the location of the fixation cross. 
+After a short duration, the two words disappear and a probe stimulus (here: X) appears in the location of one of the
+texts. Participants are asked to press one key if the probe is on the bottom and another if the probe is on top.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'genericdotprobe_words_raw*.iqdat'
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file.
+
+task:								1 = practice; 2 = test															
+category:							1 = category1 ; 2 = category2 
+Congruence:							1 = probe and target (e.g. category1) position same; 2 = probe and target (e.g. category1) position different
+target_position:					1 = target (e.g. category1) word on left; 2 = target (e.g. category1) word on right 
+
+comp_x-probe_x:						the x-coordinate (in %) of the target (e.g. category1)/ comp ('paired with target') /probe stims
+itemnumber:							itemnumber of currently selected word
+target_word:						stores the currently presented target (e.g. category1) word
+comp_word:							stores the currently presented comp ('paired with target') word
+
+response:							the participant's response (scancode of response button)
+									 49 = N (left key)
+									 50 = M (right key)
+									 
+latency: 							the response latency in ms (measured from onset of probe)
+correct:							accuracy of response (regardless of whether latency >= parameters.minimum_latency)
+									1 = correct; 0 = incorrect
+valid:								latency in ms that is >= parameters.minimum_latency
+validCorrect:						1 = response was correct AND latency was >= parameters.minimum_latency; 0 = otherwise
+
+(2) Summary data file: 'genericdotprobe_words_summary*.iqdat'
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+NOTE: all latency/accuracy summary variables are based on correct responses with latencies >= parameters.minimum_latency (default: 100ms)
+
+propcorrect:						proportion correct overall
+meanrt:								overall mean latency (in ms)
+
+propcorrect_congruent_Category1:	proportion correct in congruent Category1  trials
+meanrt_congruent_Category1:			mean latency of congruent Category1  trials
+propcorrect_incongruent_Category1:	proportion correct in incongruent Category1  trials 
+meanrt_incongruent_Category1:		mean latency of incongruent Category1  trials
+
+AB_Category1:						Attentional Bias for Category1 words : If AB_Category1 > 0 
+									=> faster mean latencies to congruent Category1 trials than incongruent ones
+
+propcorrect_congruent_Category2:	proportion correct in congruent Category2 trials 
+meanrt_congruent_Category2:			mean latency of congruent Category2  trials
+propcorrect_incongruent_Category2:	proportion correct in incongruent Category2 trials 
+meanrt_incongruent_Category2:		mean latency of incongruent Category2  trials
+
+AB_Category2:						Attentional Bias for Category2 words ('targets'): If AB_Category2 > 0
+									=> faster mean latencies to congruent Category2 trials than incongruent ones
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+2 categories tested; within-design
+- 1 block of 10 practice trials
+- 1 block of 80 trials: 40 category1 trials (category1target-category2comp pairings) and 40 category2 pairings
+	10 word pairs, all texts presented 4 times
+	category1:
+	=> top/bottom, followed by prime/not followed by prime => 10 * 4 = 40 trials
+	category2: the same
+	Note: all 80 trials are randomly sampled without replacement
+
+	DEFAULT TRIAL SEQUENCES
+	fixation cross (500ms) -> target word pair (1000ms) -> tp_isi (0ms) -> probe (max. 1000ms)	(latency measured from onset of probe until response or offset of probe; whichever comes first)
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+generic text stimuli - insert your own under section Editable Stimuli
+stimuli are presented in white on a black background
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+Instructions are provided by Millisecond Software
+as htm/html pages and can be edited by changing the provided htm/html files.
+To edit htm/html-files: open the respective documents in simple Text Editors such as TextEdit (Mac)
+or Notepad (Windows).
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS TO ADD CATEGORIES
+___________________________________________________________________________________________________________________
+go to section INSTRUCTIONS HOW TO ADD ADDITIONAL CATEGORIES
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/ReadyDuration:							the duration (in ms) of the get-ready-trial (default: 3000ms)
+/fixationduration/targetduration:		the duration of the fixation cross (default: 500ms)/the targets (default: 1000ms)
+/tp_isi:								target-probe interstimulus interval in ms (0ms)
+
+/probeduration:							the duration of the probe presentation (default: 1000ms)
+										Note: by default this scripts allows for responses for the entire probe duration;
+										the trial terminates after parameters.probeduration is over
+
+/iti:									intertrialpause in ms (default: 0ms)
+/probe:									the symbol used for the probe (default: X)
+
+/responsekey_top:						the top response button (default: "T")
+/responsekey_bottom:					the bottom response button (default: "B")
+
+/minimum_latency:						the minimum latency of a correct response that is included into summary variables
+										(default: 100ms)
+
+Physical Settings of Display:				Note: change the settings to optimize the display on your computer screen
+
+/target_bottom_y-target_top_y:			the y-coordinate in % of the top/bottom target (default: 35%, 65%)
+/target_x:								the x-coordinate of the target (default: center at 50%)
+/fixationcross_height:					the height of the fixation cross in canvas height percentage (default: 5%)
+/probe_height:							the height of the probe in canvas height percentage (default: 5%)
+/wordheight:							the height of the word in canvas height percentage (default: 5%)
+
+</usermanual>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ readyDuration = 3000
+/ fixationduration = 500
+/ targetduration = 1000
+/ tp_isi = 0
+/ probeduration = 1000
+/ iti = 0
+/ probe = "X"
+
+/ responsekey_top = "T"
+/ responsekey_bottom = "B"
+
+/ minimum_latency = 100
+
+/ target_top_y = 35%
+/ target_bottom_y = 65%
+/ target_x = 50%
+
+/ fixationcross_height = 5%
+/ probe_height = 5%
+/ wordheight = 5%
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS HOW TO ADD ADDITIONAL CATEGORIES
+**************************************************************************************************************
+**************************************************************************************************************
+
+NOTE: testing additional categories -> use the existing code as a template
+
+(1) Go to section EDITABLE STIMULI and add the necessary stimuli (also edit practice stimuli)
+(2) Go to section EDITABE LISTS and add the necessary lists for the added categories
+(3) Go to section VALUES and add the necessary summary values for the added categories
+(4) Go to section EXPRESSIONS and add the necessary expressions for the added categories
+(5) Go to section DATA and add the necessary summary variables to summary data file
+(6) Go to section STIMULI and add the necessary text elements for the added categories
+(7) Go to section TRIALS and add the necessary trials for the added categories
+(8) Go to section BLOCKS: edit the trial list block.wordDotProbe
+
+
+TIP: 
+once all categories have been added:
+use the "FIND/REPLACE" functions to replace "Category1" with the actual name of the category you
+are running as category1 (and same for all other categories)
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: 
+itemnumbers 1-10: category 1 target words
+<item Category1Target_words>
+/ 1 = "Category1target1"
+/ 2 = "Category1target2"
+/ 3 = "Category1target3"
+/ 4 = "Category1target4"
+/ 5 = "Category1target5"
+/ 6 = "Category1target6"
+/ 7 = "Category1target7"
+/ 8 = "Category1target8"
+/ 9 = "Category1target9"
+/ 10 = "Category1target10"
+</item>
+
+Note: 
+itemnumbers 1-10: category 1 comp words (will be tied to target words by itemnumber)
+<item Category1Comp_words>
+/ 1 = "Category1comp1"
+/ 2 = "Category1comp2"
+/ 3 = "Category1comp3"
+/ 4 = "Category1comp4"
+/ 5 = "Category1comp5"
+/ 6 = "Category1comp6"
+/ 7 = "Category1comp7"
+/ 8 = "Category1comp8"
+/ 9 = "Category1comp9"
+/ 10 = "Category1comp10"
+</item>
+
+Note: 
+itemnumbers 1-10: category 2 target words
+<item Category2Target_words>
+/ 1 = "Category2target1"
+/ 2 = "Category2target2"
+/ 3 = "Category2target3"
+/ 4 = "Category2target4"
+/ 5 = "Category2target5"
+/ 6 = "Category2target6"
+/ 7 = "Category2target7"
+/ 8 = "Category2target8"
+/ 9 = "Category2target9"
+/ 10 = "Category2target10"
+</item>
+
+Note: 
+itemnumbers 1-10: category 2 comp words (will be tied to target words by itemnumber)
+<item Category2Comp_words>
+/ 1 = "Category2comp1"
+/ 2 = "Category2comp2"
+/ 3 = "Category2comp3"
+/ 4 = "Category2comp4"
+/ 5 = "Category2comp5"
+/ 6 = "Category2comp6"
+/ 7 = "Category2comp7"
+/ 8 = "Category2comp8"
+/ 9 = "Category2comp9"
+/ 10 = "Category2comp10"
+</item>
+
+********************************
+Practice Stimuli
+********************************
+
+<item PracticeTargets>
+/ 1 = "practicetarget1"
+/ 2 = "practicetarget2"
+/ 3 = "practicetarget3"
+/ 4 = "practicetarget4"
+/ 5 = "practicetarget5"
+/ 6 = "practicetarget6"
+/ 7 = "practicetarget7"
+/ 8 = "practicetarget8"
+/ 9 = "practicetarget9"
+/ 10 = "practicetarget10"
+</item>
+
+<item PracticeComps>
+/ 1 = "practicecomp1"
+/ 2 = "practicecomp2"
+/ 3 = "practicecomp3"
+/ 4 = "practicecomp4"
+/ 5 = "practicecomp5"
+/ 6 = "practicecomp6"
+/ 7 = "practicecomp7"
+/ 8 = "practicecomp8"
+/ 9 = "practicecomp9"
+/ 10 = "practicecomp10"
+</item>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 2.80%, false, false, false, false, 5, 1)
+</instruct>
+
+<htmlpage instructions>
+/file = "dotprobe_intro1.htm"
+</htmlpage>
+
+<htmlpage practice>
+/ file = "dotprobe_teststart.htm"
+</htmlpage>
+
+<text feedback>
+/ items = ("ERROR")
+/ txcolor = red
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 10%, true, false, false, false, 5, 1)
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/ items = ("Get Ready:
+~n<%expressions.buttoninstruct1%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+/ vjustify = center
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"place your response fingers over the response buttons";} 
+else {"put your index fingers on the <%parameters.responsekey_top%> and <%parameters.responsekey_bottom%> keys";}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: the following lists control the presentation of each word.
+They run 40 trials for each Category
+=> each word is presented 4 times
+=> each word is presented bottom 2 times and top 2 times 
+(-> list.Category1Target_position; it's linked to the itemnumbers by selectionmode)
+=> if presented on the bottom: one presentation is congruent with probe; one is incongruent with probe
+(-> list.Category1Target_congruence; it's linked to the item numbers by selectionmode)
+=> if presented on the top: one presentation is congruent with probe; one is incongruent with probe
+(-> list.Category1Target_congruence; it's linked to the item numbers by selectionmode)
+
+!!!!If the number of itemnumbers != 10, update the lists accordingly
+!!!!If the trialnumber changes, update the lists accordingly
+
+********************************************
+Category1 lists
+********************************************
+
+Note: the following list contains the 4 repetitions of the 10 itemnumber of the Category1Target stimuli 
+the list randomly selects one itemnumber (without replacement) for Category1 trials
+(the same itemnumbers are used for comp stimuli)
+<list Category1Target_itemnumbers>
+/ items = (
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+/ replace = false
+</list>
+
+Note: the following list samples the bottom (1) or top (2) position of the Category1Target stimuli
+that is tied to the sampled itemnumber (by its list position index)
+=> each item number is presented twice on the bottom and twice on the top)
+<list Category1Target_positions>
+/ items = (
+1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
+/ selectionmode = list.Category1Target_itemnumbers.currentIndex
+</list>
+
+Note: the following list samples the Category1Target and probe congruence that is tied to the sampled itemnumber (by its list position index)
+=> each itemnumber is presented once bottom and is followed by the probe (congruent = 1)
+=> each itemnumber is presented once bottom is is not followed by the probe (incongruent = 2)
+=> each itemnumber is presented once top and is followed by the probe (congruent = 1)
+=> each itemnumber is presented once top is is not followed by the probe (incongruent = 2)
+<list Category1Targetprobe_congruence>
+/ items = (
+1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
+/ selectionmode = list.Category1Target_itemnumbers.currentIndex
+</list>
+
+
+********************************************
+Category2Target lists
+********************************************
+
+Note: the following list contains the 4 repetitions of the 10 itemnumber of the Category2Target stimuli 
+the list randomly selects one itemnumber (without replacement) for Category2 trials
+<list Category2Target_itemnumbers>
+/ items = (
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+/ replace = false
+</list>
+
+Note: the following list samples the bottom (1) or top (2) position of the Category2Target stimuli
+that is tied to the sampled itemnumber (by its list position index)
+=> each item number is presented twice on the bottom and twice on the top
+<list Category2Target_positions>
+/ items = (
+1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
+/ selectionmode = list.Category2Target_itemnumbers.currentIndex
+</list>
+
+Note: the following list samples the Category2Targetnd probe congruence that is tied to the sampled itemnumber (by its list position index)
+=> each itemnumber is presented once bottom and is followed by the probe (congruent = 1)
+=> each itemnumber is presented once bottom is is not followed by the probe (incongruent = 2)
+=> each itemnumber is presented once top and is followed by the probe (congruent = 1)
+=> each itemnumber is presented once top is is not followed by the probe (incongruent = 2)
+<list Category2Targetprobe_congruence>
+/ items = (
+1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
+/ selectionmode = list.Category2Target_itemnumbers.currentIndex
+</list>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = white
+/ txbgcolor = black
+/ screencolor = black
+/ canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+VALUES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+automatically updated
+********************
+/category:											1 = Category1 ; 2 = category2 
+/itemnumber:										itemnumber of currently selected text
+/selecteditem:										helper variable to determine itemnumber
+/target_y-probe_y:									the y-coordinate (in %) of the target / comp /probe stims
+/comp_word:											stores the currently presented comp ('paired with target') word
+/target_word:										stores the currently presented target word
+/target_position:									1 = target word on bottom; 2 = target word on top 
+/congruence:										1 = probe and target position same; 2 = probe and target position different
+/task:												1 = practice; 2 = test	
+/valid:												latency in ms that is >= parameters.minimum_latency
+/validcorrect:										1 = response was correct and latency was >= parameters.minimum_latency; 0 = otherwise
+
+Summary Variables:
+
+Note: 
+* all latency/accuracy summary variables are based on correct responses with latencies >= parameters.minimum_latency (default: 100ms)
+
+/counttrials:											counts all trials
+
+							
+<values>
+/ category = 0
+/ itemnumber = 0
+/ selecteditem = ""
+/ target_y = 0
+/ comp_y = 0
+/ probe_y = 0
+/ probe_x = 0
+/ comp_word = ""
+/ target_word = ""
+/ target_position = 0
+/ congruence = 0
+/ task = 0
+/ valid = ""
+/ validcorrect = 0
+
+/ trialcount = 0
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+NOTE: all latency/accuracy summary variables are based on correct responses with latencies >= parameters.minimum_latency (default: 100ms)
+
+/propcorrect:						proportion correct overall
+/meanrt:							overall mean latency
+
+/propcorrect_congruent_category1:	proportion correct in congruent Category1 trials 
+/propcorrect_incongruent_category1:	proportion correct in incongruent Category1 trials 
+/meanRT_congruent_category1:		mean latency of congruent Category1 trials
+/meanRT_incongruent_category1:		mean latency of incongruent Category1 trials
+/AB_category1:						Attentional Bias for Category1 word : If AB_category1 > 0 => faster mean latencies to congruent category1 trials (target and probe congruent)than incongruent ones
+
+/propcorrect_congruent_category2:	proportion correct in congruent Category2 trials 
+/propcorrect_incongruent_category2:	proportion correct in incongruent Category2 trials 
+/meanRT_congruent_category2:		mean latency of congruent Category2 trials
+/meanRT_incongruent_category2:		mean latency of incongruent Category2 trials
+/AB_category2:						Attentional Bias for Category2 word : If AB_category2 > 0 => faster mean latencies to congruent category2 trials (target and probe congruent)than incongruent ones
+
+<expressions>
+/ propcorrect = list.accuracy.mean
+/ meanrt = list.latencies.mean
+
+/ propcorrect_congruent_Category1 = list.accuracy_Category1_C.mean
+/ propcorrect_incongruent_Category1 = list.accuracy_Category1_IC.mean
+/ meanRT_congruent_Category1 = list.latencies_Category1_C.mean
+/ meanRT_incongruent_Category1 = list.latencies_Category1_IC.mean
+/ AB_category1 = expressions.meanRT_incongruent_category1 - expressions.meanRT_congruent_category1
+
+/ propcorrect_congruent_Category2 = list.accuracy_Category2_C.mean
+/ propcorrect_incongruent_Category2 = list.accuracy_Category2_IC.mean
+/ meanRT_congruent_Category2 = list.latencies_Category2_C.mean
+/ meanRT_incongruent_Category2 = list.latencies_Category2_IC.mean
+/ AB_category2 = expressions.meanRT_incongruent_category2 - expressions.meanRT_congruent_category2
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+ 
+ This trial is used when participants are asked to place their fingers on specific response
+buttons. On the touchscreen, this trial presents the (inactive) response buttons to the participants.
+<trial getReady>
+/ stimulusframes = [1 = getReady]
+/ trialduration = parameters.readyDuration
+/ validresponse = (parameters.responsekey_top, parameters.responsekey_bottom)
+/ beginresponsetime = parameters.readyDuration
+/ errormessage = false
+/ recorddata = false
+</trial>
+ 
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA
+*******************************************************************************************************************
+*******************************************************************************************************************
+for explanations of custom values, go to VALUES/EXPRESSIONS. Customize.
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+values.task,values.category, values.congruence, values.target_position,
+values.comp_y, values.target_y, values.probe_y,
+values.itemnumber, values.target_word, values.comp_word,
+response, latency, correct, values.valid, values.validcorrect)
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+
+expressions.propcorrect, expressions.meanrt,
+expressions.propcorrect_congruent_Category1, expressions.meanrt_congruent_Category1, 
+expressions.propcorrect_incongruent_Category1, expressions.meanrt_incongruent_Category1,
+expressions.AB_Category1, 
+expressions.propcorrect_congruent_Category2, expressions.meanrt_congruent_Category2, 
+expressions.propcorrect_incongruent_Category2, expressions.meanrt_incongruent_Category2,
+expressions.AB_Category2)
+</summarydata>
+
+
+ 
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<text Category1Target>
+/ items = Category1Target_words
+/ select = values.itemnumber
+/ vposition = values.Target_y
+/ hposition = parameters.target_x
+/ fontstyle = ("Arial", parameters.wordheight, false, false, false, false, 5, 1)
+</text>
+
+<text Category1Comp>
+/ items = Category1Comp_words
+/ select = values.itemnumber
+/ vposition = values.Comp_y
+/ hposition = parameters.target_x
+/ fontstyle = ("Arial", parameters.wordheight, false, false, false, false, 5, 1)
+</text>
+
+<text Category2Target>
+/ items = Category2Target_words
+/ select = values.itemnumber
+/ vposition = values.Target_y
+/ hposition = parameters.target_x
+/ fontstyle = ("Arial", parameters.wordheight, false, false, false, false, 5, 1)
+</text>
+
+<text Category2Comp>
+/ items = Category2Comp_words
+/ select = values.itemnumber
+/ vposition = values.Comp_y
+/ hposition = parameters.target_x
+/ fontstyle = ("Arial", parameters.wordheight, false, false, false, false, 5, 1)
+</text>
+
+<text PracticeTarget>
+/ items = PracticeTargets
+/ select = noreplace
+/ vposition = values.target_y
+/ hposition = parameters.target_x
+/ fontstyle = ("Arial", parameters.wordheight, false, false, false, false, 5, 1)
+</text>
+
+<text PracticeComp>
+/ items = PracticeComps
+/ select = text.PracticeTarget.currentItemNumber
+/ vposition = values.Comp_y
+/ hposition = parameters.target_x
+/ fontstyle = ("Arial", parameters.wordheight, false, false, false, false, 5, 1)
+</text>
+
+******************************
+other stimuli
+******************************
+
+<text fixation>
+/ items = ("+")
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", parameters.fixationcross_height, false, false, false, false, 5, 1)
+/ erase = false
+/ vjustify = center
+</text>
+
+<text probe>
+/ items = ("<%parameters.probe%>")
+/ vposition = values.probe_y
+/ hposition = parameters.target_x
+/ txcolor = white
+/ fontstyle = ("Arial", parameters.probe_height, false, false, false, false, 5, 1)
+/ erase = false
+/ vjustify = center
+</text>
+
+<shape eraser>
+/ shape = rectangle
+/ size = (100%, 100%)
+/ color = black
+/ position = (50%, 50%)
+/ erase = false
+</shape>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	PRACTICE TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+***************************************************************************
+Lists that control the position of the emotion face and the probe for
+practice
+***************************************************************************
+
+Note: selects randomly with replacement the position (1=bottom, 2 = top) of the 
+emotion face for practice trials
+<list PracticeTarget_positions>
+/ items = (1, 2)
+/ replace = true
+</list>
+
+Note: selects randomly without replacement the probe position (1=bottom, 2 = top) for 10 practice trials
+<list PracticeTargetprobe_congruence>
+/ items = (1, 2, 1, 2, 1, 2, 1, 2, 1, 2)
+/ replace = false
+</list>
+
+<trial Practice>
+/ ontrialbegin = [
+	values.category = "Practice";
+	values.target_position = list.PracticeTarget_positions.nextValue;
+	values.congruence = list.PracticeTargetprobe_congruence.nextValue;
+	if (values.target_position == 1) {
+		values.target_y = parameters.target_bottom_y;
+		values.comp_y = parameters.target_top_y;
+	} else {
+		values.target_y = parameters.target_top_y;
+		values.comp_y = parameters.target_bottom_y;
+	}
+	if (values.congruence == 1) {
+		values.probe_y = values.target_y;
+	} else {
+		values.probe_y = values.comp_y;
+	}
+	trial.Practice.insertStimulusTime(shape.eraser, parameters.fixationduration);
+	trial.Practice.insertStimulusTime(text.PracticeTarget, parameters.fixationduration);
+	trial.Practice.insertStimulusTime(text.PracticeComp, parameters.fixationduration);
+	trial.Practice.insertStimulusTime(shape.eraser, (parameters.fixationduration + parameters.targetduration));
+	trial.Practice.insertStimulusTime(text.probe, (parameters.fixationduration + parameters.targetduration + parameters.TP_ISI));
+]
+/ stimulusframes = [1 = fixation]
+/ beginresponsetime = parameters.fixationduration + parameters.targetduration + parameters.TP_ISI
+/ responseinterrupt = immediate
+/ validresponse = (parameters.responsekey_bottom, parameters.responsekey_top)
+/ iscorrectresponse = [
+	return ((values.probe_y == parameters.target_bottom_y && trial.Practice.responseText == parameters.responsekey_bottom) ||
+			(values.probe_y == parameters.target_top_y && trial.Practice.responseText == parameters.responsekey_top));
+]
+/ ontrialend = [
+	values.target_word = text.PracticeTarget.currentItem;
+	values.comp_word = text.PracticeComp.currentItem;
+	trial.Practice.resetStimulusFrames();
+]
+/ timeout = (parameters.fixationduration + parameters.targetduration + parameters.tp_isi + parameters.probeduration)
+/ posttrialpause = parameters.iti
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+<list accuracy>
+</list>
+
+<list latencies>
+</list>
+
+<list accuracy_Category1_C>
+</list>
+
+<list latencies_Category1_C>
+</list>
+
+<list accuracy_Category1_IC>
+</list>
+
+<list latencies_Category1_IC>
+</list>
+
+<list accuracy_Category2_C>
+</list>
+
+<list latencies_Category2_C>
+</list>
+
+<list accuracy_Category2_IC>
+</list>
+
+<list latencies_Category2_IC>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: trial.category1
+* samples the next target itemnumber, its location on the screen, and its probe congruence
+* selects the appropriate screen coordinates for target, comp, probe
+* presents fixation cross for parameters.fixationduration
+* presents the words for parameters.targetduration
+* presents the probe for parameters.probeduration
+* starts collecting responses at onset of probe
+* terminates trial with positive response
+* updates summary variables
+
+<trial Category1>
+/ ontrialbegin = [
+	values.valid = 0;
+	values.validcorrect = 0;
+	values.trialcount += 1;
+	values.category="Category1";
+	values.itemnumber = list.Category1Target_itemnumbers.nextValue;
+	values.target_position = list.Category1Target_positions.nextValue;
+	values.congruence = list.Category1Targetprobe_congruence.nextValue;
+	if (values.target_position == 1) {
+		values.target_y = parameters.target_bottom_y;
+		values.comp_y = parameters.target_top_y;
+	} else {
+		values.target_y = parameters.target_top_y;
+		values.comp_y = parameters.target_bottom_y;
+	}
+	if (values.congruence == 1) {
+		values.probe_y = values.target_y;
+	} else {
+		values.probe_y = values.comp_y;
+	}
+	trial.Category1.insertStimulusTime(shape.eraser, parameters.fixationduration);
+	trial.Category1.insertStimulusTime(text.Category1Target, parameters.fixationduration);
+	trial.Category1.insertStimulusTime(text.Category1Comp, parameters.fixationduration);
+	trial.Category1.insertStimulusTime(shape.eraser, (parameters.fixationduration + parameters.targetduration));
+	trial.Category1.insertStimulusTime(text.probe, (parameters.fixationduration + parameters.targetduration + parameters.tp_isi));
+]
+/ stimulusframes = [1 = fixation]
+/ beginresponsetime = parameters.fixationduration + parameters.targetduration + parameters.tp_isi
+/ responseinterrupt = immediate
+/ validresponse = (parameters.responsekey_bottom, parameters.responsekey_top)
+/ iscorrectresponse = [
+	return((values.probe_y == parameters.target_bottom_y && trial.category1.responseText == parameters.responsekey_bottom) ||
+			(values.probe_y == parameters.target_top_y && trial.category1.responseText == parameters.responsekey_top));
+]
+/ ontrialend = [
+	trial.Category1.resetStimulusFrames();
+	values.target_word = text.Category1Target.currentItem;
+	values.comp_word = text.Category1Comp.currentItem;
+	
+	if (trial.Category1.latency >= parameters.minimum_latency){
+		values.valid = 1;
+		if (trial.Category1.correct) {
+			values.validcorrect = 1;
+			if (values.congruence == 1) {
+				list.latencies_Category1_C.appendItem(trial.Category1.latency);
+				list.latencies.appendItem(trial.Category1.latency);
+			} else {
+				list.latencies_Category1_IC.appendItem(trial.Category1.latency);
+				list.latencies.appendItem(trial.Category1.latency);
+			}
+		}
+	}
+	
+	list.accuracy.appendItem(values.validcorrect);
+	if (values.congruence == 1) {
+		list.accuracy_Category1_C.appendItem(values.validcorrect);
+	} else {
+		list.accuracy_Category1_IC.appendItem(values.validcorrect);
+	}
+]
+/ timeout = (parameters.fixationduration + parameters.targetduration + parameters.tp_isi + parameters.probeduration)
+/ posttrialpause = parameters.iti
+</trial>
+
+
+<trial Category2>
+/ ontrialbegin = [
+	values.valid = 0;
+	values.validcorrect = 0;
+	values.trialcount += 1;
+	values.category="Category2";
+	values.itemnumber = list.Category2Target_itemnumbers.nextValue;
+	values.target_position = list.Category2Target_positions.nextValue;
+	values.congruence = list.Category2Targetprobe_congruence.nextValue;
+	if (values.target_position == 1) {
+		values.target_y = parameters.target_bottom_y;
+		values.comp_y = parameters.target_top_y;
+	} else {
+		values.target_y = parameters.target_top_y;
+		values.comp_y = parameters.target_bottom_y;
+	}
+	if (values.congruence == 1) {
+		values.probe_y = values.target_y;
+	} else {
+		values.probe_y = values.comp_y;
+	}
+	trial.Category2.insertStimulusTime(shape.eraser, parameters.fixationduration);
+	trial.Category2.insertStimulusTime(text.Category2Target, parameters.fixationduration);
+	trial.Category2.insertStimulusTime(text.Category2Comp, parameters.fixationduration);
+	trial.Category2.insertStimulusTime(shape.eraser, (parameters.fixationduration + parameters.targetduration));
+	trial.Category2.insertStimulusTime(text.probe, (parameters.fixationduration + parameters.targetduration + parameters.tp_isi));
+]
+/ stimulusframes = [1 = fixation]
+/ beginresponsetime = parameters.fixationduration + parameters.targetduration + parameters.tp_isi
+/ responseinterrupt = immediate
+/ validresponse = (parameters.responsekey_bottom, parameters.responsekey_top)
+/ iscorrectresponse = [
+return((values.probe_y == parameters.target_bottom_y && trial.category2.responseText == parameters.responsekey_bottom) ||
+		(values.probe_y == parameters.target_top_y && trial.category2.responseText == parameters.responsekey_top));
+]											
+/ ontrialend = [
+	trial.Category2.resetStimulusFrames();
+	values.target_word = text.Category2Target.currentItem;
+	values.comp_word = text.Category2Comp.currentItem;
+	
+	if (trial.Category2.latency >= parameters.minimum_latency){
+		values.valid = 1;
+		if (trial.Category2.correct) {
+			values.validcorrect = 1;
+			if (values.congruence == 1) {
+				list.latencies_Category2_C.appendItem(trial.Category2.latency);
+				list.latencies.appendItem(trial.Category2.latency);
+			} else {
+				list.latencies_Category2_IC.appendItem(trial.Category2.latency);
+				list.latencies.appendItem(trial.Category2.latency);
+			}
+		}
+	}
+	
+	list.accuracy.appendItem(values.validcorrect);
+	if (values.congruence == 1) {
+		list.accuracy_Category2_C.appendItem(values.validcorrect);
+	} else {
+		list.accuracy_Category2_IC.appendItem(values.validcorrect);
+	}
+]
+/ timeout = (parameters.fixationduration + parameters.targetduration + parameters.tp_isi + parameters.probeduration)
+/ posttrialpause = parameters.iti
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: 
+* presents 10 practice trials (order is random)
+<block Practice>
+/ onblockbegin = [
+	values.task = 1;
+]
+/ postinstructions = (practice)
+/ trials = [
+	1 = getReady;
+	2-11 = practice;
+]
+/ errormessage = true(feedback, 500)
+</block>
+
+Note: presents 80 trials (trial order is determined randomly)
+<block wordDotProbeTask>
+/ onblockbegin = [
+	values.task = 2;
+]
+/ trials = [
+	1 = getReady;
+	2-81 = noreplace(category1, category2)]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+<expt dotprobe>
+/ preinstructions = (instructions)
+/ blocks = [
+	1 = Practice; 
+	2 = wordDotProbeTask;
+	3 = finish;
+]
+</expt>
+
+
+Note: debug element
+<monkey>
+/ latencydistribution = normal(300, 50)
+</monkey>
+
+*******************************************************************************************************************
+End of File
+*******************************************************************************************************************

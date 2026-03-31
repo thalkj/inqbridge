@@ -1,0 +1,705 @@
+<usermanual>														
+___________________________________________________________________________________________________________________	
+
+									*RAND Quality of Life Survey 36-Item Short Form (SF-36) *
+									(SF-36)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 10-10-2-13
+last updated:  09-27-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 09-27-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the RAND 36 - Item Health Survey 1.0 version of the Medical Outcomes Study (MOS) Short Form 
+Health Survey (SF-36). It was developed at RAND as part of MOS.  It differs from the commercially available MOS SF-36 
+in the scoring algorithm. The following articles/webpages were used to develop this script:
+
+Ware, J., Jr., & Sherbourne, C.D. (1992). The MOS 36-Item Short-Form Health Survey (SF-36): I. Conceptual Framework 
+and Item Selection. Medical Care, 30, 473-483.
+
+Ware, J.E. Jr. & Gandek, B, (1998). Overview of the SF-36 Health Survey and the International Quality of Life Assessment 
+(IQOLA) Project. Journal of Clinical Epidemiology, 51, 903-912.
+
+More information (including scoring guidelines) about the RAND 36 - Item Health Survey 1.0 on:
+http://www.rand.org/health/surveys_tools/mos/mos_core_36item.html
+
+All RAND surveys are in the public domain.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+The RAND36-Item Health Survey contains 36 questions that assess the following 8 scales (+ 1 extra):
+
+Factor 1: Physical Health (PCS) (summary measure)
+Physical Functioning (PF): questions 3-12 (10 items)
+Role-Physical (RP): questions 13-16  (4 items)
+Bodily Pain (BP): question 21-22 (2 items)
+General Health (GH): questions 1,33,34,35,36 (5 items)
+
+Factor 2: Mental Health (MCS) (summary measure)
+Mental Health (MH): questions 24,25,26,28,30 (5 items)
+Role-Emotional (RE): questions 17,18,19 (3 items)
+Social Functioning (SF): questions 20,32 (2 items)
+Vitality (VT): questions 23, 27, 29, 31  (4 items)
+
+Self-reported Health Transition: question 2 
+
+By default, participants are required to answer all the questions in this script.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes under 5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'rand36_ItemHealthSurvey.iqdat' 
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response to a particular question (here in percentages); the anchors vary per question
+								For a more detailed check, check assigned 'optionvalues' under each question 
+								under section QUESTIONS
+								
+q*_latency:						latency of clicking "next" the last time the page was visited
+
+(2) Summary data file: 'rand36_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+the following scores save the percentage of total well-being (=100%) for each of the 8 (+1 extra) scales
+
+selfreported_HT:	self-reported health transition
+
+ => Physical Health (PCS) (summary measure: mean percentage of the individual responses to target questions)
+PF: 					Physical Functioning (PF): questions 3-12
+RP:					Role-Physical (RP): questions 13-16  (4 items)
+BP:					Bodily Pain (BP): question 21-22 (2 items)
+GH:					General Health (GH): questions 1,33,34,35,36 (5 items)
+
+=> Mental Health (MCS) (summary measure: mean percentage of the individual responses to target questions)
+MH:					Mental Health (MH): questions 24,25,26,28,30 (5 items)
+RE:					Role-Emotional (RE): questions 17,18,19 (3 items)
+SF:					Social Functioning (SF): questions 20,32 (2 items)
+VT:					Vitality (VT): question 23, 27, 29, 31  (4 items)
+
+__________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to further customize your experiment.
+
+The parameters you can change are:
+
+/instructions:					Contain the surveypage instructions. The default instructions ("Please answer the following questions")
+								are not original to the survey and were addede by Millisecond Software.
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ instructions =   "Please answer the following questions
+"
+</parameters>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/ canvasaspectratio =   (4,3)
+/ minimumversion =   "6.6.1.0"
+/ fontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor =   white
+/ txcolor =   (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+the raw data is saved under RAND36_ItemHealthSurvey.iqdat
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns =   (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+expressions.selfreported_HT,
+expressions.PF, expressions.RP, expressions.BP, expressions.GH,
+expressions.MH, expressions.RE, expressions.SF, expressions.VT,
+
+//raw data
+radiobuttons.q1.response,
+radiobuttons.q2.response,
+radiobuttons.q3.response,
+radiobuttons.q4.response,
+radiobuttons.q5.response,
+radiobuttons.q6.response,
+radiobuttons.q7.response,
+radiobuttons.q8.response,
+radiobuttons.q9.response,
+radiobuttons.q10.response,
+radiobuttons.q11.response,
+radiobuttons.q12.response,
+radiobuttons.q13.response,
+radiobuttons.q14.response,
+radiobuttons.q15.response,
+radiobuttons.q16.response,
+radiobuttons.q17.response,
+radiobuttons.q18.response,
+radiobuttons.q19.response,
+radiobuttons.q20.response,
+radiobuttons.q21.response,
+radiobuttons.q22.response,
+radiobuttons.q23.response,
+radiobuttons.q24.response,
+radiobuttons.q25.response,
+radiobuttons.q26.response,
+radiobuttons.q27.response,
+radiobuttons.q28.response,
+radiobuttons.q29.response,
+radiobuttons.q30.response,
+radiobuttons.q31.response,
+radiobuttons.q32.response,
+radiobuttons.q33.response,
+radiobuttons.q34.response,
+radiobuttons.q35.response,
+radiobuttons.q36.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+the 8 scores are the mean scores of their corresponding items 
+
+ => Physical Health (PCS) (summary measure)
+/PF: 					Physical Functioning (PF): questions 3-12
+/RP:					Role-Physical (RP): questions 13-16  (4 items)
+/BP:					Bodily Pain (BP): question 21-22 (2 items)
+/GH:					General Health (GH): questions 1,33,34,35,36 (5 items)
+
+=> Mental Health (MCS) (summary measure)
+/MH:					Mental Health (MH): questions 24,25,26,28,30 (5 items)
+/RE:					Role-Emotional (RE): questions 17,18,19 (3 items)
+/SF:					Social Functioning (SF): questions 20,32 (2 items)
+/VT:					Vitality (VT): question 23, 27, 29, 31  (4 items)
+
+/selfreported_HT: q2
+
+<expressions>
+/ PF =   return ((radiobuttons.q3.response + radiobuttons.q4.response + radiobuttons.q5.response + radiobuttons.q6.response + 
+radiobuttons.q7.response + radiobuttons.q8.response + radiobuttons.q9.response + radiobuttons.q10.response + 
+radiobuttons.q11.response + radiobuttons.q12.response)/10)
+/ RP =   return ((radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q15.response + radiobuttons.q16.response)/4)
+/ BP =   return ((radiobuttons.q21.response + radiobuttons.q22.response)/2)
+/ GH =   return ((radiobuttons.q1.response + radiobuttons.q33.response + radiobuttons.q34.response + radiobuttons.q35.response + radiobuttons.q36.response) / 5)
+/ MH =   return ((radiobuttons.q24.response + radiobuttons.q25.response + radiobuttons.q26.response + radiobuttons.q28.response + radiobuttons.q30.response) / 5)
+/ RE =   return ((radiobuttons.q17.response + radiobuttons.q18.response + radiobuttons.q19.response) / 3)
+/ SF =   return ((radiobuttons.q20.response + radiobuttons.q32.response) / 2)
+/ VT =   return ((radiobuttons.q23.response + radiobuttons.q27.response + radiobuttons.q29.response + radiobuttons.q31.response) / 4)
+
+/ selfreported_HT =   return radiobuttons.q2.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: the responses saved in the datafile are the assigned numeric values (= percentages of total well-being)
+
+<radiobuttons q1>
+/ caption =   "1. In general, would you say your health is:"
+/ options =   ("Excellent", "Very Good", "Good", "Fair", "Poor")
+/ optionvalues =   ("100", "75", "50", "25", "0")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/ caption =   "2. Compared to one year ago, how would you rate your health in general now?"
+/ options =   ("Much better now than one year ago", "Somewhat better now than one year ago", "About the same as one year ago", "Somewhat worse now than one year ago", "Much worse than one year ago")
+/ optionvalues =   ("100", "75", "50", "25", "0")
+/ required =   true
+/ orientation =   vertical
+</radiobuttons>
+
+<caption part3_caption>
+/ caption =   "<span style='background-color:#00FEFE'>The following items are about activities you might do during a typical day. Does <b>your health now limit you</b> in these activities? If so, how much?</span>"
+</caption>
+
+<radiobuttons q3>
+/ caption =   "3. <b>Vigorous activities</b>, such as running, lifting heavy objects, participating in strenuous sports"
+/ options =   ("Yes, limited a lot", "Yes, limited a little", "No, not limited at all")
+/ optionvalues =   ("0", "50", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q4>
+/ caption =   "4. <b>Moderate activities</b>, such as moving a table, pushing a vacuum cleaner, bowling, or playing golf"
+/ options =   ("Yes, limited a lot", "Yes, limited a little", "No, not limited at all")
+/ optionvalues =   ("0", "50", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q5>
+/ caption =   "5. Lifting or carrying groceries"
+/ options =   ("Yes, limited a lot", "Yes, limited a little", "No, not limited at all")
+/ optionvalues =   ("0", "50", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q6>
+/ caption =   "6. Climbing <b>several</b> flights of stairs"
+/ options =   ("Yes, limited a lot", "Yes, limited a little", "No, not limited at all")
+/ optionvalues =   ("0", "50", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q7>
+/ caption =   "7. Climbing <b>one</b> flight of stairs"
+/ options =   ("Yes, limited a lot", "Yes, limited a little", "No, not limited at all")
+/ optionvalues =   ("0", "50", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q8>
+/ caption =   "8. Bending, kneeling, or stooping"
+/ options =   ("Yes, limited a lot", "Yes, limited a little", "No, not limited at all")
+/ optionvalues =   ("0", "50", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q9>
+/ caption =   "9. Walking <b>more than a mile</b>"
+/ options =   ("Yes, limited a lot", "Yes, limited a little", "No, not limited at all")
+/ optionvalues =   ("0", "50", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q10>
+/ caption =   "10. Walking <b>several blocks</b>"
+/ options =   ("Yes, limited a lot", "Yes, limited a little", "No, not limited at all")
+/ optionvalues =   ("0", "50", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q11>
+/ caption =   "11. Walking <b>one</b> block"
+/ options =   ("Yes, limited a lot", "Yes, limited a little", "No, not limited at all")
+/ optionvalues =   ("0", "50", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q12>
+/ caption =   "12. Bathing or dressing yourself"
+/ options =   ("Yes, limited a lot", "Yes, limited a little", "No, not limited at all")
+/ optionvalues =   ("0", "50", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<caption part4_caption>
+/ caption =  "<span style='background-color:#00FEFE'>During the <b><b>past 4 weeks</b></b>, have you had any of the following problems with your work or other regular daily activities <b>as a result of your PHYSICAL HEALTH</b>?</span>"
+</caption>
+
+<radiobuttons q13>
+/ caption =   "13. Cut down the <b>amount of time<b> you spent on work or other activities."
+/ options =   ("Yes", "No")
+/ optionvalues =   ("0", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q14>
+/ caption =   "14. <b>Accomplished less</b> than you would like"
+/ options =   ("Yes", "No")
+/ optionvalues =   ("0", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q15>
+/ caption =   "15. Were limited in the <b>kind</b> of work or other activities"
+/ options =   ("Yes", "No")
+/ optionvalues =   ("0", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q16>
+/ caption =   "16. Had <b>difficulty</b> performing the work or other activities (for example, it took extra effort)"
+/ options =   ("Yes", "No")
+/ optionvalues =   ("0", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<caption part5_caption>
+/ caption =   "<span style='background-color:#00FEFE'>During the <b><b>past 4 weeks</b></b>, have you had any of the following problems with your work or other regular daily activities <b>as a result of any EMOTIONAL PROBLEMS</b> (such as feeling depressed or anxious)?</span>"
+</caption>
+
+<radiobuttons q17>
+/ caption =   "17. Cut down the <b>amount of time</b> you spent on work or other activities"
+/ options =   ("Yes", "No")
+/ optionvalues =   ("0", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q18>
+/ caption =   "18. <b>Accomplished less</b> than you would like"
+/ options =   ("Yes", "No")
+/ optionvalues =   ("0", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q19>
+/ caption =   "19. Didn't do work or other activities as <b>carefully</b> as usual"
+/ options =   ("Yes", "No")
+/ optionvalues =   ("0", "100")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q20>
+/ caption =   "20. During the <b>past 4 weeks</b>, to what extent has your physical health or emotional problems interfered with your normal social activities with family, friends, neighbors, or groups?"
+/ options =   ("Not at all", "Slightly", "Moderately", "Quite a bit", "Extremely")
+/ optionvalues =   ("100", "75", "50", "25", "0")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q21>
+/ caption =   "21. How much <b>bodily</b> pain have you had during the <b>past 4 weeks</b>?"
+/ options =   ("None", "Very mild", "Mild", "Moderate", "Severe", "Very severe")
+/ optionvalues =   ("100", "80", "60", "40", "20", "0")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q22>
+/ caption =   "22. During the <b>past 4 weeks</b>, how much did <b>pain</b> interfere with your normal work (including both work outside the home and housework)?"
+/ options =   ("Not at all", "A little bit", "Moderately", "Quite a bit", "Extremely")
+/ optionvalues =   ("100", "75", "50", "25", "0")
+/ orientation =   vertical
+/ required =   true
+</radiobuttons>
+
+<caption part9_caption>
+/ caption =   "<span style='background-color:#00FEFE'>These questions are about how you feel and how things have been with you during the <b>past 4 weeks</b>. For each question, please give the one answer that comes closest to the way you have.</span>"
+</caption>
+
+<radiobuttons q23>
+/ caption =   "23. How much of the time during the <b>past 4 weeks</b> did you feel full of pep?"
+/ options =   ("All ~nof the time  ", "Most ~nof the time  ", "A good bit ~nof the time  ", "Some ~nof the time  ", "A little ~nof the time  ", "None ~nof the time  ")
+/ optionvalues =   ("100", "80", "60", "40", "20", "0")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q24>
+/ caption =   "24. How much of the time during the <b>past 4 weeks</b> have you been a very nervous person?"
+/ options =   ("All ~nof the time  ", "Most ~nof the time  ", "A good bit ~nof the time  ", "Some ~nof the time  ", "A little ~nof the time  ", "None ~nof the time  ")
+/ optionvalues =   ("0", "20", "40", "60", "80", "100")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q25>
+/ caption =   "25. How much of the time during the <b>past 4 weeks</b> have you felt so down in the dumps that nothing could cheer you up?"
+/ options =   ("All ~nof the time  ", "Most ~nof the time  ", "A good bit ~nof the time  ", "Some ~nof the time  ", "A little ~nof the time  ", "None ~nof the time  ")
+/ optionvalues =   ("0", "20", "40", "60", "80", "100")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q26>
+/ caption =   "26. How much of the time during the <b>past 4 weeks</b> have you felt calm and peaceful?"
+/ options =   ("All ~nof the time  ", "Most ~nof the time  ", "A good bit ~nof the time  ", "Some ~nof the time  ", "A little ~nof the time  ", "None ~nof the time  ")
+/ optionvalues =   ("100", "80", "60", "40", "20", "0")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q27>
+/ caption =   "27. How much of the time during the <b>past 4 weeks</b> did you have a lot or energy?"
+/ options =   ("All ~nof the time  ", "Most ~nof the time  ", "A good bit ~nof the time  ", "Some ~nof the time  ", "A little ~nof the time  ", "None ~nof the time  ")
+/ optionvalues =   ("100", "80", "60", "40", "20", "0")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q28>
+/ caption =   "28. How much of the time during the <b>past 4 weeks</b> have you felt downhearted and blue?"
+/ options =   ("All ~nof the time  ", "Most ~nof the time  ", "A good bit ~nof the time  ", "Some ~nof the time  ", "A little ~nof the time  ", "None ~nof the time  ")
+/ optionvalues =   ("0", "20", "40", "60", "80", "100")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q29>
+/ caption =   "29. How much of the time during the <b>past 4 weeks</b> did you feel worn out?"
+/ options =   ("All ~nof the time  ", "Most ~nof the time  ", "A good bit ~nof the time  ", "Some ~nof the time  ", "A little ~nof the time  ", "None ~nof the time  ")
+/ optionvalues =   ("0", "20", "40", "60", "80", "100")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q30>
+/ caption =   "30. How much of the time during the <b>past 4 weeks</b> have you been a happy person?"
+/ options =   ("All ~nof the time  ", "Most ~nof the time  ", "A good bit ~nof the time  ", "Some ~nof the time  ", "A little ~nof the time  ", "None ~nof the time  ")
+/ optionvalues =   ("100", "80", "60", "40", "20", "0")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q31>
+/ caption =   "31. How much of the time during the <b>past 4 weeks</b> did you feel tired?"
+/ options =   ("All ~nof the time  ", "Most ~nof the time  ", "A good bit ~nof the time  ", "Some ~nof the time  ", "A little ~nof the time  ", "None ~nof the time  ")
+/ optionvalues =   ("0", "20", "40", "60", "80", "100")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q32>
+/ caption =   "32. During the <b>past 4 weeks</b>, how much of the time has <b>your physical health or emotional problems</b> interfered with your social activities (like visiting with friends, relatives, etc.)?"
+/ options =   ("All ~nof the time  ", "Most ~nof the time  ", "Some ~nof the time  ", "A little ~nof the time  ", "None ~nof the time  ")
+/ optionvalues =   ("0", "25", "50", "75", "100")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<caption part11_caption>
+/ caption =   "<span style='background-color:#00FEFE'>How TRUE or FALSE is <b>each</b> of the following statements for you?</span>"
+</caption>
+
+<radiobuttons q33>
+/ caption =   "33. I seem to get sick a little easier than other people"
+/ options =   ("Definitely true", "Mostly true", "Don't know", "Mostly false", "Definitely false")
+/ optionvalues =   ("0", "25", "50", "75", "100")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q34>
+/ caption =   "34. I am as healthy as anybody I know"
+/ options =   ("Definitely true", "Mostly true", "Don't know", "Mostly false", "Definitely false")
+/ optionvalues =   ("100", "75", "50", "25", "0")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q35>
+/ caption =   "35. I expect my health to get worse"
+/ options =   ("Definitely true", "Mostly true", "Don't know", "Mostly false", "Definitely false")
+/ optionvalues =   ("0", "25", "50", "75", "100")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+<radiobuttons q36>
+/ caption =   "36. My health is excellent"
+/ options =   ("Definitely true", "Mostly true", "Don't know", "Mostly false", "Definitely false")
+/ optionvalues =   ("100", "75", "50", "25", "0")
+/ orientation =   horizontalequal
+/ required =   true
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage RAND36_1>
+/ caption =   "<%parameters.instructions%>"
+/ questions =   [1 = q1, q2]
+</surveypage>
+
+<surveypage RAND36_2>
+
+/ questions =   [1 = part3_caption, q3, q4]
+</surveypage>
+
+<surveypage RAND36_3>
+
+/ questions =   [1 = part3_caption, q5, q6]
+</surveypage>
+
+<surveypage RAND36_4>
+
+/ questions =   [1 = part3_caption, q7, q8]
+</surveypage>
+
+<surveypage RAND36_5>
+
+/ questions =   [1 = part3_caption, q9, q10]
+</surveypage>
+
+<surveypage RAND36_6>
+
+/ questions =   [1 = part3_caption, q11, q12]
+</surveypage>
+
+<surveypage RAND36_7>
+
+/ questions =   [1 = part4_caption, q13, q14]
+</surveypage>
+
+<surveypage RAND36_8>
+
+/ questions =   [1 = part4_caption, q15, q16]
+</surveypage>
+
+<surveypage RAND36_9>
+
+/ questions =   [1 = part5_caption, q17, q18, q19]
+</surveypage>
+
+<surveypage RAND36_10>
+
+/ questions =   [1 = q20, q21]
+</surveypage>
+
+<surveypage RAND36_11>
+
+/ questions =   [1 = q22, part9_caption,q23]
+</surveypage>
+
+<surveypage RAND36_12>
+
+/ questions =   [1 = part9_caption,q24, q25, q26]
+</surveypage>
+
+<surveypage RAND36_13>
+
+/ questions =   [1 = part9_caption,q27, q28, q29]
+</surveypage>
+
+<surveypage RAND36_14>
+
+/ questions =   [1 = part9_caption, q30, q31]
+</surveypage>
+
+<surveypage RAND36_15>
+
+/ questions =   [1 = q32, part11_caption, q33, q34]
+</surveypage>
+
+<surveypage RAND36_16>
+
+/ questions =   [1 = part11_caption, q35, q36]
+</surveypage>
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY/BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note:
+The final responses saved in the data file are already converted into their numeric value.
+- to take pictures of each screen set /screencapture = true
+
+<survey rand36_itemhealthsurvey>
+/ pages =   [
+	1 = RAND36_1; 
+	2 = RAND36_2; 
+	3 = RAND36_3; 
+	4 = RAND36_4; 
+	5 = RAND36_5; 
+	6 = RAND36_6;
+	7 = RAND36_7;
+	8 = RAND36_8;
+	9 = RAND36_9;
+	10 = RAND36_10;
+	11 = RAND36_11;
+	12 = RAND36_12;
+	13 = RAND36_13;
+	14 = RAND36_14;
+	15 = RAND36_15;
+	16 = RAND36_16;
+]
+/ screencapture =   false
+/ fontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle =   ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ responsefontstyle =   ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor =   (0, 0, 0)
+/ showpagenumbers =   false
+/ showquestionnumbers =   false
+/ navigationbuttonfontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize =   (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition =   (70%, 90%)
+/ finishlabel =   "Finish - Thank you!"
+/ navigationbuttonsize =   (20%, 5%)
+</survey>
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

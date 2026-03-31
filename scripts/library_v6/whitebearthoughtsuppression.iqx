@@ -1,0 +1,408 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*WHITE BEAR THOUGHT SUPPRESSION PROCEDURE*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 06-03-2020
+last updated:  03-03-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 03-03-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a computer adapted 'White Bear Thought Suppression Procedure' (Wegner et al, 1987); 
+a procedure to investigate the paradoxical effect of attempting to suppress of conscious thought.
+
+References
+
+Wegner, D.M, Schneider, D.J, Carter, S.R, & White, T.L (1987). Paradoxical Effects of Thought Suppression. 
+Journal of Personality and Social Psychology 53, 5–13.
+
+Giuliano, R.J., & Wicha, N.Y. (2010). Why the white bear is still there: electrophysiological evidence for 
+ironic semantic activation during thought suppression. Brain research, 1316, 62–74. 
+https://doi.org/10.1016/j.brainres.2009.12.041
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+
+Participants work through three phases of thought vocalizations:
+
+Phase1: Participants are instructed to vocalize their thoughts for 5 minutes (editable) straight.
+-> Inquisit records and provides a soundfile for this phase
+
+Phase2: Participants are instructed to vocalize their thoughts for 5 minutes (editable) while 
+being instructed to NOT think of a 'White Bear'. If they think of a 'White Bear', they are instructed 
+to press the Spacebar.
+-> Inquisit records and provides a soundfile for this phase as well as counts the number
+of spacebar presses
+
+Phase3: Participants are instructed to vocalize their thoughts for 5 minutes (editable).
+If they happen to think of a 'White Bear', they are instructed to press the Spacebar
+-> Inquisit records and provides a soundfile for this phase as well as counts the number
+of spacebar presses
+
+Note: if the task is performed on devices that have keyboards attached, the spacebar presses are
+easily in the recorded soundfiles.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 18 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'whitebearthoughtsuppression_raw*.iqdat'*
+
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.
+										
+stimulusitem:					the presented stimuli in order of trial presentation
+response:						the participant's response (scancode of response buttons)
+								57 = spacebar
+
+countResponses:					counts the number of spacebar presses made during phase2 and phase3
+
+latency: 						the response latency (in ms); measured from: onset of trial
+
+
+(2) Summary data file: 'whitebearthoughtsuppression_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+phase2Responses:				counts the number of spacebar-presses made during phase2 (thought suppression phase)									
+phase3Responses:				counts the number of spacebar-presses made during phase3							
+							
+
+
+(3) 3 Sound files per participant
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+Participants work through three phases of thought vocalizations:
+
+Phase1: Participants are instructed to vocalize their thoughts for 5 minutes (editable) straight.
+-> Inquisit records and provides a soundfile for this phase
+
+Phase2: Participants are instructed to vocalize their thoughts for 5 minutes (editable) while 
+being instructed to NOT think of a 'White Bear'. If they think of a 'White Bear', they are instructed 
+to press the Spacebar.
+-> Inquisit records and provides a soundfile for this phase as well as counts the number
+of spacebar presses
+
+Phase3: Participants are instructed to vocalize their thoughts for 5 minutes (editable).
+If they happen to think of a 'White Bear', they are instructed to press the Spacebar
+-> Inquisit records and provides a soundfile for this phase as well as counts the number
+of spacebar pressesse
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+The instructions are taken from: Giuliano & Wicha (2010)
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/targetConcept = "White Bear"			//the target concept tested in this script
+
+/phase1Duration = 300000				//the duration (in ms) of phase1 (default: 300000 -> 5minutes)
+/phase2Duration = 300000				//the duration (in ms) of phase2 (default: 300000 -> 5minutes)
+/phase3Duration = 300000				 //the duration (in ms) of phase3 (default: 300000 -> 5minutes)
+										//NOTE: if any of these default values are changed, instructions under
+										//section Editable Instructions need to be changed accordingly
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</instruct>
+
+<page phase1>
+<br><h2>For the next five minutes, please verbalize your thoughts out loud. </h2><br><br>
+You are encouraged to report <i><u>everything that comes to mind no matter how much sense it makes.</u></i><br><br>
+You are not required to explain or justify why you are thinking the thoughts; we only ask that
+you describe your thoughts as they come to you. The important thing is that you
+continue to talk throughout the five-minute period.
+</page>
+
+<page phase2>
+<br><br><br>For the next five minutes, please verbalize your thoughts as you did before, with one
+exception:<br><br> 
+This time, try <b>not</b> to think of the word <b>'<%parameters.targetConcept%>'</b>.<br><br>
+<i>Every time you do say <b>'<%parameters.targetConcept%>'</b> or have <b>'<%parameters.targetConcept%>'</b> 
+come to mind, please <u>press the SPACEBAR</u></i>.
+</page>
+
+<page phase3>
+<br><br><br>For the next five minutes, please verbalize your thoughts as you did before, with one
+exception:<br><br>
+<i>This time, try to think (or not to think) of the word <b>'<%parameters.targetConcept%>'</b>. Every time
+you say <b>'<%parameters.targetConcept%>'</b> or have <b>'<%parameters.targetConcept%>'</b> come to mind, though, 
+<u>press the SPACEBAR</u></i>.
+</page>
+
+<text ready>
+/ items = ("Press SPACEBAR to start")
+</text>
+
+<text instruct>
+/ items = ("Vocalize your thoughts")
+/ erase = false
+/ position = (50%, 10%)
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+/ inputdevice = keyboard
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+stimulusitem, response, values.countResponses, latency)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+values.phase2Responses, values.phase3Responses)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/phase = 1
+/trialEndTime = ""
+/countResponses = 0
+/phase2Responses = 0
+/phase3Responses = 0
+/testDuration = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+finish trial
+**************************************************************************************************************
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+//trial starts the procedure by having participants press the spacebar
+//at the end of the trial, values.trialEndTime is calculated
+<trial starttrial>
+/ stimulusframes = [1 = ready ]
+/ validresponse = (" ")
+/ ontrialend = [
+	values.trialEndTime = script.elapsedTime + values.testDuration;
+]
+</trial>
+
+//trial records verbal reporting for the prescribed timeperiod
+//and collects spacebar presses during the entire time
+<trial whitebeartesttrial>
+/ soundcapture = true
+/ stimulusframes = [1 = instruct]
+
+//spacebar press is only valid for phase2/phase3
+/ validresponse = (" ")
+/ isvalidresponse = [
+	if (values.phase > 1 && trial.whitebeartesttrial.responseText == " "){
+		values.countResponses += 1;
+	}
+	return (values.phase > 1 && trial.whitebeartesttrial.responseText == " ");
+]
+
+/ stop = [
+	return script.elapsedTime > values.trialEndTime;
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block phase1>
+/ preinstructions = (phase1)
+/ onblockbegin = [
+	values.phase = 1;
+	values.countResponses = 0;
+	values.testDuration = parameters.phase1Duration;
+]
+/ trials = [1 = starttrial; 2 = whitebeartesttrial]
+</block>
+
+<block phase2>
+/ preinstructions = (phase2)
+/ onblockbegin = [
+	values.phase = 2;
+	values.countResponses = 0;
+	values.testDuration = parameters.phase2Duration;
+]
+/ trials = [1 = starttrial; 2 = whitebeartesttrial]
+/ onblockend = [
+	values.phase2Responses = values.countResponses;
+]
+</block>
+
+<block phase3>
+/ preinstructions = (phase3)
+/ onblockbegin = [
+	values.phase = 3;
+	values.countResponses = 0;
+	values.testDuration = parameters.phase3Duration;
+]
+/ trials = [1 = starttrial; 2 = whitebeartesttrial]
+/ onblockend = [
+	values.phase3Responses = values.countResponses;
+]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt whiteBear>
+/ blocks = [
+	1 = phase1;
+	2 = phase2;
+	3 = phase3;
+	4 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

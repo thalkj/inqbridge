@@ -1,0 +1,297 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Perceived Stress Scale (PSS-10)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 09-27-2023
+last updated:  09-27-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 09-27-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements Millisecond's computerized version of the Perceived Stress Scale (PSS-10).
+The Perceived Stress Scale was originally suggested as a 14-item scale (PSS-14, Cohen et al, 1983) and later
+shortened to 10 items (Cohen & Williamson, 1988).
+
+"Items in the PSS-10 were designed to tap how unpredictable, uncontrollable, and overloading respondents find their lives" 
+(Cohen & Janicki-Deverts, 2012, p. 1323)
+
+References:
+
+Cohen, S., Kamarck, T., & Mermelstein, R. (1983). A global measure of perceived stress. 
+Journal of Health and Social Behavior, 24, 386-396.
+
+Cohen, S., & Williamson, G. (1988). Perceived stress in a probability sample of the U.S. In S. Spacapam & S. Oskamp (Eds.), 
+The social psychology of health: Claremont Symposium on Applied Social Psychology. Newbury Park, CA: Sage.
+
+Cohen, S., & Janicki-Deverts, D. (2012). Who's stressed? Distributions of psychological stress in the United States in 
+probability samples from 1983, 2006 and 2009.  
+Journal of Applied Social Psychology, 42, 1320-1334.  
+(This article provides NORMATIVE DATA for the PSS-10 from US samples in 1983, 2006 and 2009)
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+self-report measure consisting of 10 5-point Likert Scale questions on a scale from (0 = never to 4 = very often)
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minute to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'pss_10.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 0="never" to 4= "very often")
+								R: reversed coded questions (if any)
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'pss_10_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+							
+								
+
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/ canvasaspectratio =   (4,3)
+/ minimumversion =   "6.6.1.0"
+/ fontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor =   white
+/ txcolor =   (0, 0, 0)
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns =   (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+expressions.PSS_total,
+
+//raw responses
+radiobuttons.q1.response, 
+radiobuttons.q2.response, 
+radiobuttons.q3.response, 
+radiobuttons.q4R.response,
+radiobuttons.q5R.response ,
+ radiobuttons.q6.response, 
+ radiobuttons.q7R.response, 
+ radiobuttons.q8R.response, 
+radiobuttons.q9.response, 
+radiobuttons.q10.response
+)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/ PSS_total = return (radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4R.response +
+radiobuttons.q5R.response  + radiobuttons.q6.response + radiobuttons.q7R.response + radiobuttons.q8R.response + 
+radiobuttons.q9.response + radiobuttons.q10.response)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/ caption =   "1. In the last month, how often have you been upset because of something that happened unexpectedly?"
+/ options =   ("never", "almost never", "sometimes", "fairly often", "very often")
+/ optionvalues =   ("0", "1", "2", "3", "4")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/ caption =   "2. In the last month, how often have you felt that you were unable to control the important things in your life?"
+/ options =   ("never", "almost never", "sometimes", "fairly often", "very often")
+/ optionvalues =   ("0", "1", "2", "3", "4")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/ caption =   "3. In the last month, how often have you felt nervous and stressed?"
+/ options =   ("never", "almost never", "sometimes", "fairly often", "very often")
+/ optionvalues =   ("0", "1", "2", "3", "4")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q4R>
+/ caption =   "4. In the last month, how often have you felt confident about your ability to handle your personal problems?"
+/ options =   ("never", "almost never", "sometimes", "fairly often", "very often")
+/ optionvalues =   ("4","3","2","1","0")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q5R>
+/ caption =   "5. In the last month, how often have you felt that things were going your way?"
+/ options =   ("never", "almost never", "sometimes", "fairly often", "very often")
+/ optionvalues =   ("4","3","2","1","0")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/ caption =   "6. In the last month, how often have you found that you could not cope with all the things that you had to do?"
+/ options =   ("never", "almost never", "sometimes", "fairly often", "very often")
+/ optionvalues =   ("0", "1", "2", "3", "4")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q7R>
+/ caption =   "7. In the last month, how often have you been able to control irritations in your life?"
+/ options =   ("never", "almost never", "sometimes", "fairly often", "very often")
+/ optionvalues =   ("4","3","2","1","0")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q8R>
+/ caption =   "8. In the last month, how often have you felt that you were on top of things?"
+/ options =   ("never", "almost never", "sometimes", "fairly often", "very often")
+/ optionvalues =   ("4","3","2","1","0")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/ caption =   "9. In the last month, how often have you been angered because of things that happened that were outside of your control?"
+/ options =   ("never", "almost never", "sometimes", "fairly often", "very often")
+/ optionvalues =   ("0", "1", "2", "3", "4")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/ caption =   "10. In the last month, how often have you felt difficulties were piling up so high that you could not overcome them?"
+/ options =   ("never", "almost never", "sometimes", "fairly often", "very often")
+/ optionvalues =   ("0", "1", "2", "3", "4")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage PSS_1>
+/ caption =   "The questions in this scale ask you about your feelings and thoughts during the <u>last month</u>.<br><br>
+In each case you will be asked to indicate <i>how often</i> you felt or thought a certain way. Although some of the questions are similar, there are differences between them
+and you should treat each one as a separate question.<br><br>
+The best approach is to answer each question fairly quickly. That is, don't try to count
+up the number of times you felt a particular way, but rather indicate the alternative that seems like a reasonable estimate.<br>"
+/ subcaption =   ""
+/ questions =   [1 = q1,q2]
+</surveypage>
+
+<surveypage PSS_2>
+/ caption =   ""
+/ subcaption =   ""
+/ questions =   [1 = q3,q4R,q5R,q6]
+</surveypage>
+
+<surveypage PSS_3>
+/ caption =   ""
+/ subcaption =   ""
+/ questions =   [1 = q7R, q8R, q9, q10]
+</surveypage>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+
+<survey PSS_10>
+/ pages =   [
+	1 = PSS_1;
+	2 = PSS_2;
+	3 = PSS_3;
+]
+/ screencapture =   false
+/ fontstyle =   ("Arial", 2.75%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle =   ("Arial", 2.75%, true, false, false, false, 5, 1)
+/ responsefontstyle =   ("Arial", 2.25%, false, false, false, false, 5, 1)
+/ showpagenumbers =   false
+/ showquestionnumbers =   false
+/ navigationbuttonfontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize =   (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition =   (70%, 90%)
+/ finishlabel =   "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

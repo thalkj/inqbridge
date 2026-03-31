@@ -1,0 +1,122 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									Neuroscan Sample
+___________________________________________________________________________________________________________________	
+
+
+Script Author: Sean Draine, Ph.D. (seandr@millisecond.com) for Millisecond Software, LLC
+last updated:  10-16-2019 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-16-2019 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script shows how to send markers from the parallel port of the Inquisit presentation computer to a 
+Neuroscan EEG System. 
+
+Neuroscan requires that the value of the marker be set on the data register of the parallel port, and a pulse 
+is sent to the control register to indicate the onset of the marker signal. Between each signal, both data and 
+control registers must be reset to zero. 
+
+The process for sending a marker requires a value of zero to be sent to both  data and control registers, 
+then sending the marker  value to the data register, and finally sending a brief pulse sent to the control 
+register at the point when the marker should be sent.
+	
+	To run this script:
+	1) Connect the parallel port to the Neuroscan EEG System using the custom Neuroscan cable. 
+    2) Check the number of the parallel port you are using. This script assumes LPT1, so if you have 
+		a difference port number, search/replace "LPT1" with  whatever your port number is (e.g. "LPT3" for port 3).
+    3) Click the Run button in Inquisit to run the script
+
+Result:
+One each trial, marker values of 1, 2, and 3 are sent approximately 500 ms apart.  
+
+</usermanual>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 5.0.0.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "5.0.0.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	CODE
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block test>
+/ bgstim = (pulsebaseline, markerbaseline)
+/ trials = [1-10=test]
+</block>
+
+<trial test>
+/ pretrialpause = 100
+/ stimulusframes = [
+	1 =marker1,pulsetrigger; 
+	2 =pulsebaseline,markerbaseline;
+	31=marker2,pulsetrigger; 
+	32=pulsebaseline,markerbaseline;
+	61=marker3,pulsetrigger; 
+	62=pulsebaseline,markerbaseline;
+]
+/ response = noresponse
+/ trialduration = 2000
+</trial>
+
+<port marker1>
+/ items = ("00000001")
+/ port = LPT1
+/ subport = data
+/ erase = false
+</port>
+
+<port marker2>
+/ items = ("00000010")
+/ port = LPT1
+/ subport = data
+/ erase = false
+</port>
+
+<port marker3>
+/ items = ("00000011")
+/ port = LPT1
+/ subport = data
+/ erase = false
+</port>
+
+<port pulsetrigger>
+/ items = ("00000001")
+/ port = LPT1
+/ subport = control
+/ erase = false
+</port>
+
+<port pulsebaseline>
+/ items = ("00000000")
+/ port = LPT1
+/ subport = control
+/ erase = false
+</port>
+
+<port markerbaseline>
+/ items = ("00000000")
+/ port = LPT1
+/ subport = data
+/ erase = false
+</port>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

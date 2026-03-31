@@ -1,0 +1,323 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+										DAILY SLEEP DIARY
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-23-2016
+last updated:  02-21-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-21-2022 Millisecond Software
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of a Daily Sleep Diary.
+
+Kevin Morgan, Beverley David, Claire Gascoigne (2007). Clinical Sleep Research Unit Loughborough University UK.
+http://www.nhs.uk/livewell/insomnia/documents/sleepdiary.pdf
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+Each morning, participants answer 8 questions about their sleep.										  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'dailysleepdiary.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	 with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+								
+(2) Summary data file: 'dailysleepdiary_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+textbox.id.response:							assigned id (if different than subjectId)
+textbox.dayCount.response:						entered day count 
+textbox.q1_bedtime.response-
+radiobuttons.q8_sleepQualityRating.response: 	responses to question 1-8
+ 
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+can be edited under Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:				Instructions for Diary
+/dateFormat:					"DMY" (day/month/year), "MDY" (month/day/year, default), "YMD" (year/month/day)
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "Complete the diary each morning (“Day 1” will be your first morning). Don’t worry too much about giving exact answers; an estimate will do.
+"
+/dateFormat = "MDY"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+textbox.id.response, textbox.dayCount.response, 
+textbox.q1_bedtime.response, textbox.q2_fallAsleep.response, textbox.q3_nrWakeUp.response,
+textbox.q4_awake.response, textbox.q5_wakeUp.response, textbox.q6_getUp.response,
+textbox.q7_timeInBed.response, radiobuttons.q8_sleepQualityRating.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+/todayDate1:			stores the local date in format mmddyy
+/todayDate:				stores the local date in format mm/dd/yy			
+
+<values>
+/todayDate1 = script.startDate
+/todayDate = ""
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/todayDate:			converts the script.startDate into the specified format
+
+2020-01-03
+
+
+
+<expressions>
+/todayDate = {
+		values.todayDate = "";
+		values.todayDate1 = script.startDate;
+		if (parameters.dateFormat == "MDY") {
+			values.todayDate = concat(values.todayDate, subString(values.todayDate1, 5, 2));
+			values.todayDate = concat(values.todayDate, "/");
+			values.todayDate = concat(values.todayDate, subString(values.todayDate1, 8, 2));
+			values.todayDate = concat(values.todayDate, "/");
+			values.todayDate = concat(values.todayDate, subString(values.todayDate1, 0, 4));	
+			values.todayDate;
+		} else if (parameters.dateFormat == "DMY") {
+			values.todayDate = concat(values.todayDate, subString(values.todayDate1, 8, 2));
+			values.todayDate = concat(values.todayDate, "/");
+			values.todayDate = concat(values.todayDate, subString(values.todayDate1, 5, 2));
+			values.todayDate = concat(values.todayDate, "/");
+			values.todayDate = concat(values.todayDate, subString(values.todayDate1, 0, 4));	
+			values.todayDate;
+		} else {
+			values.todayDate = concat(values.todayDate, subString(values.todayDate1, 0, 4));
+			values.todayDate = concat(values.todayDate, "/");
+			values.todayDate = concat(values.todayDate, subString(values.todayDate1, 5, 2));
+			values.todayDate = concat(values.todayDate, "/");
+			values.todayDate = concat(values.todayDate, subString(values.todayDate1, 8, 2));
+			values.todayDate;
+		}
+}	
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<caption todayDate>
+/ caption = "
+
+Today's Date is: <%expressions.todayDate%>"
+/ txcolor = blue
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+</caption>
+
+<textbox dayCount>
+/ caption = "Day (Day1 will be your first morning):"
+/ required = true
+/ mask = integer
+/ textboxsize = (5%, 2.5%)
+</textbox>
+
+<textbox id>
+/ caption = "Your Identification Number:"
+/ required = true
+/ multiline = true
+/ maxchars = 100
+/ textboxsize = (50%, 5%)
+</textbox>
+
+<textbox q1_bedtime>
+/ caption = "1. At what time did you go to bed last night?"
+/ required = true
+</textbox>
+
+<textbox q2_fallAsleep>
+/ caption = "2. After settling down, how long did it take you to fall asleep?"
+/ required = true
+</textbox>
+
+<textbox q3_nrWakeUp>
+/ caption = "3. After falling asleep, about how many times did you wake up in the night?"
+/ required = true
+</textbox>
+
+<textbox q4_awake>
+/ caption = "4. After falling asleep, for how long were you awake during the night in total?"
+/ required = true
+</textbox>
+
+<textbox q5_wakeUp>
+/ caption = "5. At what time did you finally wake up?"
+/ required = true
+</textbox>
+
+<textbox q6_getUp>
+/ caption = "6. At what time did you get up?"
+/ required = true
+</textbox>
+
+<textbox q7_timeInBed>
+/ caption = "7. How long did you spend in bed last night (from first getting in, to finally getting up)?"
+/ required = true
+</textbox>
+
+<radiobuttons q8_sleepQualityRating>
+/ caption = "8. How would you rate the quality of your sleep last night? "
+/ options = ("1~nVery Poor", "2~n     ", "3~n     ", "4~n     ", "5~nVery Good")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation= horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage SD1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = todayDate, daycount, id]
+</surveypage>
+
+<surveypage SD2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = todayDate, q1_bedtime, q2_fallAsleep, q3_nrWakeUp]
+</surveypage>
+
+<surveypage SD3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = todayDate, q4_awake, q5_wakeUp, q6_getUp]
+</surveypage>
+
+<surveypage SD4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = todayDate, q7_timeInBed, q8_sleepQualityRating]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey DailySleepDiary>
+/pages = [
+	1 = SD1; 
+	2 = SD2; 
+	3 = SD3;
+	4 = SD4;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

@@ -1,0 +1,563 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									INTERPERSONAL REACTIVITY INDEX (IRI)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 07-28-2016
+last updated:  02-23-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-23-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of the Interpersonal Reactivity Index (IRI) as described in:
+
+Davis, M.H. (1979). INDIVIDUAL DIFFERENCES IN EMPATHY: A MULTIDIMENSIONAL APPROACH.
+Dissertation (Scales published on p. 52).
+
+Davis, M. H. (1983). Measuring individual differences in empathy: Evidence for a
+multidimensional approach. Journal of Personality and Social Psychology, 44, 113–
+126.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+28 5-point Likert questions on 4 subscales (7 question per subscale) with two anchors
+(A=Does not describe me well; E=Describes me very well). 
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________ 
+The default data stored in the data files are:
+
+(1) Raw data file: 'iri.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 0 (does not describe me well) - 4 (describes me well)
+									R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'iri_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 					Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+4 subscales (reversed scoring automatically done by computer) - Min: 0 - Max: 28 on each scale
+
+PerspectiveTaking:				the tendency to spontaneously adopt the psychological point of view of others
+Fantasy:						taps respondents' tendencies to transpose themselves imaginatively into the feelings and actions of fictitious characters in books, movies, and plays
+EmpathicConcern: 				assesses "other-oriented" feelings of sympathy and concern for unfortunate others
+PersonalDistress:				measures "self-oriented" feelings of personal anxiety and unease in tense interpersonal settings
+
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________	 
+
+paper and pencil questionnaire: 
+http://fetzer.org/sites/default/files/images/stories/pdf/selfmeasures/EMPATHY-InterpersonalReactivityIndex.pdf
+
+28 5-point Likert Scale (A, B, C, D, E)
+Scoring: (Note: computer scores reversed scored questions are automatically)
+A = 0
+B = 1
+C = 2
+D = 3
+E = 4
+
+Subscales (taken from Davis, 1983, p. 113):
+
+Perspective Taking – the tendency to spontaneously adopt the psychological point of
+view of others
+Fantasy – taps respondents' tendencies to transpose themselves imaginatively into
+the feelings and actions of fictitious characters in books, movies, and plays
+Empathic Concern – assesses "other-oriented" feelings of sympathy and concern for
+unfortunate others
+Personal Distress – measures "self-oriented" feelings of personal anxiety and unease
+in tense interpersonal settings
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to further customize your experiment.
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+expressions.PerspectiveTaking, expressions.Fantasy, expressions.EmpathicConcern, expressions.PersonalDistress)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+subscales are (taken directly from Davis, 1983):
+
+Perspective Taking – the tendency to spontaneously adopt the psychological point of
+view of others
+Fantasy – taps respondents' tendencies to transpose themselves imaginatively into
+the feelings and actions of fictitious characters in books, movies, and plays
+Empathic Concern – assesses "other-oriented" feelings of sympathy and concern for
+unfortunate others
+Personal Distress – measures "self-oriented" feelings of personal anxiety and unease
+in tense interpersonal settings
+
+<expressions>
+/PerspectiveTaking = radiobuttons.q3R_PT.response + radiobuttons.q8_PT.response + radiobuttons.q11_PT.response + 
+radiobuttons.q15R_PT.response + radiobuttons.q21_PT.response + radiobuttons.q25_PT.response + radiobuttons.q28_PT.response
+/Fantasy = radiobuttons.q1_FS.response + radiobuttons.q5_FS.response + radiobuttons.q7R_FS.response + radiobuttons.q12R_FS.response + 
+radiobuttons.q16_FS.response + radiobuttons.q23_FS.response + radiobuttons.q26_FS.response
+/EmpathicConcern = radiobuttons.q2_EC.response + radiobuttons.q4R_EC.response + radiobuttons.q9_EC.response + radiobuttons.q14R_EC.response + 
+radiobuttons.q18R_EC.response + radiobuttons.q20_EC.response + radiobuttons.q22_EC.response
+/PersonalDistress = radiobuttons.q6_PD.response + radiobuttons.q10_PD.response + radiobuttons.q13R_PD.response +
+radiobuttons.q17_PD.response + radiobuttons.q19R_PD.response + radiobuttons.q24_PD.response + radiobuttons.q27_PD.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_FS>
+/caption = "1. I daydream and fantasize, with some regularity, about things that might happen to me."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q2_EC>
+/caption = "2. I often have tender, concerned feelings for people less fortunate than me."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3R_PT>
+/caption = "3. I sometimes find it difficult to see things from the ''other guy's'' point of view."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4R_EC>
+/caption = "4. Sometimes I don't feel very sorry for other people when they are having problems."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_FS>
+/caption = "5. I really get involved with the feelings of the characters in a novel."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_PD>
+/caption = "6. In emergency situations, I feel apprehensive and ill-at-ease."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7R_FS>
+/caption = "7. I am usually objective when I watch a movie or play, and I don't often get completely caught up in it."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_PT>
+/caption = "8. I try to look at everybody's side of a disagreement before I make a decision."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_EC>
+/caption = "9. When I see someone being taken advantage of, I feel kind of protective towards them."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10_PD>
+/caption = "10. I sometimes feel helpless when I am in the middle of a very emotional situation."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11_PT>
+/caption = "11. I sometimes try to understand my friends better by imagining how things look from their perspective."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12R_FS>
+/caption = "12. Becoming extremely involved in a good book or movie is somewhat rare for me."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13R_PD>
+/caption = "13. When I see someone get hurt, I tend to remain calm."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14R_EC>
+/caption = "14. Other people's misfortunes do not usually disturb me a great deal."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15R_PT>
+/caption = "15. If I'm sure I'm right about something, I don't waste much time listening to other people's arguments."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16_FS>
+/caption = "16. After seeing a play or movie, I have felt as though I were one of the characters."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17_PD>
+/caption = "17. Being in a tense emotional situation scares me."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18R_EC>
+/caption = "18. When I see someone being treated unfairly, I sometimes don't feel very much pity for them."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19R_PD>
+/caption = "19. I am usually pretty effective in dealing with emergencies."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20_EC>
+/caption = "20. I am often quite touched by things that I see happen."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21_PT>
+/caption = "21. I believe that there are two sides to every question and try to look at them both."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22_EC>
+/caption = "22. I would describe myself as a pretty soft-hearted person."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23_FS>
+/caption = "23. When I watch a good movie, I can very easily put myself in the place of a leading character."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q24_PD>
+/caption = "24. I tend to lose control during emergencies."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q25_PT>
+/caption = "25. When I'm upset at someone, I usually try to ''put myself in his shoes'' for a while."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q26_FS>
+/caption = "26. When I am reading an interesting story or novel, I imagine how I would feel if the events in the story were happening to me."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q27_PD>
+/caption = "27. When I see someone who badly needs help in an emergency, I go to pieces."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q28_PT>
+/caption = "28. Before criticizing somebody, I try to imagine how I would feel if I were in their place."
+/ options = ("A~nDoes not~ndescribe me well", "B", "C", "D", "E~nDescribes me~nvery well")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage IRI1>
+/caption ="The following statements inquire about your thoughts and feelings in a variety of situations.
+ 
+For each item, indicate how well it describes you by choosing the appropriate letter on the scale under each question: A, B, C, D, or E. 
+
+READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q1_FS, q2_EC]
+</surveypage>
+
+<surveypage IRI2>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q3R_PT, q4R_EC]
+</surveypage>
+
+<surveypage IRI3>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q5_FS, q6_PD]
+</surveypage>
+
+<surveypage IRI4>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q7R_FS, q8_PT]
+</surveypage>
+
+<surveypage IRI5>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q9_EC, q10_PD]
+</surveypage>
+
+<surveypage IRI6>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q11_PT, q12R_FS]
+</surveypage>
+
+<surveypage IRI7>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q13R_PD, q14R_EC]
+</surveypage>
+
+<surveypage IRI8>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q15R_PT, q16_FS]
+</surveypage>
+
+<surveypage IRI9>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q17_PD, q18R_EC]
+</surveypage>
+
+<surveypage IRI10>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q19R_PD, q20_EC]
+</surveypage>
+
+<surveypage IRI11>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q21_PT, q22_EC]
+</surveypage>
+
+<surveypage IRI12>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q23_FS, q24_PD]
+</surveypage>
+
+<surveypage IRI13>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q25_PT, q26_FS]
+</surveypage>
+
+<surveypage IRI14>
+/caption ="READ EACH ITEM CAREFULLY BEFORE RESPONDING. Answer as honestly as you can. Thank you.
+"
+/questions = [1 = q27_PD, q28_PT]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey IRI>
+/pages = [
+	1 = IRI1; 
+	2 = IRI2; 
+	3 = IRI3; 
+	4 = IRI4; 
+	5 = IRI5; 
+	6 = IRI6; 
+	7 = IRI7;
+	8 = IRI8;
+	9 = IRI9;
+	10 = IRI10;
+	11 = IRI11;
+	12 = IRI12;
+	13 = IRI13;
+	14 = IRI14;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 2.5%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

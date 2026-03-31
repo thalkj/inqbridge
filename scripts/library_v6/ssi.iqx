@@ -1,0 +1,417 @@
+﻿<usermanual>								
+___________________________________________________________________________________________________________________	
+
+								*SCALE FOR SUICIDE IDEATION (SSI)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 07-25-2014
+last updated:  10-30-2019 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-30-2019 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized version of the Scale of Suicide Ideation (SSI) as described in:
+
+Beck, AT, Kovacs, M. & Weissman, A. (1979). Assessment of Suicidal Intention: The Scale for Suicide Ideation.
+Journal of Consulting and Clinical Psychology, 47, 43-352.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+The SSI is a 19-item instrument to assess suicidal intentions. Each question has 3 answer choices.
+Clinician fills out the survey based on a semi-structured interview.
+
+* 19 questions with 3 answer choices each (the answer choice suggesting the least suicide intentions
+is scored as 0); question 13 has 4 answer choices (but 2 are weighted the same)
+* a SSI Score is determined based on the sum of all individual scores
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'ssi.iqdat' 
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	   	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 0-2 (anchors vary by question)
+								no reversed scored questions
+								
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'ssi_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+								
+ssi_total:						sum of all response scores 
+								Range 0-38: the answer choice suggesting the least suicide intentions is scored as 0
+								=> the higher the score the higher reported suicide intention
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+Not original, can be easily edited under Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ pageinstructions = "Please select the answers that apply best.
+"
+</parameters>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data: SSI.iqdat
+********************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.ssi_total)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/q13response:	determines the response value for question 13
+/SSI_total:		sum of all responses
+
+<expressions>
+/ q13response = 
+	if (radiobuttons.q13.response == "2a" || radiobuttons.q13.response == "2b") {
+		2;
+	} else if (radiobuttons.q13.response == "0") {
+		0;
+	} else if (radiobuttons.q13.response == "1") {
+		1;
+	}
+				
+
+/ SSI_total = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response +
+radiobuttons.q4.response + radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response +
+radiobuttons.q8.response + radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q11.response +
+radiobuttons.q12.response + expressions.q13response + radiobuttons.q14.response + radiobuttons.q15.response +
+radiobuttons.q16.response + radiobuttons.q17.response + radiobuttons.q18.response + radiobuttons.q19.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/ caption = "1. Wish to live"
+/ options = ("0. Moderate to strong", "1. Weak", "2. None")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q2>
+/ caption = "2. Wish to die"
+/ options = ("0. None", "1. Weak","2. Moderate to strong")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q3>
+/ caption = "3. Reasons for living/dying"
+/ options = ("0. For living outweigh for dying", "1. About equal","2. For dying outweigh for living")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q4>
+/ caption = "4. Desire to make active suicide attempt"
+/ options = ("0. None", "1. Weak","2. Moderate to strong")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q5>
+/ caption = "5. Passive suicidal desire"
+/ options = ("0. Would take precautions to save life", "1. Would leave life/death to chance","2. Would avoid steps necessary to save or maintain life")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q6>
+/ caption = "6. Time dimension: Duration of suicide ideation/wish"
+/ options = ("0. Brief, fleeting periods", "1. Longer periods","2. Continuous (chronic) or almost continuous")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q7>
+/ caption = "7. Time dimension: Frequency of suicide"
+/ options = ("0. Rare, occasional", "1. Intermittent","2. Persistent or continuous")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q8>
+/ caption = "8. Attitude toward ideation/wish"
+/ options = ("0. Rejecting", "1. Ambivalent; indifferent","2. Accepting")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q9>
+/ caption = "9. Control over suicidal action/acting-out wish"
+/ options = ("0. Has sense of control", "1. Unsure of control","2. Has no sense of control")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q10>
+/ caption = "10. Deterrents to active attempt (e.g., family, religion, irreversibility)"
+/ options = ("0. Would not attempt because of a deterrent", "1. Some concern about deterrents","2. Minimal or no concern about deterrents")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q11>
+/ caption = "11. Reason for contemplated attempt"
+/ options = ("0. To manipulate the environment; get attention, revenge", "1. Combination of 0 and 2","2. Escape, surcease, solve problems")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q12>
+/ caption = "12. Method: Specificity/planning of contemplated attempt"
+/ options = ("0. Not considered", "1. Considered, but details not worked out","2. Details worked out/well formulated")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q13>
+/ caption = "13. Method: Availability/opportunity for contemplated attempt"
+/ options = ("0. Method not available; no opportunity", "1. Method would take time/effort; opportunity not readily
+available","2a. Method and opportunity available", "2b. Future opportunity or availability of method anticipated")
+/ optionvalues = ("0", "1", "2a", "2b")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q14>
+/ caption = "14. Sense of 'capability' to carry out attempt"
+/ options = ("0. No courage, too weak, afraid, incompetent", "1. Unsure of courage, competence","2. Sure of competence, courage")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q15>
+/ caption = "15. Expectancy/anticipation of actual attempt"
+/ options = ("0. No", "1. Uncertain, not sure","2. Yes")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q16>
+/ caption = "16. Actual preparation for contemplated attempt"
+/ options = ("0. None", "1. Partial (e.g., starting to collect pills)","2. Complete (e.g., had pills, loaded gun)")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q17>
+/ caption = "17. Suicide note"
+/ options = ("0. None", "1. Started but not completed; only thought about","2. Completed")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q18>
+/ caption = "18. Final acts in anticipation of death (e.g., insurance, will)"
+/ options = ("0. None", "1. Thought about or made some arrangements","2. Made definite plans or completed arrangements")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+<radiobuttons q19>
+/ caption = "19. Deception/concealment of contemplated suicide"
+/ options = ("0. Revealed ideas openly", "1. Held back on revealing","2. Attempted to deceive, conceal, lie")
+/ optionvalues = ("0", "1", "2")
+/ required = true
+/ orientation = vertical
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+<surveypage SSI1>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage SSI2>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage SSI3>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage SSI4>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage SSI5>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage SSI6>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q16, q17, q18]
+</surveypage>
+
+<surveypage SSI7>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q19]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey SSI>
+/ pages = [
+	1 = SSI1; 
+	2 = SSI2; 
+	3 = SSI3; 
+	4 = SSI4;
+	5 = SSI5;
+	6 = SSI6;
+	7 = SSI7;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

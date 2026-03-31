@@ -1,0 +1,1259 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+										LIST LEARNING TASK
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-16-2017
+last updated:  10-04-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-04-2024 Millisecond Software
+
+Millisecond Software thanks Derrick Palma for his collaboration on this script!
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a basic computer-adapted List Learning Task inspired by the one used by
+the Repeatable Battery for Neuropsychological Status (RBANS).
+The script presents the list visually and accepts written input.
+
+Adjustments to z-scores as described by:
+Gregg, A. & Sedikides, C. (2010). Narcissistic Fragility:
+Rethinking Its Links to Explicit and Implicit Self-esteem, Self and Identity, 9:2, 142-161 (p.148)
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+Participants are presented a list of 10 words (fixed sequence), one at a time, on the computer screen.
+Once the list has finished, a textbox appears and participants are asked to enter as many of the list words 
+as they remember, in any order. The list learning/recall task is repeated 3 more times before a break (default: 15min).
+After the break, participants work through through an optional delayed recall test and a recognition task: 
+20 words are presented to them, one by one, and participants have to decide whether the word was part of 
+the original list (if so, press Y) or not (if so, press N).
+10 of the words are list words, the other ones are new distractor words.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 20 minutes to complete (15 minute break included in this estimate)
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	 
+The default data stored in the data files are:
+
+(1) Raw data file: 'listlearningtask_raw*.iqdat'*
+
+build:						The specific Inquisit version used (the 'build') that was run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+date, time: 				date and time script was run 
+subject, group: 			with the current subject/groupnumber
+session:					with the current session id
+
+blockcode, blocknum:		the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 		the name and number of the currently recorded trial (built-in Inquisit variable)
+								Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+								that do not store data to the data file such as feedback trials. Thus, trialnum 
+								may not reflect the number of main trials run per bloc
+																				
+										
+count_immediateRounds:		counts the number of immediate recall trials run
+count_allRecallRounds:		counts the number of ALL (immediate + delayed) recall trials run
+wordCategory:				1 = old word (word on list); 0 = new word (during recognition)
+stimulusitem:				the presented stimuli in order of trial presentation
+stimulusnumber:				the itemnumber of the presented stimuli in order of trial presentation
+response:					the participant's response
+correct:					the correctness of the response (1 = correct; 0 = incorrect)
+latency: 					the response latency (in ms)
+Recall:						stores the recall text input (with single commas to separate the different words)
+countCorrect_Recall:		tracks the number of correctly recalled words per trial
+
+RecallWordEstimate:			stores the computer-derived estimate of the number of words recalled
+							Note: see below of algorithm implemented. 
+							Algorithm does not check whether the recalled words are actual words.
+										
+nr_otherRecalledWords:		stores the number of other recalled words that are not list words
+
+intrusionOther:				stores the character strings contained in the recall string that are not list words
+							Note: misspelled study words will show up here
+										
+word1_recall-
+word10_recall:				stores the number of times the first (second, third, etc) word of a list was recalled									
+
+
+(2) Summary data file: 'listlearningtask_summary*.iqdat'*
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)
+
+recallScore:				sum of all correctly recalled items across the 4 IMMEDIATE recall trials (Max: 40)
+delayedRecallScore:			number of correctly recalled items during delayed recall (Max: 10)
+
+recognitionScore:			the number of words correctly identified (Max: 20);
+							Note: combines 'hits' and 'correct rejections'							
+
+Immediate Recall:
+mean_WordRecall:			mean of the estimated number of words recalled (IMMEDIATE RECALL only)- independent of recall accuracy
+meanRecall:					mean number of correctly recalled words per list (IMMEDIATE RECALL only)
+
+Recall1:					number of correctly recalled words on list 1
+Recall2:					number of correctly recalled words on list 2  
+Recall3:					number of correctly recalled words on list 3  
+Recall4:					number of correctly recalled words on list 4 
+
+prop_word1Recall-
+prop_word10Recall:			stores the recall proportion of words in study positions 1 - 10 across the number of IMMEDIATE recall rounds
+							(Max: 4/4 for each item)
+							Example: word 1(here: market)\
+							=> word in list position 1 was remembered x out of 4 times during immediate recall
+									
+meanIntrusions:				mean number of intrusions on recall lists (recalling words that were not on the list)
+
+Recall ALL:								
+trial1_recalledWords-
+trial4_recalledWords:		stores the list of the recalled words for trial1, trial2, trial3, trial4 (IMMEDIATE RECALL)
+
+delayedRecall_recalledWords:	stores the list of the recalled words for the delayed recall trial								
+
+recallIntrusions:			a storage variable that stores all recall intrusion words across the 4 immediate (+ delayed) recall trials
+							Note: check for misspelled words here and adjust scores accordingly 
+
+r_hits_recognition:	hit rate during recognition (hit => participant categorized old word as 'old')
+r_misses_recognition:	miss rate duration recognition (miss => participant categorizes old word as 'new')
+r_FAs_recognition:	false alarm rate during recognition (false alarm => participant categorized new word as 'old')
+r_CRs_recognition:	correct rejection duration recognition (cr => participant categorizes new word as 'new')
+
+Note: z-score calculations: adjustments (see Gregg & Sedikides, 2010, p.148)
+If the hit rate / FA rate is 0 => 0.005 is used instead (aka 0.005 is added to the hit/FA rate)
+IF the hit rate / FA rate is 1.0 => 0.995 is used instead (aka 0.005 is subtracted from the hit/FA rate)
+
+z_hr_recognition:	z-score of hit rate
+z_fr_recognition:	z-score of false alarm rate
+
+dprime_recognition:	Computes d' (parametric measure of discriminability)
+					==> The higher the value, the better signals (old list stimuli) were overall distinguished 
+					=from noise (new stimuli) (d' = 0: chance performance)
+					
+c: 			c-criterion in signal detection:The absolute value of c provides an indication of the strength of
+			the response bias/response style
+			negative: participant more likely to report that signal (go stims) is present (liberal response style);
+			may favor faster responding in speed-accuracy trade-off response paradigms
+			positive: favoring caution (conservative response style)					
+
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+
+(I) 4 blocks: List Learning/Recall Task
+- the words are presented with a 2s SOA in the middle of the screen
+- the order of the words is predetermined and the same across all 4 blocks
+- after an editable delay (default: no delay), a textbox appears and prompts participants
+to enter all the words they remember (self-paced)
+
+Recall Task: Scoring Algorithms
+Algorithm to estimate number of recalled words:
+In general this algorithm uses the number of a specific word separator (here: comma)
+to estimate the number of words in between the separators: estimated word count = number of separators + 1
+The algorithm uses several steps to clean up the text input to ensure as much as 
+possible that only single commas are used as word separators. It also removes
+trailing commas from the input if necessary.
+
+Steps:
+(1) textbox response is stored in values.Recall (Example: values.Recall = "bed; chair; table") 
+(note: there is a space AND a ; after bed and chair)
+
+(2) values.Recall replaces 7 types of possible word separator symbols (e.g. ";", " ") with a comma 
+(Example: values.Recall = "bed,,chair,,table")
+
+(3) values.Recall adds a comma to the first item 
+(Example: values.Recall = ",bed,,chair,,table")
+
+(3) values.Recall replaces all consecutive commas with a single comma 
+(Example: values.Recall = ",bed,chair,table")
+
+(4) if values.Recall does not end in a comma at this point, this comma is added 
+(Example: values.Recall = ",bed,chair,table,")
+
+(5) the length of the variable values.Recall is stored in variable values.RecallLength 
+(Example: values.RecallLength = 17)
+
+(6) a second variable (values.reducedRecall) deletes all commas in values.Recall 
+(Example: values.reducedRecall = "bedchairtable" => length: 13)
+
+(7) the word count estimate = length of values.Recall* - length of values.reducedRecall - 1 (extra comma) 
+(Example: estimate = 17 - 13 - 1 = 3)
+		*with length = number of characters 
+
+Note: the recall scoring algorithms implemented in this script depend on participants 
+(a) using the implemented separators
+(b) make no spelling mistakes
+(c) don't use phonetically similar words (e.g. pain instead of pane)
+Manual checks of the raw data might be necessary to adjust the scores (see values.intrustionOther)
+
+(II) Break (default: 15min)
+
+(III) optional: Delayed Recall Task
+
+(IV) Delayed Recognition Task
+- 10 list words and 10 new words are presented randomly (to change to a fixed order, go to text.recognitionWord)
+- self-paced
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+uses the words of the Repeatable Battery for Neuropsychological Status (RBANS)
+edit under section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+are provided by Millisecond Software - change under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+Response Keys: -> see Tools->Keyboard Scancodes
+/oldKey:				label of the "old key" response key (default: "Y")
+/newKey:				label of the "new key" response key (default: "N")
+
+/wordSize:				proportional sizing of study words (default: 8% of canvas height)
+
+/wordSOA:				the stimulus onset asynchrony (in ms) of the presented study words (default: 2000ms)
+/recallDelay:			the delay (in ms) between last presented study list word and the recall trial (default: 0ms)
+/MinRecognitionDelay:	the minimum delay (in ms) between end of last trial and the recognition task (default: 15min)
+
+/runDelayedRecall:		optional delayed recall task after the break
+						true (1): delayed recall task is run (default)
+						false (0): delayed recall task is skipped
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/oldKey = "Y"
+/newKey = "N"
+
+/wordSize = 8%
+
+/wordSOA = 2000
+/recallDelay = 0
+/MinRecognitionDelay = 900000
+
+/runDelayedRecall = true
+</parameters>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: contains the 10 words to be studied (in the order they appear)
+<item words>
+/1 = "market"
+/2 = "package"
+/3 = "elbow"
+/4 = "apple"
+/5 = "story"
+/6 = "carpet"
+/7 = "bubble"
+/8 = "highway"
+/9 = "saddle"
+/10 = "powder"
+</item>
+
+
+Note: item list contains all words used for the recognition phase.
+By default, the items are called randomly.
+To call them in sequence, go to section "STIMULI" and follow instructions
+about how to change text.recognitionWord
+
+<item recognitionWords>
+/1 = "apple"
+/2 = "honey"
+/3 = "market"
+/4 = "story"
+/5 = "fabric"
+/6 = "sailor"
+/7 = "velvet"
+/8 = "carpet"
+/9 = "valley"
+/10 = "elbow"
+/11 = "bubble"
+/12 = "prairie"
+/13 = "highway"
+/14 = "oyster"
+/15 = "student"
+/16 = "saddle"
+/17 = "powder"
+/18 = "angle"
+/19 = "package"
+/20 = "meadow"
+</item>
+
+Note:
+1 = old word
+0 = new word
+tied to the item list above
+(if the order is changed above, change the order of the word categories accordingly)
+<item wordCategories>
+/1 = "1"
+/2 = "0"
+/3 = "1"
+/4 = "1"
+/5 = "0"
+/6 = "0"
+/7 = "0"
+/8 = "1"
+/9 = "0"
+/10 = "1"
+/11 = "1"
+/12 = "0"
+/13 = "1"
+/14 = "0"
+/15 = "0"
+/16 = "1"
+/17 = "1"
+/18 = "0"
+/19 = "1"
+/20 = "0"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ finishlabel = "press [space] to start"
+</instruct>
+
+<page recallIntro>
+<center><hr><h2>List Learning</h2><hr></center><br>
+We present you with a list of words, one word at a time, in the middle of the screen.<br><br>
+Pay close attention to each word.<br><br>
+Once the list has finished, you will be asked to enter as many of these words as you remember into a provided textbox.<br><br>
+You can enter the words in any order.<br><br><br><br>
+Start when you are ready.
+</page>
+
+<page recallRepeat>
+<center><hr><h2>List Learning</h2><hr></center><br>
+We are repeating the same list of words as before. Again, pay close attention to each word.<br><br>
+You will be asked to enter as many of these words as you remember into a provided textbox, even if you have already done so before. <br><br>
+You can enter the words in any order.<br><br><br><br>
+Start when you are ready.
+</page>
+
+<page delayedRecall>
+<center><hr><h2>List Learning</h2><hr></center><br>
+Remember the list of words you were shown repeatedly before the break? <br><br> 
+You will be asked to enter as many of these words as your remember into a provided textbox.<br><br> 
+You can enter the words in any order.<br><br><br><br>
+Start when you are ready.
+</page>
+
+<page recognition>
+<center><hr><h2>List Learning</h2><hr></center><br>
+We are going to present you with another list of words, one word at a time. Some of these words were on the earlier list; but some were not.<br><br>  
+<div style='background-color:lightGray'><center>For each word, ask the question:<br><br> 
+<b>"was this word on the list?"</b>.<br>
+If the answer to that question is "Yes", press the "<%parameters.oldKey%>" key.<br>
+If the answer to that question is "No", press the "<%parameters.newKey%>" key.</center></div><br><br>
+Start when you are ready.
+</page>
+
+<page End>
+<center><br><br><br><br><br><br>
+You have reached the end of the task.<br>
+<h2>Thank you!</h2></center>
+</page>
+
+<text recallInstructions>
+/ items = ("Recall as many of the words from the list as you can.
+ Press <Enter> key after each word.")
+/ position = (50%, 10%)
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ size = (90%, 10%)
+</text>
+
+<text recognitionInstructions>
+/ items = ("Was this word on the list?
+
+press '<%parameters.oldKey%>' for yes
+press '<%parameters.newKey%>' for no")
+/ position = (50%, 10%)
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+<text break>
+/ items = ("Take a break")
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum, 
+values.count_immediateRounds, values.count_allRecallRounds,  values.wordCategory, 
+stimulusitem, stimulusnumber, response, correct, latency, 
+values.Recall,  
+values.countCorrect_Recall, values.RecallWordEstimate, 
+values.nr_otherRecalledWords, values.intrusionOther, 
+values.word1_recall, values.word2_recall, values.word3_recall, values.word4_recall, values.word5_recall, 
+values.word6_recall, values.word7_recall, values.word8_recall, values.word9_recall, values.word10_recall)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+expressions.recallScore, expressions.delayedRecallScore, values.recognitionScore,
+
+expressions.mean_WordRecall, expressions.meanRecall, expressions.Recall1, expressions.Recall2, expressions.Recall3, expressions.Recall4,
+expressions.prop_word1Recall, expressions.prop_word2Recall, expressions.prop_word3Recall, expressions.prop_word4Recall,
+expressions.prop_word5Recall, expressions.prop_word6Recall, expressions.prop_word7Recall, expressions.prop_word8Recall,
+
+expressions.prop_word9Recall, expressions.prop_word10Recall,
+expressions.meanIntrusions, 
+
+values.trial1_recalledWords, values.trial2_recalledWords, values.trial3_recalledWords, values.trial4_recalledWords,
+values.delayedRecall_recalledWords,
+values.recallIntrusions,
+
+expressions.r_hits_recognition, expressions.r_misses_recognition, 
+expressions.r_FAs_recognition, expressions.r_CRS_recognition,
+expressions.z_hr_recognition, expressions.z_fr_recognition,
+expressions.dprime_recognition, expressions.c_recognition)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/count_immediateRounds:			counts the number of immediate recall trials run (1-4)
+/count_allRecallRounds:				counts the number of immediate and delayed recall trials run 
+
+/tempSearchTarget:				helper variable to look for certain words in the recall string
+/Recall:						stores the recall text input (with single commas to separate the different words)
+/countCorrect_Recall:			tracks the number of correctly recalled words per trial
+/recallLength:					helper variable to estimate number of words recalled
+/reducedRecall:					helper variable to estimate number of words recalled
+/RecallWordEstimate:			stores the computer-derived estimate of the number of words recalled
+									Note: see below of algoritm implemented. Algorithm does not check whether the recalled words are actual words.
+/helperRecall:					helper variable to analyze recall words
+
+/word1_recall-
+/word10_recall:					stores the number of times the first (second, third, etc) word of a list was recalled
+
+/intrusionOther:				stores the character strings contained in the recall string that not list words
+									Note: misspelled study words will show up here
+/recallIntrusions:				a storage variable that stores all recall intrusion words across the 4 trials									
+/nr_otherRecalledWords			stores the number of other recalled words that are not list words
+/recognitionScore:				the number of words correctly identified
+
+/trial1_recalledWords-
+/trial4_recalledWords:			stores the list of the recalled words for trial1, trial2, trial3, trial4
+
+<values>
+/count_immediateRounds = 0
+/count_allRecallRounds = 0
+/tempSearchTarget = ""
+/Recall = "";
+/countCorrect_Recall = 0
+/recallLength = 0;
+/reducedRecall = "";
+/RecallWordEstimate = ""
+/helperRecall = ""
+/word1_recall = ""
+/word2_recall = ""
+/word3_recall = ""
+/word4_recall = ""
+/word5_recall = ""
+/word6_recall = ""
+/word7_recall = ""
+/word8_recall = ""
+/word9_recall = ""
+/word10_recall = ""
+/nr_otherRecalledWords = 0
+/intrusionOther = ""
+/recallIntrusions = ""
+/wordCategory = ""
+/recognitionScore = 0
+/trial1_recalledWords = ""
+/trial2_recalledWords = ""
+/trial3_recalledWords = ""
+/trial4_recalledWords = ""
+/delayedRecall_recalledWords = "not run"
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/wordcountEstimate: 	algorithm to estimate the number of words recalled
+						-> algorithm replaces 7 possible word separators (" ", ;, etc) with "," in values.Recall
+						-> algorithm adds a comma before the first word
+						-> algoritm replaces multiple consecutive "," (up to 5) with a single one in values.Recall
+						-> algorithm adds a comma at the end of the string
+							-> values.Recall is as cleaned up as possible of random word separators
+						-> algorithm removes all "," from values.Recall and stores the resulting reduced string in values.reducedRecall
+						-> algorithm compares the length of values.reducedRecall to that of values.Recall
+						and uses the reduced length to estimate the number of words in between the separators
+						NOTE: values.recall will ideally contain only lower letter words separated by a single comma each at
+						the end of this function + a start and an ending comma
+
+/removeConsecutiveCommas:	recursive helper function to remove instances of consecutive commas from values.Recall						
+
+/otherWordIntrusions:		function to find falsely recalled words (= words not part of the list)
+
+
+<expressions>
+/wordcountEstimate = {	
+	values.Recall = replaceAll(values.Recall, "\", ",");
+	values.Recall = replaceAll(values.Recall, "|", ",");	
+	values.Recall = replaceAll(values.Recall, "/", ",");	
+	values.Recall = replaceAll(values.Recall, ";", ",");	
+	values.Recall = replaceAll(values.Recall, " ", ",");	
+	values.Recall = replaceAll(values.Recall, ":", ",");
+	values.Recall = replaceAll(values.Recall, ".", ",");
+	values.Recall = replaceAll(values.Recall, "~n", ",");		
+	
+	values.Recall = concat(",", values.Recall);
+	expressions.removeConsecutiveCommas;
+		
+	if (!endswith(values.Recall, ",")){
+		values.Recall = concat(values.Recall, ",");	
+	}
+
+	values.RecallLength = length(values.Recall);
+	values.reducedRecall = replaceAll(values.Recall, ",", "");	
+	values.RecallWordEstimate= values.RecallLength - length(values.reducedRecall) - 1;
+}
+/removeConsecutiveCommas = {
+	values.Recall = replaceAll(values.Recall, ",,", ",");
+	if (contains(values.Recall, ",,")){
+		expressions.removeConsecutiveCommas;
+	}
+}	
+/otherWordIntrusions = {
+	
+	values.helperRecall = values.Recall;
+	values.tempSearchTarget = concat(",", item.words.item(1));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");		
+	values.helperRecall = replaceAll(values.helperRecall, values.tempSearchTarget, ",");
+	
+	values.tempSearchTarget = concat(",", item.words.item(2));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");		
+	values.helperRecall = replaceAll(values.helperRecall, values.tempSearchTarget, ",");	
+	
+	values.tempSearchTarget = concat(",", item.words.item(3));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");		
+	values.helperRecall = replaceAll(values.helperRecall, values.tempSearchTarget, ",");	
+	
+	values.tempSearchTarget = concat(",", item.words.item(4));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");		
+	values.helperRecall = replaceAll(values.helperRecall, values.tempSearchTarget, ",");	
+	
+	values.tempSearchTarget = concat(",", item.words.item(5));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");		
+	values.helperRecall = replaceAll(values.helperRecall, values.tempSearchTarget, ",");	
+	
+	values.tempSearchTarget = concat(",", item.words.item(6));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");		
+	values.helperRecall = replaceAll(values.helperRecall, values.tempSearchTarget, ",");	
+	
+	values.tempSearchTarget = concat(",", item.words.item(7));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");		
+	values.helperRecall = replaceAll(values.helperRecall, values.tempSearchTarget, ",");	
+	
+	values.tempSearchTarget = concat(",", item.words.item(8));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");		
+	values.helperRecall = replaceAll(values.helperRecall, values.tempSearchTarget, ",");
+
+	values.tempSearchTarget = concat(",", item.words.item(9));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");		
+	values.helperRecall = replaceAll(values.helperRecall, values.tempSearchTarget, ",");
+
+	values.tempSearchTarget = concat(",", item.words.item(10));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");		
+	values.helperRecall = replaceAll(values.helperRecall, values.tempSearchTarget, ",");
+	
+	if (length(replaceAll(values.helperRecall, ",", "")) > 0){
+		values.intrusionOther = values.helperRecall;		
+	} else {
+		values.intrusionOther = "";
+	}
+	
+	values.recallIntrusions = concat(values.recallIntrusions, values.intrusionOther);
+	values.recallIntrusions = concat(values.recallIntrusions, ",");
+}
+</expressions>
+
+******************************
+Summary Variables
+******************************
+/recallScore:					sum of all correctly recalled items across the 4 immediate recall trials
+/delayedRecallScore:			number of correctly recalled items during delayed recall
+/mean_WordRecall:				mean of the estimated number of words recalled (immediate recall only) - independent of recall accuracy
+/meanRecall:					mean number of correctly recalled words per immediate recall list
+/Recall1:						number of correctly recalled words on list 1 
+/Recall2:						number of correctly recalled words on list 2  
+/Recall3:						number of correctly recalled words on list 3  
+/Recall4:						number of correctly recalled words on list 4 
+
+/prop_word1Recall-
+/prop_word10Recall:				stores the immediate recall proportion of words in study positions 1 - 10 across the number of trials (Max: 4/4 for each item)
+/meanIntrusions:				mean number of intrusions on recall lists (recalling words that were not on the list)
+
+/r_hits_recognition:			hit rate during recognition (hit => participant categorized old word as 'old')
+/r_FAs_recognition :			false alarm rate during recognition (false alarm => participant categorized new word as 'old')
+
+Note: z-score calculations: adjustments (see Gregg & Sedikides, 2010, p.148)
+If the hit rate / FA rate is 0 => 0.005 is used instead (aka 0.005 is added to the hit/FA rate)
+IF the hit rate / FA rate is 1.0 => 0.995 is used instead (aka 0.005 is subtracted from the hit/FA rate)
+
+/z_hr_recognition:				z-score of hit rate
+/z_fr_recognition:				z-score of false alarm rate
+/dprime_recognition:			Computes d' (parametric measure of discriminability).
+
+<expressions>
+/recallScore = 
+if (list.accuracy_recall.itemCount > 0){
+	if (list.accuracy_recall.itemCount > 1){
+
+		if (list.accuracy_recall.itemCount > 2){
+			if (list.accuracy_recall.itemCount > 3){
+				list.accuracy_recall.item(1) + list.accuracy_recall.item(2) + list.accuracy_recall.item(3) + list.accuracy_recall.item(4);
+			} else {
+				list.accuracy_recall.item(1) + list.accuracy_recall.item(2) + list.accuracy_recall.item(3);
+			}//only three items
+		} else {
+			list.accuracy_recall.item(1) + list.accuracy_recall.item(2);
+		}//only two items	
+	} else {
+		list.accuracy_recall.item(1);
+	}		
+} else {
+	0; 
+}
+
+/delayedRecallScore = if (list.accuracy_recall.itemCount > 4) list.accuracy_recall.item(5) else "not run"
+/mean_WordRecall = 
+if (list.wordCountEstimates.itemCount > 0){
+	if (list.wordCountEstimates.itemCount > 1){
+		if (list.wordCountEstimates.itemCount > 2){
+			if (list.wordCountEstimates.itemCount > 3){
+				(list.wordCountEstimates.item(1) + list.wordCountEstimates.item(2) + list.wordCountEstimates.item(3) + list.wordCountEstimates.item(4))/values.count_immediateRounds;
+			} else {
+				(list.wordCountEstimates.item(1) + list.wordCountEstimates.item(2) + list.wordCountEstimates.item(3))/values.count_immediateRounds;
+			}
+		} else {
+			(list.wordCountEstimates.item(1) + list.wordCountEstimates.item(2))/values.count_immediateRounds;
+		}
+	} else {
+		(list.wordCountEstimates.item(1))/values.count_immediateRounds;
+	}		
+} else {
+	0; 
+}
+
+/meanRecall = expressions.recallScore/values.count_immediateRounds
+
+/Recall1 = if (list.accuracy_recall.itemCount >= 1) list.accuracy_recall.item(1) else "NA"
+/Recall2 = if (list.accuracy_recall.itemCount >= 2) list.accuracy_recall.item(2) else "NA"
+/Recall3 = if (list.accuracy_recall.itemCount >= 3) list.accuracy_recall.item(3) else "NA"
+/Recall4 = if (list.accuracy_recall.itemCount >= 4) list.accuracy_recall.item(4) else "NA"
+
+/meanIntrusions = 
+if (list.intrusions.itemCount > 0){
+	if (list.intrusions.itemCount > 1){
+
+		if (list.intrusions.itemCount > 2){
+			if (list.intrusions.itemCount > 3){
+				(list.intrusions.item(1) + list.intrusions.item(2) + list.intrusions.item(3) + list.intrusions.item(4))/values.count_immediateRounds;
+			} else {
+				(list.intrusions.item(1) + list.intrusions.item(2) + list.intrusions.item(3))/values.count_immediateRounds;
+			}
+		} else {
+			(list.intrusions.item(1) + list.intrusions.item(2))/values.count_immediateRounds;
+		}
+	} else {
+		list.intrusions.item(1)/values.count_immediateRounds;
+	}		
+} else {
+	0; 
+}
+
+/prop_word1Recall = values.word1_recall/values.count_immediateRounds
+/prop_word2Recall = values.word2_recall/values.count_immediateRounds
+/prop_word3Recall = values.word3_recall/values.count_immediateRounds
+/prop_word4Recall = values.word4_recall/values.count_immediateRounds
+/prop_word5Recall = values.word5_recall/values.count_immediateRounds
+/prop_word6Recall = values.word6_recall/values.count_immediateRounds
+/prop_word7Recall = values.word7_recall/values.count_immediateRounds
+/prop_word8Recall = values.word8_recall/values.count_immediateRounds
+/prop_word9Recall = values.word9_recall/values.count_immediateRounds
+/prop_word10Recall = values.word10_recall/values.count_immediateRounds
+
+/r_hits_recognition = list.hits.mean
+/r_misses_recognition = (1-expressions.r_hits_recognition)
+/r_FAs_recognition = list.falseAlarms.mean
+/r_CRS_recognition = (1-expressions.r_FAs_recognition)
+
+/z_hr_recognition = if (expressions.r_hits_recognition == 0){
+	zofp(expressions.r_hits_recognition + 0.005);
+} else if (expressions.r_hits_recognition == 1){
+	zofp(expressions.r_hits_recognition - 0.005);
+} else {
+	zofp(expressions.r_hits_recognition);
+}
+
+/z_fr_recognition = if (expressions.r_FAs_recognition == 0){
+	zofp(expressions.r_FAs_recognition + 0.005);
+} else if (expressions.r_FAs_recognition == 1){
+	zofp(expressions.r_FAs_recognition - 0.005);
+} else {
+	zofp(expressions.r_FAs_recognition);	
+}
+
+/dprime_recognition = (expressions.z_hr_recognition-expressions.z_fr_recognition)
+/c_recognition = return (-1*((expressions.z_hr_recognition + expressions.z_fr_recognition)/2))
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: by default, the recognition Words are called in a fixed order.
+To call them randomly, change to:
+/select = noreplace
+<text word>
+/ items = words
+/ select = sequence
+/ fontstyle = ("Arial", parameters.wordSize, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+</text>
+
+
+Note: by default, the recognition Words are called randomly.
+To call them in a fixed sequence, change to
+/select = sequence
+<text recognitionWord>
+/ items = recognitionWords
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.wordSize, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+</text>
+
+<clock breakTimer>
+/ mode = timer
+/ txcolor = yellow
+/ txbgcolor = black
+/ timeout = parameters.MinRecognitionDelay
+/ position = (50%, 70%)
+/ size = (20%, 10%)
+/ format = "hh:mm:ss"
+</clock>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores number of correctly recalled items per immediate recall trial
+<list accuracy_recall>
+</list>
+
+Note: this list stores all wordCountEstimates across all immediate recall lists
+<list wordCountEstimates>
+</list>
+
+Note: list stores number of other intrusions on recall across all immediate recall lists
+<list intrusions>
+</list>
+
+Note: list stores 1 = hit (recognized old word); 0 = miss
+<list hits>
+</list>
+
+Note: list stores 1 = False Alarm (recognized new word as old); 0 = correct rejection
+<list falseAlarms>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial listLearning>
+/ stimulusframes = [1 = word]
+/ trialduration = parameters.wordSOA
+</trial>
+
+
+************************
+immediate Recall
+************************
+
+Note: openended.recall 
+* presents a textbox to collect all recalled items
+(each of these items should ideally be put on a new line in the textbox)
+* trial estimates the number of estimated words (whether or not they really are words)
+* trial checks which list words have been mentioned 
+and counts the number of correctly recalled items.
+
+<openended immediateRecall>
+/ stimulusframes = [1 = recallInstructions]
+/ pretrialpause = parameters.recallDelay
+/ ontrialbegin = [
+	values.Recall = "";
+	values.countCorrect_Recall = 0;
+]
+/ size = (20%, 60%)
+/ multiline = true
+/ charlimit = 5000
+/ position = (50%, 80%)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ monkeyresponse = (
+"market,package,elbow,apple,story,carpet,bubble,highway,saddle,powder", 
+"story,bubble, carpet,market,elbow,apple,powder",
+"package,saddle,elbow,apple,carpet,bubble,highway,powder,story,bank"
+"market,package,elbow,apple,story,carpet,buble,highway,saddle,powder")
+/ ontrialend = [
+	values.Recall = tolower(openended.immediateRecall.response);
+	expressions.wordcountEstimate;
+	list.wordCountEstimates.insertItem(values.RecallWordEstimate, values.count_allRecallRounds);	
+		
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(1));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word1_recall += 1;
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(2));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word2_recall += 1;		
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(3));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word3_recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(4));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word4_recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(5));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word5_recall += 1;		
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(6));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word6_recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(7));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word7_recall += 1;		
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(8));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;	
+		values.word8_recall += 1;		
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(9));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word9_recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(10));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+		values.word10_recall += 1;		
+	}	
+	
+	
+	values.nr_otherRecalledWords = values.RecallWordEstimate - values.countCorrect_Recall;
+	list.intrusions.insertItem(values.nr_otherRecalledWords, values.count_allRecallRounds);	
+	expressions.otherWordIntrusions;
+
+	list.accuracy_recall.insertItem(values.countCorrect_Recall, values.count_allRecallRounds);
+
+]
+</openended>
+
+
+************************
+break
+************************
+
+<trial break>
+/ stimulusframes = [1 = break, breakTimer]
+/ recorddata = false
+/ trialduration = parameters.MinRecognitionDelay;
+</trial>
+
+************************
+delayed Recall
+************************
+
+<openended delayedRecall>
+/ stimulusframes = [1 = recallInstructions]
+/ pretrialpause = parameters.recallDelay
+/ ontrialbegin = [
+	values.Recall = "";
+	values.countCorrect_Recall = 0;
+]
+/ size = (20%, 60%)
+/ multiline = true
+/ charlimit = 5000
+/ position = (50%, 80%)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ monkeyresponse = (
+"market,package,elbow,apple,story,carpet,bubble,highway,saddle,powder", 
+"story,bubble, carpet,market,elbow,apple,powder",
+"package,saddle,elbow,apple,carpet,bubble,highway,powder,story,bank"
+"market,package,elbow,apple,story,carpet,buble,highway,saddle,powder")
+
+/ ontrialend = [
+	values.Recall = tolower(openended.delayedRecall.response);
+	expressions.wordcountEstimate;
+	list.wordCountEstimates.insertItem(values.RecallWordEstimate, values.count_allRecallRounds);	
+		
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(1));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(2));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;	
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(3));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;		
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(4));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;	
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(5));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;		
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(6));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;	
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(7));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;	
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(8));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;			
+	}
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(9));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;	
+	}	
+	values.tempSearchTarget = "";
+	values.tempSearchTarget = concat(",",item.words.item(10));
+	values.tempSearchTarget = concat(values.tempSearchTarget, ",");
+	if (contains(values.Recall, values.tempSearchTarget)){
+		values.countCorrect_Recall += 1;		
+	}	
+	
+	
+	values.nr_otherRecalledWords = values.RecallWordEstimate - values.countCorrect_Recall;
+	list.intrusions.insertItem(values.nr_otherRecalledWords, values.count_allRecallRounds);	
+	expressions.otherWordIntrusions;
+
+	list.accuracy_recall.insertItem(values.countCorrect_Recall, values.count_allRecallRounds);
+
+]
+</openended>
+
+************************
+delayed Recognition
+************************
+
+<trial recognition>
+/ stimulusframes = [1 = recognitionWord, recognitionInstructions, ]
+/ validresponse = (parameters.oldKey, parameters.newKey)
+/ iscorrectresponse = [
+	values.wordCategory = item.wordCategories.item(text.recognitionWord.currentItemNumber);
+
+	return (
+	(values.wordCategory == 1 && trial.recognition.responseText == parameters.oldKey) ||
+	(values.wordCategory == 0 && trial.recognition.responseText == parameters.newKey));
+]
+/ ontrialend = [
+	values.wordCategory = item.wordCategories.item(text.recognitionWord.currentItemNumber);
+	if (values.wordCategory == 1){
+		list.hits.appendItem(trial.recognition.correct);
+		values.recognitionScore += trial.recognition.correct;
+	} else {
+		list.falseAlarms.appendItem(trial.recognition.error);
+		values.recognitionScore += trial.recognition.correct;		
+	}
+
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block recallIntro>
+/ preinstructions = (recallIntro)
+</block>
+
+<block recallRepeat>
+/ preinstructions = (recallRepeat)
+</block>
+
+
+<block recall>
+/ onblockbegin = [
+	values.count_immediateRounds += 1;
+	values.count_allRecallRounds += 1;
+	values.tempSearchTarget = "";
+	values.Recall = "";
+	values.countCorrect_Recall = 0;
+	values.recallLength = 0;
+	values.reducedRecall = "";
+	values.RecallWordEstimate = "";
+	values.helperRecall = "";
+	values.nr_otherRecalledWords = 0;
+	values.intrusionOther = "";	
+	values.wordCategory = 1;
+	values.recallIntrusions = concat(values.recallIntrusions, values.count_allRecallRounds);
+	values.recallIntrusions = concat(values.recallIntrusions, ":");
+	
+]
+/ trials = [1-10 = listLearning; 11 = immediateRecall]
+/ onblockend = [
+	if (values.count_immediateRounds == 1){
+		values.trial1_recalledWords = values.Recall;
+	} else if (values.count_immediateRounds == 2){
+		values.trial2_recalledWords = values.Recall;
+	} else if (values.count_immediateRounds == 3){
+		values.trial3_recalledWords = values.Recall;
+	} else if (values.count_immediateRounds == 4){
+		values.trial4_recalledWords = values.Recall;
+	}
+]
+</block>
+
+<block break>
+/ trials = [1 = break]
+/ recorddata = false
+</block>
+
+<block delayedRecall>
+/ preinstructions = (delayedRecall)
+/ skip = [
+	parameters.runDelayedRecall == false;
+]
+/ onblockbegin = [
+	values.count_allRecallRounds += 1;
+	values.tempSearchTarget = "";
+	values.Recall = "";
+	values.countCorrect_Recall = 0;
+	values.recallLength = 0;
+	values.reducedRecall = "";
+	values.RecallWordEstimate = "";
+	values.helperRecall = "";
+	values.nr_otherRecalledWords = 0;
+	values.intrusionOther = "";	
+	values.wordCategory = 1;
+	values.recallIntrusions = concat(values.recallIntrusions, values.count_allRecallRounds);
+	values.recallIntrusions = concat(values.recallIntrusions, ":");
+	
+]
+/ trials = [1 = delayedRecall]
+/ onblockend = [
+	values.delayedRecall_recalledWords = values.Recall;
+]
+</block>
+
+
+
+Note: block.recognition
+* presents 20 items (10 old, 10 new) in predetermined order
+<block recognition>
+/ onblockbegin = [
+	values.Recall = "";
+	values.countCorrect_Recall = 0;
+	values.RecallWordEstimate = "";
+	values.nr_otherRecalledWords = 0;
+	values.intrusionOther = "";		
+]
+/ preinstructions = (recognition)
+/ trials = [1-20 = recognition]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt listLeaning>
+/ blocks = [
+	1 = recallIntro;
+	2 = recall;
+	3 = recallRepeat;
+	4 = recall;
+	5 = recallRepeat;
+	6 = recall;
+	7 = recallRepeat;
+	8 = recall;
+	9 = break;
+	10 = delayedRecall;
+	11 = recognition;
+]
+
+</expt>
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

@@ -1,0 +1,2653 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+											*Missing Scan Test*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-03-2019
+last updated:  08-11-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 08-11-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a Missing Scan Test (MST) procedure based on the procedure described by Buschke (1963).
+Disclaimer: the procedure implemented is a best guess effort by Millisecond Software.
+
+In general the MST procedure presents lists of randomly ordered items (mostly numbers) of well known sets 
+(Example: set 1-16) that leave out one set member (e.g. 5). Participants then have to name the missing set member. 
+
+The MST procedure is believed to test item short term memory retention that is less subject to retrieval effects 
+than recall/recognition tests. According to Bushke the MST method does not require retrieval 
+by recall or recognition as it depends mainly on prior (well versed) knowledge of class membership. 
+In order to correctly report the missing class member of such a well-known class, however, retention of all 
+presented class members is still necessary and thus the MST can be used as a capacity measure for short term 
+memory. 
+
+Usually, the MST methodology uses lists of items that are greater in length than is used in digit span tests 
+(e.g. N=13) and use items that are well-known such as lists of consecutive numbers. 
+
+Reference
+
+Buschke, H. (1963). Retention in Immediate Memory Estimated without Retrieval.
+Science, New Series, Vol. 140, No. 3562 (Apr. 5, 1963), pp. 56-57
+https://www.jstor.org/stable/1710736
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+
+This script runs an MST task and Digit Span (DS) task* (optional). Order of task is determined by 
+selected groupnumber.
+Both tasks are using the same stimuli lists which are generated at the beginning of each script run.
+By default, only the MST task is set to be run (see editable parameters).
+
+Participants are given a class of consecutive numbers of varying lengths (4, 6, 8, 10, 12, 14).
+The classes are taken from the numbers 1-16.
+Example class: '4, 5, 6, 7, 8, 9 '
+Then participants hear a random order of these elements. However, one of the items is missing.
+Example presentation: "seven", "four", "five", "eight", "nine"
+
+MST: participants are asked to name the missing number (by default, the missing number is selected from a number dial)
+DS: participants are asked to name all the numbers that were presented, order is not important 
+(by default, numbers are selected from a number dial)
+
+*the DS task is simplified: participants get the same stimuli lists as in the MST task and recalling
+the order of the items is not important (see Buschke, 1963)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script* takes appr. 25-30 minutes to complete
+
+*by default, this script only runs the MST task. If the DS task is run duration will double.
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'missingscantest_raw*.iqdat'*
+
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+										
+										
+level:								the currently tested level (length of sequence) 
+missingNumber:						the selected missing Number of the currently tested sequence (e.g. 6)
+class:								the selected class (e.g. '5, 6, 7, 8')
+startNumber:						the first class member
+lastNumber:							the last class member
+presentationClass:					the selected class in the randomly ordered presentation (e.g. 05080706)
+presentedNumbers:					lists the presented numbers in order of presentation (missing number is not presented)
+
+enteredResponse:					all the entered responses in the order entered (including those respones that might have been deleted)
+
+finalResponse: 						the final response given for the current trial
+									Note: for DS trials the final values.finalResponse contains the ordered sequence of entered numbers
+									(thus it may not reflect the order in which the items were named)
+									
+correctResponse: 					the correct response for the current trial (Note: for DS trials it contains the ordered response)									
+
+correct:							accuracy of response: 1 = correct response; 0 = otherwise
+
+rt:									the cumulative response time (in ms) of all trials that collected a number until the submit button is pressed/'done'	
+									measured from onset of first reponse collecting trial
+
+mainly used for debugging:									
+Parameter: debugmode:				for data collection purposes this value should be 0 (if it's 1 participants will be able to see correct responses on the screen)									
+sequenceLength:						stores the length of the sequence (should be equal to values.level)
+theoreticalPresentedNumbers:		the theoretically presented numbers (should be equal to values.presentedNumbers)
+
+
+(2) Summary data file: 'missingscantest_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+																		
+MST:								retention span for the Missing Scan Test 
+
+MST_propCorrect_level4:				stores the proportion correct responses for level 4 MST trials
+MST_meancorrRT_level4:				stores the mean reaction time for level 4 MST trials (correct trials only)
+(same for level6, level8, level10, level12, level14 trials)
+
+DS:									retention span for the (simplified) Digit Span Test
+
+DS_propCorrect_level4:				stores the proportion correct responses for level 4 DS trials
+DS_meancorrRT_level4:				stores the mean reaction time for level 4 DS trials (correct trials only)
+(same for level6, level8, level10, level12, level14 trials)								
+							
+							
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP (best guess effort)
+___________________________________________________________________________________________________________________	
+
+This script is set up to run a Missing Scan Test (MST) and a Digit Span (DS) Assessment by default.
+The order of the tasks is counterbalanced by groupnumber:
+odd groupnumbers will run MST -> DS; even groupnumbers will run DS -> MST
+(Note: parameters.runDSAssessment controls whether the DS Assessment is run)
+
+Stimuli Preparation:
+At the beginning of the script, the script generates all the stimuli that are used for the MST/DS task:
+- the script generates stimuli for 90 trials: 15 trials for each of the 6 levels (4, 6, 8, 10, 12, 14) tested 
+- the script randomly selects a level (4, 6, 8, 10, 12, 14) and randomly (without replacement)
+selects the missing number for the current level (1-15) (Note: each level runs numbers 1-15 once as the missing number)
+	Example: level 4, missing number 5
+
+- an algorithm randomly selects a suitable class/sequence for the selected level and selected missing number
+and randomizes the order of the numbers for presentation purposes.
+Note: the missing number is never 'a limiting number of the class' (Buschke, 1963) which 
+Millisecond Software interpreted to be the highest number of the class.
+	Example: class generated: '3, 4, 5, 6' => presentation class: '04050306' (the missing number '05' will not be presented)
+
+- the information is then added to several level specific lists 
+(e.g. list.level4_class, list.level4_missingNumber, list.level4_presentationNumbers), so that MST and DS assessment
+run the very same stimuli for each level
+
+Response Format:
+By default, the stimuli are presented orally at 1 number per second and the response is collected in 'written' format
+(the numbers are selected from a number dial).
+Note: parameters.responseFormat can be set to collect oral responses.
+
+MST Task:
+(1) Demo: a minimum of one demo trial (level=3) is run to demonstrate the setup of the MST task
+(participants can decide whether they want to run additional demo trials)
+- the script randomly selects the missing number and generates a suitable class and random presentation order
+- the class is announced to participants (start button press starts the random sequence delivery)
+- the numbers are presented orally at 1 number per second
+- after a default delay of 0ms (editable parameter) the response is collected either in 'written'
+format (number selection from a number dial; default) or in verbal format (Response: missing number only)
+- participants receive feedback during the demo
+
+(2) Test:
+- the script randomly selects a level without replacement (levels: 4, 6, 8, 10, 12, 14; each tested 15 times)
+- the script randomly selects the missing number of the level as well as the generated class and
+random presentation order
+- the class is announced to participants (start button press starts the random sequence delivery)
+- the numbers are presented orally at 1 number per second in random order
+- after a default delay of 0ms (editable parameter) the response is collected either in 'written'
+format (number selection from a number dial; default) or in verbal format (Response: missing number only)
+- participants do not receive feedback during the test
+- after an intertrial interval (default: 500ms; editable parameters), the next class is presented
+
+
+DS Task:
+(1) Demo: a minimum of one demo trial (level=3) is run to demonstrate the setup of the MST task
+(participants can decide whether they want to run additional demo trials)
+- the script randomly selects the missing number and generates a suitable class and random presentation order
+- the class is announced to participants (start button press starts the random sequence delivery)
+- the numbers are presented orally at 1 number per second
+- after a default delay of 0ms (editable parameter) the response is collected either in 'written'
+format (number selection from a number dial; default) or in verbal format (Response: ALL the numbers presented; order is irrelevant)
+- participants receive feedback during the demo
+
+(2) Test:
+- the script randomly selects a level without replacement (levels: 4, 6, 8, 10, 12, 14; each tested 15 times)
+- the script randomly selects the missing number of the level as well as the generated class and
+random presentation order
+- the class is announced to participants (start button press starts the random sequence delivery)
+- the numbers are presented orally at 1 number per second
+- after a default delay of 0ms (editable parameter) the response is collected either in 'written'
+format (number selection from a number dial; default) or in verbal format (Response: ALL the numbers presented; order is irrelevant)
+- participants do not receive feedback during the test
+- after an intertrial interval (default: 500ms; editable parameters), the next class is presented
+
+Span Assessment:
+The assessment of the MST and the digit span was inspired by the method recommended by Woodworth and Schlosberg (1954):
+The script started with a base value of 2:
+MST: 2 + 2*x/15 (level4) + 2*x/15 (level6) + 3*x/15 (8) + 2*x/15 (10) + 2*x/15 (12) + 2*x/15 (14)
+DS: 2 + 2*x/15 (level4) + 2*x/15 (level6) + 3*x/15 (8) + 2*x/15 (10) + 2*x/15 (12) + 2*x/15 (14)
+
+=> the span range possible with this algorithm: 2-14
+
+
+Description of experimental setup in Buschke (1963):
+"The test items were the numbers from one to sixteen. 
+Series containing 4, 6, 8, 10, 12, or 14 randomly ordered numbers were prepared so that in the 15 series 
+for each number of items the missing number was randomly 1 through 15. 
+This was achieved by using appropriate segments of the sequence one to sixteen as the classes 
+from which one number was missing. The missing number was never a limiting number of the class. 
+
+Before both digit-span and missing-scan tests the subjects were told the class or sequential 
+series of numbers to which the numbers presented belonged."
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+Numbers 1-16, presented orally (using voiceover feature of text elements)
+
+__________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/debugmode = false	//true: the missing number as well as (verbal) numbers are presented on screen; 
+					//false: the missing number is not presented and the verbal numbers are 'hidden' (=> test mode)
+
+/responseFormat = "written" //select btw. written ("written" => select number from a number dial) or verbal response ("verbal")
+
+/runDSAssessment = false //true = script runs DS assessment in addition to MST assessment; false = only MST assessment is run
+						 //Note: if DS assessment is run, order of assessment types can be counterbalanced by groupnumber
+						
+/skipSummaryFeedback = false //true: the summary feedback (Span Feedback) is skipped; false: summary feedback (Span Feedback) if provided at the end						
+
+
+//Duration Parameters:
+
+/numberPresentationDelay = 500 // the delay (in ms) of presenting the first oral number after pressing start button
+/numberPresentationDuration_inms = 1000 //the presentation duration (in ms) of the verbally presented numbers
+/responseDelay = 0 //the delay (in ms) of the response collecting trials after offset of last oral number
+/iti = 1000 //intertrial interval (in ms); blank screen in between trials
+
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ finishLabel = "start"
+/ inputdevice = mouse
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</instruct>
+
+************************************************************
+MST
+************************************************************
+
+<page MST_intro>
+<hr><h1>Missing Scan Test</h1><hr>
+<p>You will hear sequences of numbers, taken from numbers 1-16.</p><br>
+<p>Each sequence consists of <b>consecutive</b> numbers, but the numbers will be presented in <u>random</u> order.</p><br>
+<p>However: One of the numbers will be missing. Your task will be to name this missing number.</p><br>
+<p>Continue on to a demonstration.</p>
+</page>
+
+<page MST_start>
+<hr><h1>Missing Scan Test</h1><hr>
+<p>The test will now begin. It will take approximately 30 minutes.</p><br>
+<p><b>Remember</b>:</p>
+<ul>
+<li>You will hear sequences of numbers, taken from the numbers 1-16.</li>
+<li>The sequences will vary in length. Some of these sequences will be shorter and others will be longer.</li>
+<li>The numbers of each sequence will be presented in <u>random order</u> and one of the numbers will be missing.</li>
+</ul><br>
+<p style="text-align: center"><b><i>Your task is to name this missing number.</i><b><br><br><br></p>
+<p>Start the test when you are ready.</p>
+</page>
+
+
+<text MSTdemo1>
+/ items = ("First you will be told the number sequence you will hear:")
+/ size = (80%, 11%)
+/ vjustify = center
+/ hjustify = center
+/ position = (50%,30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text MSTdemo2>
+/ items = ("These numbers will be presented in <b>random order</b><br> 
+but <u>one of the numbers will be missing</u><br><br>
+Pay good attention!")
+/ position = (50%,70%)
+/ txcolor = blue
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text MSTdemo3a>
+/ items = ("Now you are asked to <b>SAY<b> the Missing Number<br>
+ (Hint: the missing number was <b><%values.missingNumber%></b>):")
+/ position = (50%,15%)
+/ txcolor = blue
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text MSTdemo3b>
+/ items = ("Now select the Missing Number<br>
+ (here: <b><%values.missingNumber%></b>):")
+/ position = (50%,45%)
+/ txcolor = blue
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text MSTdemo_repeat>
+/ items = ("Would you like to repeat the demo?")
+/ position = (50%,50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+</text>
+
+<button yes>
+/ caption = "YES"
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ size = (20%, 7%)
+/ position = (25%, 75%)
+</button>
+
+<button no>
+/ caption = "NO"
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ size = (20%, 7%)
+/ position = (75%, 75%)
+</button>
+
+<text MST_classAnnouncement>
+/items = ("The next number class is:")
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text MST_responseReminder>
+/items = ("The missing number is:")
+/ position = (50%, 8%)
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+************************************************************
+DS
+************************************************************
+
+<page DS_intro>
+<hr><h1>Digit Span Test</h1><hr>
+<p>You will hear sequences of numbers, taken from numbers 1-16.</p><br>
+<p>Each sequence consists of <b>consecutive</b> numbers, but the numbers will be presented in <u>random</u> order.</p><br>
+<p>However: One of the numbers will be missing. Your task is to report <b>ALL</b> of the numbers presented.</p><br>
+<p>Continue on to a demonstration.</p>
+</page>
+
+<page DS_start>
+<hr><h1>Digit Span Test</h1><hr>
+<p>The test will now begin. It will take approximately 30 minutes.</p><br>
+<p><b>Remember</b>:</p>
+<ul>
+<li>You will hear sequences of numbers, taken from the numbers 1-16.</li>
+<li>The sequences will vary in length. Some of these sequences will be shorter and others will be longer.</li>
+<li>The numbers of each sequence will be presented in <u>random order</u> and one of the numbers will be missing.</li>
+</ul><br>
+<p style="text-align: center"><b><i>Your task is to report <b>ALL</b> of the numbers presented.</i><b><br><br><br></p>
+<p>Start the test when you are ready.</p>
+</page>
+
+
+<text DSdemo1>
+/ items = ("First you will be told the number sequence you will hear:")
+/ size = (80%, 11%)
+/ vjustify = center
+/ hjustify = center
+/ position = (50%,30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text DSdemo2>
+/ items = ("These numbers will be presented in <b>random order</b><br> 
+and your job is to <b><u>recall ALL the numbers presented</u></b>.<br>
+Pay good attention!")
+/ position = (50%,70%)
+/ txcolor = blue
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text DSdemo3a>
+/ items = ("Now you are asked to <b>SAY<b> each of the numbers presented<br>
+regardless of order<br><br>
+When you are done, simply say <b>'done'</b>")
+/ position = (50%,65%)
+/ txcolor = blue
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text DSdemo3b>
+/ items = ("Example: <%list.demoNumbers.item(1)%>, <%list.demoNumbers.item(2)%>")
+/ position = (50%,45%)
+/ txcolor = blue
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text DSdemo_repeat>
+/ items = ("Would you like to repeat the demo?")
+/ position = (50%,50%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+</text>
+
+<text DS_classAnnouncement>
+/items = ("The next number class is:")
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text DS_responseReminder_verbal>
+/items = ("Say all numbers presented regardless of order")
+/ position = (50%, 30%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text DS_responseReminder_written>
+/items = ("Select <i>ALL</i> numbers presented. Order is not important.")
+/ position = (50%, 8%)
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+/ erase = false
+/ erase = false
+</text>
+
+
+************************************************************
+All
+************************************************************
+
+<button start>
+/ caption = "START"
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ size = (30%, 7%)
+/ position = (50%, 90%)
+/ erase = false
+</button>
+
+<text correctFeedback>
+/ items = ("correct")
+/ hposition = text.response.hposition
+/ vposition = text.response.vposition
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ erase = false
+/ txbgcolor = green
+/ width = text.response.width
+/height = text.response.height
+/ vjustify = center
+/ hjustify = center
+</text>
+
+<text errorFeedback>
+/ items = ("incorrect")
+/ hposition = text.response.hposition
+/ vposition = text.response.vposition
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ erase = false
+/ txbgcolor = red
+/ width = text.response.width
+/height = text.response.height
+/ vjustify = center
+/ hjustify = center
+</text>
+
+<text summaryFeedback>
+/ items = ("<%expressions.summaryFeedback%>")
+/ size = (80%, 30%)
+/ position = (50%, 60%)
+/ txcolor = blue
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</text>
+
+<expressions>
+/summaryFeedback = {
+	if (parameters.runDSAssessment){
+		"Missing Scan Span: <%expressions.MST%>
+		Digit Span: <%expressions.DS%>"
+	} else {
+		"Missing Scan Span: <%expressions.MST%>"		
+	}
+}
+</expressions>
+
+<button reset>
+/ caption = "reset"
+/ position = (25%, 95%)
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ size = (30%, 6%)
+/ erase = false
+</button>
+
+<button submit>
+/ caption = "submit"
+/ position = (75%, 95%)
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ size = (30%, 6%)
+/ erase = false
+</button>
+
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 30%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<button exit>
+/ caption = "EXIT"
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ size = (30%, 7%)
+/ position = (50%, 90%)
+</button>
+
+<text trialcount>
+/ items = ("Trial <%values.trialCounter%> of 90")
+/ position = (50%, 98%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (20%, 4%)
+/ erase = false
+</text>
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+/ inputdevice = mouse
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+
+values.level, values.missingNumber, values.class, values.startNumber, values.lastNumber, values.presentationClass, 
+values.presentedNumbers, 
+values.enteredResponse, values.finalResponse, values.correctResponse, correct, values.rt, 
+
+parameters.debugmode, values.sequenceLength, values.theoreticalPresentedNumbers) 
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+expressions.MST, 
+expressions.MST_propCorrect_level4, expressions.MST_meancorrRT_level4,
+expressions.MST_propCorrect_level6, expressions.MST_meancorrRT_level6,
+expressions.MST_propCorrect_level8, expressions.MST_meancorrRT_level8,
+expressions.MST_propCorrect_level10, expressions.MST_meancorrRT_level10,
+expressions.MST_propCorrect_level12, expressions.MST_meancorrRT_level12,
+expressions.MST_propCorrect_level14, expressions.MST_meancorrRT_level14,
+
+expressions.DS,
+expressions.DS_propCorrect_level4, expressions.DS_meancorrRT_level4,
+expressions.DS_propCorrect_level6, expressions.DS_meancorrRT_level6,
+expressions.DS_propCorrect_level8, expressions.DS_meancorrRT_level8,
+expressions.DS_propCorrect_level10, expressions.DS_meancorrRT_level10,
+expressions.DS_propCorrect_level12, expressions.DS_meancorrRT_level12,
+expressions.DS_propCorrect_level14, expressions.DS_meancorrRT_level14)
+
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/level = 0 //the level 4, 6, 8, 10, 12, 14 that is currently selected
+/missingNumber = 0 //stores the missing number 1-15 for the currently selected level
+/minStartingNumber = 0 //stores the minimum starting number of a sequence that contains the missing number and is of the required length
+/maxStartingNumber = 0 //stores the maximum starting number of a sequence that contains the missing number and is of the required length
+/startNumber = 0 //stores the randomly selected start number (from range from minimum to maximum possible start numbers)
+/lastNumber = 0 //stores the highest class member
+/currentNumber = 1 //variables that contains the currently selected number to be presented
+/numberCounter = 0 //a counter to count the number of Numbers presented
+/class = "" //string variable that contains the class/sequence to be announced to participants (e.g "5, 6, 7, 8, 9, 10")
+/presentationClass = "" //string variable that contains the class/sequence for presentation purposes; 
+						//(e.g. "070610080905")
+
+/presentedNumbers = "" //stores the order of the presented numbers (in digits)
+						
+/correctResponse = "" //stores the correct response of the current trial
+
+/enteredResponse = "" //stores the response in the order entered (stores all the numbers, entered even those being deleted at the end)
+/finalResponse = "" //stores the response of the participant in a cleaned up format (e.g. numbers will be ordered and separated by commas)
+/tempResponse = ""
+/rt = "" //collects the latencies of the individual input trials
+
+/baseValue = 0 //baseValue for Item Retention
+/trialCounter = 0
+/sequenceLength = 0 //debug variable
+/theoreticalPresentedNumbers = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+//find the minimum start number of the class that can be used for the currently selected missing Number for the
+//selected level; return the value to values.minStartingNumber
+/findMinStartNumber = {
+	var currentMinStartNumber = (values.missingNumber) - (values.level - 2);
+
+	while (currentMinStartNumber <= 0){
+		currentMinStartNumber += 1;
+	}
+	
+	return (currentMinStartNumber);
+}
+//find the maximum startnumber of the class that can be used for the currently selected missing Number for the
+//selected level; return the value to values.maxStartingNumber
+/findMaxStartNumber = {
+	var currentMaxStartNumber = values.missingNumber;
+	while (currentMaxStartNumber + (values.level - 1) > 16){
+		currentMaxStartNumber -= 1;
+	}
+	return (currentMaxStartNumber);
+}
+//assemble the list that contains all the possible startnumbers for the currently selected missing Number for the selected level
+//return the selected number to values.startNumber
+/selectStartNumber = {
+	list.possibleStartNumbers.reset(); //reset the list that contains all possible start numbers
+	
+	var startNumber = values.minStartingNumber;
+	while (startNumber <= values.maxStartingNumber){
+		list.possibleStartNumbers.appendItem(startNumber);
+		startNumber += 1;
+	}
+	
+	return(list.possibleStartNumbers.nextValue);
+}
+
+//assembles the class of numbers generated for the current level and current missing Number (values.class)
+//assembles the presentation class (values.presentationClass) that contains the numbers in randomized order (Note: will not contain missing Number)
+/assembleClassLists = {
+	values.class = "";
+	values.presentationClass = "";
+	list.classNumbers.reset();
+	var i = 1; //counter
+	var currentNumber = values.startNumber;
+	
+	while (i <= values.level){
+		
+		//store the information in values.class (e.g. "5, 6, 7, 8")
+		values.class = concat(values.class, currentNumber);
+		if (i < values.level){
+			values.class = concat(values.class, ", ");	//do not add the comma for the last member of the class
+		}
+		list.classNumbers.appendItem(currentNumber); //add the number to list.classNumbers
+
+		currentNumber += 1;
+		i += 1;
+	}
+	
+	//generate values.presentationClass (the number sequence to be presented in random order)
+	i = 1; //reset the local counter
+	while (i <= values.level){
+		currentNumber = list.classNumbers.nextValue; //list.classNumbers randomly selects one of the class members
+		if (currentNumber < 10){
+			values.presentationClass = concat(values.presentationClass, "0"); //for single digits make sure to a 0
+		}
+		values.presentationClass = concat(values.presentationClass, currentNumber);	
+	
+		i += 1;
+	}
+}
+//generates the list of Numbers to be presented during the MST/DS 
+/generateNumberList = {
+	list.Numbers.reset();
+	var k = 0; //local counter
+	var selectedNumber = 0;
+	
+	while (k < length(values.presentationClass)){		
+	
+		//go through values.presentationClass and get substrings of length = 2 that contain the number info
+		//use math function 'evaluate' to generate the integer number of string variables
+		//Example: "03" => evaluate("03") -> 3		
+		selectedNumber = evaluate(subString(values.presentationClass, k, 2));
+		//add all numbers except the missing number to list.Numbers
+		if (selectedNumber != values.missingNumber){
+			list.Numbers.appendItem(selectedNumber);			
+		}		
+
+		k += 2; //increase k by two to get to the next number chunk in values.class
+	}
+}
+
+//translate the spoken words into written ones
+/DSresponse = {
+	if (values.tempResponse == "one"){
+		return ("1");
+	} else if (values.tempResponse == "two"){
+		return ("2");
+	} else if (values.tempResponse == "three"){
+		return ("3");
+	} else if (values.tempResponse == "four"){
+		return ("4");
+	} else if (values.tempResponse == "five"){
+		return ("5");
+	} else if (values.tempResponse == "six"){
+		return ("6");
+	} else if (values.tempResponse == "seven"){
+		return ("7");
+	} else if (values.tempResponse == "eight"){
+		return ("8");
+	} else if (values.tempResponse == "nine"){
+		return ("9");
+	} else if (values.tempResponse == "ten"){
+		return ("10");
+	} else if (values.tempResponse == "eleven"){
+		return ("11");
+	} else if (values.tempResponse == "twelve"){
+		return ("12");
+	} else if (values.tempResponse == "thirteen"){
+		return ("13");
+	} else if (values.tempResponse == "fourtenn"){
+		return ("14");
+	} else if (values.tempResponse == "fifteen"){
+		return ("15");
+	} else if (values.tempResponse == "sixteen"){
+		return ("16");
+	} else if (values.tempResponse == "done"){
+		return ("done");
+	} else {
+		return ("else");
+	}
+}
+
+//assemble the verbal DSresponse based on the individually spoken numbers
+//the final output should look something like this: "7,8,10," (sorted in ascending order)
+/assembleDSresponse_verbal = {
+	var index = 1;
+	var spokennumber = "";
+	var tempResponse = "";
+	
+	//generate values.DSresponse
+	while (index <= list.DSresponse.itemCount){
+		spokennumber = list.DSresponse.nextValue;
+		tempResponse = concat(tempResponse, spokennumber);
+		tempResponse = concat(tempResponse, ",");
+
+		index += 1;
+	}	
+	
+	return(tempResponse);
+}
+
+//assemble the written DSresponse based on the individually entered numbers
+//the final output should be sorted in ascending order and look something like this: "7,8,10,"
+/assembleDSresponse_written = {
+	var tempResponse2 = values.finalResponse;
+
+	//at this point tempResponse2 should look something like: "8,7,10," (=> it's not necessarily sorted)
+	//the following code will sort the input using list.DSresponse:
+	
+	list.DSresponse.reset(); //empty out list.DSresponse
+	var index2 = 0; //reset helper variables
+	var temp = "";
+	
+	//loop through the current tempResponse2 (e.g. "8,7,10,") and check chunks of 2 elements (e.g. "8,"; "7," and "10")
+	while (index2 < length(tempResponse2)){
+		temp = subString(tempResponse2, index2, 2); //look at the next chunk of 2 elements starting at the current index (Note: the first index of a string variable is 0)
+		if (contains(temp, ",")){//check if the chunk contains a ','. If so, the chunk contains the entire number but also a comma (e.g. "8,")
+			temp = replaceAll(temp, ",", ""); //remove the comma
+			list.DSresponse.appendItem(temp); //add the 'clean' number to list.DSresponse
+			index2 += 2; //increase the index by 2 and check the next chunk
+		} else { //at this point the chunk of 2 elements does not contain a comma (e.g. "10") and thus can directly be added to list.DSresponse
+			list.DSresponse.appendItem(temp);
+			index2 += 3; //the index needs to be increased by 3 to get the start of the next chunk
+		}
+	}
+	
+	//now the list needs to be sorted in ascending order
+	//and the elements need to be reinserted into tempResponse2 in sorted order
+	list.DSresponse.sort(true, false);
+	index2 = 1;
+	tempResponse2 = ""; //reset tempResponse2
+	
+	//for each element in the list, get the next list item (selection is set to sequential), store it in tempResponse2 and add a comma
+	while (index2 <= list.DSresponse.itemCount){
+		tempResponse2 = concat(tempResponse2, list.DSresponse.nextValue);
+		tempResponse2 = concat(tempResponse2, ",");
+		index2 += 1; //increase the index for the next number
+	}
+	
+	return(tempResponse2);//at this point tempResponse2 should be sorted (e.g. "7,8,10,")
+		
+}
+
+//uses values.class (e.g. "7, 8, 9, 10") and removes the missing Number (e.g. "9"), so that it can be compared to the DSresponse
+//the final output should look something like this: "7,8,10,"
+/assembleDScorrectResponse = {
+	var DS_tempCorrect = values.class;
+	DS_tempCorrect = replaceAll(DS_tempCorrect, " ", "");//remove all empty spaces
+	DS_tempCorrect = concat(DS_tempCorrect, ","); //add last comma
+	
+	var removeChunk = values.missingNumber;
+	removeChunk = concat(removeChunk, ",");//create the chunk that needs to be removed 
+		
+	DS_tempCorrect = replaceAll(DS_tempCorrect, removeChunk, "");//remove missing number + ','
+	
+	return(DS_tempCorrect);
+
+}
+//for debug purposes
+/determineStartAndLastNumberOfClass = {	
+	if (contains(subString(values.class, 0, 2), ",")){//if the first two elements of values.class contain a comma it's a single digit number
+		values.startNumber = subString(values.class, 0, 1);//single digit number
+	} else {
+		values.startNumber = subString(values.class, 0, 2);	//double digit number
+	}
+
+	values.lastNumber = values.startNumber + (values.level - 1); //determine the last number of the class
+}
+
+/theoreticalPresentedNumbers = {
+	var t = 0;
+	values.theoreticalPresentedNumbers = "";
+	
+	while (t < length(values.presentationClass)){
+		if (evaluate(subString(values.presentationClass, t, 2)) != values.missingNumber){
+			values.theoreticalPresentedNumbers = concat(values.theoreticalPresentedNumbers, evaluate(subString(values.presentationClass, t, 2)));
+			values.theoreticalPresentedNumbers = concat(values.theoreticalPresentedNumbers, ",");
+		}
+		t += 2;
+	}
+}
+</expressions>
+
+//Span Determination
+<expressions>
+/MST = {
+	values.baseValue = 2; //in this script anybody gets assigned a base value of 2
+	values.baseValue += 2*list.MST_level4_ACC.mean; //for each level add the appropriate proportion correct to the base level (multiplied by 2 as the levels increased by 2)
+	values.baseValue += 2*list.MST_level6_ACC.mean;	
+	values.baseValue += 2*list.MST_level8_ACC.mean;	
+	values.baseValue += 2*list.MST_level10_ACC.mean;
+	values.baseValue += 2*list.MST_level12_ACC.mean;
+	values.baseValue += 2*list.MST_level14_ACC.mean;
+
+	return(values.baseValue);
+}
+/DS = {
+	values.baseValue = 2; //in this script anybody gets assigned a base value of 2
+	values.baseValue += 2*list.DS_level4_ACC.mean; //for each level add the appropriate proportion correct to the base level (multiplied by 2 as the levels increased by 2)
+	values.baseValue += 2*list.DS_level6_ACC.mean;	
+	values.baseValue += 2*list.DS_level8_ACC.mean;	
+	values.baseValue += 2*list.DS_level10_ACC.mean;
+	values.baseValue += 2*list.DS_level12_ACC.mean;
+	values.baseValue += 2*list.DS_level14_ACC.mean;
+
+	return(values.baseValue);
+}
+
+
+/MST_propCorrect_level4 = list.MST_level4_ACC.mean
+/MST_meancorrRT_level4 = list.MST_level4_corrRT.mean
+/MST_propCorrect_level6 = list.MST_level6_ACC.mean
+/MST_meancorrRT_level6 = list.MST_level6_corrRT.mean
+/MST_propCorrect_level8 = list.MST_level8_ACC.mean
+/MST_meancorrRT_level8 = list.MST_level8_corrRT.mean
+/MST_propCorrect_level10 = list.MST_level10_ACC.mean
+/MST_meancorrRT_level10 = list.MST_level10_corrRT.mean
+/MST_propCorrect_level12 = list.MST_level12_ACC.mean
+/MST_meancorrRT_level12 = list.MST_level12_corrRT.mean
+/MST_propCorrect_level14 = list.MST_level14_ACC.mean
+/MST_meancorrRT_level14 = list.MST_level14_corrRT.mean
+
+/DS_propCorrect_level4 = list.DS_level4_ACC.mean
+/DS_meancorrRT_level4 = list.DS_level4_corrRT.mean
+/DS_propCorrect_level6 = list.DS_level6_ACC.mean
+/DS_meancorrRT_level6 = list.DS_level6_corrRT.mean
+/DS_propCorrect_level8 = list.DS_level8_ACC.mean
+/DS_meancorrRT_level8 = list.DS_level8_corrRT.mean
+/DS_propCorrect_level10 = list.DS_level10_ACC.mean
+/DS_meancorrRT_level10 = list.DS_level10_corrRT.mean
+/DS_propCorrect_level12 = list.DS_level12_ACC.mean
+/DS_meancorrRT_level12 = list.DS_level12_corrRT.mean
+/DS_propCorrect_level14 = list.DS_level14_ACC.mean
+/DS_meancorrRT_level14 = list.DS_level14_corrRT.mean
+</expressions>
+
+
+*************************************
+CIRCLE COORDINATES of buttons
+*************************************
+
+The following expressions are used to calculate the coordinates of the 18 circle positions (in px)
+
+/centerx-
+/centery:					x and y center coordinates in pixels based on canvas dimensions
+/radius_px:					the radius of the circle in pixels
+/Radians_button1 -
+/Radians_button16:			the radians angles of the 16 circle positions
+/heightchange_button1: 		change in height (measured from screen center) for circleposition button1 with radius expressions.radius_px
+/widthchange_button1: 		change in width (measured from screen center) for circleposition button1 with radius expressions.radius_px
+(same for all other buttons)
+
+<expressions>
+/centerx=0.5*display.canvasWidth
+/centery=0.45*display.canvasHeight
+/radius_px = 0.3 * display.canvasHeight
+
+/Radians_button1 = rad(270)
+/Radians_button2 = rad(292.5)
+/Radians_button3 = rad(315)
+/Radians_button4 = rad(337.5)
+/Radians_button5 = rad(360)
+/Radians_button6 = rad(22.5)
+/Radians_button7 = rad(45)
+/Radians_button8 = rad(67.5)
+/Radians_button9 = rad(90)
+/Radians_button10 = rad(112.5)
+/Radians_button11 = rad(135)
+/Radians_button12 = rad(157.5)
+/Radians_button13 = rad(180)
+/Radians_button14 = rad(202.5)
+/Radians_button15 = rad(225)
+/Radians_button16 = rad(247.5)
+
+/heightchange_button1 = sin(expressions.Radians_button1) * expressions.radius_px
+/widthchange_button1 = cos(expressions.Radians_button1) * expressions.radius_px
+/heightchange_button2 = sin(expressions.Radians_button2) * expressions.radius_px
+/widthchange_button2 = cos(expressions.Radians_button2) * expressions.radius_px
+/heightchange_button3 = sin(expressions.Radians_button3) * expressions.radius_px
+/widthchange_button3 = cos(expressions.Radians_button3) * expressions.radius_px
+/heightchange_button4 = sin(expressions.Radians_button4) * expressions.radius_px
+/widthchange_button4 = cos(expressions.Radians_button4) * expressions.radius_px
+/heightchange_button5 = sin(expressions.Radians_button5) * expressions.radius_px
+/widthchange_button5 = cos(expressions.Radians_button5) * expressions.radius_px
+/heightchange_button6 = sin(expressions.Radians_button6) * expressions.radius_px
+/widthchange_button6 = cos(expressions.Radians_button6) * expressions.radius_px
+/heightchange_button7 = sin(expressions.Radians_button7) * expressions.radius_px
+/widthchange_button7 = cos(expressions.Radians_button7) * expressions.radius_px
+/heightchange_button8 = sin(expressions.Radians_button8) * expressions.radius_px
+/widthchange_button8 = cos(expressions.Radians_button8) * expressions.radius_px
+/heightchange_button9 = sin(expressions.Radians_button9) * expressions.radius_px
+/widthchange_button9 = cos(expressions.Radians_button9) * expressions.radius_px
+/heightchange_button10 = sin(expressions.Radians_button10) * expressions.radius_px
+/widthchange_button10 = cos(expressions.Radians_button10) * expressions.radius_px
+/heightchange_button11 = sin(expressions.Radians_button11) * expressions.radius_px
+/widthchange_button11 = cos(expressions.Radians_button11) * expressions.radius_px
+/heightchange_button12 = sin(expressions.Radians_button12) * expressions.radius_px
+/widthchange_button12 = cos(expressions.Radians_button12) * expressions.radius_px
+/heightchange_button13 = sin(expressions.Radians_button13) * expressions.radius_px
+/widthchange_button13 = cos(expressions.Radians_button13) * expressions.radius_px
+/heightchange_button14 = sin(expressions.Radians_button14) * expressions.radius_px
+/widthchange_button14 = cos(expressions.Radians_button14) * expressions.radius_px
+/heightchange_button15 = sin(expressions.Radians_button15) * expressions.radius_px
+/widthchange_button15 = cos(expressions.Radians_button15) * expressions.radius_px
+/heightchange_button16 = sin(expressions.Radians_button16) * expressions.radius_px
+/widthchange_button16 = cos(expressions.Radians_button16) * expressions.radius_px
+</expressions>
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+finish trial
+**************************************************************************************************************
+
+<trial finish>
+/ stimulusframes = [1 = finish, summaryFeedback]
+/ timeout = 2000
+/ recorddata = false
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEMO	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text demo_number>
+/ onprepare = [text.demo_number.skip = !parameters.debugmode;]
+/ items = ("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", 
+"twelve", "thirteen", "fourteen", "fifteen", "sixteen")
+/ select = list.demoNumbers.currentValue
+
+/ txcolor = gray
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</text>
+
+<sound demo_audioNumber>
+/ items = ("1.wav", "2.wav", "3.wav", "4.wav", "5.wav", "6.wav", "7.wav", "8.wav", "9.wav", "10.wav", "11.wav", 
+"12.wav", "13.wav", "14.wav", "15.wav", "16.wav")
+/ select = list.demoNumbers.nextValue
+/ playthrough = true
+</sound>
+
+//will contain the random numbers for the demo number presentation
+<list demoNumbers>
+/ replace = false
+/ not = [
+	values.missingNumber;
+]
+
+</list>
+
+**************************************************************************************************
+MST
+**************************************************************************************************
+
+<trial MSTdemo_start>
+/ ontrialbegin = [
+
+	//assemble the demo class of level 3:
+	values.level = 3;
+	values.missingNumber = replace(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+	values.minStartingNumber = expressions.findMinStartNumber;
+	values.maxStartingNumber = expressions.findMaxStartNumber;
+	values.startNumber = expressions.selectStartNumber;
+	values.lastNumber = values.startNumber + (values.level - 1);
+	values.class = "";
+	values.presentationClass = "practice";
+	list.demoNumbers.reset();
+	values.numberCounter = 0;
+	values.finalResponse = "";
+	values.enteredResponse = "";
+	values.presentedNumbers = "";
+	values.rt = "";
+	
+	var l = 1;
+	while (l <= values.level){
+		list.demoNumbers.appendItem(values.startNumber);		
+		values.class = concat(values.class, values.startNumber);
+		if (l < values.level){
+			values.class = concat(values.class, ", ");
+		}	
+		values.startNumber += 1;
+		l += 1;
+	}
+	values.startNumber = values.lastNumber - (values.level - 1);
+	
+	values.correctResponse = values.missingNumber;
+]
+/ stimulusframes = [1 = MSTdemo1, MSTdemo2, class, start]
+/ validresponse = (start)
+/ responsemessage = ("start", clearScreen, parameters.numberPresentationDelay)
+/ branch = [
+	return trial.MSTdemo_presentNumber;
+]
+/ recorddata = false
+</trial>
+
+<trial MSTdemo_presentNumber>
+/ ontrialbegin = [
+	values.numberCounter += 1;
+]
+/ stimulusframes = [1 = clearScreen, demo_audioNumber, demo_Number, correctResponse]
+/ trialduration = parameters.numberPresentationDuration_inms
+/ ontrialend = [
+	values.presentedNumbers = concat(values.presentedNumbers, list.demoNumbers.currentValue);
+	values.presentedNumbers = concat(values.presentedNumbers, ",");	
+]
+/ branch = [
+	if (values.numberCounter < (values.level - 1)){
+		return trial.MSTdemo_presentNumber;
+	} else {
+		return trial.MSTdemo_responseDelay;
+	}
+]
+/ recorddata = false
+</trial>
+
+//adds optional delay for response collection
+<trial MSTdemo_responseDelay>
+/ ontrialbegin = [
+	values.numberCounter = 0;
+]
+
+/ trialduration = parameters.responseDelay
+/ recorddata = false
+/ branch = [
+	if (parameters.responseFormat == "verbal"){
+		return trial.MSTdemo_collectVerbalResponse;
+	} else {
+		return trial.MSTdemo_collectWrittenResponse;
+	}
+]
+</trial>
+
+
+//collects the verbal response
+<trial MSTdemo_collectVerbalResponse>
+/ soundcapture = true //capture spoken response for potential manual checks
+/ inputdevice = speech
+/ ontrialbegin = [
+	if (values.missingNumber == 1){
+		values.correctResponse = "one";
+	} else if (values.missingNumber == 2){
+		values.correctResponse = "two";
+	} else if (values.missingNumber == 3){
+		values.correctResponse = "three";
+	} else if (values.missingNumber == 4){
+		values.correctResponse = "four";
+	} else if (values.missingNumber == 5){
+		values.correctResponse = "five";
+	} else if (values.missingNumber == 6){
+		values.correctResponse = "six";
+	} else if (values.missingNumber == 7){
+		values.correctResponse = "seven";
+	} else if (values.missingNumber == 8){
+		values.correctResponse = "eight";
+	} else if (values.missingNumber == 9){
+		values.correctResponse = "nine";
+	} else if (values.missingNumber == 10){
+		values.correctResponse = "ten";
+	} else if (values.missingNumber == 11){
+		values.correctResponse = "eleven";
+	} else if (values.missingNumber == 12){
+		values.correctResponse = "twelve";
+	} else if (values.missingNumber == 13){
+		values.correctResponse = "thirteen";
+	} else if (values.missingNumber == 14){
+		values.correctResponse = "fourteen";
+	} else if (values.missingNumber == 15){
+		values.correctResponse = "fifteen";
+	}
+]
+/ stimulusframes = [1 = clearScreen, MST_responseReminder, MSTdemo3a, correctResponse, response]
+/ validresponse = ("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen")
+/ correctresponse = (values.correctResponse)
+/ ontrialend = [
+	values.finalResponse = trial.MSTdemo_collectVerbalResponse.response;
+	values.enteredResponse = trial.MSTdemo_collectVerbalResponse.response;
+]
+/ branch = [
+	return trial.MSTdemo_verbalResponse_summary;
+]
+</trial>
+
+<trial MSTdemo_verbalResponse_summary>
+/ stimulusframes = [1 = response]
+/ trialduration = 200
+/ iscorrectresponse = [
+	trial.MSTdemo_collectVerbalResponse.correct;
+]
+/ errormessage = true(text.errorFeedback, 3000)
+/ correctmessage = true(text.correctFeedback, 500)
+/ branch = [
+	return trial.MSTdemo_repeat;
+]
+/ recorddata = false
+</trial>
+
+
+//collects the written response
+<trial MSTdemo_collectWrittenResponse>
+/ inputdevice = mouse
+/ stimulusframes = [1 = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, reset, submit, response, MST_responseReminder,  MSTdemo3b,correctResponse]
+/ validresponse = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, reset, submit)
+/ monkeyresponse = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
+/ ontrialend = [
+	if (trial.MSTdemo_collectWrittenResponse.response != "reset" && trial.MSTdemo_collectWrittenResponse.response != "submit"){
+		values.numberCounter += 1;
+		if (values.numberCounter > 1){
+			values.finalResponse = concat(values.finalResponse, ",");
+		}
+		values.finalResponse = concat(values.finalResponse, trial.MSTdemo_collectWrittenResponse.response);		
+	}
+	values.enteredResponse = concat(values.enteredResponse, trial.MSTdemo_collectWrittenResponse.response);
+	values.enteredResponse = concat(values.enteredResponse, ",");	
+	values.rt += trial.MSTdemo_collectWrittenResponse.latency;
+]
+/ branch = [
+	if (monkey.monkeyMode){
+		return trial.MSTdemo_writtenResponse_summary;		
+	} else if (trial.MSTdemo_collectWrittenResponse.response != "reset" && trial.MSTdemo_collectWrittenResponse.response != "submit"){
+		return trial.MSTdemo_collectWrittenResponse;
+	} else if (trial.MSTdemo_collectWrittenResponse.response == "reset"){
+		values.finalResponse = "";
+		values.numberCounter = 0;
+		return trial.MSTdemo_collectWrittenResponse;		
+	} else {
+		return trial.MSTdemo_writtenResponse_summary;
+	}
+]
+/ recorddata = false
+</trial>
+
+<trial MSTdemo_writtenResponse_summary>
+/ trialduration = 0
+/ iscorrectresponse = [ return (values.finalResponse == values.correctresponse);]
+/ branch = [
+	return trial.MSTdemo_repeat;
+]
+/ errormessage = true(text.errorFeedback, 3000)
+/ correctmessage = true(text.correctFeedback, 500)
+/ recorddata = true
+</trial>
+
+
+<trial MSTdemo_repeat>
+/ stimulusframes = [1 = clearScreen, MSTdemo_repeat, yes, no]
+/ validresponse = (yes, no)
+/ branch = [
+	if (trial.MSTdemo_repeat.response == "yes" && !monkey.monkeyMode){
+		trial.MSTdemo_start;
+	}
+]
+/ recorddata = false
+
+</trial>
+
+**************************************************************************************************
+DS
+**************************************************************************************************
+
+//helper list for DS demo trials: the list will be used to store the individual entered numbers (verbally or written)
+//the list is then sorted and the sorted members are stored in variable values.finalResponse
+//values.finalResponse can then be directly compared to values.class to determine accuracy
+<list DSresponse>
+/ selectionrate = always
+/ selectionmode = sequence
+</list>
+
+<trial DSdemo_start>
+/ ontrialbegin = [
+
+	//assemble the demo class of level 3:
+	values.level = 3;
+	values.missingNumber = replace(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+	values.minStartingNumber = expressions.findMinStartNumber;
+	values.maxStartingNumber = expressions.findMaxStartNumber;
+	values.startNumber = expressions.selectStartNumber;
+	values.lastNumber = values.startNumber + (values.level - 1);
+	values.class = "";
+	values.presentationClass = "practice";
+	list.demoNumbers.reset();
+	values.numberCounter = 0;
+	values.finalResponse = "";
+	values.enteredResponse = "";
+	values.presentedNumbers = "";
+	values.rt = "";
+	
+	var l = 1; //simple loop counter variable
+	while (l <= values.level){
+		if (values.startNumber != values.missingNumber){
+			list.demoNumbers.appendItem(values.startNumber);			
+		}
+		values.class = concat(values.class, values.startNumber);
+		if (l < values.level){
+			values.class = concat(values.class, ", ");
+		}
+		values.startNumber += 1;
+		l += 1;
+	}
+	values.startNumber = values.lastNumber - (values.level - 1);
+	
+	//assemble correct response for the current demo trial	
+	values.correctResponse = expressions.assembleDScorrectResponse; 		
+]
+
+/ stimulusframes = [1 = DSdemo1, DSdemo2, class, start]
+/ validresponse = (start)
+/ responsemessage = ("start", clearScreen, parameters.numberPresentationDelay)
+/ branch = [
+	return trial.DSdemo_presentNumber;
+]
+/ recorddata = false
+</trial>
+
+<trial DSdemo_presentNumber>
+/ ontrialbegin = [
+	values.numberCounter += 1;
+]
+
+/ stimulusframes = [1 = demo_audioNumber, demo_Number, correctResponse]
+/ trialduration = parameters.numberPresentationDuration_inms
+/ ontrialend = [
+	values.presentedNumbers = concat(values.presentedNumbers, list.demoNumbers.currentValue);
+	values.presentedNumbers = concat(values.presentedNumbers, ",");	
+]
+/ branch = [
+	if (values.numberCounter < (values.level - 1)){
+		return trial.DSdemo_presentNumber;
+	} else {
+		return trial.DSdemo_responseDelay;
+	}
+]
+/ recorddata = false
+</trial>
+
+//adds an optional delay before collecting response
+<trial DSdemo_responseDelay>
+/ ontrialbegin = [
+	values.numberCounter = 0;
+]
+/ trialduration = parameters.responseDelay
+/ recorddata = false
+/ branch = [
+	if (parameters.responseFormat == "verbal"){
+		list.DSresponse.reset();
+		return trial.DSdemo_collectVerbalResponse;
+	} else {
+		return trial.DSdemo_collectWrittenResponse;
+	}
+]
+</trial>
+
+
+//collects the verbal response
+<trial DSdemo_collectVerbalResponse>
+/ soundcapture = true //store the soundcapture for later manual analyses if necessary
+/ inputdevice = speech
+/ stimulusframes = [1 = clearScreen, DS_responseReminder_verbal, DSdemo3a, correctResponse, response]
+/ validresponse = ("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "done")
+/ correctresponse = (values.correctResponse)
+/ ontrialend = [
+	values.tempResponse = trial.DSdemo_collectVerbalResponse.response;
+	if (trial.DSdemo_collectVerbalResponse.response != "done"){
+		list.DSresponse.appendItem(expressions.DSresponse);	
+		values.finalResponse = concat(values.finalResponse, expressions.DSresponse);
+		values.finalResponse = concat(values.finalResponse, ",");		
+	}
+	values.enteredResponse = concat(values.enteredResponse, expressions.DSresponse);
+	values.enteredResponse = concat(values.enteredResponse, ",");	
+]
+/ branch = [
+	if (trial.DSdemo_collectVerbalResponse.response != "done"){
+		return trial.DSdemo_collectVerbalResponse;
+	} else {
+		return trial.DSdemo_verbalResponseSummary;		
+	}
+]
+</trial>
+
+<trial DSdemo_verbalResponseSummary>
+/ ontrialbegin = [
+	list.DSresponse.sort(true, false); //sort list.DSresponse in ascending order
+	values.finalResponse = expressions.assembleDSresponse_verbal; //assemble the final values.finalResponse in sorted order
+
+]
+/ iscorrectresponse = [
+	values.finalResponse == values.correctResponse;
+]
+/ trialduration = 0
+/ branch = [
+	return trial.DSdemo_repeat;
+]
+/ errormessage = true(text.errorFeedback, 3000)
+/ correctmessage = true(text.correctFeedback, 500)
+</trial>
+
+//collects the written response
+<trial DSdemo_collectWrittenResponse>
+/ inputdevice = mouse
+/ stimulusframes = [1 = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, reset, submit, response, DS_responseReminder_written,  DSdemo3b,correctResponse]
+/ validresponse = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, reset, submit)
+/ ontrialend = [
+	if (trial.DSdemo_collectWrittenResponse.response != "reset" && trial.DSdemo_collectWrittenResponse.response != "submit"){
+		values.numberCounter += 1;
+		if (values.numberCounter > 1){
+			values.finalResponse = concat(values.finalResponse, ",");
+		}
+		values.finalResponse = concat(values.finalResponse, trial.DSdemo_collectWrittenResponse.response);		
+	}
+	values.rt += trial.DSdemo_collectWrittenResponse.latency;
+	values.enteredResponse = concat(values.enteredResponse, trial.DSdemo_collectWrittenResponse.response);
+	values.enteredResponse = concat(values.enteredResponse, ",");	
+]
+/ branch = [
+	if (trial.DSdemo_collectWrittenResponse.response != "reset" && trial.DSdemo_collectWrittenResponse.response != "submit"){
+		return trial.DSdemo_collectWrittenResponse;
+	} else if (trial.DSdemo_collectWrittenResponse.response == "reset"){
+		values.finalResponse = "";
+		values.numberCounter = 0;
+		return trial.DSdemo_collectWrittenResponse;		
+	} else {
+		return trial.DSdemo_writtenResponse_summary;
+	}
+]
+/ recorddata = false
+</trial>
+
+<trial DSdemo_writtenResponse_summary>
+/ trialduration = 0
+/ iscorrectresponse = [ 
+	values.finalResponse = expressions.assembleDSresponse_written; //assemble the final values.finalResponse	
+	return (values.finalResponse == values.correctResponse);	
+]
+/ branch = [
+	return trial.DSdemo_repeat;
+]
+/ errormessage = true(text.errorFeedback, 3000)
+/ correctmessage = true(text.correctFeedback, 500)
+/ recorddata = true
+</trial>
+
+
+<trial DSdemo_repeat>
+/ stimulusframes = [1 = clearScreen, DSdemo_repeat, yes, no]
+/ validresponse = (yes, no)
+/ branch = [
+	if (trial.DSdemo_repeat.response == "yes"){
+		trial.DSdemo_start;
+	}
+]
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TEST STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text number>
+/ onprepare = [text.number.skip = !parameters.debugmode;]
+/ items = ("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", 
+"twelve", "thirteen", "fourteen", "fifteen", "sixteen")
+/ select = values.currentNumber
+/ txcolor = gray
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</text>
+
+<sound audioNumber>
+/ items = ("1.wav", "2.wav", "3.wav", "4.wav", "5.wav", "6.wav", "7.wav", "8.wav", "9.wav", "10.wav", "11.wav", 
+"12.wav", "13.wav", "14.wav", "15.wav", "16.wav")
+/ select = values.currentNumber
+/ playthrough = true
+</sound>
+
+<text class>
+/ items = ("<%values.class%>")
+/ erase = false
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+</text>
+
+<text correctResponse>
+/ onprepare = [text.correctResponse.skip = !parameters.debugmode;]
+/ items = ("<%values.correctResponse%>")
+/ txcolor = red
+/ position = (50%, 89%)
+/ erase = false
+/ size = (90%, 3%)
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+</text>
+
+<text response>
+/ items = ("<%values.finalResponse%>")
+/ position = (50%, 83%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ erase = false
+/ txbgcolor = gray
+/ size = (80%, 7%)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+
+**********************************************************
+"written" response screen
+**********************************************************
+
+<button 1>
+/ erase = false
+/ caption = "1"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button1)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button1)
+/ size = (7%, 7%)
+</button>
+
+<button 2>
+/ erase = false
+/ caption = "2"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button2)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button2)
+/ size = (7%, 7%)
+</button>
+
+<button 3>
+/ erase = false
+/ caption = "3"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button3)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button3)
+/ size = (7%, 7%)
+</button>
+
+<button 4>
+/ erase = false
+/ caption = "4"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button4)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button4)
+/ size = (7%, 7%)
+</button>
+
+<button 5>
+/ erase = false
+/ caption = "5"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button5)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button5)
+/ size = (7%, 7%)
+</button>
+
+<button 6>
+/ erase = false
+/ caption = "6"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button6)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button6)
+/ size = (7%, 7%)
+</button>
+
+<button 7>
+/ erase = false
+/ caption = "7"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button7)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button7)
+/ size = (7%, 7%)
+</button>
+
+<button 8>
+/ erase = false
+/ caption = "8"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button8)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button8)
+/ size = (7%, 7%)
+</button>
+
+<button 9>
+/ erase = false
+/ caption = "9"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button9)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button9)
+/ size = (7%, 7%)
+</button>
+
+<button 10>
+/ erase = false
+/ caption = "10"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button10)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button10)
+/ size = (7%, 7%)
+</button>
+
+<button 11>
+/ erase = false
+/ caption = "11"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button11)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button11)
+/ size = (7%, 7%)
+</button>
+
+<button 12>
+/ erase = false
+/ caption = "12"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button12)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button12)
+/ size = (7%, 7%)
+</button>
+
+<button 13>
+/ erase = false
+/ caption = "13"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button13)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button13)
+/ size = (7%, 7%)
+</button>
+
+<button 14>
+/ erase = false
+/ caption = "14"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button14)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button14)
+/ size = (7%, 7%)
+</button>
+
+<button 15>
+/ erase = false
+/ caption = "15"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button15)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button15)
+/ size = (7%, 7%)
+</button>
+
+<button 16>
+/ erase = false
+/ caption = "16"
+/ fontstyle = ("Verdana", 4%, true, false, false, false, 5, 0)
+/ hposition = 1px * (expressions.centerx + expressions.widthchange_button16)
+/ vposition = 1px * (expressions.centery + expressions.heightchange_button16)
+/ size = (7%, 7%)
+</button>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TEST LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+//this list stores all the levels tested by this script
+//this list selects randomly without replacement from the pool
+//each level should be selected 15 times until the selection pool resets
+<list levels>
+/ items = (4, 6, 8, 10, 12, 14)
+/ poolSize = 90
+/ replace = false
+/ resetinterval = 0
+</list>
+
+
+//The following lists store the missing numbers 1-15 that should be 
+//selected once for each level
+
+<list allMissingNumbers_level4>
+/ items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list allMissingNumbers_level6>
+/ items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list allMissingNumbers_level8>
+/ items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list allMissingNumbers_level10>
+/ items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list allMissingNumbers_level12>
+/ items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list allMissingNumbers_level14>
+/ items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+
+//filled during runtime (used for class generation purposes)
+//will store all the possible class start Numbers for a selected level and a specific missing number
+<list possibleStartNumbers>
+/ replace = false
+</list>
+
+
+
+*******************************************************************************
+Final Stimuli Lists (created during runtime at the beginning of the task)
+*******************************************************************************
+
+//will contain item lists such as = ("2", "8" etc) <= will contain the missing number of the to be presented class
+<list level4_missingNumbers>
+/ replace = false
+</list>
+
+//will contain item lists such as = ("1, 2, 3, 4", "6, 7, 8, 9" etc) <= will be used for class announcements
+<list level4_class>
+/ selectionmode = list.level4_missingNumbers.currentIndex
+</list>
+
+//will contain item lists such as = ("04030201", "07060908" etc.) store the class members in randomized order
+//the list will be presented without the missing number
+<list level4_presentationClass>
+/ selectionmode = list.level4_missingNumbers.currentIndex
+</list>
+
+<list level6_missingNumbers>
+/ replace = false
+</list>
+
+<list level6_class>
+/ selectionmode = list.level6_missingNumbers.currentIndex
+</list>
+
+<list level6_presentationClass>
+/ selectionmode = list.level6_missingNumbers.currentIndex
+</list>
+
+<list level8_missingNumbers>
+/ replace = false
+</list>
+
+<list level8_class>
+/ selectionmode = list.level8_missingNumbers.currentIndex
+</list>
+
+<list level8_presentationClass>
+/ selectionmode = list.level8_missingNumbers.currentIndex
+</list>
+
+<list level10_missingNumbers>
+/ replace = false
+</list>
+
+<list level10_class>
+/ selectionmode = list.level10_missingNumbers.currentIndex
+</list>
+
+<list level10_presentationClass>
+/ selectionmode = list.level10_missingNumbers.currentIndex
+</list>
+
+<list level12_missingNumbers>
+/ replace = false
+</list>
+
+<list level12_class>
+/ selectionmode = list.level12_missingNumbers.currentIndex
+</list>
+
+<list level12_presentationClass>
+/ selectionmode = list.level12_missingNumbers.currentIndex
+</list>
+
+<list level14_missingNumbers>
+/ replace = false
+</list>
+
+<list level14_class>
+/ selectionmode = list.level14_missingNumbers.currentIndex
+</list>
+
+<list level14_presentationClass>
+/ selectionmode = list.level14_missingNumbers.currentIndex
+</list>
+
+
+//list is used to generate values.presentationClass in expressions.assembleClassLists
+//it randomly selects any of the class members including the missing Number
+<list classNumbers>
+/ replace = false
+/ selectionrate = always
+</list>
+
+//list is used for number presentation purposes
+//it selects the randomized class numbers in sequence but skips the missing Number
+<list Numbers>
+/ selectionmode = sequence
+</list>
+
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT>
+</list>
+
+***********************************
+MST lists
+***********************************
+
+//stores 1 = correct; 0 = error for all level 4 trials during the MST
+<list MST_level4_ACC>
+</list>
+
+//stores the correct response time for all correct level 4 trials during the MST
+<list MST_level4_corrRT>
+</list>
+
+<list MST_level6_ACC>
+</list>
+
+<list MST_level6_corrRT>
+</list>
+
+<list MST_level8_ACC>
+</list>
+
+<list MST_level8_corrRT>
+</list>
+
+<list MST_level10_ACC>
+</list>
+
+<list MST_level10_corrRT>
+</list>
+
+<list MST_level12_ACC>
+</list>
+
+<list MST_level12_corrRT>
+</list>
+
+<list MST_level14_ACC>
+</list>
+
+<list MST_level14_corrRT>
+</list>
+
+***********************************
+DS lists
+***********************************
+
+//stores 1 = correct; 0 = error for all level 4 trials during the DS
+<list DS_level4_ACC>
+</list>
+
+//stores the correct response time for all correct level 4 trials during the DS
+<list DS_level4_corrRT>
+</list>
+
+<list DS_level6_ACC>
+</list>
+
+<list DS_level6_corrRT>
+</list>
+
+<list DS_level8_ACC>
+</list>
+
+<list DS_level8_corrRT>
+</list>
+
+<list DS_level10_ACC>
+</list>
+
+<list DS_level10_corrRT>
+</list>
+
+<list DS_level12_ACC>
+</list>
+
+<list DS_level12_corrRT>
+</list>
+
+<list DS_level14_ACC>
+</list>
+
+<list DS_level14_corrRT>
+</list>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TEST TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+<trial generateTestStimuli>
+/ ontrialbegin = [
+	values.level = list.levels.nextValue; //select next level (randomly without replacement)
+	
+	//select the next missing Number for the selected level
+	if (values.level == 4){
+		values.missingNumber = list.allMissingNumbers_level4.nextValue;
+	} else if (values.level == 6){
+		values.missingNumber = list.allMissingNumbers_level6.nextValue;
+	} else if (values.level == 8){
+		values.missingNumber = list.allMissingNumbers_level8.nextValue;
+	} else if (values.level == 10){
+		values.missingNumber = list.allMissingNumbers_level10.nextValue;
+	} else if (values.level == 12){
+		values.missingNumber = list.allMissingNumbers_level12.nextValue;
+	} else if (values.level == 14){
+		values.missingNumber = list.allMissingNumbers_level14.nextValue;
+	}
+	
+	//generate the final class for the given level and missing Number
+	values.minStartingNumber = expressions.findMinStartNumber;
+	values.maxStartingNumber = expressions.findMaxStartNumber;
+	values.startNumber = expressions.selectStartNumber;
+	expressions.assembleClassLists; //will generate values.class and values.presentationClass
+	
+	//fill stimuli lists to be used during missing scan test and digit span assessment
+	if (values.level == 4){
+		list.level4_class.appendItem(values.class);
+		list.level4_presentationClass.appendItem(values.presentationClass);
+		list.level4_missingNumbers.appendItem(values.missingNumber);
+	} else if (values.level == 6){
+		list.level6_class.appendItem(values.class);
+		list.level6_presentationClass.appendItem(values.presentationClass);
+		list.level6_missingNumbers.appendItem(values.missingNumber);
+	} else if (values.level == 8){
+		list.level8_class.appendItem(values.class);
+		list.level8_presentationClass.appendItem(values.presentationClass);
+		list.level8_missingNumbers.appendItem(values.missingNumber);
+	} else if (values.level == 10){
+		list.level10_class.appendItem(values.class);
+		list.level10_presentationClass.appendItem(values.presentationClass);
+		list.level10_missingNumbers.appendItem(values.missingNumber);
+	} else if (values.level == 12){
+		list.level12_class.appendItem(values.class);
+		list.level12_presentationClass.appendItem(values.presentationClass);
+		list.level12_missingNumbers.appendItem(values.missingNumber);
+	} else if (values.level == 14){
+		list.level14_class.appendItem(values.class);
+		list.level14_presentationClass.appendItem(values.presentationClass);
+		list.level14_missingNumbers.appendItem(values.missingNumber);
+	}		
+]
+/ trialduration = 0
+/ recorddata = false
+</trial>
+
+
+**********************************************************************************
+Missing Scan Test Trials
+**********************************************************************************
+
+<trial MST_classPresentation>
+/ ontrialbegin = [
+	values.level = list.levels.nextValue; //select the next level to be tested
+	if (values.level == 4){
+		values.missingNumber = list.level4_missingNumbers.nextValue;
+		values.class = list.level4_class.nextValue;
+		values.presentationClass = list.level4_presentationClass.nextValue;
+	} else if (values.level == 6){
+		values.missingNumber = list.level6_missingNumbers.nextValue;
+		values.class = list.level6_class.nextValue;
+		values.presentationClass = list.level6_presentationClass.nextValue;
+	} else if (values.level == 8){
+		values.missingNumber = list.level8_missingNumbers.nextValue;
+		values.class = list.level8_class.nextValue;
+		values.presentationClass = list.level8_presentationClass.nextValue;
+	} else if (values.level == 10){
+		values.missingNumber = list.level10_missingNumbers.nextValue;
+		values.class = list.level10_class.nextValue;
+		values.presentationClass = list.level10_presentationClass.nextValue;
+	} else if (values.level == 12){
+		values.missingNumber = list.level12_missingNumbers.nextValue;
+		values.class = list.level12_class.nextValue;
+		values.presentationClass = list.level12_presentationClass.nextValue;
+	} else if (values.level == 14){
+		values.missingNumber = list.level14_missingNumbers.nextValue;
+		values.class = list.level14_class.nextValue;
+		values.presentationClass = list.level14_presentationClass.nextValue;
+	}
+
+	values.numberCounter = 0;
+	values.finalResponse = "";
+	values.enteredResponse = "";
+	values.presentedNumbers = "";
+	values.rt = "";
+	values.correctResponse = values.missingNumber;	
+	values.trialCounter += 1;
+	
+	//used mainly for debugging purposes:
+	expressions.determineStartAndlastNumberOfClass;
+	values.sequenceLength = length(values.presentationClass)/2; //the sequence Length should be the same as values.level
+	expressions.theoreticalPresentedNumbers;
+
+]
+/ stimulusframes = [1 =MST_classAnnouncement, class, start, trialcount]
+/ validresponse = (start)
+/ ontrialend = [	
+	expressions.generateNumberList; //generate list.Numbers (without missing Number)
+	values.numberCounter = 0; //reset number counter
+]
+/ branch = [
+	return trial.MST_numberPresentationDelay;
+]
+/ recorddata = false
+</trial>
+
+<trial MST_numberPresentationDelay>
+/ stimulusframes = [1 = clearScreen, trialcount]
+/ trialduration = parameters.numberPresentationDelay
+/ branch = [
+	return trial.MST_presentNumber;
+]
+/ recorddata = false
+</trial>
+
+
+<trial MST_presentNumber>
+/ ontrialbegin = [
+	values.numberCounter += 1;
+	
+	//select the next number from List.Numbers
+	//Note: list.Numbers contains the randomized order of the numbers to be presented without the missingNumber
+	values.currentNumber = list.Numbers.nextValue;
+]
+/ stimulusframes = [1 = clearScreen, number, audioNumber, correctResponse, trialcount]
+/ trialduration = 1000
+/ ontrialend = [
+	values.presentedNumbers = concat(values.presentedNumbers, values.currentNumber);
+	values.presentedNumbers = concat(values.presentedNumbers, ",");	
+]
+/ branch = [
+	if (values.numberCounter < (values.level - 1)){
+		return trial.MST_presentNumber;
+	} else {
+		return trial.MST_responseDelay;
+	}
+]
+/ recorddata = false
+</trial>
+
+//adds optional delay for response collection
+<trial MST_responseDelay>
+/ ontrialbegin = [
+	values.numberCounter = 0;
+]
+/ stimulusframes = [1 = clearScreen, trialcount]
+/ trialduration = parameters.responseDelay
+/ recorddata = false
+/ branch = [
+	if (parameters.responseFormat == "verbal"){
+		return trial.MST_collectVerbalResponse;
+	} else {
+		return trial.MST_collectWrittenResponse;
+	}
+]
+</trial>
+
+
+//collects the verbal response
+<trial MST_collectVerbalResponse>
+/ inputdevice = speech
+/ ontrialbegin = [
+	if (values.missingNumber == 1){
+		values.correctResponse = "one";
+	} else if (values.missingNumber == 2){
+		values.correctResponse = "two";
+	} else if (values.missingNumber == 3){
+		values.correctResponse = "three";
+	} else if (values.missingNumber == 4){
+		values.correctResponse = "four";
+	} else if (values.missingNumber == 5){
+		values.correctResponse = "five";
+	} else if (values.missingNumber == 6){
+		values.correctResponse = "six";
+	} else if (values.missingNumber == 7){
+		values.correctResponse = "seven";
+	} else if (values.missingNumber == 8){
+		values.correctResponse = "eight";
+	} else if (values.missingNumber == 9){
+		values.correctResponse = "nine";
+	} else if (values.missingNumber == 10){
+		values.correctResponse = "ten";
+	} else if (values.missingNumber == 11){
+		values.correctResponse = "eleven";
+	} else if (values.missingNumber == 12){
+		values.correctResponse = "twelve";
+	} else if (values.missingNumber == 13){
+		values.correctResponse = "thirteen";
+	} else if (values.missingNumber == 14){
+		values.correctResponse = "fourteen";
+	} else if (values.missingNumber == 15){
+		values.correctResponse = "fifteen";
+	}
+]
+/ stimulusframes = [1 = clearScreen, MST_responseReminder, correctResponse, trialcount]
+/ validresponse = ("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen")
+/ correctresponse = (values.correctResponse)
+/ ontrialend = [
+	values.finalResponse = trial.MST_collectVerbalResponse.response;
+	values.enteredResponse = trial.MST_collectVerbalResponse.response;
+
+	if (values.level == 4){
+		list.MST_level4_ACC.appendItem(trial.MST_collectVerbalResponse.correct);
+		if (trial.MST_collectVerbalResponse.correct){
+			list.MST_level4_corrRT.appendItem(trial.MST_collectVerbalResponse.latency);
+		}
+	} else if (values.level == 6){
+		list.MST_level6_ACC.appendItem(trial.MST_collectVerbalResponse.correct);
+		if (trial.MST_collectVerbalResponse.correct){
+			list.MST_level6_corrRT.appendItem(trial.MST_collectVerbalResponse.latency);
+		}
+	} else if (values.level == 8){
+		list.MST_level8_ACC.appendItem(trial.MST_collectVerbalResponse.correct);
+		if (trial.MST_collectVerbalResponse.correct){
+			list.MST_level8_corrRT.appendItem(trial.MST_collectVerbalResponse.latency);
+		}
+	} else if (values.level == 10){
+		list.MST_level10_ACC.appendItem(trial.MST_collectVerbalResponse.correct);
+		if (trial.MST_collectVerbalResponse.correct){
+			list.MST_level10_corrRT.appendItem(trial.MST_collectVerbalResponse.latency);
+		}
+	} else if (values.level == 12){
+		list.MST_level12_ACC.appendItem(trial.MST_collectVerbalResponse.correct);
+		if (trial.MST_collectVerbalResponse.correct){
+			list.MST_level12_corrRT.appendItem(trial.MST_collectVerbalResponse.latency);
+		}
+	} else if (values.level == 14){
+		list.MST_level14_ACC.appendItem(trial.MST_collectVerbalResponse.correct);
+		if (trial.MST_collectVerbalResponse.correct){
+			list.MST_level14_corrRT.appendItem(trial.MST_collectVerbalResponse.latency);
+		}
+	}
+]
+/ branch = [
+	return trial.iti;
+]
+</trial>
+
+//collects the written response
+<trial MST_collectWrittenResponse>
+/ inputdevice = mouse
+/ stimulusframes = [1 = clearScreen, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, reset, submit, response, MST_responseReminder, 
+correctResponse, trialcount]
+/ validresponse = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, reset, submit)
+/ monkeyresponse = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
+/ ontrialend = [
+	if (trial.MST_collectWrittenResponse.response != "reset" && trial.MST_collectWrittenResponse.response != "submit"){
+		values.numberCounter += 1;
+		if (values.numberCounter > 1){
+			values.finalResponse = concat(values.finalResponse, ",");
+		}
+		values.finalResponse = concat(values.finalResponse, trial.MST_collectWrittenResponse.response);		
+	}
+	
+	values.rt += trial.MST_collectWrittenResponse.latency;
+	values.enteredResponse = concat(values.enteredResponse, trial.MST_collectWrittenResponse.response);
+	values.enteredResponse = concat(values.enteredResponse, ",");
+]
+/ branch = [
+	if (monkey.monkeyMode){
+		return trial.MST_writtenResponse_summary;
+	} else if (trial.MST_collectWrittenResponse.response != "reset" && trial.MST_collectWrittenResponse.response != "submit"){
+		return trial.MST_collectWrittenResponse;
+	} else if (trial.MST_collectWrittenResponse.response == "reset"){
+		values.finalResponse = "";
+		values.numberCounter = 0;
+		return trial.MST_collectWrittenResponse;		
+	} else {
+		return trial.MST_writtenResponse_summary;
+	}
+]
+/ recorddata = false
+</trial>
+
+<trial MST_writtenResponse_summary>
+/ trialduration = 0
+/ iscorrectresponse = [ return (values.finalResponse == values.correctresponse);]
+/ ontrialend = [
+	if (values.level == 4){
+		list.MST_level4_ACC.appendItem(trial.MST_writtenResponse_summary.correct);
+		if (trial.MST_writtenResponse_summary.correct){
+			list.MST_level4_corrRT.appendItem(values.rt);
+		}
+	} else if (values.level == 6){
+		list.MST_level6_ACC.appendItem(trial.MST_writtenResponse_summary.correct);
+		if (trial.MST_writtenResponse_summary.correct){
+			list.MST_level6_corrRT.appendItem(values.rt);
+		}
+	} else if (values.level == 8){
+		list.MST_level8_ACC.appendItem(trial.MST_writtenResponse_summary.correct);
+		if (trial.MST_writtenResponse_summary.correct){
+			list.MST_level8_corrRT.appendItem(values.rt);
+		}
+	} else if (values.level == 10){
+		list.MST_level10_ACC.appendItem(trial.MST_writtenResponse_summary.correct);
+		if (trial.MST_writtenResponse_summary.correct){
+			list.MST_level10_corrRT.appendItem(values.rt);
+		}
+	} else if (values.level == 12){
+		list.MST_level12_ACC.appendItem(trial.MST_writtenResponse_summary.correct);
+		if (trial.MST_writtenResponse_summary.correct){
+			list.MST_level12_corrRT.appendItem(values.rt);
+		}
+	} else if (values.level == 14){
+		list.MST_level14_ACC.appendItem(trial.MST_writtenResponse_summary.correct);
+		if (trial.MST_writtenResponse_summary.correct){
+			list.MST_level14_corrRT.appendItem(values.rt);
+		}
+	}
+]
+/ branch = [
+	return trial.iti;
+]
+/ recorddata = true
+</trial>
+
+<trial iti>
+/ stimulusframes = [1 = clearScreen]
+/ trialduration = parameters.iti
+/ recorddata = false
+</trial>
+
+**********************************************************************************
+Digit Span Test Trials
+**********************************************************************************
+
+<trial DS_classPresentation>
+/ ontrialbegin = [
+	values.level = list.levels.nextValue; //select the next level to be tested
+	if (values.level == 4){
+		values.missingNumber = list.level4_missingNumbers.nextValue;
+		values.class = list.level4_class.nextValue;
+		values.presentationClass = list.level4_presentationClass.nextValue;
+	} else if (values.level == 6){
+		values.missingNumber = list.level6_missingNumbers.nextValue;
+		values.class = list.level6_class.nextValue;
+		values.presentationClass = list.level6_presentationClass.nextValue;
+	} else if (values.level == 8){
+		values.missingNumber = list.level8_missingNumbers.nextValue;
+		values.class = list.level8_class.nextValue;
+		values.presentationClass = list.level8_presentationClass.nextValue;
+	} else if (values.level == 10){
+		values.missingNumber = list.level10_missingNumbers.nextValue;
+		values.class = list.level10_class.nextValue;
+		values.presentationClass = list.level10_presentationClass.nextValue;
+	} else if (values.level == 12){
+		values.missingNumber = list.level12_missingNumbers.nextValue;
+		values.class = list.level12_class.nextValue;
+		values.presentationClass = list.level12_presentationClass.nextValue;
+	} else if (values.level == 14){
+		values.missingNumber = list.level14_missingNumbers.nextValue;
+		values.class = list.level14_class.nextValue;
+		values.presentationClass = list.level14_presentationClass.nextValue;
+	}
+	
+	values.numberCounter = 0;
+	values.finalResponse = "";
+	values.enteredResponse = "";
+	values.presentedNumbers = "";
+	values.rt = "";
+	values.correctResponse = expressions.assembleDScorrectResponse; //assemble the correct response for the current trial	
+	values.trialCounter += 1;
+	expressions.determineStartAndLastNumberOfClass;	
+	values.sequenceLength = length(values.presentationClass)/2; //the sequence Length should be the same as values.level
+]
+/ stimulusframes = [1 =DS_classAnnouncement, class, start, trialcount]
+/ validresponse = (start)
+/ ontrialend = [	
+	expressions.generateNumberList; //generate list.Numbers (without missing Number)
+	values.numberCounter = 0; //reset number counter
+]
+/ branch = [
+	return trial.DS_numberPresentationDelay;
+]
+/ recorddata = false
+</trial>
+
+<trial DS_numberPresentationDelay>
+/ stimulusframes = [1 = clearScreen, trialcount]
+/ trialduration = parameters.numberPresentationDelay
+/ branch = [
+	return trial.DS_presentNumber;
+]
+/ recorddata = false
+</trial>
+
+<trial DS_presentNumber>
+/ ontrialbegin = [
+	values.numberCounter += 1;
+	
+	//select the next number from List.Numbers
+	//Note: list.Numbers contains the randomized order of the numbers to be presented without the missingNumber
+	values.currentNumber = list.Numbers.nextValue;	
+]
+/ stimulusframes = [1 = clearScreen, number, audioNumber, correctResponse, trialcount]
+/ trialduration = parameters.numberPresentationDuration_inms
+/ ontrialend = [
+	values.presentedNumbers = concat(values.presentedNumbers, values.currentNumber);
+	values.presentedNumbers = concat(values.presentedNumbers, ",");	
+]
+/ branch = [
+	if (values.numberCounter < (values.level - 1)){
+		return trial.DS_presentNumber;
+	} else {
+		return trial.DS_responseDelay;
+	}
+]
+/ recorddata = false
+</trial>
+
+//adds optional delay for response collection
+<trial DS_responseDelay>
+/ ontrialbegin = [
+	values.numberCounter = 0;
+]
+/ stimulusframes = [1 = clearScreen, trialcount]
+/ trialduration = parameters.responseDelay
+/ recorddata = false
+/ branch = [
+	if (parameters.responseFormat == "verbal"){
+		values.finalResponse = "";
+		list.DSresponse.reset();
+		return trial.DS_collectVerbalResponse;
+	} else {
+		return trial.DS_collectWrittenResponse;
+	}
+]
+</trial>
+
+
+//collects the verbal response
+<trial DS_collectVerbalResponse>
+/ soundcapture = true //store the soundcapture for later manual analyses if necessary
+/ inputdevice = speech
+/ stimulusframes = [1 = clearScreen, DS_responseReminder_verbal, correctResponse, response, trialcount]
+/ validresponse = ("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "done")
+/ correctresponse = (values.correctResponse)
+/ ontrialend = [
+	values.finalResponse = trial.DS_collectVerbalResponse.response;
+	if (trial.DS_collectVerbalResponse.response != "done"){
+		list.DSresponse.appendItem(expressions.DSresponse);	
+		values.finalResponse = expressions.DSresponse;
+	}
+	
+	values.enteredResponse = concat(values.enteredResponse, expressions.DSresponse);
+	values.enteredResponse = concat(values.enteredResponse, ",");
+]
+/ branch = [
+	if (trial.DS_collectVerbalResponse.response != "done"){
+		return trial.DS_collectVerbalResponse;
+	} else {
+		return trial.DS_verbalResponseSummary;		
+	}
+]
+</trial>
+
+<trial DS_verbalResponseSummary>
+/ ontrialbegin = [
+	list.DSresponse.sort(true, false); //sort list.DSresponse in ascending order
+	values.finalResponse = expressions.assembleDSresponse_verbal; //assemble the final values.finalResponse
+]
+/ iscorrectresponse = [
+	values.finalResponse == values.correctResponse;
+]
+/ trialduration = 0
+/ ontrialend = [
+		if (values.level == 4){
+		list.DS_level4_ACC.appendItem(trial.DS_verbalResponseSummary.correct);
+		if (trial.DS_verbalResponseSummary.correct){
+			list.DS_level4_corrRT.appendItem(trial.DS_verbalResponseSummary.latency);
+		}
+	} else if (values.level == 6){
+		list.DS_level6_ACC.appendItem(trial.DS_verbalResponseSummary.correct);
+		if (trial.DS_verbalResponseSummary.correct){
+			list.DS_level6_corrRT.appendItem(trial.DS_verbalResponseSummary.latency);
+		}
+	} else if (values.level == 8){
+		list.DS_level8_ACC.appendItem(trial.DS_verbalResponseSummary.correct);
+		if (trial.DS_verbalResponseSummary.correct){
+			list.DS_level8_corrRT.appendItem(trial.DS_verbalResponseSummary.latency);
+		}
+	} else if (values.level == 10){
+		list.DS_level10_ACC.appendItem(trial.DS_verbalResponseSummary.correct);
+		if (trial.DS_verbalResponseSummary.correct){
+			list.DS_level10_corrRT.appendItem(trial.DS_verbalResponseSummary.latency);
+		}
+	} else if (values.level == 12){
+		list.DS_level12_ACC.appendItem(trial.DS_verbalResponseSummary.correct);
+		if (trial.DS_verbalResponseSummary.correct){
+			list.DS_level12_corrRT.appendItem(trial.DS_verbalResponseSummary.latency);
+		}
+	} else if (values.level == 14){
+		list.DS_level14_ACC.appendItem(trial.DS_verbalResponseSummary.correct);
+		if (trial.DS_verbalResponseSummary.correct){
+			list.DS_level14_corrRT.appendItem(trial.DS_verbalResponseSummary.latency);
+		}
+	}
+]
+/ branch = [
+	return trial.iti;
+]
+</trial>
+
+//collects the written response
+//collects the written response
+<trial DS_collectWrittenResponse>
+/ inputdevice = mouse
+/ stimulusframes = [1 = clearScreen, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, reset, submit, response, DS_responseReminder_written,  
+correctResponse, trialcount]
+/ validresponse = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, reset, submit)
+/ ontrialend = [
+	if (trial.DS_collectWrittenResponse.response != "reset" && trial.DS_collectWrittenResponse.response != "submit"){
+		values.numberCounter += 1;
+		if (values.numberCounter > 1){
+			values.finalResponse = concat(values.finalResponse, ",");
+		}
+		values.finalResponse = concat(values.finalResponse, trial.DS_collectWrittenResponse.response);		
+	}
+	values.rt += trial.DS_collectWrittenResponse.latency;
+	values.enteredResponse = concat(values.enteredResponse, trial.DS_collectWrittenResponse.response);
+	values.enteredResponse = concat(values.enteredResponse, ",");		
+]
+/ branch = [
+	if (trial.DS_collectWrittenResponse.response != "reset" && trial.DS_collectWrittenResponse.response != "submit"){
+		return trial.DS_collectWrittenResponse;
+	} else if (trial.DS_collectWrittenResponse.response == "reset"){
+		values.finalResponse = "";
+		values.numberCounter = 0;
+		return trial.DS_collectWrittenResponse;		
+	} else {
+		return trial.DS_writtenResponse_summary;
+	}
+]
+/ recorddata = false
+</trial>
+
+<trial DS_writtenResponse_summary>
+/ trialduration = 0
+/ iscorrectresponse = [ 
+	values.finalResponse = expressions.assembleDSresponse_written; //assemble the final values.finalResponse	
+	return (values.finalResponse == values.correctResponse);	
+]
+/ ontrialend = [
+	if (values.level == 4){
+		list.DS_level4_ACC.appendItem(trial.DS_writtenResponse_summary.correct);
+		if (trial.DS_writtenResponse_summary.correct){
+			list.DS_level4_corrRT.appendItem(values.rt);
+		}
+	} else if (values.level == 6){
+		list.DS_level6_ACC.appendItem(trial.DS_writtenResponse_summary.correct);
+		if (trial.DS_writtenResponse_summary.correct){
+			list.DS_level6_corrRT.appendItem(values.rt);
+		}
+	} else if (values.level == 8){
+		list.DS_level8_ACC.appendItem(trial.DS_writtenResponse_summary.correct);
+		if (trial.DS_writtenResponse_summary.correct){
+			list.DS_level8_corrRT.appendItem(values.rt);
+		}
+	} else if (values.level == 10){
+		list.DS_level10_ACC.appendItem(trial.DS_writtenResponse_summary.correct);
+		if (trial.DS_writtenResponse_summary.correct){
+			list.DS_level10_corrRT.appendItem(values.rt);
+		}
+	} else if (values.level == 12){
+		list.DS_level12_ACC.appendItem(trial.DS_writtenResponse_summary.correct);
+		if (trial.DS_writtenResponse_summary.correct){
+			list.DS_level12_corrRT.appendItem(values.rt);
+		}
+	} else if (values.level == 14){
+		list.DS_level14_ACC.appendItem(trial.DS_writtenResponse_summary.correct);
+		if (trial.DS_writtenResponse_summary.correct){
+			list.DS_level14_corrRT.appendItem(values.rt);
+		}
+	}	
+]
+
+/ branch = [
+	return trial.iti;
+]
+/ recorddata = true
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block generateTestStimuli>
+/ trials = [1-90 = trial.generateTestStimuli]
+</block>
+
+<block MSTdemo>
+/ preinstructions = (MST_intro)
+/ trials = [1 = MSTdemo_start]
+</block>
+
+<block MST>
+/ onblockbegin = [
+	values.trialCounter = 0;
+]
+/ preinstructions = (MST_start)
+/ trials = [1-90 = MST_classPresentation]
+</block>
+
+<block DSdemo>
+/ skip = [
+	parameters.runDSAssessment == false;
+]
+
+/ preinstructions = (DS_intro)
+/ trials = [1 = DSdemo_start]
+</block>
+
+<block DS>
+/ skip = [
+	parameters.runDSAssessment == false;
+]
+/ ontrialbegin = [
+	values.trialCounter = 0;
+]
+/ preinstructions = (DS_start)
+/ trials = [1-90 = DS_classPresentation]
+</block>
+
+<block finish>
+/ onblockbegin = [
+	text.summaryFeedback.skip = parameters.skipSummaryFeedback;
+]
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt a>
+/ groups = (1 of 2)
+/ blocks = [
+	1 = generateTestStimuli;
+	2 = MSTdemo;
+	3 = MST;
+	4 = DSdemo;
+	5 = DS;
+	6 = finish;
+]
+</expt>
+
+<expt b>
+/ groups = (2 of 2)
+/ blocks = [
+	1 = generateTestStimuli;
+	2 = DSdemo;
+	3 = DS;
+	4 = MSTdemo;
+	5 = MST;
+	6 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

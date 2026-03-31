@@ -1,0 +1,279 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							Columbia-Suicide Severity Rating Scale (C-SSRS) - Screener/Recent/Self-Report
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 03-13-2018
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Columbia-Suicide Severity Rating Scale (C-SSRS) - Screener/Recent/Self-Report
+
+http://cssrs.columbia.edu/
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+6 screener question to screen for suicide ideation and preparatory suicide behavior 
+											  
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes less than 1 minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'c_ssrs.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 = yes; 0 = no
+								no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'c_ssrs_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+radiobuttons.q1_ideation1.response-
+radiobuttons.q6_suicidebehavior.response: 				the responses to the 6 questions
+													1 = yes; 0 = no
+								
+dropdown.q6_timespan:			timeframe of reported suicide preparation
+								
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP
+___________________________________________________________________________________________________________________	
+q1-q5: screening for suicide ideations (if q2 is negated, ideation3-4 are skipped) during the last Month
+1 -> Wish to be dead
+2 -> Non-Specific Active Suicidal Thoughts
+3 -> Active Suicidal Ideation with Any Methods (Not Plan) without Intent to Act
+4 -> Active Suicidal Ideation with Some Intent to Act, without Specific Plan
+5 -> Active Suicidal Ideation with Specific Plan and Intent
+
+q6: screening for preparatory suicide behaviors during the last 3 months/entire lifetime
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+radiobuttons.q1_ideation1.response, radiobuttons.q2_ideation2.response, expressions.q3_ideation,
+expressions.q4_ideation, expressions.q5_ideation,
+radiobuttons.q6_suicidebehavior.response, dropdown.q6_timespan.response)
+</summarydata>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/q3_ideation = if (radiobuttons.q3_ideation3.response != ""){
+	radiobuttons.q3_ideation3.response;
+} else {
+	"skipped";
+}
+/q4_ideation = if (radiobuttons.q4_ideation4.response != ""){
+	radiobuttons.q4_ideation4.response;
+} else {
+	"skipped";
+}
+/q5_ideation = if (radiobuttons.q5_ideation5.response != ""){
+	radiobuttons.q5_ideation5.response;
+} else {
+	"skipped";
+}
+</expressions>
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_ideation1>
+/caption = "1. Have you wished you were dead or wished you could go to sleep and not wake up?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q2_ideation2>
+/caption = "2. Have you actually had any thoughts about killing yourself? "
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+	
+<radiobuttons q3_ideation3>
+/caption = "3. Have you thought about how you might do this?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>	
+
+<radiobuttons q4_ideation4>
+/caption = "4. Have you had any intention of acting on these thoughts of killing yourself, as opposed to you have the thoughts but you definitely would not act on them?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>	
+
+<radiobuttons q5_ideation5>
+/caption = "5. Have you started to work out or worked out the details of how to kill yourself? Do you intend to carry out this plan? "
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>	
+
+<caption q6>
+/ caption = "6. Have you ever done anything, started to do anything, or prepared to do anything to end your life?"
+</caption>
+
+<caption q6_2>
+/ caption = "Examples: Collected pills, obtained a gun, gave away valuables, wrote a will or suicide note, took out pills but didn’t swallow any, held a gun but changed your mind or it was grabbed from your hand, went to the roof but didn’t jump; or actually took pills, tried to shoot yourself, cut yourself, tried to hang yourself, etc"
+/ fontstyle = ("Arial", 1.75%, false, true, false, false, 5, 1)
+</caption>
+
+<radiobuttons q6_suicidebehavior>
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>		
+
+<dropdown q6_timespan>
+/ caption = "If YES, ask: How long ago did you do any of these?"
+/ options = ("over a year ago", "between three months and a year ago", "within the last three months")
+/ required = false
+</dropdown>
+	
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage C_SSRS1>
+/ caption = "COLUMBIA-SUICIDE SEVERITY RATING SCALE
+Screener/Recent – Self-Report
+
+"
+/subcaption = "In the past month...
+"
+/questions = [1 = q1_ideation1, q2_ideation2]
+</surveypage>
+
+<surveypage C_SSRS2>
+/ skip = [
+	radiobuttons.q2_ideation2.response == 0;
+]
+/caption ="In the past month...
+"
+/questions = [1 = q3_ideation3, q4_ideation4, q5_ideation5]
+</surveypage>
+
+
+<surveypage C_SSRS3>
+/questions = [1 = q6, q6_2, q6_suicidebehavior, q6_timespan]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey C_SSRS>
+/pages = [
+	1 = C_SSRS1;
+	2 = C_SSRS2;
+	3 = C_SSRS3;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, true, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ showbackbutton = false
+/ finishlabel = "Finish"
+/ nextbuttonposition = (65%, 90%)
+/ backbuttonposition = (20%, 90%)
+/ navigationbuttonfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (12%, 3%)
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

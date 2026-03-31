@@ -1,0 +1,690 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									YALE FOOD ADDICTION SCALE
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-14-2016
+last updated:  03-03-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 03-03-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+	
+This script implements a computerized version of the Yale Food Addiction Scale.
+The Yale Food Addiction Scale was developed to identify people who exhibit dependence on high fat/high sugar foods.
+
+Reference:
+
+Gearhardt, A.N., Corbin, W.R., & Brownell, K.D. (2009). Preliminary validation of the Yale Food Addiction Scale. Appetite, 52, 430-436.
+
+Ashley N. Gearhardt, William R. Corbin, Kelly D. Brownell. (2012) . Yale Food Addiction Scale (YFAS). 
+Measurement Instrument Database for the Social Science. Retrieved from www.midss.ie
+
+Instrument Authors: Ashley N. Gearhardt, William R. Corbin, Kelly D. Brownell
+http://www.midss.org/content/yale-food-addiction-scale-yfas
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+A questionnaire with 25 questions with different response scales, self-report											  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'yalefoodaddictionscale.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale:
+								q1-q16: 0 (never) - 4 (4 or more times)
+								q17-q24: 0 (no); 1 (yes)
+								q25: 0 (1 or fewer times) - 4 (5 or more times)
+								No reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'yalefoodaddictionscale_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+
+Scales:							1 = criterion met; 
+								0 = criterion not met 
+
+AmountsTaken:					Substance taken in larger amount and for longer period than intended; Questions #1, #2, #3
+UnsuccessfulQuits:				Persistent desire or repeated unsuccessful attempts to quit; Questions #4, #22, # 24, #25
+TimeSpentObtaining:				Much time/activity to obtain, use, recover; Questions #5, #6, #7
+ReducedActivities:				Important social, occupational, or recreational activities given up or reduced; Questions #8, #9, #10, #11
+UseDespiteKnowledge:			Use continues despite knowledge of adverse consequences (e.g., failure to fulfill role obligation, use when physically hazardous); Question #19
+Tolerance:						Tolerance (marked increase in amount; marked decrease in effect); Questions #20, #21
+Withdrawal:						Characteristic withdrawal symptoms; substance taken to relieve withdrawal; Questions #12, #13, #14
+ClinicalSignificance:			Use causes clinically significant impairment or distress; Questions #15, #16
+SymptomCountScore:				sum of the individual criterion scores (excluding clinical significance) = Symptom count without diagnosis (Range: 0-7)
+
+DiagnosisFoodDependence: 		1 = diagnosis met (symptomcount > 3 AND clinical significance = 1); 
+								0 = otherwise diagnosis not met
+								
+q1-q25:							contain the scored responses for question 1-25 according to the scoring guidelines
+								NOTE: q17, q18, q23 are not scored - used as primers for other questions
+								
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________
+25 questions
+q1-q16, q25: 5 point Likert Questions
+q17-q24: yes/no questions
+
+
+SCORING (from scoring guidelines: http://www.midss.org/content/yale-food-addiction-scale-yfas):
+The following cut-offs were developed for the continuous questions.
+0 = criterion not met, 1 = criterion is met
+The following questions are scored 0 = (0), 1 = (1): #19, #20, #21, #22
+The following question is scored 0 = (1), 1 = (0): #24
+The following questions are scored 0 = (0 thru 1), 1 = (2 thru 4): #8, #10, #11
+The following questions are scored 0 = (0 thru 2), 1 = (3 & 4): #3, #5, #7, #9, #12, #13,
+#14, #15, #16
+The following questions are scored 0 = (0 thru 3), 1 = (4): #1, #2, #4, #6
+The following questions are scored 0 = (0 thru 4), 1 = (5): #25
+NOTE: q17, q18, q23 are not scored - used as primers for other questions
+
+NORMS (from scoring guidelines: http://www.midss.org/content/yale-food-addiction-scale-yfas):
+Norms (undergraduates)
+Diagnosis of Food Dependence – 11.6%
+Median Symptom Count Score – 1.0
+Withdrawal – 16.3%
+Tolerance – 13.5%
+Continued Use Despite Problems – 28.3%
+Important Activities Given Up – 10.3%
+Large Amounts of Time Spent – 24.0%
+Loss of Control – 21.7%
+Have Tried Unsuccessfully to Cut Down or Worried About Cutting Down – 71.3%
+Clinically Significant Impairment - 14%
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed 
+expressions.AmountsTaken, expressions.UnsuccessfulQuits, expressions.TimeSpentObtaining,
+expressions.ReducedActivities, expressions.UseDespiteKnowledge, expressions.Tolerance, expressions.Withdrawal, expressions.ClinicalSignificance,
+expressions.SymptomCountScore, expressions.DiagnosisFoodDependence,
+values.q1, values.q2, values.q3, values.q4, values.q5, values.q6, values.q7, values.q8, values.q9, values.q10, values.q11,
+values.q12, values.q13, values.q14, values.q15, values.q16, values.q19, values.q20, values.q21, values.q22, values.q24, values.q25)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+/completed:				0 = script was not completed (script prematurely aborted); 1 = script was completed (all conditions run)
+/q1-q25:				contain the scored responses for question 1-25 according to the scoring guidelines
+
+<values>
+/completed = 0
+
+/q1 = 0
+/q2 = 0
+/q3 = 0
+/q4 = 0
+/q5 = 0
+/q6 = 0
+/q7 = 0
+/q8 = 0
+/q9 = 0
+/q10 = 0
+/q11 = 0
+/q12 = 0
+/q13 = 0
+/q14 = 0
+/q15 = 0
+/q16 = 0
+/q17 = 0
+/q18 = 0
+/q19 = 0
+/q20 = 0
+/q21 = 0
+/q22 = 0
+/q23 = 0
+/q24 = 0
+/q25 = 0
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+if the sum of the question scores for a particular criterion > 0; then the criterion is scored as 1.
+
+/AmountsTaken:			Substance taken in larger amount and for longer period than intended; Questions #1, #2, #3
+/UnsuccessfulQuits:		Persistent desire or repeated unsuccessful attempts to quit; Questions #4, #22, # 24, #25
+/TimeSpentObtaining:	Much time/activity to obtain, use, recover; Questions #5, #6, #7
+/ReducedActivities:		Important social, occupational, or recreational activities given up or reduced; Questions #8, #9, #10, #11
+/UseDespiteKnowledge:	Use continues despite knowledge of adverse consequences (e.g., failure to fulfill role obligation, use when physically hazardous); Question #19
+/Tolerance:				Tolerance (marked increase in amount; marked decrease in effect); Questions #20, #21
+/Withdrawal:			Characteristic withdrawal symptoms; substance taken to relieve withdrawal; Questions #12, #13, #14
+/ClinicalSignificance:	Use causes clinically significant impairment or distress; Questions #15, #16
+
+/SymptomCountScore:		sum of the individual criterion scores (excluding clinical significance) (Range: 0-7)
+/DiagnosisFoodDependence: 1 = diagnosis met (symptomcount > 3 AND clinical significance = 1); 0 = otherwise
+
+
+Note: question 17, 18, 23 are not scored but are used for primers for other questions
+
+<expressions>
+/AmountsTaken = if (values.q1 + values.q2 + values.q3 > 0) 1; else 0;
+/UnsuccessfulQuits = if (values.q4 + values.q22 + values.q24 + values.q25 > 0) 1; else 0;
+/TimeSpentObtaining = if (values.q5 + values.q6 + values.q7 > 0) 1; else 0;
+/ReducedActivities = if (values.q8 + values.q9 + values.q10 + values.q11 > 0) 1; else 0;
+/UseDespiteKnowledge = if (values.q19 > 0) 1; else 0;
+/Tolerance = if (values.q20 + values.q21 > 0) 1; else 0;
+/Withdrawal = if (values.q12 + values.q13 + values.q14 > 0) 1; else 0;
+/ClinicalSignificance= if (values.q15 + values.q16) 1; else 0;
+
+/SymptomCountScore = expressions.AmountsTaken + expressions.UnsuccessfulQuits + expressions.TimeSpentObtaining +
+expressions.ReducedActivities + expressions.UseDespiteKnowledge + expressions.Tolerance + expressions.Withdrawal
+
+/DiagnosisFoodDependence = if (expressions.SymptomCountScore > 3 && expressions.ClinicalSignificance > 0) 1; else 0;
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<caption timeframe>
+/ caption = "IN THE PAST 12 MONTHS:"
+/ fontstyle = ("Arial", 3.0%, true, true, false, false, 5, 1)
+</caption>
+
+
+<radiobuttons q1>
+/caption = "1. I find that when I start eating certain foods, I end up eating much more than planned"
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. I find myself continuing to consume certain foods even though I am no longer hungry"
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. I eat to the point where I feel physically ill"
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. Not eating certain types of food or cutting down on certain types of food is something I worry about"
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. I spend a lot of time feeling sluggish or fatigued from overeating"
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. I find myself constantly eating certain foods throughout the day"
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. I find that when certain foods are not available, I will go out of my way to obtain them. For example, I will drive to the store to purchase certain foods even though I have other options available to me at home."
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. There have been times when I consumed certain foods so often or in such large quantities that I started to eat food instead of working, spending time with my family or friends, or engaging in other important activities or recreational activities I enjoy."
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. There have been times when I consumed certain foods so often or in such large quantities that I spent time dealing with negative feelings from overeating instead of working, spending time with my family or friends, or engaging in other important activities or recreational activities I enjoy."
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. There have been times when I avoided professional or social situations where certain foods were available, because I was afraid I would overeat."
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. There have been times when I avoided professional or social situations because I was not able to consume certain foods there."
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. I have had withdrawal symptoms such as agitation, anxiety, or other physical symptoms when I cut down or stopped eating certain foods. (Please do NOT include withdrawal symptoms caused by cutting down on caffeinated beverages such as soda pop, coffee, tea, energy drinks, etc.)"
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. I have consumed certain foods to prevent feelings of anxiety, agitation, or other physical symptoms that were developing. 
+(Please do NOT include consumption of caffeinated beverages such as soda pop, coffee, tea, energy drinks, etc.)"
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "14. I have found that I have elevated desire for or urges to consume certain foods when I cut down or stop eating them."
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. My behavior with respect to food and eating causes significant distress."
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "16. I experience significant problems in my ability to function effectively (daily routine, job/school, social activities, family activities, health difficulties) because of food and eating."
+/ options = ("Never", "Once~na month", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week~nor daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. My food consumption has caused significant psychological problems such as depression, anxiety, self-loathing, or guilt."
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "18. My food consumption has caused significant physical problems or made a physical problem worse."
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. I kept consuming the same types of food or the same amount of food even though I was having emotional and/or physical problems."
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q20>
+/caption = "20. Over time, I have found that I need to eat more and more to get the feeling I want, such as reduced negative emotions or increased pleasure."
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q21>
+/caption = "21. I have found that eating the same amount of food does not reduce my negative emotions or increase pleasurable feelings the way it used to."
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "22. I want to cut down or stop eating certain kinds of food."
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q23>
+/caption = "23. I have tried to cut down or stop eating certain kinds of food."
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q24>
+/caption = "24. I have been successful at cutting down or not eating these kinds of food"
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q25>
+/caption = "25. How many times in the past year did you try to cut down or stop eating certain foods altogether?"
+/ options = ("1 ~nor fewer times", "2 ~ntimes", "3 ~ntimes", "4 ~ntimes", "5 ~nor more times")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage YFAS1>
+/caption ="This survey asks about your eating habits in the past year. "
+/ subcaption = "People sometimes have difficulty controlling their intake of certain foods such as:
+
+- Sweets like ice cream, chocolate, doughnuts, cookies, cake, candy, ice cream
+- Starches like white bread, rolls, pasta, and rice
+- Salty snacks like chips, pretzels, and crackers
+- Fatty foods like steak, bacon, hamburgers, cheeseburgers, pizza, and French fries
+- Sugary drinks like soda pop
+
+When the following questions ask about “CERTAIN FOODS” please think of ANY food similar to those listed in the food group or ANY OTHER foods you have had a problem with in the past year
+
+"
+/questions = [1 = timeframe, q1]
+</surveypage>
+
+<surveypage YFAS2>
+/questions = [1 = timeframe, q2, q3, q4]
+</surveypage>
+
+<surveypage YFAS3>
+/questions = [1 = timeframe, q5, q6, q7]
+</surveypage>
+
+<surveypage YFAS4>
+/questions = [1 = timeframe, q8, q9]
+</surveypage>
+
+<surveypage YFAS5>
+/questions = [1 = timeframe, q10, q11]
+</surveypage>
+
+<surveypage YFAS6>
+/questions = [1 = timeframe, q12, q13]
+</surveypage>
+
+<surveypage YFAS7>
+/questions = [1 = timeframe, q14, q15]
+</surveypage>
+
+<surveypage YFAS8>
+/questions = [1 = timeframe, q16]
+</surveypage>
+
+<surveypage YFAS9>
+/caption ="This survey asks about your eating habits in the past year. "
+/ subcaption = "People sometimes have difficulty controlling their intake of certain foods such as:
+
+- Sweets like ice cream, chocolate, doughnuts, cookies, cake, candy, ice cream
+- Starches like white bread, rolls, pasta, and rice
+- Salty snacks like chips, pretzels, and crackers
+- Fatty foods like steak, bacon, hamburgers, cheeseburgers, pizza, and French fries
+- Sugary drinks like soda pop
+
+When the following questions ask about “CERTAIN FOODS” please think of ANY food similar to those listed in the food group or ANY OTHER foods you have had a problem with in the past year
+"
+/questions = [1 = timeframe, q17]
+</surveypage>
+
+<surveypage YFAS10>
+/questions = [1 = timeframe, q18, q19, q20]
+</surveypage>
+
+<surveypage YFAS11>
+/questions = [1 = timeframe, q21, q22, q23]
+</surveypage>
+
+<surveypage YFAS12>
+/questions = [1 = timeframe, q24, q25]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey YaleFoodAddictionScale>
+/pages = [
+	1 = YFAS1; 
+	2 = YFAS2; 
+	3 = YFAS3; 
+	4 = YFAS4; 
+	5 = YFAS5; 
+	6 = YFAS6; 
+	7 = YFAS7;
+	8 = YFAS8;
+	9 = YFAS9;
+	10 =YFAS10;
+	11 = YFAS11;
+	12 = YFAS12;
+]
+/screencapture = false
+
+/ onblockend = [
+	if (radiobuttons.q1.response <= 3) {
+		values.q1 = 0;
+	} else {
+		values.q1 = 1;
+	}
+	if (radiobuttons.q2.response <= 3) {
+		values.q2 = 0;
+	} else {
+		values.q2 = 1;
+	}	
+	if (radiobuttons.q3.response <= 2) {
+		values.q3 = 0;
+	} else {
+		values.q3 = 1;
+	}
+	if (radiobuttons.q4.response <= 3) {
+		values.q4 = 0;
+	} else {
+		values.q4 = 1;
+	}
+	if (radiobuttons.q5.response <= 2) {
+		values.q5 = 0;
+	} else {
+		values.q5 = 1;
+	}
+	if (radiobuttons.q6.response <= 3) {
+		values.q6 = 0;
+	} else {
+		values.q6 = 1;
+	}	
+	if (radiobuttons.q7.response <= 2) {
+		values.q7 = 0;
+	} else {
+		values.q7 = 1;
+	}	
+	if (radiobuttons.q8.response <= 1) {
+		values.q8 = 0;
+	} else {
+		values.q8 = 1;
+	}
+	if (radiobuttons.q9.response <= 2) {
+		values.q9 = 0;
+	} else {
+		values.q9 = 1;
+	}	
+	if (radiobuttons.q10.response <= 1) {
+		values.q10 = 0;
+	} else {
+		values.q10 = 1;
+	}	
+	if (radiobuttons.q11.response <= 1) {
+		values.q11 = 0;
+	} else {
+		values.q11 = 1;
+	}	
+	if (radiobuttons.q12.response <= 2) {
+		values.q12 = 0;
+	} else {
+		values.q12 = 1;
+	}
+	if (radiobuttons.q13.response <= 2) {
+		values.q13 = 0;
+	} else {
+		values.q13 = 1;
+	}
+	if (radiobuttons.q14.response <= 2) {
+		values.q14 = 0;
+	} else {
+		values.q14 = 1;
+	}	
+	if (radiobuttons.q15.response <= 2) {
+		values.q15 = 0;
+	} else {
+		values.q15 = 1;
+	}	
+	if (radiobuttons.q16.response <= 2) {
+		values.q16 = 0;
+	} else {
+		values.q16 = 1;
+	}	
+	if (radiobuttons.q19.response ==0) {
+		values.q19 = 0;
+	} else {
+		values.q19 = 1;
+	}	
+	if (radiobuttons.q20.response ==0) {
+		values.q20 = 0;
+	} else {
+		values.q20 = 1;
+	}
+	if (radiobuttons.q21.response ==0) {
+		values.q21 = 0;
+	} else {
+		values.q21 = 1;
+	}	
+	if (radiobuttons.q22.response ==0) {
+		values.q22 = 0;
+	} else {
+		values.q22 = 1;
+	}
+	if (radiobuttons.q24.response ==1) {
+		values.q24 = 0;
+	} else {
+		values.q24 = 1;
+	}
+	if (radiobuttons.q25.response <= 4) {
+		values.q25 = 0;
+	} else {
+		values.q25 = 1;
+	}	
+]
+
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

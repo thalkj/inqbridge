@@ -1,0 +1,751 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+											*LexTALE*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 12-22-2020
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the LexTALE task by Lemhöfer & Broersma (2012).
+'LexTALE stands for Lexical Test for Advanced Learners of English. It is intended for cognitive researchers 
+studying participants with an advanced level of English as a second language in an experimental setting.'
+
+For more information: http://www.lextale.com/
+
+Reference
+
+Lemhöfer, K., & Broersma, M. (2012).Behavior research methods, 44, 325-343.
+https://doi.org/10.3758/s13428-011-0146-0
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+
+Participants are presented 63 testitems (3 practice items, 60 test items) one by one in the middle of the screen
+and have to decide if the item is an English word (then press 'yes') or not (press 'no').
+The test does not impose any time constraints.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'lextale_raw*.iqdat'*
+
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+										
+itemnumber:							the itemnumber of the currently presented testitem 
+testitem:							the currently presented testitem 
+wordstatus:							the wordstatus of the presented testitem: 1 = word; 0 = nonword
+
+//DVs:
+response:							the participant's response: 'yes' vs. 'no'
+correct:							accuracy of response: 1 = correct response; 0 = otherwise
+latency: 							the response latency (in ms); measured from: onset of testitem
+
+(2) Summary data file: 'lextale_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+Note: summary variables for testitems with itemnumber > 0 									
+propCorrect:					proportion correct across of testitems
+meanCorrRT:						mean correct response time across testitems						
+numberCorrectWords:				number of correctly identified words 
+numberCorrectNonwords:			number of correctly identified nonwords 
+
+HITrate:						the hitrate for correctly identifying words
+FArate:							the false alarm rate for incorrectly identifying nonwords as words
+
+//main DV:
+avg_percent_correct:			averaged % correct. It is calculated as follows:
+								((number of words correct/40*100) + (number of nonwords correct/20*100)) / 2												
+							
+							
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+1 testblock with 63 items of which the first three are practice items.
+Items (40 words/20 nonwords) are presented in a fixed sequence with no time-constraints.
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+
+downloaded from: http://www.lextale.com/
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+
+downloaded from: http://www.lextale.com/
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ testitemSize = 7%				//the proportional size of the testitems on screen (default: 7%)
+
+/yesButton_x = 75%				//the horizontal location of the yes-button (default: 75% -> on left hand side)
+/noButton_x = 25%				//the horizontal location of the no-button (default: 25% -> on right hand side)
+
+/showScore = true				//true = the final score is presented to participants
+								//false = the final score is not presented to participants
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: 
+'As this is a standardized test, the order of the items should not be changed or randomized.'
+
+<item itemnumber>
+/1="0"
+/2="0"
+/3="0"
+/4="1"
+/5="2"
+/6="3"
+/7="4"
+/8="5"
+/9="6"
+/10="7"
+/11="8"
+/12="9"
+/13="10"
+/14="11"
+/15="12"
+/16="13"
+/17="14"
+/18="15"
+/19="16"
+/20="17"
+/21="18"
+/22="19"
+/23="20"
+/24="21"
+/25="22"
+/26="23"
+/27="24"
+/28="25"
+/29="26"
+/30="27"
+/31="28"
+/32="29"
+/33="30"
+/34="31"
+/35="32"
+/36="33"
+/37="34"
+/38="35"
+/39="36"
+/40="37"
+/41="38"
+/42="39"
+/43="40"
+/44="41"
+/45="42"
+/46="43"
+/47="44"
+/48="45"
+/49="46"
+/50="47"
+/51="48"
+/52="49"
+/53="50"
+/54="51"
+/55="52"
+/56="53"
+/57="54"
+/58="55"
+/59="56"
+/60="57"
+/61="58"
+/62="59"
+/63="60"
+</item>
+
+<item testitems>
+/1="platery"
+/2="denial"
+/3="generic"
+/4="mensible"
+/5="scornful"
+/6="stoutly"
+/7="ablaze"
+/8="kermshaw"
+/9="moonlit"
+/10="lofty"
+/11="hurricane"
+/12="flaw"
+/13="alberation"
+/14="unkempt"
+/15="breeding"
+/16="festivity"
+/17="screech"
+/18="savoury"
+/19="plaudate"
+/20="shin"
+/21="fluid"
+/22="spaunch"
+/23="allied"
+/24="slain"
+/25="recipient"
+/26="exprate"
+/27="eloquence"
+/28="cleanliness"
+/29="dispatch"
+/30="rebondicate"
+/31="ingenious"
+/32="bewitch"
+/33="skave"
+/34="plaintively"
+/35="kilp"
+/36="interfate"
+/37="hasty"
+/38="lengthy"
+/39="fray"
+/40="crumper"
+/41="upkeep"
+/42="majestic"
+/43="magrity"
+/44="nourishment"
+/45="abergy"
+/46="proom"
+/47="turmoil"
+/48="carbohydrate"
+/49="scholar"
+/50="turtle"
+/51="fellick"
+/52="destription"
+/53="cylinder"
+/54="censorship"
+/55="celestial"
+/56="rascal"
+/57="purrage"
+/58="pulsh"
+/59="muddy"
+/60="quirty"
+/61="pudour"
+/62="listless"
+/63="wrought"
+</item>
+
+//1 = word
+//2 = nonword
+<item wordstatus>
+/1="0"
+/2="1"
+/3="1"
+/4="0"
+/5="1"
+/6="1"
+/7="1"
+/8="0"
+/9="1"
+/10="1"
+/11="1"
+/12="1"
+/13="0"
+/14="1"
+/15="1"
+/16="1"
+/17="1"
+/18="1"
+/19="0"
+/20="1"
+/21="1"
+/22="0"
+/23="1"
+/24="1"
+/25="1"
+/26="0"
+/27="1"
+/28="1"
+/29="1"
+/30="0"
+/31="1"
+/32="1"
+/33="0"
+/34="1"
+/35="0"
+/36="0"
+/37="1"
+/38="1"
+/39="1"
+/40="0"
+/41="1"
+/42="1"
+/43="0"
+/44="1"
+/45="0"
+/46="0"
+/47="1"
+/48="1"
+/49="1"
+/50="1"
+/51="0"
+/52="0"
+/53="1"
+/54="1"
+/55="1"
+/56="1"
+/57="0"
+/58="0"
+/59="1"
+/60="0"
+/61="0"
+/62="1"
+/63="1"
+</item>
+
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+</instruct>
+
+<text instructions>
+/ items = ("This test consists of about 60 trials, in each of which you will see a string of letters. 
+
+Your task is to decide whether this is an existing English word or not. If you think it is an existing English word, you click on 'yes', and if you think it is not an existing English word, you click on 'no'.
+ 
+If you are sure that the word exists, even though you don’t know its exact meaning, you may still respond 'yes'. But if you are not sure if it is an existing word, you should respond 'no'.
+
+In this experiment, we use British English rather than American English spelling. For example: 'realise' instead of 'realize'; 'colour' instead of 'color', and so on. Please don’t let this confuse you. This experiment is not about detecting such subtle spelling differences anyway.
+
+You have as much time as you like for each decision. This part of the experiment will take about 5 minutes.
+
+
+If everything is clear, you can now start the experiment.")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 80%)
+</text>
+
+<button startbutton>
+/ caption = "start test"
+/ position = (50%, 95%)
+/ size = (20%, 5%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</button>
+
+<shape backgr_yes>
+/ shape = rectangle
+/ color = green
+/ size = (21%, 11%)
+/ hposition = parameters.yesButton_x
+/ vposition = 70%
+/ erase = false
+</shape>
+
+<button yes>
+/ caption = "yes"
+/ hposition = parameters.yesButton_x
+/ vposition = 70%
+/ size = (20%, 10%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ erase = false
+</button>
+
+<shape backgr_no>
+/ shape = rectangle
+/ color = red
+/ size = (21%, 11%)
+/ hposition = parameters.noButton_x
+/ vposition = 70%
+/ erase = false
+</shape>
+
+<button no>
+/ caption = "no"
+/ hposition = parameters.noButton_x
+/ vposition = 70%
+/ size = (20%, 10%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ erase = false
+</button>
+
+<text score>
+/ onprepare = [
+	if (parameters.showScore == false){
+		text.score.skip = true;
+	}
+]
+/ items = ("Score: <%expressions.avg_percent_correct%>%")
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ position = (50%, 30%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<button exitbutton>
+/ caption = "EXIT"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 80%)
+/ size = (30%, 8%)
+/ valign = center
+/ halign = center
+</button>
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/ items = ("Get Ready:
+~n<%expressions.buttoninstruct1%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+/ vjustify = center
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"on the bottom of your screen";} else {"on your keyboard";}
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+/ inputdevice = mouse
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+values.itemnumber, values.testitem, values.wordstatus, response, correct, latency)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.propCorrect, expressions.meanCorrRT,
+expressions.numberCorrectWords, expressions.numberCorrectNonwords, 
+expressions.HITrate, expressions.FArate,
+expressions.avg_percent_correct)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/index = ""
+/testitem = ""
+/itemnumber = ""
+/wordstatus = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/propCorrect = list.ACC.mean
+/meanCorrRT = list.corrRT.mean
+/numberCorrectWords = list.corrRT_words.itemCount
+/numberCorrectNonwords = list.corrRT_nonwords.itemCount
+
+/HITrate = list.ACC_words.mean
+/FArate = 1 - list.ACC_nonwords.mean
+
+/avg_percent_correct = (((expressions.numberCorrectWords/40)*100) + ((expressions.numberCorrectNonwords/20)*100))/2
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial intro>
+/ stimulusframes = [1 = instructions, startbutton]
+/ validresponse = (startbutton)
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, score, finish]
+/ timeout = 2000
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text testitem>
+/ items = testitems
+/ select = values.index
+/ fontstyle = ("Arial", parameters.testitemSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ size = (80%, 50%)
+/ erase = false
+</text>
+
+<shape backgr_progressbar>
+/ shape = rectangle
+/ color = lightGray
+/ position = (20%, 90%)
+/ halign = left
+/ valign = bottom
+/ size = (63%, 5%)
+/ erase = false
+</shape>
+
+<shape progressbar>
+/ shape = rectangle
+/ color = gray
+/ position = (20%, 90%)
+/ halign = left
+/ valign = bottom
+/ size = (1%, 5%)
+/ erase = false
+</shape>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC>
+</list>
+
+<list corrRT>
+</list>
+
+<list ACC_words>
+</list>
+
+<list corrRT_words>
+</list>
+
+<list ACC_nonwords>
+</list>
+
+<list corrRT_nonwords>
+</list>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial lexTALE>
+/ ontrialbegin = [
+	values.index += 1; //sequential selection of test items
+	values.itemnumber = item.itemnumber.item(values.index);	
+	values.testitem = item.testitems.item(values.index);
+	values.wordstatus = item.wordstatus.item(values.index);
+]
+/ stimulusframes = [1 = clearScreen, testitem, backgr_yes, yes, backgr_no, no, backgr_progressbar, progressbar]
+/ validresponse = (yes,no)
+/ iscorrectresponse = [
+	return ((trial.lexTALE.response == "yes" && values.wordstatus == 1) || 
+	(trial.lexTALE.response == "no" && values.wordstatus == 0))	
+]
+/ ontrialend = [
+	shape.progressbar.width += 1%;
+
+	//summary variables:
+	if (values.itemnumber > 0){//first three items are practice items and should not be scored
+		list.ACC.appendItem(trial.lexTALE.correct);
+		if (trial.lexTALE.correct){
+			list.corrRT.appendItem(trial.lexTALE.latency);
+		}
+		
+		//separate summary variables depending on 'wordstatus'
+		if (values.wordstatus == 1){
+			list.ACC_words.appendItem(trial.lexTALE.correct);
+			if (trial.lexTALE.correct){
+				list.corrRT_words.appendItem(trial.lexTALE.latency);
+			}
+		} else {
+			list.ACC_nonwords.appendItem(trial.lexTALE.correct);
+			if (trial.lexTALE.correct){
+				list.corrRT_nonwords.appendItem(trial.lexTALE.latency);
+			}			
+		}
+	}
+]
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block intro>
+/ trials = [1 = intro]
+</block>
+
+<block lexTALE>
+/ onblockbegin = [
+	values.index = 0;
+	shape.progressbar.width = 0%;
+]
+/ trials = [
+	1-63 = lexTALE;
+]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt lexTale>
+/ blocks = [
+	1 = intro;
+	2 = lexTALE;
+	3 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

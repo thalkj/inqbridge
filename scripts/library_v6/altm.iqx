@@ -1,0 +1,4354 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Activated Long Term Memory (ALTM) Task 
+								AKA: Facilitation of Procedural Memory Task
+									-Category Priming Task-
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 10-24-2017
+last updated:  02-16-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-16-2022 Millisecond Software
+
+Millisecond Software thanks Dr. Christopher Was for sharing all source material for the task!
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+The Activated Long Term Memory (ALTM) Task studies the availability in conceptually 
+related LTM representations of previously processed information. It uses a Memory Load Task 
+to activate concepts in Long Term Memory. 
+
+This script implements the ALTM task as described by:
+
+Woltz, D. J., & Was, C. A. (2006). Activation in long-term memory during and after
+attention focus in working memory. Memory and Cognition, 34(3), 668–684
+
+Was, C. A., & Woltz, D. J. (2007). Reexamining the relationship between working memory
+and comprehension: The role of available long-term memory. Journal of Memory
+and Language, 56(1), 86–102.
+
+Was, C. A., J. Dunlosky, J., Bailey, H. & Rawson, K.A. (2012).
+The unique contributions of the facilitation of procedural memory and working
+memory to individual differences in intelligence. Acta Psychologica 139 (2012) 425–433
+
+This Inquisit script is based on an original ALTM e-prime script shared by Dr. Christopher Was.
+It implements a category priming task.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________										 
+Each of the 18 rounds of the ALTM task in this script consists of 3 phases:
+
+Phase1: Word List Presentation (Memory Load)										  
+Participants are presented word lists consisting of 5 words of two different categories.
+Each word is presented for 2s. 
+
+Phase2: Facilitation Task
+A recall test asks participants 'which of the two categories was there more of'. 
+
+Phase3: Likeness Comparisons of word pairs
+For half the rounds (9) the test words come from the same two categories used during phase 1.
+For the remaining rounds (9) the test words come from unrelated two categories.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 25-30 minutes minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'altm_raw*.iqdat'*
+
+build:						The specific Inquisit version used (the 'build') that was run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+date, time: 				date and time script was run 
+subject, group: 			with the current subject/groupnumber
+session:					with the current session id
+
+blockcode, blocknum:		the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 		the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block. 
+																			
+practice:					1 = practice round; 0 = test round
+round:						counts the rounds run (1 round = 1 set); resets after practice	
+setNr:						stores the itemnumber of the currently presented set 
+setType:					stores the set type of the current set ("primed" vs. "unprimed")
+setTypeNr:					stores the set type and number of the current set(UnprimedSet1, PrimedSet1....UnprimedSet12, PrimedSet12)
+Fconcept:					stores the Focused concept of the currently selected set ( Focused on during recall)
+Iconcept:					stores the Ignored concept of the currently selected set (Ignored during recall)
+Nconcept:					stores the Not used concept of the currently selected set (concept that is not used during the word list)								
+presentationOrder:			stores the selected presentation order of the Focused concept and Ignored Concept words for the current set
+presentedStim:				stores the words in the order they were presented during the list presentation	
+								
+recallQuestion****:			helper variable to assign the left/right response buttons to F/I concept
+									1 = F concept is on the left (I oncept on the right)
+									2 = F concept is on the right (I concept on the left)	
+									
+leftCategory:				stores the concept that is represented by the left response button during recall
+rightCategory:				stores the concept that is represented by the right response button during recall		
+compStem:					stores the word presented on top (word 1 of each pair) for the current word comparison
+compAlt:					stores the word presented on bottom (word 2 of each pair) for the current word comparison	
+ 								
+primeType:					stores the primeType of the currently presented word comparison pair:
+									primed Sets: 
+											FA - associated with focused concept; 
+											IA - associated with ignored concept;
+											FM - presented (memorized) focused concept item;
+											IM - presented (memorized) focused concept item;
+									unprimed Sets: 
+											NA1 - dedicated comparison item for FA primes
+											NA2 - dedicated comparison item for IA primes
+											NM1 - dedicated comparison item for FM primes
+											NM2 - dedicated comparison item for IM primes
+									practice: 
+											FAssocPos - associated with focused concept (positive match)
+											FAssocNeg - associated with focused concept (negative match)
+											IAssocPos - associated with ignored concept (positive match)
+											IAssocNeg - associated with ignored concept (negative match)											
+											FAttnPos - associated with presented (memorized) focused concept (positive match)
+											FAttnNeg - associated with presented (memorized) focused concept (negative match)
+											IAttnPos - associated with presented (memorized) ignored concept (positive match)
+											IAttnNeg - associated with presented (memorized) ignored concept (negative match)											
+											N1AssocPoc- dedicated comparisons for FAssocPos 
+											N1AssocNeg- dedicated comparisons for FAssocNeg 
+											N2AssocPoc- dedicated comparisons for IAssocPos 
+											N2AssocNeg- dedicated comparisons for IAssocNeg 											
+											N1AttnPos- dedicated comparisons for FAttnPos 
+											N1AttnNeg- dedicated comparisons for FAttncNeg 											
+											N2AttnPos- dedicated comparisons for IAttnPos 
+											N2AttnNeg- dedicated comparisons for IAttncNeg 												
+																																								
+response:							the scancode of response button pressed
+									44 = Z
+									50 = M
+									32 = D
+									38 = L
+
+responseCategory:			recall: the participant selected concept ('Fconcept' vs. 'Iconcept')
+							comparison: the participant selected likeness ('l' (like ~ same) vs. 'd' (different))
+								
+correctResponse:			recall: the Fconcept category
+							comparison: the correct likeness for the current word pair ('l' vs. 'd')
+								
+correct:					accuracy of participant's response: 1 = correct response; 0 = otherwise
+latency: 					the response latency (in ms); 
+							recall: measured from: onset of question
+							comparison: measured from: onset of the 2 comparison words
+	
+FMem1-
+NMem3:						store the respective F,I, N words for the given set
+
+WrmL1wrd1-
+WrmD2wrd2:					store the 8 respective warmUp words (for comparison trials) for the given round
+							2 Like trials (Like1/Like2), 2 Different trials (Diff1/Diff2)
+
+compWord1_1:				stores the first word for comparison 1
+compWord1_2:				stores the second word for comparison 1 
+compWord1_compAns:			stores the correct answer ('l' (like) vs. 'd' (different)) for comparison word pair 1
+compWord1_compType:			stores the prime Type for comparison word pair 1
+(same for all 8 word pairs)
+
+
+(2) Summary data file: 'altm_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+propCorrect_recall:  			proportion correct recall performance
+meanRT_recall:					mean latency (in ms) of correct recall responses
+propCorrect_comp_primed:		proportion correct of answering comparison test questions of primed items (across FA, FM, IA, IM items)
+meanRT_comp_primed:				mean latency (in ms) of making correct comparisons of primed test items (across FA, FM, IA, IM items)
+uncorrmeanRT_comp_primed:		mean latency (in ms) of making comparisons of primed test items for both correct and incorrect responses (across FA, FM, IA, IM items)
+speed_comp_primed:				relationship btw. proportion correct of answering comparison test questions of primed items to 
+											the mean response time (in min) of comparison trials of primed items (using the mean response time across correct and incorrect responses)
+											=> number of correct responses per minute for primed items
+
+propCorrect_comp_unprimed:		proportion correct of answering comparison test questions of unprimed items
+meanRT_comp_unprimed:			mean latency (in ms) of making correct comparisons of unprimed test items
+uncorrmeanRT_comp_unprimed:		mean latency (in ms) of making comparisons of unprimed test items for both correct and incorrect responses
+speed_comp_unprimed:			relationship btw. proportion correct of answering comparison test questions of unprimed items to 
+												the mean response time (in min) of comparison trials of unprimed items (using the mean response time across correct and incorrect responses)
+												=> number of correct responses per minute for unprimed items
+
+Response Speed Change:		Difference in response speed btw. unprimed and primed word comparisons
+								=> positive: unprimed word comparisons take longer (Priming Effect)
+								=> negative: primed word comparisons take longer
+								Note: Was & Woltz (2007) use residual change scores (from regression analysis)
+								rather than difference scores to measure the Priming Effect (see discussion on p.93)
+
+																
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+
+Practice:
+* 2 rounds, 1 set per round (4 sets are provided, but sets 3 & 4 are not run*, see list.setNr_practice
+under section Editable Lists); the sets are selected in sequential order
+* everything else is the same as the test trials
+
+Test:
+* 18 rounds, 1 set per round (24 sets are provided, but sets 16, 17, 19, 22, 23, 24 are not run*, see list.setNr 
+under section Editable Lists); the sets are selected in sequential order
+* each round divided into 3 phases:
+(1) word list presentation: 5 words are presented, each is presented for 2s (with SOA=2s, default)
+	- 3 of the words come from the Fconcept (F = focused) category, 2 come from the Iconcept (I = Ignored) category
+	- 6 different orders of Fconcept and Iconcept words are run in a fixed sequential order throughout the script:
+	"IFIFF", "FIFIF", "FIFFI", "IFFIF", "FIIFF", "IFFFI", see list.presentationOrder under section Editable Lists
+	
+	List Presentations Timing:
+	get Ready (2500ms)->blank(1000ms)->fixation(750ms) ->
+	->word1(2000ms)->isi:blank(0ms)->....->word5(2000ms)->isi:blank(0ms)->iti:blank(1000ms) (end of word list presentation)	
+		
+(2) recall task: unlimited time to respond
+	- the assigned response keys to the F and I concepts are selected randomly (without replacement)
+	(F concept is the 'Focused' concept and thus the one presented more of)
+	
+	Recall Timing:
+	recall delay: blank screen (500ms) -> recall question (up until response) -> isi: blank screen (500ms) 
+	-> Feedback (up until response) -> iti: blank (500ms) (end of recall procedure)
+
+	
+(3) word comparisons: unlimited time to respond
+	(a) warm-up trials: 4 warm up trials (2 same, 2 different => order of word pairs is randomized)
+		=> warm-up comparisons use words unrelated to any of the categories from the test comparison trials
+		=> half the comparisons are same/like, half are different
+	(b) 8 test comparison trials
+		=> for half the rounds (9), the comparison pairs come from the F and I concept categories (= primedSets)
+		(the remaining rounds (9) use comparison pairs that come from two other categories = unprimed Sets)
+	=> half the comparisons are same/like, half are different
+		=> fixed order of comparison pairs
+
+	Comparison Procedure Timing:
+	comp delay: blank (500ms) -> get Ready (4000ms) ->procedure start:
+	isi1: blank (1000ms) -> Fixation (500ms) -> isi2: blank (750ms) -> Comparison Words (until response) ->
+	isi1: blank (1000ms) -> Fixation (500ms) -> isi2: blank (750ms) -> Comparison Words (until response) ->
+	...last comparison ->
+	feedback delay: blank (1000ms) -> feedback (until response) -> iti: blank (2000ms) (end of comparison procedure)
+
+
+* reduced number of sets:
+the script procedure implemented in this Inquisit script follows closely the one run by the original eprime script
+shared by Dr. Christopher Was. The original e-prime script provides 24 sets of which 18 are run.
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+provided by Dr. Christopher Was - all practice and test sets are listed under section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+provided by Dr. Christopher Was - all instructions are listed under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/leftKey:					left response button (default: Z)
+/rightKey:					right response button (default: M)
+
+/differentKey:				'different category' response button  (default: D)
+/sameKey:					'same category' response button  (default: L)
+
+Sizing Parameters:
+/fixationSize:				size of the fixation cross  proportional to canvas (default: 8%)
+/listWordSize:				size of the words presented in the word lists proportional to canvas (default: 8%)
+/compWordSize:				size of the words presented for word comparisons (default: 5%)
+
+Timing Parameters:
+
+(1) List Presentations Timing:
+get Ready (2500ms)->blank(1000ms)->fixation(750ms) ->
+->word1(2000ms)->isi:blank(0ms)->....->word5(2000ms)->isi:blank(0ms)->iti:blank(1000ms) (end of word list presentation)
+
+/getReadyWordlist:				duration (in ms) of the 'get Ready for word list' trial (default: 2500ms)
+/wordList_delay:				duration (in ms) of the delay of presenting the fixation cross after the 'get ready' warning (default: 1000ms)
+/attnDuration:					duration (in ms) of the fixation cross before presening the word list (default: 1250ms)
+/listwordPresentationDuration:	duration (in ms) of the words during word list presentation (default: 2000ms)
+
+/listPresentation_isi:			duration (in ms) of the interstimulus interval (blank screen) after offset of one stimulus and onset 
+								of the next (default: 0ms) => by default, in this script there is no blank screen presented in between stims
+								=> 2000ms + 0ms => Stimulus Onset Asynchrony of 2000ms
+								
+/listPresentation_iti:			the intertrial interval (in ms) - blank screen- after the last list word presentation isi (default: 1000ms)
+
+(2) Recall Timing:
+recall delay: blank screen (500ms) -> recall question (up until response) -> isi: blank screen (500ms) 
+-> Feedback (up until response) -> iti: blank (500ms) (end of recall procedure)
+
+/recall_delay:					duration (in ms) of the delay of the recall question (default: 500ms)
+/recall_isi:					duration (in ms) of the blank screen presented btw. recall response and recall feedback (default: 500ms)
+/recall_iti:					duration (in ms) of the blank screen following the recall feedback trial (default: 500ms)
+
+(3) Comparison Procedure Timing:
+
+comp delay: blank (500ms) -> get Ready (4000ms) ->procedure start:
+isi1: blank (1000ms) -> Fixation (500ms) -> isi2: blank (750ms) -> Comparison Words (until response) ->
+isi1: blank (1000ms) -> Fixation (500ms) -> isi2: blank (750ms) -> Comparison Words (until response) ->
+ ...last comparison ->
+feedback delay: blank (1000ms) -> feedback (until response) -> iti: blank (2000ms) (end of comparison procedure)
+
+
+/comparison_delay:			duration (in ms) of the delay of the comparison procedure (default: 500ms)
+/warmUpGetReady:			duration (in ms) of the 'get Ready for first warm up comparison trial (default: 4000ms)
+/comp_attn_isi1:				duration (in ms) of blank screen before fixation crosses are presented (default: 1000ms)
+/comp_attnPriming: 			duration (in ms) of fixation crosses (default: 500ms)
+/comp_attn_isi2:				duration (in ms) of blank screen before the comparison words appear (default: 750ms)
+/comparisonFeedback_delay:	duration (in ms) of blank screen after last comparison response before feedback is given (default: 1000ms)
+/comparison_iti:				duration (in ms) of blank screen after comparison feedback and before the next round starts (default: 2000ms)
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/leftKey = "Z"
+/rightKey = "M"
+
+/differentKey = "D"
+/sameKey = "L"
+
+/fixationSize = 8%
+/listWordSize = 8%
+/compWordSize = 5%
+
+/getReadyWordlist = 2500
+/wordList_delay = 1000
+/attnDuration = 750
+/listwordPresentationDuration = 2000
+/listPresentation_isi = 0
+/listPresentation_iti = 1000
+
+/recall_delay = 500
+/recall_isi = 500
+/recall_iti = 500
+
+/comparison_delay = 500
+/warmUpGetReady = 4000
+/comp_attn_isi1 = 1000
+/comp_attnPriming = 500
+/comp_attn_isi2 = 750
+/comparisonFeedback_delay = 1000
+/comparison_iti = 2000
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+***************************************************************
+practice items
+***************************************************************
+
+<item setTypeNr_practice>
+/1="practiceSet1"
+/2="practiceSet2"
+/3="practiceSet3"
+/4="practiceSet4"
+</item>
+
+<item Fconcept_practice>
+/1 = "PLACES TO SHOP"
+/2 = "ROADWAYS"
+/3 = "TYPES OF BREAD"
+/4 = "DAIRY PRODUCTS"
+</item>
+
+<item FMemStim1_practice>
+/1 = "store"
+/2 = "street"
+/3 = "bagel"
+/4 = "butter"
+</item>
+
+<item FMemStim2_practice>
+/1="boutique"
+/2="alley"
+/3="bun"
+/4="milk"
+</item>
+
+<item FMemStim3_practice>
+/1="grocery"
+/2="road"
+/3="muffin"
+/4="eggs"
+</item>
+
+<item IConcept_practice>
+/1 = "GRAINS"
+/2 = "APPLIANCES"
+/3 = "CARD GAMES"
+/4 = "LARGE MACHINES"
+</item>
+
+<item IMemStim1_practice>
+/1 = "wheat"
+/2 = "stove"
+/3 = "poker"
+/4 = "bulldozer"
+</item>
+
+<item IMemStim2_practice>
+/1 = "rice"
+/2 = "fridge"
+/3 = "blackjack"
+/4 = "forklift"
+</item>
+
+not currently used by script
+item IMemStim3_practice>
+/1 = "corn"
+/2 = "blender"
+/3 = "go fish"
+/4 = "plow"
+</item>
+
+************************************
+Practice Warm-up Comparison Stims
+************************************
+
+<item WrmL1wrd1_practice>
+/1 = "mustard"
+/2 = "round"
+/3 = "cerebellum"
+/4 = "pounds"
+</item>
+
+<item WrmL1wrd2_practice>
+/1 = "ketchup"
+/2 = "square"
+/3 = "cortex"
+/4 = "grams"
+</item>
+
+<item WrmD1wrd1_practice>
+/1 = "pickles"
+/2 = "triangular"
+/3 = "thalamus"
+/4 = "ounces"
+</item>
+
+<item WrmD1wrd2_practice>
+/1 = "border"
+/2 = "muscular"
+/3 = "candy"
+/4 = "museums"
+</item>
+
+<item WrmL2wrd1_practice>
+/1 = "soap"
+/2 = "harness"
+/3 = "Capricorn"
+/4 = "perfume"
+</item>
+
+<item WrmL2wrd2_practice>
+/1 = "detergent"
+/2 = "reins"
+/3 = "Aquarius"
+/4 = "cologne"
+</item>
+
+<item WrmD2wrd1_practice>
+/1 = "mouthwash"
+/2 = "bridle"
+/3 = "Gemini"
+/4 = "deordorant"
+</item>
+
+<item WrmD2wrd2_practice>
+/1 = "grass seed"
+/2 = "timer"
+/3 = "Battery"
+/4 = "fungus"
+</item>
+
+************************************
+Practice Test Comparison Stims
+************************************
+
+<item comp1_wrd1_practice>
+/1 = "cabinet"
+/2 = "boulevard"
+/3 = "biscuit"
+/4 = "hispanic"
+</item>
+
+<item comp1_wrd2_practice>
+/1 = "cupboard"
+/2 = "freeway"
+/3 = "roll"
+/4 = "caucasian"
+</item>
+
+<item comp1_compAns_practice>
+/1 = "l"
+/2 = "l"
+/3 = "l"
+/4 = "l"
+</item>
+
+<item comp1_compType_practice>
+/1 = "N1AssocPos"
+/2 = "FAssocPos"
+/3 = "FAssocPos"
+/4 = "N1AssocPos"
+</item>
+
+<item comp2_wrd1_practice>
+/1 = "closet"
+/2 = "avenue"
+/3 = "loaf"
+/4 = "asian"
+</item>
+
+<item comp2_wrd2_practice>
+/1 = "nest"
+/2 = "fortress"
+/3 = "tile"
+/4 = "nail"
+</item>
+
+<item comp2_compAns_practice>
+/1 = "d"
+/2 = "d"
+/3 = "d"
+/4 = "d"
+</item>
+
+<item comp2_compType_practice>
+/1 = "N1AssocNeg"
+/2 = "FAssocNeg"
+/3 = "FAssocNeg"
+/4 = "N1AssocNeg"
+</item>
+
+<item comp3_wrd1_practice>
+/1 = "pantry"
+/2 = "oven"
+/3 = "solitaire"
+/4 = "African"
+</item>
+
+<item comp3_wrd2_practice>
+/1 = "storage room"
+/2 = "microwave"
+/3 = "bridge"
+/4 = "Pacific Islander"
+</item>
+
+<item comp3_compAns_practice>
+/1 = "l"
+/2 = "l"
+/3 = "l"
+/4 = "l"
+</item>
+
+<item comp3_compType_practice>
+/1 = "N2AssocPos"
+/2 = "IAssocPos"
+/3 = "IAssocPos"
+/4 = "N2AssocPos"
+</item>
+
+<item comp4_wrd1_practice>
+/1 = "shelves"
+/2 = "toaster"
+/3 = "hearts"
+/4 = "Native American"
+</item>
+
+<item comp4_wrd2_practice>
+/1 = "cake"
+/2 = "handle"
+/3 = "factory"
+/4 = "friend"
+</item>
+
+<item comp4_compAns_practice>
+/1 = "d"
+/2 = "d"
+/3 = "d"
+/4 = "d"
+</item>
+
+<item comp4_compType_practice>
+/1 = "N2AssocNeg"
+/2 = "IAssocNeg"
+/3 = "IAssocNeg"
+/4 = "N2AssocNeg"
+</item>
+
+<item comp5_wrd1_practice>
+/1 = "sundial"
+/2 = "road"
+/3 = "muffin"
+/4 = "pocket watch"
+</item>
+
+<item comp5_wrd2_practice>
+/1 = "clock"
+/2 = "alley"
+/3 = "bun"
+/4 = "digital clock"
+</item>
+
+<item comp5_compAns_practice>
+/1 = "l"
+/2 = "l"
+/3 = "l"
+/4 = "l"
+</item>
+
+<item comp5_compType_practice>
+/1 = "N1AttnPos"
+/2 = "FAttnPos"
+/3 = "FAttnPos"
+/4 = "N1AttnPos"
+</item>
+
+<item comp6_wrd1_practice>
+/1 = "wristwatch"
+/2 = "street"
+/3 = "bagel"
+/4 = "grandfather clock"
+</item>
+
+<item comp6_wrd2_practice>
+/1 = "foodcolor"
+/2 = "blade"
+/3 = "vapor"
+/4 = "mole"
+</item>
+
+<item comp6_compAns_practice>
+/1 = "d"
+/2 = "d"
+/3 = "d"
+/4 = "d"
+</item>
+
+<item comp6_compType_practice>
+/1 = "N1AttnNeg"
+/2 = "FAttnNeg"
+/3 = "FAttnNeg"
+/4 = "N1AttnNeg"
+</item>
+
+<item comp7_wrd1_practice>
+/1 = "email"
+/2 = "stove"
+/3 = "poker"
+/4 = "radio"
+</item>
+
+<item comp7_wrd2_practice>
+/1 = "fax"
+/2 = "fridge"
+/3 = "blackjack"
+/4 = "TV"
+</item>
+
+<item comp7_compAns_practice>
+/1 = "l"
+/2 = "l"
+/3 = "l"
+/4 = "l"
+</item>
+
+<item comp7_compType_practice>
+/1 = "N2AttnPos"
+/2 = "IAttnPos"
+/3 = "IAttnPos"
+/4 = "N2AttnPos"
+</item>
+
+<item comp8_wrd1_practice>
+/1 = "cell phone"
+/2 = "blender"
+/3 = "go fish"
+/4 = "internet"
+</item>
+
+<item comp8_wrd2_practice>
+/1 = "runner"
+/2 = "frame"
+/3 = "towel"
+/4 = "shelf"
+</item>
+
+<item comp8_compAns_practice>
+/1 = "d"
+/2 = "d"
+/3 = "d"
+/4 = "d"
+</item>
+
+<item comp8_compType_practice>
+/1 = "N2AttnNeg"
+/2 = "IAttnNeg"
+/3 = "IAttnNeg"
+/4 = "N2AttnNeg"
+</item>
+
+***************************************************************
+test items
+***************************************************************
+
+<item setTypeNr>
+/1="UnprimedSet1"
+/2="PrimedSet1"
+/3="PrimedSet2"
+/4="UnprimedSet2"
+/5="UnprimedSet3"
+/6="PrimedSet3"
+/7="UnprimedSet4"
+/8="UnprimedSet5"
+/9="PrimedSet4"
+/10="PrimedSet5"
+/11="PrimedSet6"
+/12="UnprimedSet6"
+/13="UnprimedSet7"
+/14="PrimedSet7"
+/15="UnprimedSet8"
+/16="UnprimedSet9"
+/17="UnprimedSet10"
+/18="PrimedSet8"
+/19="PrimedSet9"
+/20="UnprimedSet11"
+/21="PrimedSet10"
+/22="PrimedSet11"
+/23="UnprimedSet12"
+/24="PrimedSet12"
+</item>
+
+<item FConcept>
+/1="PRECIOUS STONES"
+/2="DISTANCES"
+/3="MILITARY RANKS"
+/4="COLORS"
+/5="PARTS OF SPEECH"
+/6="FRUITS"
+/7="DWELLINGS"
+/8="CRIMES"
+/9="SEASONINGS"
+/10="GEOLOGICAL FEATURES"
+/11="PIECES OF CLOTHING"
+/12="MUSICAL INSTRUMENTS"
+/13="TYPES OF MUSIC"
+/14="SCIENCES"
+/15="VEGETABLES"
+/16="GIRL'S NAMES"
+/17="FLOWERS"
+/18="FISH"
+/19="SNAKES"
+/20="COLLEGES"
+/21="PLANETS"
+/22="METHODS OF COOKING"
+/23="FORMS OF TRANSPORTATION"
+/24="BREAKFAST CEREALS"
+</item>
+
+<item FMemStim1>
+/1="emerald"
+/2="mile"
+/3="lieutenant"
+/4="purple"
+/5="adjective"
+/6="apple"
+/7="house"
+/8="robbery"
+/9="vanilla"
+/10="valley"
+/11="trousers"
+/12="piano"
+/13="symphony"
+/14="chemistry"
+/15="tomato"
+/16="Barbara"
+/17="daisy"
+/18="trout"
+/19="boa"
+/20="Stanford"
+/21="Mars"
+/22="bake"
+/23="bus"
+/24="Cheerios"
+</item>
+
+<item FMemStim2>
+/1="sapphire"
+/2="centimeter"
+/3="admiral"
+/4="red"
+/5="verb"
+/6="banana"
+/7="apartment"
+/8="assault"
+/9="salt"
+/10="plateau"
+/11="blouse"
+/12="violin"
+/13="classical"
+/14="botany"
+/15="cabbage"
+/16="Jane"
+/17="carnation"
+/18="marlin"
+/19="rattler"
+/20="Penn State"
+/21="Saturn"
+/22="broil"
+/23="automobile"
+/24="Oatmeal"
+</item>
+
+<item FMemStim3>
+/1="pearl"
+/2="foot"
+/3="major"
+/4="green"
+/5="pronoun"
+/6="pear"
+/7="shack"
+/8="embezzling"
+/9="cinnamon"
+/10="river"
+/11="sweater"
+/12="oboe"
+/13="blues"
+/14="astronomy"
+/15="lettuce"
+/16="Ann"
+/17="rose"
+/18="catfish"
+/19="anaconda"
+/20="Yale"
+/21="Jupiter"
+/22="steam"
+/23="train"
+/24="Raisin Bran"
+</item>
+
+<item IConcept>
+/1="UNITS OF TIME"
+/2="METALS"
+/3="ANIMALS"
+/4="KITCHEN UTENSILS"
+/5="PIECES OF FURNITURE"
+/6="WEAPONS"
+/7="ALCOHOLIC DRINKS"
+/8="CARPENTRY TOOLS"
+/9="FUELS"
+/10="SPORTS"
+/11="PARTS OF A BUILDING"
+/12="KINDS OF MONEY"
+/13="BEVERAGES"
+/14="TOYS"
+/15="TYPES OF FOOTWEAR"
+/16="TREES"
+/17="BOY'S NAMES"
+/18="CITIES"
+/19="STATES"
+/20="ROYAL TITLES"
+/21="ROOMS"
+/22="US PRESIDENTS"
+/23="DESSERTS"
+/24="BRANCHES OF THE MILITARY"
+</item>
+
+<item IMemStim1>
+/1="month"
+/2="copper"
+/3="pig"
+/4="fork"
+/5="sofa"
+/6="dagger"
+/7="rum"
+/8="pliers"
+/9="diesel oil"
+/10="baseball"
+/11="ceiling"
+/12="dime"
+/13="milk"
+/14="marbles"
+/15="slipper"
+/16="cedar"
+/17="Robert"
+/18="Boston"
+/19="Georgia"
+/20="queen"
+/21="bathroom"
+/22="Kennedy"
+/23="ice cream"
+/24="Army"
+</item>
+
+<item IMemStim2>
+/1="century"
+/2="aluminum"
+/3="buffalo"
+/4="spatula"
+/5="dresser"
+/6="bomb"
+/7="brandy"
+/8="wrench"
+/9="coal"
+/10="golf"
+/11="wall"
+/12="half dollar"
+/13="lemonade"
+/14="teddy bear"
+/15="shoe"
+/16="oak"
+/17="William"
+/18="Paris"
+/19="Nevada"
+/20="princess"
+/21="den"
+/22="Truman"
+/23="brownie"
+/24="National Guard"
+</item>
+
+Note: these items are not currently used by this script
+item IMemStim3>
+/1="minute"
+/2="bronze"
+/3="lion"
+/4="pan"
+/5="bed"
+/6="cannon"
+/7="wine"
+/8="screwdriver"
+/9="petroleum"
+/10="soccer"
+/11="floor"
+/12="quarter"
+/13="tea"
+/14="jacks"
+/15="moccasin"
+/16="aspen"
+/17="David"
+/18="Chicago"
+/19="Kansas"
+/20="baron"
+/21="attic"
+/22="Jefferson"
+/23="cake"
+/24="Marines"
+</item>
+
+<item NConcept>
+/1="RELATIVES"
+/2="READING MATERIALS"
+/3="KINDS OF CLOTH"
+/4="RELIGIOUS BUILDINGS"
+/5="BODY PARTS"
+/6="POLITICAL OFFICES"
+/7="COUNTRIES"
+/8="CLERGY MEMBERS"
+/9="OCCUPATIONS"
+/10="WEATHER PHENOMENA"
+/11="CHEMICAL ELEMENTS"
+/12="BIRDS"
+/13="CARS"
+/14="DANCES"
+/15="INSECTS"
+/16="DISEASES"
+/17="WATERCRAFT"
+/18="EMOTIONS"
+/19="MEALS"
+/20="CAR PARTS"
+/21="STAGES OF LIFE"
+/22="CONTINENTS"
+/23="HUMAN ORGANS"
+/24="TASTES"
+</item>
+
+Note: these items are not currently used by this script
+item NMemStim1>
+/1="mother"
+/2="newspaper"
+/3="wool"
+/4="chapel"
+/5="finger"
+/6="president"
+/7="England"
+/8="priest"
+/9="lawyer"
+/10="hurricane"
+/11="hydrogen"
+/12="bluejay"
+/13="Toyota"
+/14="waltz"
+/15="mosquito"
+/16="malaria"
+/17="yacht"
+/18="lonely"
+/19="dinner"
+/20="piston"
+/21="infant"
+/22="Europe"
+/23="liver"
+/24="salty"
+</item>
+
+Note: these items are not currently used by this script
+item NMemStim2>
+/1="brother"
+/2="pamphlet"
+/3="linen"
+/4="temple"
+/5="arm"
+/6="sheriff"
+/7="Canada"
+/8="minister"
+/9="farmer"
+/10="snow"
+/11="sulfur"
+/12="hawk"
+/13="Ford"
+/14="cha-cha"
+/15="ant"
+/16="cancer"
+/17="submarine"
+/18="envious"
+/19="lunch"
+/20="transmission"
+/21="adolescent"
+/22="Antarctica"
+/23="heart"
+/24="tart"
+</item>
+
+Note: these items are not currently used by this script
+item NMemStim3>
+/1="cousin"
+/2="novel"
+/3="nylon"
+/4="cathedral"
+/5="head"
+/6="governor"
+/7="Japan"
+/8="nun"
+/9="doctor"
+/10="wind"
+/11="oxygen"
+/12="canary"
+/13="Chrysler"
+/14="minuet"
+/15="bee"
+/16="polio"
+/17="freighter"
+/18="angry"
+/19="snack"
+/20="muffler"
+/21="child"
+/22="Australia"
+/23="bladder"
+/24="spicy"
+</item>
+
+************************************
+Warm-up Comparison Stims
+************************************
+
+<item WrmL1wrd1>
+/1="leaf"
+/2="barrel"
+/3="paddle"
+/4="knitting"
+/5="parcel"
+/6="watercolor"
+/7="candle"
+/8="television"
+/9="Pulitzer"
+/10="paper clip"
+/11="Pacific"
+/12="Hispanic"
+/13="pencil"
+/14="renaissance"
+/15="teeter-totter"
+/16="poem"
+/17="short stop"
+/18="rope"
+/19="vault"
+/20="statue"
+/21="surgeon"
+/22="comma"
+/23="Aspirin"
+/24="jury"
+</item>
+
+<item WrmL1wrd2>
+/1="stem"
+/2="bucket"
+/3="oar"
+/4="sewing"
+/5="package"
+/6="pastels"
+/7="flashlight"
+/8="radio"
+/9="Nobel"
+/10="staple"
+/11="Atlantic"
+/12="Caucasian"
+/13="pen"
+/14="middle ages"
+/15="sand box"
+/16="short story"
+/17="catcher"
+/18="string"
+/19="lockbox"
+/20="sculpture"
+/21="pediatrician"
+/22="period"
+/23="Tylenol"
+/24="judge"
+</item>
+
+<item WrmD1wrd1>
+/1="bud"
+/2="basket"
+/3="rudder"
+/4="stitching"
+/5="carton"
+/6="acrylic"
+/7="florescent"
+/8="email"
+/9="Oscar"
+/10="brad"
+/11="Indian"
+/12="Native American"
+/13="typewriter"
+/14="prehistoric"
+/15="monkey bars"
+/16="fiction"
+/17="center fielder"
+/18="cable"
+/19="bank safe"
+/20="bust"
+/21="obstetrician"
+/22="question mark"
+/23="Motrin"
+/24="prosecutor"
+</item>
+
+<item WrmD1wrd2>
+/1="plug"
+/2="tune"
+/3="crust"
+/4="running"
+/5="list"
+/6="rust"
+/7="humility"
+/8="cork"
+/9="Inmate"
+/10="corner"
+/11="City Hall"
+/12="Stadium"
+/13="shelf"
+/14="serious"
+/15="torch"
+/16="war lord"
+/17="remnant"
+/18="cover"
+/19="lid"
+/20="key"
+/21="outhouse"
+/22="understudy"
+/23="Flavor"
+/24="humanitarian"
+</item>
+
+<item WrmL2wrd1>
+/1="beard"
+/2="credit card"
+/3="cemetery"
+/4="pier"
+/5="factory"
+/6="zone"
+/7="treaty"
+/8="college"
+/9="oath"
+/10="ambush"
+/11="souvenir"
+/12="detergent"
+/13="shoreline"
+/14="saloon"
+/15="award"
+/16="beef"
+/17="purse"
+/18="honey"
+/19="bonnet"
+/20="August"
+/21="pun"
+/22="dungeon"
+/23="carpet"
+/24="algebra"
+</item>
+
+<item WrmL2wrd2>
+/1="whiskers"
+/2="cash"
+/3="mortuary"
+/4="wharf"
+/5="plant"
+/6="sector"
+/7="pact"
+/8="preschool"
+/9="vow"
+/10="trap"
+/11="keepsake"
+/12="cleanser"
+/13="coast"
+/14="pub"
+/15="trophy"
+/16="pork"
+/17="wallet"
+/18="saccharin"
+/19="scarf"
+/20="April"
+/21="limeric"
+/22="jail"
+/23="tile"
+/24="calculus"
+</item>
+
+<item WrmD2wrd1>
+/1="mustache"
+/2="check"
+/3="graveyard"
+/4="dock"
+/5="mill"
+/6="area"
+/7="agreement"
+/8="university"
+/9="promise"
+/10="snare"
+/11="token"
+/12="soap"
+/13="seaside"
+/14="tavern"
+/15="prize"
+/16="veal"
+/17="pocketbook"
+/18="sugar"
+/19="cap"
+/20="July"
+/21="humor"
+/22="prison"
+/23="linoleum"
+/24="trigonometry"
+</item>
+
+<item WrmD2wrd2>
+/1="dice"
+/2="rut"
+/3="tissue"
+/4="cartoon"
+/5="circus"
+/6="poison"
+/7="switch"
+/8="waiter"
+/9="buckle"
+/10="varnish"
+/11="paint"
+/12="bench"
+/13="straw"
+/14="graph"
+/15="towel"
+/16="ribbon"
+/17="blindfold"
+/18="pavement"
+/19="ounce"
+/20="Sprite"
+/21="poverty"
+/22="fuse"
+/23="pendulum"
+/24="bronchitis"
+</item>
+
+************************************
+Test Comparison Stims
+************************************
+
+<item comp1_wrd1>
+/1 = "essay"
+/2 = "kilometer"
+/3 = "elephant"
+/4 = "silk"
+/5 = "lunch"
+/6 = "apple"
+/7 = "adolescent"
+/8 = "hail"
+/9 = "coal"
+/10 = "mountain"
+/11 = "sweater"
+/12 = "helium"
+/13 = "novel"
+/14 = "yo-yo"
+/15 = "linen"
+/16 = "brunch"
+/17 = "newborn"
+/18 = "Paris"
+/19 = "cobra"
+/20 = "wind"
+/21 = "basement"
+/22 = "steam"
+/23 = "sulfur"
+/24 = "National Guard"
+</item>
+
+<item comp1_wrd2>
+/1 = "textbook"
+/2 = "inch"
+/3 = "galaxy"
+/4 = "frame"
+/5 = "denture"
+/6 = "box"
+/7 = "infant"
+/8 = "tornado"
+/9 = "petroleum"
+/10 = "mildew"
+/11 = "ground"
+/12 = "carbon"
+/13 = "vase"
+/14 = "doll"
+/15 = "nylon"
+/16 = "shadow"
+/17 = "jam"
+/18 = "Runner up"
+/19 = "python"
+/20 = "bravery"
+/21 = "cough"
+/22 = "bake"
+/23 = "hydrogen"
+/24 = "Marines"
+</item>
+
+<item comp1_compAns>
+/1 = "l"
+/2 = "l"
+/3 = "d"
+/4 = "d"
+/5 = "d"
+/6 = "d"
+/7 = "l"
+/8 = "l"
+/9 = "l"
+/10 = "d"
+/11 = "d"
+/12 = "l"
+/13 = "d"
+/14 = "l"
+/15 = "l"
+/16 = "d"
+/17 = "d"
+/18 = "d"
+/19 = "l"
+/20 = "d"
+/21 = "d"
+/22 = "l"
+/23 = "l"
+/24 = "l"
+</item>
+
+<item comp1_compType>
+/1 = "NA1"
+/2 = "FA"
+/3 = "IA"
+/4 = "NA1"
+/5 = "NM1"
+/6 = "FM"
+/7 = "NM1"
+/8 = "NA1"
+/9 = "IM"
+/10 = "FA"
+/11 = "FM"
+/12 = "NA1"
+/13 = "NM1"
+/14 = "IA"
+/15 = "NM1"
+/16 = "NA1"
+/17 = "NA1"
+/18 = "IM"
+/19 = "FA"
+/20 = "NM1"
+/21 = "IA"
+/22 = "FM"
+/23 = "NM1"
+/24 = "IM"
+</item>
+
+<item comp2_wrd1>
+/1 = "Chrysler"
+/2 = "silver"
+/3 = "buffalo"
+/4 = "angry"
+/5 = "polio"
+/6 = "missile"
+/7 = "plumber"
+/8 = "Antarctics"
+/9 = "pepper"
+/10 = "golf"
+/11 = "stockings"
+/12 = "tart"
+/13 = "polka"
+/14 = "astronomy"
+/15 = "chapel"
+/16 = "governor"
+/17 = "canoe"
+/18 = "marlin"
+/19 = "Nevada"
+/20 = "nun"
+/21 = "Mercury"
+/22 = "fry"
+/23 = "sour"
+/24 = "Navy"
+</item>
+
+<item comp2_wrd2>
+/1 = "Toyota"
+/2 = "feather"
+/3 = "lion"
+/4 = "lonely"
+/5 = "malaria"
+/6 = "eraser"
+/7 = "brush"
+/8 = "Constitution"
+/9 = "cardboard"
+/10 = "soccer"
+/11 = "jacket"
+/12 = "salty"
+/13 = "tango"
+/14 = "chemistry"
+/15 = "napkin"
+/16 = "fantasy"
+/17 = "steamship"
+/18 = "trout"
+/19 = "Aristotle"
+/20 = "minister"
+/21 = "Rose Bowl"
+/22 = "winter"
+/23 = "clever"
+/24 = "Salesmen"
+</item>
+
+<item comp2_compAns>
+/1 = "l"
+/2 = "d"
+/3 = "l"
+/4 = "l"
+/5 = "l"
+/6 = "d"
+/7 = "d"
+/8 = "d"
+/9 = "d"
+/10 = "l"
+/11 = "l"
+/12 = "l"
+/13 = "l"
+/14 = "l"
+/15 = "d"
+/16 = "d"
+/17 = "l"
+/18 = "l"
+/19 = "d"
+/20 = "l"
+/21 = "d"
+/22 = "d"
+/23 = "d"
+/24 = "d"
+</item>
+
+<item comp2_compType>
+/1 = "NA2"
+/2 = "IA"
+/3 = "IM"
+/4 = "NM1"
+/5 = "NM2"
+/6 = "IA"
+/7 = "NA1"
+/8 = "NM1"
+/9 = "FA"
+/10 = "IM"
+/11 = "FA"
+/12 = "NM1"
+/13 = "NA1"
+/14 = "FM"
+/15 = "NM2"
+/16 = "NM1"
+/17 = "NA2"
+/18 = "FM"
+/19 = "IM"
+/20 = "NM2"
+/21 = "FA"
+/22 = "FA"
+/23 = "NA1"
+/24 = "IA"
+</item>
+
+<item comp3_wrd1>
+/1 = "daughter"
+/2 = "mile"
+/3 = "lieutenant"
+/4 = "mosquito"
+/5 = "senator"
+/6 = "bomb"
+/7 = "Italy"
+/8 = "bishop"
+/9 = "salt"
+/10 = "hockey"
+/11 = "stairs"
+/12 = "robin"
+/13 = "Plymouth"
+/14 = "physics"
+/15 = "embarrassed"
+/16 = "finger"
+/17 = "doctor"
+/18 = "tuna"
+/19 = "anaconda"
+/20 = "North America"
+/21 = "Jupiter"
+/22 = "Kennedy"
+/23 = "canary"
+/24 = "Granola"
+</item>
+
+<item comp3_wrd2>
+/1 = "soil"
+/2 = "fortress"
+/3 = "lightening"
+/4 = "ant"
+/5 = "mainstreet"
+/6 = "cannon"
+/7 = "Russia"
+/8 = "whale"
+/9 = "vanilla"
+/10 = "tennis"
+/11 = "window"
+/12 = "triangle"
+/13 = "Honda"
+/14 = "density"
+/15 = "happy"
+/16 = "head"
+/17 = "energy"
+/18 = "parade"
+/19 = "counter"
+/20 = "Asia"
+/21 = "Saturn"
+/22 = "Jefferson"
+/23 = "color"
+/24 = "Karl Marx"
+</item>
+
+<item comp3_compAns>
+/1 = "d"
+/2 = "d"
+/3 = "d"
+/4 = "l"
+/5 = "d"
+/6 = "l"
+/7 = "l"
+/8 = "d"
+/9 = "l"
+/10 = "l"
+/11 = "l"
+/12 = "d"
+/13 = "l"
+/14 = "d"
+/15 = "l"
+/16 = "l"
+/17 = "d"
+/18 = "d"
+/19 = "d"
+/20 = "l"
+/21 = "l"
+/22 = "l"
+/23 = "d"
+/24 = "d"
+</item>
+
+<item comp3_compType>
+/1 = "NM1"
+/2 = "FM"
+/3 = "FM"
+/4 = "NM2"
+/5 = "NA1"
+/6 = "IM"
+/7 = "NA2"
+/8 = "NA2"
+/9 = "FM"
+/10 = "IA"
+/11 = "IA"
+/12 = "NA2"
+/13 = "NA2"
+/14 = "FA"
+/15 = "NA1"
+/16 = "NM2"
+/17 = "NM1"
+/18 = "FA"
+/19 = "FM"
+/20 = "NA1"
+/21 = "FM"
+/22 = "IM"
+/23 = "NM2"
+/24 = "FA"
+</item>
+
+<item comp4_wrd1>
+/1 = "minuet"
+/2 = "aluminum"
+/3 = "sergeant"
+/4 = "church"
+/5 = "mouth"
+/6 = "lemon"
+/7 = "freighter"
+/8 = "muffler"
+/9 = "gas"
+/10 = "river"
+/11 = "ceiling"
+/12 = "heart"
+/13 = "brother"
+/14 = "teddy bear"
+/15 = "beetle"
+/16 = "tuberculosis"
+/17 = "Japan"
+/18 = "Baltimore"
+/19 = "Vermont"
+/20 = "carburetor"
+/21 = "bathroom"
+/22 = "Lincoln"
+/23 = "lung"
+/24 = "Oatmeal"
+</item>
+
+<item comp4_wrd2>
+/1 = "labor"
+/2 = "bronze"
+/3 = "general"
+/4 = "blade"
+/5 = "ankle"
+/6 = "cherry"
+/7 = "seed"
+/8 = "piston"
+/9 = "humor"
+/10 = "lawsuit"
+/11 = "octave"
+/12 = "toothpaste"
+/13 = "glass"
+/14 = "gatekeeper"
+/15 = "flour"
+/16 = "measles"
+/17 = "England"
+/18 = "London"
+/19 = "Texas"
+/20 = "trail"
+/21 = "attic"
+/22 = "Madonna"
+/23 = "kidney"
+/24 = "Cheerios"
+</item>
+
+<item comp4_compAns>
+/1 = "d"
+/2 = "l"
+/3 = "l"
+/4 = "d"
+/5 = "l"
+/6 = "l"
+/7 = "d"
+/8 = "l"
+/9 = "d"
+/10 = "d"
+/11 = "d"
+/12 = "d"
+/13 = "d"
+/14 = "d"
+/15 = "d"
+/16 = "l"
+/17 = "l"
+/18 = "l"
+/19 = "l"
+/20 = "d"
+/21 = "l"
+/22 = "d"
+/23 = "l"
+/24 = "l"
+</item>
+
+<item comp4_compType>
+/1 = "NM2"
+/2 = "IM"
+/3 = "FA"
+/4 = "NA2"
+/5 = "NA2"
+/6 = "FA"
+/7 = "NM2"
+/8 = "NM2"
+/9 = "IA"
+/10 = "FM"
+/11 = "IM"
+/12 = "NM2"
+/13 = "NM2"
+/14 = "IM"
+/15 = "NA2"
+/16 = "NA2"
+/17 = "NM2"
+/18 = "IA"
+/19 = "IA"
+/20 = "NA2"
+/21 = "IM"
+/22 = "IA"
+/23 = "NA2"
+/24 = "FM"
+</item>
+
+<item comp5_wrd1>
+/1 = "magazine"
+/2 = "yard"
+/3 = "squirrel"
+/4 = "rayon"
+/5 = "snack"
+/6 = "pear"
+/7 = "child"
+/8 = "rain"
+/9 = "diesel oil"
+/10 = "canyon"
+/11 = "blouse"
+/12 = "sodium"
+/13 = "pamphlet"
+/14 = "puzzle"
+/15 = "wool"
+/16 = "supper"
+/17 = "adult"
+/18 = "Boston"
+/19 = "viper"
+/20 = "snow"
+/21 = "hallway"
+/22 = "broil"
+/23 = "oxygen"
+/24 = "Army"
+</item>
+
+<item comp5_wrd2>
+/1 = "zipper"
+/2 = "chain"
+/3 = "dog"
+/4 = "cotton"
+/5 = "dinner"
+/6 = "banana"
+/7 = "paragraph"
+/8 = "letters"
+/9 = "needle"
+/10 = "island"
+/11 = "trousers"
+/12 = "blister"
+/13 = "newspaper"
+/14 = "filter"
+/15 = "coin"
+/16 = "breakfast"
+/17 = "elderly"
+/18 = "Chicago"
+/19 = "opaque"
+/20 = "hurricane"
+/21 = "kitchen"
+/22 = "harbor"
+/23 = "urban"
+/24 = "Lunar"
+</item>
+
+<item comp5_compAns>
+/1 = "d"
+/2 = "d"
+/3 = "l"
+/4 = "l"
+/5 = "l"
+/6 = "l"
+/7 = "d"
+/8 = "d"
+/9 = "d"
+/10 = "l"
+/11 = "l"
+/12 = "d"
+/13 = "l"
+/14 = "d"
+/15 = "d"
+/16 = "l"
+/17 = "l"
+/18 = "l"
+/19 = "d"
+/20 = "l"
+/21 = "l"
+/22 = "d"
+/23 = "d"
+/24 = "d"
+</item>
+
+<item comp5_compType>
+/1 = "NA1"
+/2 = "FA"
+/3 = "IA"
+/4 = "NA1"
+/5 = "NM1"
+/6 = "FM"
+/7 = "NM1"
+/8 = "NA1"
+/9 = "IM"
+/10 = "FA"
+/11 = "FM"
+/12 = "NA1"
+/13 = "NM1"
+/14 = "IA"
+/15 = "NM1"
+/16 = "NA1"
+/17 = "NA1"
+/18 = "IM"
+/19 = "FA"
+/20 = "NM1"
+/21 = "IA"
+/22 = "FM"
+/23 = "NM1"
+/24 = "IM"
+</item>
+
+<item comp6_wrd1>
+/1 = "Ford"
+/2 = "cobalt"
+/3 = "pig"
+/4 = "envious"
+/5 = "cancer"
+/6 = "sword"
+/7 = "teacher"
+/8 = "Australia"
+/9 = "nutmeg"
+/10 = "baseball"
+/11 = "dress"
+/12 = "spicy"
+/13 = "ballet"
+/14 = "botany"
+/15 = "cathedral"
+/16 = "sheriff"
+/17 = "sailboat"
+/18 = "catfish"
+/19 = "Georgia"
+/20 = "priest"
+/21 = "Neptune"
+/22 = "roast"
+/23 = "sweet"
+/24 = "Coast Guard"
+</item>
+
+<item comp6_wrd2>
+/1 = "Microsoft"
+/2 = "iron"
+/3 = "board"
+/4 = "twine"
+/5 = "north"
+/6 = "rifle"
+/7 = "dentist"
+/8 = "Europe"
+/9 = "garlic"
+/10 = "retreat"
+/11 = "crumb"
+/12 = "surgery"
+/13 = "morse code"
+/14 = "mutilation"
+/15 = "temple"
+/16 = "president"
+/17 = "chapter"
+/18 = "clover"
+/19 = "Kansas"
+/20 = "caterpillar"
+/21 = "Venus"
+/22 = "boil"
+/23 = "bitter"
+/24 = "Air Force"
+</item>
+
+<item comp6_compAns>
+/1 = "d"
+/2 = "l"
+/3 = "d"
+/4 = "d"
+/5 = "d"
+/6 = "l"
+/7 = "l"
+/8 = "l"
+/9 = "l"
+/10 = "d"
+/11 = "d"
+/12 = "d"
+/13 = "d"
+/14 = "d"
+/15 = "l"
+/16 = "l"
+/17 = "d"
+/18 = "d"
+/19 = "l"
+/20 = "d"
+/21 = "l"
+/22 = "l"
+/23 = "l"
+/24 = "l"
+</item>
+
+<item comp6_compType>
+/1 = "NA2"
+/2 = "IA"
+/3 = "IM"
+/4 = "NM1"
+/5 = "NM2"
+/6 = "IA"
+/7 = "NA1"
+/8 = "NM1"
+/9 = "FA"
+/10 = "IM"
+/11 = "FA"
+/12 = "NM1"
+/13 = "NA1"
+/14 = "FM"
+/15 = "NM2"
+/16 = "NM1"
+/17 = "NA2"
+/18 = "FM"
+/19 = "IM"
+/20 = "NM2"
+/21 = "FA"
+/22 = "FA"
+/23 = "NA1"
+/24 = "IA"
+</item>
+
+<item comp7_wrd1>
+/1 = "father"
+/2 = "centimeter"
+/3 = "admiral"
+/4 = "bee"
+/5 = "mayor"
+/6 = "dagger"
+/7 = "Denmark"
+/8 = "preacher"
+/9 = "cinnamon"
+/10 = "football"
+/11 = "door"
+/12 = "sparrow"
+/13 = "Chevy"
+/14 = "genetics"
+/15 = "jealous"
+/16 = "arm"
+/17 = "farmer"
+/18 = "salmon"
+/19 = "rattler"
+/20 = "Africa"
+/21 = "Mars"
+/22 = "Truman"
+/23 = "hawk"
+/24 = "Corn Flakes"
+</item>
+
+<item comp7_wrd2>
+/1 = "uncle"
+/2 = "foot"
+/3 = "major"
+/4 = "lozenge"
+/5 = "legislator"
+/6 = "garbage"
+/7 = "Treasury"
+/8 = "rabbi"
+/9 = "laboratory"
+/10 = "ladder"
+/11 = "figure"
+/12 = "eagle"
+/13 = "Wonder"
+/14 = "biology"
+/15 = "clean"
+/16 = "bottle"
+/17 = "lawyer"
+/18 = "shark"
+/19 = "boa"
+/20 = "Kmart"
+/21 = "Kenya"
+/22 = "Popeye"
+/23 = "bluejay"
+/24 = "Wheaties"
+</item>
+
+<item comp7_compAns>
+/1 = "l"
+/2 = "l"
+/3 = "l"
+/4 = "d"
+/5 = "l"
+/6 = "d"
+/7 = "d"
+/8 = "l"
+/9 = "d"
+/10 = "d"
+/11 = "d"
+/12 = "l"
+/13 = "d"
+/14 = "l"
+/15 = "d"
+/16 = "d"
+/17 = "l"
+/18 = "l"
+/19 = "l"
+/20 = "d"
+/21 = "d"
+/22 = "d"
+/23 = "l"
+/24 = "l"
+</item>
+
+<item comp7_compType>
+/1 = "NM1"
+/2 = "FM"
+/3 = "FM"
+/4 = "NM2"
+/5 = "NA1"
+/6 = "IM"
+/7 = "NA2"
+/8 = "NA2"
+/9 = "FM"
+/10 = "IA"
+/11 = "IA"
+/12 = "NA2"
+/13 = "NA2"
+/14 = "FA"
+/15 = "NA1"
+/16 = "NM2"
+/17 = "NM1"
+/18 = "FA"
+/19 = "FM"
+/20 = "NA1"
+/21 = "FM"
+/22 = "IM"
+/23 = "NM2"
+/24 = "FA"
+</item>
+
+<item comp8_wrd1>
+/1 = "cha cha"
+/2 = "copper"
+/3 = "captain"
+/4 = "synagogue"
+/5 = "leg"
+/6 = "peach"
+/7 = "submarine"
+/8 = "piston"
+/9 = "kerosene"
+/10 = "plateau"
+/11 = "wall"
+/12 = "bladder"
+/13 = "cousin"
+/14 = "marbles"
+/15 = "cricket"
+/16 = "smallpox"
+/17 = "Canada"
+/18 = "New York"
+/19 = "Florida"
+/20 = "spark plug"
+/21 = "den"
+/22 = "Roosevelt"
+/23 = "stomach"
+/24 = "Raisin Bran"
+</item>
+
+<item comp8_wrd2>
+/1 = "waltz"
+/2 = "wallet"
+/3 = "hoe"
+/4 = "convent"
+/5 = "sidewalk"
+/6 = "wedding"
+/7 = "yacht"
+/8 = "kennel"
+/9 = "propane"
+/10 = "valley"
+/11 = "floor"
+/12 = "liver"
+/13 = "mother"
+/14 = "jacks"
+/15 = "spider"
+/16 = "blonde"
+/17 = "Folgers"
+/18 = "Nestles"
+/19 = "Publisher"
+/20 = "axle"
+/21 = "embryo"
+/22 = "Nixon"
+/23 = "foliage"
+/24 = "Near East"
+</item>
+
+<item comp8_compAns>
+/1 = "l"
+/2 = "d"
+/3 = "d"
+/4 = "l"
+/5 = "d"
+/6 = "d"
+/7 = "l"
+/8 = "d"
+/9 = "l"
+/10 = "l"
+/11 = "l"
+/12 = "l"
+/13 = "l"
+/14 = "l"
+/15 = "l"
+/16 = "d"
+/17 = "d"
+/18 = "d"
+/19 = "d"
+/20 = "l"
+/21 = "d"
+/22 = "l"
+/23 = "d"
+/24 = "d"
+</item>
+
+<item comp8_compType>
+/1 = "NM2"
+/2 = "IM"
+/3 = "FA"
+/4 = "NA2"
+/5 = "NA2"
+/6 = "FA"
+/7 = "NM2"
+/8 = "NM2"
+/9 = "IA"
+/10 = "FM"
+/11 = "IM"
+/12 = "NM2"
+/13 = "NM2"
+/14 = "IM"
+/15 = "NA2"
+/16 = "NA2"
+/17 = "NM2"
+/18 = "IA"
+/19 = "IA"
+/20 = "NA2"
+/21 = "IM"
+/22 = "IA"
+/23 = "NA2"
+/24 = "FM"
+</item>
+
+************************************
+miscellaneous
+************************************
+
+<item wordListInstructions>
+/1 = "Get ready for a word list..."
+</item>
+
+<item recallQuestions>
+/1 = "Were there more <%values.Fconcept%> or more <%values.Iconcept%>?"
+/2 = "Were there more <%values.Iconcept%> or more <%values.Fconcept%>?"
+</item>
+
+<item recallfeedback>
+/1 = "Correct!"
+/2 = "Incorrect"
+/3 = "There were more <%values.Fconcept%> than <%values.IConcept%>"
+/4 = "<Press the spacebar to begin word comparisons>"
+</item>
+
+<item comparisonInstructions>
+/1 = "Get ready to COMPARE words...
+~n~n~n~n~n~n~nRest your fingers on the <%parameters.differentKey%> and <%parameters.sameKey%> keys"
+/2 = "<%parameters.differentKey%> = Different"
+/3 = "<%parameters.sameKey%> = Like"
+</item>
+
+<item comparisonFeedback>
+/1 = "Performance Summary for the Word Comparisons:
+~n~n<%list.compACC_round.mean * 100%>% correct
+~n~n<%list.compRT_round.mean/1000%> seconds average response time
+~n~n~nPress the spacebar to continue"
+/2 = "Your performance goals:~n
+1. Remember each word list so you can correctly determine which category had more~n
+2. Response as quickly as you can to the word comparisons without making careless errors
+~n~n~n~nPress spacebar to continue"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item instructions>
+/1 = "In this task, you will be presented a list of five words. 
+You must remember the list in order to answer a question about it.
+~n~n~nPress the spacebar to continue."
+/2 = "For example, you could see a list like the following:
+~ngum drop
+necklace
+bracelet
+lollipop
+candy bar
+~nRemember these words!
+~n~n~nPress the spacebar to continue."
+/3 = "You will then be asked a question about the list.
+~nExample:
+~nWere there more TYPES OF CANDY or more PIECES OF JEWELRY ?
+~n~n~nPress the spacebar to continue"
+/4 = "The list was:
+~n
+gum drop
+necklace
+bracelet
+lollipop
+candy bar
+~nSo, there were more TYPES OF CANDY than PIECES OF JEWELRY.    
+~n~n~nPress the spacebar to continue."
+/5 = "Next you will be presented pairs of words. For each pair, decide if the words are from the same (LIKE) or DIFFERENT categories. 
+~nExample:                                
+                  encyclopedia
+                  dictionary
+~nYou would respond by pressing <%parameters.sameKey%> (for LIKE). 
+~nThese words are from the same category (reference books). 
+~n~n~nPress the <%parameters.sameKey%> key now."
+/6 = "The words in some pairs come from DIFFERENT categories.
+
+~nExample:                                
+                  thesaurus
+                  curtains
+~nYou would respond by pressing <%parameters.differentKey%>  (for DIFFERENT). 
+~nA thesaurus is a reference book, and curtains are home decorations.
+~n~n~nPress the <%parameters.differentKey%> key now."
+/7 = "Now try some practice trials. 
+~n~n~nPress the spacebar to continue."
+/8 = "To review:~n
+• You will see a list of five words one at a time.~n
+• You will be asked which of two categories had more words from the list.~n
+• You will decide if pairs of words are from the
+	o same (LIKE) 
+	o or (DIFFERENT) categories
+~n~n~nPress the spacebar to begin practice items."
+/9 = "You have finished the practice problems.
+~nThe real problems will start now. They will be just like the practice ones.
+~n~n~n~nPress the spacebar to continue."
+/10 = "Final Instructions:~n
+Try to remember the five words in each list, so you can correctly answer the question about them.
+~nThen, answer the word comparison items as quickly as you can without making careless mistakes.
+~n~n~n~nPress the spacebar to begin."
+</item>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: list.presentationOrder selects the presentation order of the Fconcept and Iconcept words for the next word list.
+It selects the orders such as "IFIFF" in sequential order and resets after every 6 word lists
+<list presentationOrder>
+/items = ("IFIFF", "FIFIF", "FIFFI", "IFFIF", "FIIFF", "IFFFI")
+/ selectionmode = sequence
+/ resetinterval = 0
+</list>
+
+Note: by default, list.recallQuestion selects randomly 'left' vs. 'right' to be the correct response button 
+for the recall question.
+(1 = itemnumber 1 of item.recallQuestion => left key is the correct answer)
+(2 = itemnumber 2 of item.recallQuestion => right key is the correct answer)
+Selection is done without replacement;
+<list recallQuestion>
+/items = (1, 2)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+
+Note: list.setNr_practice selects the setNr of the next word list to be presented during practice.
+Selection is done sequentially
+!!!only 2 sets of the 4 practice sets provided are run; the two sets NOT run are: practice sets 3 and 4
+<list setNR_practice>
+/ items = (1, 2)
+/ selectionmode = sequence
+/ resetinterval = 0
+</list>
+
+
+Note: list.setNr selects the setNr of the next word list to be presented during the test portion of the task.
+Selection is done sequentially
+!!!only 18 sets of the 24 provided test sets are run; the six sets not run are: 16, 17, 19, 22, 23, 24
+<list setNr>
+/ items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 18, 20, 21)
+/ selectionmode = sequence
+/ resetinterval = 0
+</list>
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum,
+
+values.practice, values.round, values.setNr, values.setType, values.setTypeNr, values.Fconcept, values.Iconcept, values.Nconcept,
+values.presentationOrder, values.presentedStim,
+values.recallQuestion, values.leftCategory, values.rightCategory,
+values.compStem, values.compAlt, values.primeType,
+response, values.responseCategory, values.correctResponse, correct, latency,
+  
+values.FMem1, values.FMem2, values.FMem3, values.IMem1, values.IMem2, values.IMem3,
+values.NMem1, values.NMem2, values.NMem3,
+
+values.WrmL1wrd1, values.WrmL1wrd2, values.WrmL2wrd1, values.WrmL2wrd2,
+values.WrmD1wrd1, values.WrmD1wrd2, values.WrmD2wrd1, values.WrmD2wrd2,
+
+values.compWord1_1, values.compWord1_2, values.compWord1_compAns, values.compWord1_compType,
+values.compWord2_1, values.compWord2_2, values.compWord2_compAns, values.compWord2_compType,
+values.compWord3_1, values.compWord3_2, values.compWord3_compAns, values.compWord3_compType,
+values.compWord4_1, values.compWord4_2, values.compWord4_compAns, values.compWord4_compType,
+
+values.compWord5_1, values.compWord5_2, values.compWord5_compAns, values.compWord5_compType,
+values.compWord6_1, values.compWord6_2, values.compWord6_compAns, values.compWord6_compType,
+values.compWord7_1, values.compWord7_2, values.compWord7_compAns, values.compWord7_compType,
+values.compWord8_1, values.compWord8_2, values.compWord8_compAns, values.compWord8_compType)
+</data>
+
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.propCorrect_recall, expressions.meanRT_recall,
+expressions.propCorrect_comp_primed, expressions.meanRT_comp_primed, expressions.uncorrmeanRT_comp_primed, expressions.speed_comp_primed,
+expressions.propCorrect_comp_unprimed, expressions.meanRT_comp_unprimed, expressions.uncorrmeanRT_comp_unprimed, expressions.speed_comp_unprimed,
+expressions.ResponseSpeedChange)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+/countRounds:			counts the rounds run (1 round = 1 set); reset after practice	
+
+/selectInstructions:	helper variable to select appropriate instruction texts (stores itemnumber of item.instructions)
+/practice:				0 (false): this is the test session; 1 (true): this is the practice session
+
+/presentationOrder:		stores the selected presentation order of the Fconcept/Iconcept words 
+/setNr:					stores the itemnumber of the currently presented set 
+/setTypeNr:				stores the set type and number of the current set(UnprimedSet1, PrimedSet1....UnprimedSet12, PrimedSet12)
+/setType:				stores the set type of the current set ("primed" vs. "unprimed")
+/Fconcept:				stores the Fconcept of the currently selected set
+/Iconcept:				stores the Iconcept of the currently selected set
+/Nconcept:				stores the Nconcept of the currently selected set
+/leftCategory:			helper variable that stores the concept that is represented by the left response button during recall
+/rightCategory:			helper variable that stores the concept that is represented by the right response button during recall
+
+/primeType:				stores the primeType of the currently presented word comparison pair 
+
+/FMem1-
+/NMem3:					store the respective F,I, N words for the given set
+
+/WrmL1wrd1-
+/WrmD2wrd2:				store the 8 respective warmUp words for the given set (L = like; D = different)
+
+/compWord1_1-
+/compWord8_2:			store the words used for each of the 8 test comparison word pairs 
+
+/compWord1_compAns:		stores the correct answer ('l' (like) vs. 'd' (different)) for test word pair 1
+/compWord1_compType:	stores the prime Type for test word pair 1
+(same for all 8 word pairs)
+
+/compStem:				stores the word presented on top (word 1 of each pair)
+/compAlt:				stores the word presented on bottom (word 2 of each pair)
+
+/presentedStim:			stores the words in the order they were presented during the list presentation
+
+/recallQuestion:		helper variable to assign the left/right response buttons to F/I concept
+						1 = Fconcept is on the left (Iconcept on the right)
+						2 = Fconcept is on the right (Iconcept on the left)
+						
+/responseCategory:		recall: the selected concept ('Fconcept' vs. 'Iconcept')
+						comparison: the selected likeness ('l' (like ~ same) vs. 'd' (different))
+/correctResponse:		recall: the Fconcept category
+						comparison: the correct likeness for the current word pair
+						
+<values>
+/selectInstructions = 0
+/practice = 0
+/round = 0
+
+/presentationOrder = ""
+/setNr = 1
+/setTypeNr = ""
+/setType = ""
+
+/Fconcept = ""
+/Iconcept = ""
+/Nconcept = ""
+/leftCategory = ""
+/rightCategory = ""
+/primeType = ""
+/FMem1 = ""
+/FMem2 = ""
+/FMem3 = ""
+/IMem1 = ""
+/IMem2 = ""
+/IMem3 = ""
+/NMem1 = ""
+/NMem2 = ""
+/NMem3 = ""
+/WrmL1wrd1 = ""
+/WrmL1wrd2 = ""
+/WrmL2wrd1 = ""
+/WrmL2wrd2 = ""
+/WrmD1wrd1 = ""
+/WrmD1wrd2 = ""
+/WrmD2wrd1 = ""
+/WrmD2wrd2 = ""
+/compWord1_1 = ""
+/compWord1_2 = ""
+/compWord2_1 = ""
+/compWord2_2 = ""
+/compWord3_1 = ""
+/compWord3_2 = ""
+/compWord4_1 = ""
+/compWord4_2 = ""
+/compWord5_1 = ""
+/compWord5_2 = ""
+/compWord6_1 = ""
+/compWord6_2 = ""
+/compWord7_1 = ""
+/compWord7_2 = ""
+/compWord8_1 = ""
+/compWord8_2 = ""
+/compWord1_compAns = ""
+/compWord1_compType = ""
+/compWord2_compAns = ""
+/compWord2_compType = ""
+/compWord3_compAns = ""
+/compWord3_compType = ""
+/compWord4_compAns = ""
+/compWord4_compType = ""
+/compWord5_compAns = ""
+/compWord5_compType = ""
+/compWord6_compAns = ""
+/compWord6_compType = ""
+/compWord7_compAns = ""
+/compWord7_compType = ""
+/compWord8_compAns = ""
+/compWord8_compType = ""
+/compStem = ""
+/compAlt = ""
+/presentedStim = ""
+/recallQuestion = 1
+/responseCategory = ""
+/correctResponse = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+the following expressions calculate the correct trialstart times for the stims presented
+during trial.listPresentation
+
+<expressions>
+/trialstart_word1 = parameters.attnDuration
+/trialstart_isi2 = expressions.trialstart_word1 + parameters.listwordPresentationDuration
+/trialstart_word2 = expressions.trialstart_isi2 + parameters.listPresentation_isi
+/trialstart_isi3 = expressions.trialstart_word2 + parameters.listwordPresentationDuration
+/trialstart_word3 = expressions.trialstart_isi3 + parameters.listPresentation_isi
+/trialstart_isi4 = expressions.trialstart_word3 + parameters.listwordPresentationDuration
+/trialstart_word4 = expressions.trialstart_isi4 + parameters.listPresentation_isi
+/trialstart_isi5 = expressions.trialstart_word4 + parameters.listwordPresentationDuration
+/trialstart_word5 = expressions.trialstart_isi5 + parameters.listPresentation_isi
+/trialstart_isi6 = expressions.trialstart_word5 + parameters.listwordPresentationDuration
+/trialduration = expressions.trialstart_isi6 + parameters.listPresentation_isi
+</expressions>
+
+
+
+/propCorrect_recall:  			proportion correct recall performance
+/meanRT_recall:					mean latency (in ms) of correct recall responses
+/propCorrect_comp_primed:		proportion correct of answering comparison test questions of primed items
+/meanRT_comp_primed:			mean latency (in ms)of making correct comparisons of primed test items
+/uncorrmeanRT_comp_primed:		mean latency (in ms) of making comparisons of primed test items for both correct and incorrect responses
+/speed_comp_primed:				relationship btw. proportion correct of answering comparison test questions of primed items to 
+								the mean (uncorrected) response time (in min) of comparison trials of primed items
+								=> number of correct responses per minute
+
+/propCorrect_comp_unprimed:		proportion correct of answering comparison test questions of unprimed items
+/meanRT_comp_unprimed:			mean latency (in ms)of making correct comparisons of unprimed test items
+/uncorrmeanRT_comp_unprimed:	mean latency (in ms) of making comparisons of unprimed test items for both correct and incorrect responses
+/speed_comp_unprimed:			relationship btw. proportion correct of answering comparison test questions of unprimed items to 
+								the mean (uncorrected) response time (in min) of comparison trials of unprimed items
+								=> number of correct responses per minute
+
+/ResponseSpeedChange:			Difference in response speed btw. unprimed and primed word comparisons
+								=> positive: unprimed word comparisons take longer (Priming Effect)
+								=> negative: primed word comparisons take longer
+								Note: Was & Woltz (2007) use residual change scores (from regression analysis)
+								rather than difference scores to measure the Priming Effect (see discussion on p.93)
+								
+
+<expressions>
+/propCorrect_recall = list.ACC_recall.mean
+/meanRT_recall = list.RT_recall.mean
+/propCorrect_comp_primed = list.compACC_primed.mean
+/meanRT_comp_primed = list.compRT_primed.mean
+/uncorrmeanRT_comp_primed = list.compRT_primed_uncorrected.mean
+/speed_comp_primed = expressions.propCorrect_comp_primed/(expressions.uncorrmeanRT_comp_primed/1000/60)
+/propCorrect_comp_unprimed = list.compACC_unprimed.mean
+/meanRT_comp_unprimed = list.compRT_unprimed.mean
+/uncorrmeanRT_comp_unprimed = list.compRT_unprimed_uncorrected.mean
+/speed_comp_unprimed = expressions.propCorrect_comp_unprimed/(expressions.uncorrmeanRT_comp_unprimed/1000/60)
+/ResponseSpeedChange = expressions.speed_comp_unprimed - expressions.speed_comp_primed
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text instructions>
+/ items = instructions
+/ select = values.selectInstructions
+/ resetinterval = 0
+/ vjustify = center
+/ hjustify = left
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+</text>
+
+<trial instruction>
+/ ontrialbegin = [
+	values.selectInstructions += 1;
+]
+/ stimulusframes = [1 = instructions]
+/ validresponse = (" ")
+</trial>
+
+<trial instruction_sameExample>
+/ ontrialbegin = [
+	values.selectInstructions = 5;
+]
+/ stimulusframes = [1 = instructions]
+
+//for touchscreens: show both response buttons but make differentKey nonresponsive
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ correctresponse = (parameters.sameKey)
+/response = correct
+</trial>
+
+<trial instruction_differentExample>
+/ ontrialbegin = [
+	values.selectInstructions = 6;
+]
+/ stimulusframes = [1 = instructions]
+
+//for touchscreens: show both response buttons but make sameKey nonresponsive
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ correctresponse = (parameters.differentKey)
+/response = correct
+</trial>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+*******************************************
+List Presentation
+******************************************
+
+<text getReadyWordList>
+/items = wordListInstructions
+/ select = 1
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+<text attnMem>
+/ items = ("+")
+/ fontstyle = ("Arial", parameters.fixationSize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.listWordSize*2)
+</text>
+
+<text FMem1>
+/ items = ("<%values.FMem1%>")
+/ fontstyle = ("Arial", parameters.listWordSize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.listWordSize*2)
+</text>
+
+
+<text FMem2>
+/ items = ("<%values.FMem2%>")
+/ fontstyle = ("Arial", parameters.listWordSize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.listWordSize*2)
+</text>
+
+<text FMem3>
+/ items = ("<%values.FMem3%>")
+/ fontstyle = ("Arial", parameters.listWordSize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.listWordSize*2)
+</text>
+
+<text IMem1>
+/ items = ("<%values.IMem1%>")
+/ fontstyle = ("Arial", parameters.listWordSize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.listWordSize*2)
+</text>
+
+<text IMem2>
+/ items = ("<%values.IMem2%>")
+/ fontstyle = ("Arial", parameters.listWordSize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.listWordSize*2)
+</text>
+
+<text IMem3>
+/ items = ("<%values.IMem3%>")
+/ fontstyle = ("Arial", parameters.listWordSize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.listWordSize*2)
+</text>
+
+*******************************************
+Recall
+******************************************
+
+<text RecallQuestion>
+/items = recallQuestions
+/ select = values.recallQuestion
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+<text left>
+/items = ("<%values.leftCategory%>
+~nPress '<%parameters.leftKey%>'")
+/ position = (25%, 90%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (30%, 10%)
+</text>
+
+<text right>
+/items = ("<%values.rightCategory%>
+~nPress '<%parameters.rightKey%>'")
+/ position = (75%, 90%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (30%, 10%)
+</text>
+
+<text correctFeedback>
+/items = recallfeedback
+/ select = 1
+/ txcolor = blue
+/ position = (50%, 40%)
+/ fontstyle = ("Arial", 8%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+<text errorFeedback>
+/items = recallfeedback
+/ select = 2
+/ txcolor = red
+/ position = (50%, 40%)
+/ fontstyle = ("Arial", 8%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+<text recallfeedback>
+/items = recallfeedback
+/ select = 3
+/ txcolor = black
+/ position = (50%, 60%)
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ size = (80%, 20%)
+</text>
+
+<text recallContinue>
+/items = recallfeedback
+/ select = 4
+/ txcolor = black
+/ position = (50%, 90%)
+/ fontstyle = ("Courier New", 2.5%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+</text>
+
+
+*******************************************
+Comparison
+******************************************
+
+<text getReadyComparison>
+/items = comparisonInstructions
+/ select = 1
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ size = (80%, 80%)
+/ hjustify = center
+/ vjustify = center
+</text>
+
+<shape eraser>
+/ shape = rectangle
+/ hposition = 0%
+/ vposition = 0%
+/ halign = left
+/ valign = top
+/ color = white
+/ size = (100%, 70%)
+</shape>
+
+<text different>
+/items = comparisonInstructions
+/ select = 2
+/ position = (25%, 90%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (30%, 10%)
+/ erase = false
+</text>
+
+<text same>
+/items = comparisonInstructions
+/ select = 3
+/ position = (75%, 90%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (30%, 10%)
+/ erase = false
+</text>
+
+<text compFixation1>
+/items = ("+")
+/ position = (50%, 45%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ size = (30%, 10%)
+/ vjustify = center
+</text>
+
+<text compFixation2>
+/items = ("+")
+/ position = (50%, 55%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ size = (30%, 10%)
+/ vjustify = center
+</text>
+
+<text WrmL1wrd1>
+/ items = ("<%values.WrmL1wrd1%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation1.hposition
+/ vposition = text.compFixation1.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text WrmL1wrd2>
+/ items = ("<%values.WrmL1wrd2%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation2.hposition
+/ vposition = text.compFixation2.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text WrmL2wrd1>
+/ items = ("<%values.WrmL2wrd1%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation1.hposition
+/ vposition = text.compFixation1.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text WrmL2wrd2>
+/ items = ("<%values.WrmL2wrd2%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation2.hposition
+/ vposition = text.compFixation2.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text WrmD1wrd1>
+/ items = ("<%values.WrmD1wrd1%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation1.hposition
+/ vposition = text.compFixation1.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text WrmD1wrd2>
+/ items = ("<%values.WrmD1wrd2%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation2.hposition
+/ vposition = text.compFixation2.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+
+<text WrmD2wrd1>
+/ items = ("<%values.WrmD2wrd1%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation1.hposition
+/ vposition = text.compFixation1.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text WrmD2wrd2>
+/ items = ("<%values.WrmD2wrd2%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation2.hposition
+/ vposition = text.compFixation2.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp1Wrd1>
+/ items = ("<%values.compWord1_1%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation1.hposition
+/ vposition = text.compFixation1.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp1Wrd2>
+/ items = ("<%values.compWord1_2%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation2.hposition
+/ vposition = text.compFixation2.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp2Wrd1>
+/ items = ("<%values.compWord2_1%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation1.hposition
+/ vposition = text.compFixation1.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp2Wrd2>
+/ items = ("<%values.compWord2_2%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation2.hposition
+/ vposition = text.compFixation2.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp3Wrd1>
+/ items = ("<%values.compWord3_1%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation1.hposition
+/ vposition = text.compFixation1.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp3Wrd2>
+/ items = ("<%values.compWord3_2%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation2.hposition
+/ vposition = text.compFixation2.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp4Wrd1>
+/ items = ("<%values.compWord4_1%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation1.hposition
+/ vposition = text.compFixation1.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp4Wrd2>
+/ items = ("<%values.compWord4_2%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation2.hposition
+/ vposition = text.compFixation2.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp5Wrd1>
+/ items = ("<%values.compWord5_1%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation1.hposition
+/ vposition = text.compFixation1.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp5Wrd2>
+/ items = ("<%values.compWord5_2%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation2.hposition
+/ vposition = text.compFixation2.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp6Wrd1>
+/ items = ("<%values.compWord6_1%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation1.hposition
+/ vposition = text.compFixation1.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp6Wrd2>
+/ items = ("<%values.compWord6_2%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation2.hposition
+/ vposition = text.compFixation2.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp7Wrd1>
+/ items = ("<%values.compWord7_1%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation1.hposition
+/ vposition = text.compFixation1.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp7Wrd2>
+/ items = ("<%values.compWord7_2%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation2.hposition
+/ vposition = text.compFixation2.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp8Wrd1>
+/ items = ("<%values.compWord8_1%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation1.hposition
+/ vposition = text.compFixation1.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comp8Wrd2>
+/ items = ("<%values.compWord8_2%>")
+/ fontstyle = ("Arial", parameters.compWordSize, false, false, false, false, 5, 1)
+/ hposition = text.compFixation2.hposition
+/ vposition = text.compFixation2.vposition
+/ hjustify = center
+/ vjustify = center
+/ halign = center
+/ valign = center
+/ size = (100%, parameters.compWordSize*2)
+</text>
+
+<text comparisonFeedback>
+/items = comparisonFeedback
+/ select = 1
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = center
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (80%, 80%)
+</text>
+
+<text performanceGoals>
+/items = comparisonFeedback
+/ select = 2
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = center
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (80%, 80%)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_recall>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_recall>
+</list>
+
+Note: list stores 1 = correct comparison response; 0 = otherwise for each test comparison trial for primed Sets
+<list compACC_primed>
+</list>
+
+Note: list stores the latency of correct responses for each test comparison trial for primed Sets
+<list compRT_primed>
+</list>
+
+Note: list stores the response latency for each test comparison trial for primed Sets
+<list compRT_primed_uncorrected>
+</list>
+
+Note: list stores 1 = correct comparison response; 0 = otherwise for each test comparison trial for primed Sets
+<list compACC_unprimed>
+</list>
+
+Note: list stores the latency of correct responses for each test comparison trial for primed Sets
+<list compRT_unprimed>
+</list>
+
+Note: list stores the response latency for each test comparison trial for unprimed Sets
+<list compRT_unprimed_uncorrected>
+</list>
+
+*******************************
+used for comparison feedback
+*******************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each comparison run within one round
+<list compACC_round>
+</list>
+
+Note: list stores the latency of all comparison responses (warmup + test) for each comparison run within one round
+<list compRT_round>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*******************************************
+List Presentation
+*******************************************
+
+//Preparation Trial:
+<trial getReadyWordlist>
+/ stimulusframes = [1 = getReadyWordList]
+
+/ timeout = parameters.getReadyWordlist
+/ recorddata = false
+/ posttrialpause = parameters.wordList_delay
+/ ontrialend = [
+//check whether this trial was called during practice or a test block:
+	if (values.practice == false){
+	//when the script ends up here, the trial was called from a test block
+	
+	//select the next concept presentation Order of the five recall words:
+		values.presentationOrder = list.presentationOrder.nextValue;
+		
+	//select the next set#:
+		values.setNr = list.setNr.nextValue;
+		
+	//reset the variable that will store the presented words""		
+		values.presentedStim = "";
+	
+	//store the relevant concepts tested/set type/individual words for recall and comparison trials 
+	//based on the select set#:
+		values.Fconcept = item.FConcept.item(values.setNr);
+		values.Iconcept = item.IConcept.item(values.setNr);
+		values.Nconcept = item.NConcept.item(values.setNr);	
+		
+		values.setTypeNr = item.setTypeNr.item(values.setNr);
+		if (contains(values.setTypeNr, "Unprimed")){
+			values.setType = "unprimed";
+		} else {
+			values.setType = "primed";
+		}
+		values.FMem1 = item.FMemStim1.item(values.setNr);
+		values.FMem2 = item.FMemStim2.item(values.setNr);
+		values.FMem3 = item.FMemStim3.item(values.setNr);
+		values.IMem1 = item.IMemStim1.item(values.setNr);
+		values.IMem2 = item.IMemStim2.item(values.setNr);
+	
+		values.WrmD1wrd1 = item.WrmD1wrd1.item(values.setNr);
+		values.WrmD1wrd2 = item.WrmD1wrd2.item(values.setNr);
+		values.WrmD2wrd1 = item.WrmD2wrd1.item(values.setNr);
+		values.WrmD2wrd2 = item.WrmD2wrd2.item(values.setNr);
+		values.WrmL1wrd1 = item.WrmL1wrd1.item(values.setNr);
+		values.WrmL1wrd2 = item.WrmL1wrd2.item(values.setNr);
+		values.WrmL2wrd1 = item.WrmL2wrd1.item(values.setNr);
+		values.WrmL2wrd2 = item.WrmL2wrd2.item(values.setNr);	
+	
+		values.compWord1_1 = item.comp1_wrd1.item(values.setNr);
+		values.compWord1_2 = item.comp1_wrd2.item(values.setNr);
+		values.compWord2_1 = item.comp2_wrd1.item(values.setNr);
+		values.compWord2_2 = item.comp2_wrd2.item(values.setNr);
+		values.compWord3_1 = item.comp3_wrd1.item(values.setNr);
+		values.compWord3_2 = item.comp3_wrd2.item(values.setNr);
+		values.compWord4_1 = item.comp4_wrd1.item(values.setNr);
+		values.compWord4_2 = item.comp4_wrd2.item(values.setNr);
+		values.compWord5_1 = item.comp5_wrd1.item(values.setNr);
+		values.compWord5_2 = item.comp5_wrd2.item(values.setNr);
+		values.compWord6_1 = item.comp6_wrd1.item(values.setNr);
+		values.compWord6_2 = item.comp6_wrd2.item(values.setNr);		
+		values.compWord7_1 = item.comp7_wrd1.item(values.setNr);
+		values.compWord7_2 = item.comp7_wrd2.item(values.setNr);	
+		values.compWord8_1 = item.comp8_wrd1.item(values.setNr);
+		values.compWord8_2 = item.comp8_wrd2.item(values.setNr);	
+	
+		values.compWord1_compAns = item.comp1_compAns.item(values.setNr);
+		values.compWord2_compAns = item.comp2_compAns.item(values.setNr);
+		values.compWord3_compAns = item.comp3_compAns.item(values.setNr);
+		values.compWord4_compAns = item.comp4_compAns.item(values.setNr);	
+		values.compWord5_compAns = item.comp5_compAns.item(values.setNr);		
+		values.compWord6_compAns = item.comp6_compAns.item(values.setNr);		
+		values.compWord7_compAns = item.comp7_compAns.item(values.setNr);		
+		values.compWord8_compAns = item.comp8_compAns.item(values.setNr);		
+		
+		values.compWord1_compType = item.comp1_compType.item(values.setNr);
+		values.compWord2_compType = item.comp2_compType.item(values.setNr);
+		values.compWord3_compType = item.comp3_compType.item(values.setNr);
+		values.compWord4_compType = item.comp4_compType.item(values.setNr);	
+		values.compWord5_compType = item.comp5_compType.item(values.setNr);		
+		values.compWord6_compType = item.comp6_compType.item(values.setNr);		
+		values.compWord7_compType = item.comp7_compType.item(values.setNr);		
+		values.compWord8_compType = item.comp8_compType.item(values.setNr);	
+				
+	} else {
+	//when the script ends up here, the trial was called from a practice block
+	//and practice material has to be accessed instead of test material
+	
+		values.presentationOrder = list.presentationOrder.nextValue;
+		values.setNr = list.setNr_practice.nextValue;
+		values.presentedStim = "";
+		
+		values.Fconcept = item.FConcept_practice.item(values.setNr);
+		values.Iconcept = item.IConcept_practice.item(values.setNr);
+		values.Nconcept = "NA";	
+		
+		values.setTypeNr = item.setTypeNr_practice.item(values.setNr);
+		values.FMem1 = item.FMemStim1_practice.item(values.setNr);
+		values.FMem2 = item.FMemStim2_practice.item(values.setNr);
+		values.FMem3 = item.FMemStim3_practice.item(values.setNr);
+		values.IMem1 = item.IMemStim1_practice.item(values.setNr);
+		values.IMem2 = item.IMemStim2_practice.item(values.setNr);	
+		
+		values.WrmD1wrd1 = item.WrmD1wrd1_practice.item(values.setNr);
+		values.WrmD1wrd2 = item.WrmD1wrd2_practice.item(values.setNr);
+		values.WrmD2wrd1 = item.WrmD2wrd1_practice.item(values.setNr);
+		values.WrmD2wrd2 = item.WrmD2wrd2_practice.item(values.setNr);
+		values.WrmL1wrd1 = item.WrmL1wrd1_practice.item(values.setNr);
+		values.WrmL1wrd2 = item.WrmL1wrd2_practice.item(values.setNr);
+		values.WrmL2wrd1 = item.WrmL2wrd1_practice.item(values.setNr);
+		values.WrmL2wrd2 = item.WrmL2wrd2_practice.item(values.setNr);	
+	
+		values.compWord1_1 = item.comp1_wrd1_practice.item(values.setNr);
+		values.compWord1_2 = item.comp1_wrd2_practice.item(values.setNr);
+		values.compWord2_1 = item.comp2_wrd1_practice.item(values.setNr);
+		values.compWord2_2 = item.comp2_wrd2_practice.item(values.setNr);
+		values.compWord3_1 = item.comp3_wrd1_practice.item(values.setNr);
+		values.compWord3_2 = item.comp3_wrd2_practice.item(values.setNr);
+		values.compWord4_1 = item.comp4_wrd1_practice.item(values.setNr);
+		values.compWord4_2 = item.comp4_wrd2_practice.item(values.setNr);
+		values.compWord5_1 = item.comp5_wrd1_practice.item(values.setNr);
+		values.compWord5_2 = item.comp5_wrd2_practice.item(values.setNr);
+		values.compWord6_1 = item.comp6_wrd1_practice.item(values.setNr);
+		values.compWord6_2 = item.comp6_wrd2_practice.item(values.setNr);		
+		values.compWord7_1 = item.comp7_wrd1_practice.item(values.setNr);
+		values.compWord7_2 = item.comp7_wrd2_practice.item(values.setNr);	
+		values.compWord8_1 = item.comp8_wrd1_practice.item(values.setNr);
+		values.compWord8_2 = item.comp8_wrd2_practice.item(values.setNr);
+		
+		values.compWord1_compAns = item.comp1_compAns_practice.item(values.setNr);
+		values.compWord2_compAns = item.comp2_compAns_practice.item(values.setNr);
+		values.compWord3_compAns = item.comp3_compAns_practice.item(values.setNr);
+		values.compWord4_compAns = item.comp4_compAns_practice.item(values.setNr);	
+		values.compWord5_compAns = item.comp5_compAns_practice.item(values.setNr);		
+		values.compWord6_compAns = item.comp6_compAns_practice.item(values.setNr);		
+		values.compWord7_compAns = item.comp7_compAns_practice.item(values.setNr);		
+		values.compWord8_compAns = item.comp8_compAns_practice.item(values.setNr);		
+		
+		values.compWord1_compType = item.comp1_compType_practice.item(values.setNr);
+		values.compWord2_compType = item.comp2_compType_practice.item(values.setNr);
+		values.compWord3_compType = item.comp3_compType_practice.item(values.setNr);
+		values.compWord4_compType = item.comp4_compType_practice.item(values.setNr);	
+		values.compWord5_compType = item.comp5_compType_practice.item(values.setNr);		
+		values.compWord6_compType = item.comp6_compType_practice.item(values.setNr);		
+		values.compWord7_compType = item.comp7_compType_practice.item(values.setNr);		
+		values.compWord8_compType = item.comp8_compType_practice.item(values.setNr);			
+			
+	}	
+]
+</trial>
+
+//present the selected five words:
+<trial listPresentation>
+/ ontrialbegin = [	
+//depending on the selected concept presentation order (values.presentationOrder in trial.getReadyWordlist), 
+//the script prepares the order of the five words:	
+	if (values.presentationOrder == "IFIFF"){
+		trial.listPresentation.insertStimulusTime(text.IMem1, expressions.trialstart_word1);
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi2);
+		trial.listPresentation.insertStimulusTime(text.FMem1, expressions.trialstart_word2);
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi3);
+		trial.listPresentation.insertStimulusTime(text.IMem2, expressions.trialstart_word3);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi4);
+		trial.listPresentation.insertStimulusTime(text.FMem2, expressions.trialstart_word4);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi5);
+		trial.listPresentation.insertStimulusTime(text.FMem3, expressions.trialstart_word5);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi6);
+		
+	//this code assembles values.presentedStim using the order in which the ignored and focused words are to be presented:
+		values.presentedStim = concat(values.IMem1, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem1);		
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.IMem2);
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem2);
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem3);	
+		
+	} else if (values.presentationOrder == "FIFIF"){
+		trial.listPresentation.insertStimulusTime(text.FMem1, expressions.trialstart_word1);
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi2);
+		trial.listPresentation.insertStimulusTime(text.IMem1, expressions.trialstart_word2);
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi3);
+		trial.listPresentation.insertStimulusTime(text.FMem2, expressions.trialstart_word3);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi4);
+		trial.listPresentation.insertStimulusTime(text.IMem2, expressions.trialstart_word4);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi5);
+		trial.listPresentation.insertStimulusTime(text.FMem3, expressions.trialstart_word5);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi6);
+
+		values.presentedStim = concat(values.FMem1, "|");
+		values.presentedStim = concat(values.presentedStim, values.IMem1);		
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem2);
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.IMem2);
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem3);			
+	} else if (values.presentationOrder == "FIFFI"){
+		trial.listPresentation.insertStimulusTime(text.FMem1, expressions.trialstart_word1);
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi2);
+		trial.listPresentation.insertStimulusTime(text.IMem1, expressions.trialstart_word2);
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi3);
+		trial.listPresentation.insertStimulusTime(text.FMem2, expressions.trialstart_word3);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi4);
+		trial.listPresentation.insertStimulusTime(text.FMem3, expressions.trialstart_word4);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi5);
+		trial.listPresentation.insertStimulusTime(text.IMem2, expressions.trialstart_word5);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi6);
+
+		values.presentedStim = concat(values.FMem1, "|");
+		values.presentedStim = concat(values.presentedStim, values.IMem1);		
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem2);
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem3);
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.IMem2);			
+	} else if (values.presentationOrder == "IFFIF"){
+		trial.listPresentation.insertStimulusTime(text.IMem1, expressions.trialstart_word1);
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi2);
+		trial.listPresentation.insertStimulusTime(text.FMem1, expressions.trialstart_word2);
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi3);
+		trial.listPresentation.insertStimulusTime(text.FMem2, expressions.trialstart_word3);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi4);
+		trial.listPresentation.insertStimulusTime(text.IMem2, expressions.trialstart_word4);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi5);
+		trial.listPresentation.insertStimulusTime(text.FMem3, expressions.trialstart_word5);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi6);
+
+		values.presentedStim = concat(values.IMem1, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem1);		
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem2);
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.IMem2);
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem3);			
+	} else if (values.presentationOrder == "FIIFF"){
+		trial.listPresentation.insertStimulusTime(text.FMem1, expressions.trialstart_word1);
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi2);
+		trial.listPresentation.insertStimulusTime(text.IMem1, expressions.trialstart_word2);
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi3);
+		trial.listPresentation.insertStimulusTime(text.IMem2, expressions.trialstart_word3);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi4);
+		trial.listPresentation.insertStimulusTime(text.FMem2, expressions.trialstart_word4);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi5);
+		trial.listPresentation.insertStimulusTime(text.FMem3, expressions.trialstart_word5);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi6);
+
+		values.presentedStim = concat(values.FMem1, "|");
+		values.presentedStim = concat(values.presentedStim, values.IMem1);		
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.IMem2);
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem2);
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem3);			
+	} else if (values.presentationOrder == "IFFFI"){
+		trial.listPresentation.insertStimulusTime(text.IMem1, expressions.trialstart_word1);
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi2);
+		trial.listPresentation.insertStimulusTime(text.FMem1, expressions.trialstart_word2);
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi3);
+		trial.listPresentation.insertStimulusTime(text.FMem2, expressions.trialstart_word3);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi4);
+		trial.listPresentation.insertStimulusTime(text.FMem3, expressions.trialstart_word4);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi5);
+		trial.listPresentation.insertStimulusTime(text.IMem2, expressions.trialstart_word5);		
+		trial.listPresentation.insertStimulusTime(clearScreen, expressions.trialstart_isi6);
+
+
+		values.presentedStim = concat(values.IMem1, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem1);		
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem2);
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.FMem3);
+		values.presentedStim = concat(values.presentedStim, "|");
+		values.presentedStim = concat(values.presentedStim, values.IMem2);			
+	}
+]
+/ stimulustimes = [0 = attnMem]
+/ ontrialend = [
+//The trial uses dynamic stimulus insertation and thus needs to reset the stimulus frames at the end of the trial
+	trial.listPresentation.resetStimulusFrames();
+]
+/ timeout = expressions.trialduration
+/ posttrialpause = parameters.listPresentation_iti
+/ recorddata = false
+</trial>
+
+***********************************************************
+Recall
+***********************************************************
+
+ISI500 btwn last ISI1000 (list word presentation) = parameters.recall_delay and is implemented as the
+pretrialpause to the recall trial
+
+recallleft/recallright is selected by list.recallQuestion
+
+<trial recall>
+/ pretrialpause = parameters.recall_delay
+/ ontrialbegin = [
+//the script samples whether the 'focused category' will be the left or the right category
+	values.recallQuestion = list.recallQuestion.nextValue;
+	if (values.recallQuestion == 1){
+		values.leftCategory = values.Fconcept;
+		values.rightCategory = values.Iconcept;
+	} else {
+		values.leftCategory = values.Iconcept;
+		values.rightCategory = values.Fconcept;
+	}
+	
+	values.correctResponse = values.Fconcept;
+	
+]	
+/ stimulustimes = [0 = recallQuestion, left, right]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ iscorrectresponse = [
+	if (values.recallQuestion == 1){
+	//the focused category was presented on the left:
+		if (trial.recall.responseText == parameters.leftKey){
+		//if the script ends up here: the left key was pressed and thus the response is correct (true)
+			return true;
+		} else {
+		//if the script ends up here: the left key was not pressed and thus the response is not correct (false)
+			return false;
+		}
+	} else {
+	//the focused category was not presented on the left (=> it was presented on the right)
+		if (trial.recall.responseText == parameters.rightKey){
+			return true;
+		} else {
+			return false;
+		}
+	}
+]
+/ ontrialend = [
+	if (trial.recall.correct){
+		text.correctFeedback.skip = false;
+		text.errorFeedback.skip = true;
+	} else {
+		text.correctFeedback.skip = true;
+		text.errorFeedback.skip = false;		
+	}
+	
+	if (trial.recall.responseText == parameters.leftKey){
+		values.responseCategory = values.leftCategory;
+	} else {
+		values.responseCategory = values.rightCategory;
+	}
+	
+	list.ACC_recall.appendItem(trial.recall.correct);
+	if (trial.recall.correct){
+		list.RT_recall.appendItem(trial.recall.latency);
+	}
+]
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ posttrialpause = parameters.recall_isi
+/ branch = [
+	return trial.recallFeedback;
+]
+</trial>
+
+<trial recallFeedback>
+/ stimulusframes = [1 = correctFeedback, errorFeedback, recallfeedback, recallContinue]
+/ validresponse = (" ")
+/ recorddata = false
+/ posttrialpause = parameters.recall_iti
+</trial>
+
+*****************************************************************
+Comparison Warm Up Trials: order is randomly selected 
+*****************************************************************
+
+<trial getReadyComparison>
+/ pretrialpause = parameters.comparison_delay
+/ stimulusframes = [1 = getReadyComparison]
+
+//for touchscreens: present the inactive response buttons
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ isvalidresponse = [
+	return false;
+]
+
+/ timeout = parameters.warmUpGetReady
+/ recorddata = false
+</trial>
+
+
+<trial warmUp_different1>
+/ ontrialbegin = [
+	values.primeType = "warmUp";
+	values.correctResponse = "d";
+	trial.warmUp_different1.insertStimulusTime(text.compFixation1, parameters.comp_attn_isi1);
+	trial.warmUp_different1.insertStimulusTime(text.compFixation2, parameters.comp_attn_isi1);	
+	trial.warmUp_different1.insertStimulusTime(shape.eraser, (parameters.comp_attn_isi1 + parameters.comp_attnPriming));
+	trial.warmUp_different1.insertStimulusTime(text.WrmD1wrd1, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+	trial.warmUp_different1.insertStimulusTime(text.WrmD1wrd2, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+]
+/ stimulustimes = [0 = different, same]
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ beginresponsetime = parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2
+/ correctresponse = (parameters.differentKey)
+/ ontrialend = [
+	trial.warmUp_different1.resetStimulusFrames();
+	list.compACC_round.appendItem(trial.warmUp_different1.correct);
+	list.compRT_round.appendItem(trial.warmUp_different1.latency);
+	values.compStem = text.WrmD1wrd1.currentItem;
+	values.compAlt = text.WrmD1wrd2.currentItem;	
+	
+	if (trial.warmUp_different1.responseText == parameters.differentKey){
+		values.responseCategory = "d";
+	} else {
+		values.responseCategory = "l";
+	}
+]
+</trial>
+
+<trial warmUp_different2>
+/ ontrialbegin = [
+	values.primeType = "warmUp";
+	values.correctResponse = "d";	
+	trial.warmUp_different2.insertStimulusTime(text.compFixation1, parameters.comp_attn_isi1);
+	trial.warmUp_different2.insertStimulusTime(text.compFixation2, parameters.comp_attn_isi1);	
+	trial.warmUp_different2.insertStimulusTime(shape.eraser, (parameters.comp_attn_isi1 + parameters.comp_attnPriming));
+	trial.warmUp_different2.insertStimulusTime(text.WrmD2wrd1, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+	trial.warmUp_different2.insertStimulusTime(text.WrmD2wrd2, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+]
+/ stimulustimes = [0 = different, same]
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ beginresponsetime = parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2
+/ correctresponse = (parameters.differentKey)
+/ ontrialend = [
+	trial.warmUp_different2.resetStimulusFrames();
+	list.compACC_round.appendItem(trial.warmUp_different2.correct);
+	list.compRT_round.appendItem(trial.warmUp_different2.latency);
+	values.compStem = text.WrmD2wrd1.currentItem;
+	values.compAlt = text.WrmD2wrd2.currentItem;	
+	
+	if (trial.warmUp_different2.responseText == parameters.differentKey){
+		values.responseCategory = "d";
+	} else {
+		values.responseCategory = "l";
+	}	
+]
+</trial>
+
+<trial warmUp_same1>
+/ ontrialbegin = [
+	values.primeType = "warmUp";
+	values.correctResponse = "l";	
+	trial.warmUp_same1.insertStimulusTime(text.compFixation1, parameters.comp_attn_isi1);
+	trial.warmUp_same1.insertStimulusTime(text.compFixation2, parameters.comp_attn_isi1);	
+	trial.warmUp_same1.insertStimulusTime(shape.eraser, (parameters.comp_attn_isi1 + parameters.comp_attnPriming));
+	trial.warmUp_same1.insertStimulusTime(text.WrmL1wrd1, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+	trial.warmUp_same1.insertStimulusTime(text.WrmL1wrd2, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+]
+/ stimulustimes = [0 = different, same]
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ beginresponsetime = parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2
+/ correctresponse = (parameters.sameKey)
+/ ontrialend = [
+	trial.warmUp_same1.resetStimulusFrames();
+	list.compACC_round.appendItem(trial.warmUp_same1.correct);
+	list.compRT_round.appendItem(trial.warmUp_same1.latency);
+	values.compStem = text.WrmL1wrd1.currentItem;
+	values.compAlt = text.WrmL1wrd2.currentItem;	
+	
+	if (trial.warmUp_same1.responseText == parameters.differentKey){
+		values.responseCategory = "d";
+	} else {
+		values.responseCategory = "l";
+	}	
+]
+</trial>
+
+<trial warmUp_same2>
+/ ontrialbegin = [
+	values.primeType = "warmUp";
+	values.correctResponse = "l";	
+	trial.warmUp_same2.insertStimulusTime(text.compFixation1, parameters.comp_attn_isi1);
+	trial.warmUp_same2.insertStimulusTime(text.compFixation2, parameters.comp_attn_isi1);	
+	trial.warmUp_same2.insertStimulusTime(shape.eraser, (parameters.comp_attn_isi1 + parameters.comp_attnPriming));
+	trial.warmUp_same2.insertStimulusTime(text.WrmL2wrd1, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+	trial.warmUp_same2.insertStimulusTime(text.WrmL2wrd2, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+]
+/ stimulustimes = [0 = different, same]
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ beginresponsetime = parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2
+/ correctresponse = (parameters.sameKey)
+/ ontrialend = [
+	trial.warmUp_same2.resetStimulusFrames();
+	list.compACC_round.appendItem(trial.warmUp_same2.correct);
+	list.compRT_round.appendItem(trial.warmUp_same2.latency);
+	values.compStem = text.WrmL2wrd1.currentItem;
+	values.compAlt = text.WrmL2wrd2.currentItem;
+	
+	if (trial.warmUp_same2.responseText == parameters.differentKey){
+		values.responseCategory = "d";
+	} else {
+		values.responseCategory = "l";
+	}		
+]
+</trial>
+
+*****************************************************************
+Comparison Test Trials: order is randomly selected 
+*****************************************************************
+
+<trial comp1>
+/ ontrialbegin = [
+	values.primeType = values.compWord1_compType;
+	values.correctResponse = values.compWord1_compAns;
+	
+	trial.comp1.insertStimulusTime(text.compFixation1, parameters.comp_attn_isi1);
+	trial.comp1.insertStimulusTime(text.compFixation2, parameters.comp_attn_isi1);	
+	trial.comp1.insertStimulusTime(shape.eraser, (parameters.comp_attn_isi1 + parameters.comp_attnPriming));
+	trial.comp1.insertStimulusTime(text.comp1Wrd1, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+	trial.comp1.insertStimulusTime(text.comp1Wrd2, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+]
+/ stimulustimes = [0 = different, same]
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ beginresponsetime = parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2
+/ iscorrectresponse = [
+	if (values.correctResponse == "d"){
+		if (trial.comp1.responseText == parameters.differentKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else if (values.correctResponse == "l"){
+		if (trial.comp1.responseText == parameters.sameKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+]
+/ ontrialend = [
+	trial.comp1.resetStimulusFrames();
+	list.compACC_round.appendItem(trial.comp1.correct);
+	list.compRT_round.appendItem(trial.comp1.latency);
+	values.compStem = text.comp1Wrd1.currentItem;
+	values.compAlt = text.comp1Wrd2.currentItem;
+	
+	if (trial.comp1.responseText == parameters.differentKey){
+		values.responseCategory = "d";
+	} else {
+		values.responseCategory = "l";
+	}	
+
+	if (values.setType == "primed"){
+		list.compACC_primed.appendItem(trial.comp1.correct);
+		list.compRT_primed_uncorrected.appendItem(trial.comp1.latency);
+		if (trial.comp1.correct){
+			list.compRT_primed.appendItem(trial.comp1.latency);
+		}
+	} else {
+		list.compACC_unprimed.appendItem(trial.comp1.correct);
+		list.compRT_unprimed_uncorrected.appendItem(trial.comp1.latency);
+		if (trial.comp1.correct){
+			list.compRT_unprimed.appendItem(trial.comp1.latency);
+		}		
+	}
+]
+</trial>
+
+<trial comp2>
+/ ontrialbegin = [
+	values.primeType = values.compWord2_compType;
+	values.correctResponse = values.compWord2_compAns;
+	
+	trial.comp2.insertStimulusTime(text.compFixation1, parameters.comp_attn_isi1);
+	trial.comp2.insertStimulusTime(text.compFixation2, parameters.comp_attn_isi1);	
+	trial.comp2.insertStimulusTime(shape.eraser, (parameters.comp_attn_isi1 + parameters.comp_attnPriming));
+	trial.comp2.insertStimulusTime(text.comp2Wrd1, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+	trial.comp2.insertStimulusTime(text.comp2Wrd2, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+]
+/ stimulustimes = [0 = different, same]
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ beginresponsetime = parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2
+/ iscorrectresponse = [
+	if (values.correctResponse == "d"){
+		if (trial.comp2.responseText == parameters.differentKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else if (values.correctResponse == "l"){
+		if (trial.comp2.responseText == parameters.sameKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+]
+/ ontrialend = [
+	trial.comp2.resetStimulusFrames();
+	list.compACC_round.appendItem(trial.comp2.correct);
+	list.compRT_round.appendItem(trial.comp2.latency);
+	values.compStem = text.comp2Wrd1.currentItem;
+	values.compAlt = text.comp2Wrd2.currentItem;
+	
+	if (trial.comp2.responseText == parameters.differentKey){
+		values.responseCategory = "d";
+	} else {
+		values.responseCategory = "l";
+	}	
+
+	if (values.setType == "primed"){
+		list.compACC_primed.appendItem(trial.comp2.correct);
+		list.compRT_primed_uncorrected.appendItem(trial.comp2.latency);
+		if (trial.comp2.correct){
+			list.compRT_primed.appendItem(trial.comp2.latency);
+		}
+	} else {
+		list.compACC_unprimed.appendItem(trial.comp2.correct);
+		list.compRT_unprimed_uncorrected.appendItem(trial.comp2.latency);
+		if (trial.comp2.correct){
+			list.compRT_unprimed.appendItem(trial.comp2.latency);
+		}		
+	}	
+]
+</trial>
+
+<trial comp3>
+/ ontrialbegin = [
+	values.primeType = values.compWord3_compType;
+	values.correctResponse = values.compWord3_compAns;
+		
+	trial.comp3.insertStimulusTime(text.compFixation1, parameters.comp_attn_isi1);
+	trial.comp3.insertStimulusTime(text.compFixation2, parameters.comp_attn_isi1);	
+	trial.comp3.insertStimulusTime(shape.eraser, (parameters.comp_attn_isi1 + parameters.comp_attnPriming));
+	trial.comp3.insertStimulusTime(text.comp3Wrd1, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+	trial.comp3.insertStimulusTime(text.comp3Wrd2, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+]
+/ stimulustimes = [0 = different, same]
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ beginresponsetime = parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2
+/ iscorrectresponse = [
+	if (values.correctResponse == "d"){
+		if (trial.comp3.responseText == parameters.differentKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else if (values.correctResponse == "l"){
+		if (trial.comp3.responseText == parameters.sameKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+]
+/ ontrialend = [
+	trial.comp3.resetStimulusFrames();
+	list.compACC_round.appendItem(trial.comp3.correct);
+	list.compRT_round.appendItem(trial.comp3.latency);
+	values.compStem = text.comp3Wrd1.currentItem;
+	values.compAlt = text.comp3Wrd2.currentItem;
+	
+	if (trial.comp3.responseText == parameters.differentKey){
+		values.responseCategory = "d";
+	} else {
+		values.responseCategory = "l";
+	}	
+
+	if (values.setType == "primed"){
+		list.compACC_primed.appendItem(trial.comp3.correct);
+		list.compRT_primed_uncorrected.appendItem(trial.comp3.latency);
+		if (trial.comp3.correct){
+			list.compRT_primed.appendItem(trial.comp3.latency);
+		}
+	} else {
+		list.compACC_unprimed.appendItem(trial.comp3.correct);
+		list.compRT_unprimed_uncorrected.appendItem(trial.comp3.latency);
+		if (trial.comp3.correct){
+			list.compRT_unprimed.appendItem(trial.comp3.latency);
+		}		
+	}	
+]
+</trial>
+
+<trial comp4>
+/ ontrialbegin = [
+	values.primeType = values.compWord4_compType;
+	values.correctResponse = values.compWord4_compAns;
+		
+	trial.comp4.insertStimulusTime(text.compFixation1, parameters.comp_attn_isi1);
+	trial.comp4.insertStimulusTime(text.compFixation2, parameters.comp_attn_isi1);	
+	trial.comp4.insertStimulusTime(shape.eraser, (parameters.comp_attn_isi1 + parameters.comp_attnPriming));
+	trial.comp4.insertStimulusTime(text.comp4Wrd1, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+	trial.comp4.insertStimulusTime(text.comp4Wrd2, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+]
+/ stimulustimes = [0 = different, same]
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ beginresponsetime = parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2
+/ iscorrectresponse = [
+	if (values.correctResponse == "d"){
+		if (trial.comp4.responseText == parameters.differentKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else if (values.correctResponse == "l"){
+		if (trial.comp4.responseText == parameters.sameKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+]
+/ ontrialend = [
+	trial.comp4.resetStimulusFrames();
+	list.compACC_round.appendItem(trial.comp4.correct);
+	list.compRT_round.appendItem(trial.comp4.latency);
+	values.compStem = text.comp4Wrd1.currentItem;
+	values.compAlt = text.comp4Wrd2.currentItem;
+	
+	if (trial.comp4.responseText == parameters.differentKey){
+		values.responseCategory = "d";
+	} else {
+		values.responseCategory = "l";
+	}
+
+	if (values.setType == "primed"){
+		list.compACC_primed.appendItem(trial.comp4.correct);
+		list.compRT_primed_uncorrected.appendItem(trial.comp4.latency);
+		if (trial.comp4.correct){
+			list.compRT_primed.appendItem(trial.comp4.latency);
+		}
+	} else {
+		list.compACC_unprimed.appendItem(trial.comp4.correct);
+		list.compRT_unprimed_uncorrected.appendItem(trial.comp4.latency);
+		if (trial.comp4.correct){
+			list.compRT_unprimed.appendItem(trial.comp4.latency);
+		}		
+	}	
+]
+</trial>
+
+<trial comp5>
+/ ontrialbegin = [
+	values.primeType = values.compWord5_compType;
+	values.correctResponse = values.compWord5_compAns;
+		
+	trial.comp5.insertStimulusTime(text.compFixation1, parameters.comp_attn_isi1);
+	trial.comp5.insertStimulusTime(text.compFixation2, parameters.comp_attn_isi1);	
+	trial.comp5.insertStimulusTime(shape.eraser, (parameters.comp_attn_isi1 + parameters.comp_attnPriming));
+	trial.comp5.insertStimulusTime(text.comp5Wrd1, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+	trial.comp5.insertStimulusTime(text.comp5Wrd2, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+]
+/ stimulustimes = [0 = different, same]
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ beginresponsetime = parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2
+/ iscorrectresponse = [
+	if (values.correctResponse == "d"){
+		if (trial.comp5.responseText == parameters.differentKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else if (values.correctResponse == "l"){
+		if (trial.comp5.responseText == parameters.sameKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+]
+/ ontrialend = [
+	trial.comp5.resetStimulusFrames();
+	list.compACC_round.appendItem(trial.comp5.correct);
+	list.compRT_round.appendItem(trial.comp5.latency);
+	values.compStem = text.comp5Wrd1.currentItem;
+	values.compAlt = text.comp5Wrd2.currentItem;
+	if (trial.comp5.responseText == parameters.differentKey){
+		values.responseCategory = "d";
+	} else {
+		values.responseCategory = "l";
+	}	
+	
+	if (values.setType == "primed"){
+		list.compACC_primed.appendItem(trial.comp5.correct);
+		list.compRT_primed_uncorrected.appendItem(trial.comp5.latency);
+		if (trial.comp5.correct){
+			list.compRT_primed.appendItem(trial.comp5.latency);
+		}
+	} else {
+		list.compACC_unprimed.appendItem(trial.comp5.correct);
+		list.compRT_unprimed_uncorrected.appendItem(trial.comp5.latency);
+		if (trial.comp5.correct){
+			list.compRT_unprimed.appendItem(trial.comp5.latency);
+		}		
+	}	
+]
+</trial>
+
+<trial comp6>
+/ ontrialbegin = [
+	values.primeType = values.compWord6_compType;
+	values.correctResponse = values.compWord6_compAns;
+		
+	trial.comp6.insertStimulusTime(text.compFixation1, parameters.comp_attn_isi1);
+	trial.comp6.insertStimulusTime(text.compFixation2, parameters.comp_attn_isi1);	
+	trial.comp6.insertStimulusTime(shape.eraser, (parameters.comp_attn_isi1 + parameters.comp_attnPriming));
+	trial.comp6.insertStimulusTime(text.comp6Wrd1, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+	trial.comp6.insertStimulusTime(text.comp6Wrd2, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+]
+/ stimulustimes = [0 = different, same]
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ beginresponsetime = parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2
+/ iscorrectresponse = [
+	if (values.correctResponse == "d"){
+		if (trial.comp6.responseText == parameters.differentKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else if (values.correctResponse == "l"){
+		if (trial.comp6.responseText == parameters.sameKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+]
+/ ontrialend = [
+	trial.comp6.resetStimulusFrames();
+	list.compACC_round.appendItem(trial.comp6.correct);
+	list.compRT_round.appendItem(trial.comp6.latency);
+	values.compStem = text.comp6Wrd1.currentItem;
+	values.compAlt = text.comp6Wrd2.currentItem;
+	if (trial.comp6.responseText == parameters.differentKey){
+		values.responseCategory = "d";
+	} else {
+		values.responseCategory = "l";
+	}
+
+	if (values.setType == "primed"){
+		list.compACC_primed.appendItem(trial.comp6.correct);
+		list.compRT_primed_uncorrected.appendItem(trial.comp6.latency);
+		if (trial.comp6.correct){
+			list.compRT_primed.appendItem(trial.comp6.latency);
+		}
+	} else {
+		list.compACC_unprimed.appendItem(trial.comp6.correct);
+		list.compRT_unprimed_uncorrected.appendItem(trial.comp6.latency);
+		if (trial.comp6.correct){
+			list.compRT_unprimed.appendItem(trial.comp6.latency);
+		}		
+	}	
+]
+</trial>
+
+<trial comp7>
+/ ontrialbegin = [
+	values.primeType = values.compWord7_compType;
+	values.correctResponse = values.compWord7_compAns;
+		
+	trial.comp7.insertStimulusTime(text.compFixation1, parameters.comp_attn_isi1);
+	trial.comp7.insertStimulusTime(text.compFixation2, parameters.comp_attn_isi1);	
+	trial.comp7.insertStimulusTime(shape.eraser, (parameters.comp_attn_isi1 + parameters.comp_attnPriming));
+	trial.comp7.insertStimulusTime(text.comp7Wrd1, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+	trial.comp7.insertStimulusTime(text.comp7Wrd2, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+]
+/ stimulustimes = [0 = different, same]
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ beginresponsetime = parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2
+/ iscorrectresponse = [
+	if (values.correctResponse == "d"){
+		if (trial.comp7.responseText == parameters.differentKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else if (values.correctResponse == "l"){
+		if (trial.comp7.responseText == parameters.sameKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+]
+/ ontrialend = [
+	trial.comp7.resetStimulusFrames();
+	list.compACC_round.appendItem(trial.comp7.correct);
+	list.compRT_round.appendItem(trial.comp7.latency);
+	values.compStem = text.comp7Wrd1.currentItem;
+	values.compAlt = text.comp7Wrd2.currentItem;
+	if (trial.comp7.responseText == parameters.differentKey){
+		values.responseCategory = "d";
+	} else {
+		values.responseCategory = "l";
+	}	
+
+	if (values.setType == "primed"){
+		list.compACC_primed.appendItem(trial.comp7.correct);
+		list.compRT_primed_uncorrected.appendItem(trial.comp7.latency);
+		if (trial.comp7.correct){
+			list.compRT_primed.appendItem(trial.comp7.latency);
+		}
+	} else {
+		list.compACC_unprimed.appendItem(trial.comp7.correct);
+		list.compRT_unprimed_uncorrected.appendItem(trial.comp7.latency);
+		if (trial.comp7.correct){
+			list.compRT_unprimed.appendItem(trial.comp7.latency);
+		}		
+	}	
+]
+</trial>
+
+<trial comp8>
+/ ontrialbegin = [
+	values.primeType = values.compWord8_compType;
+	values.correctResponse = values.compWord8_compAns;
+		
+	trial.comp8.insertStimulusTime(text.compFixation1, parameters.comp_attn_isi1);
+	trial.comp8.insertStimulusTime(text.compFixation2, parameters.comp_attn_isi1);	
+	trial.comp8.insertStimulusTime(shape.eraser, (parameters.comp_attn_isi1 + parameters.comp_attnPriming));
+	trial.comp8.insertStimulusTime(text.comp8Wrd1, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+	trial.comp8.insertStimulusTime(text.comp8Wrd2, (parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2));
+]
+/ stimulustimes = [0 = different, same]
+/ validresponse = (parameters.differentKey, parameters.sameKey)
+/ beginresponsetime = parameters.comp_attn_isi1 + parameters.comp_attnPriming + parameters.comp_attn_isi2
+/ iscorrectresponse = [
+	if (values.correctResponse == "d"){
+		if (trial.comp8.responseText == parameters.differentKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else if (values.correctResponse == "l"){
+		if (trial.comp8.responseText == parameters.sameKey){
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+]
+/ ontrialend = [
+	trial.comp8.resetStimulusFrames();
+	list.compACC_round.appendItem(trial.comp8.correct);
+	list.compRT_round.appendItem(trial.comp8.latency);
+	values.compStem = text.comp8Wrd1.currentItem;
+	values.compAlt = text.comp8Wrd2.currentItem;
+	if (trial.comp8.responseText == parameters.differentKey){
+		values.responseCategory = "d";
+	} else {
+		values.responseCategory = "l";
+	}	
+
+	if (values.setType == "primed"){
+		list.compACC_primed.appendItem(trial.comp8.correct);
+		list.compRT_primed_uncorrected.appendItem(trial.comp8.latency);
+		if (trial.comp8.correct){
+			list.compRT_primed.appendItem(trial.comp8.latency);
+		}
+	} else {
+		list.compACC_unprimed.appendItem(trial.comp8.correct);
+		list.compRT_unprimed_uncorrected.appendItem(trial.comp8.latency);
+		if (trial.comp8.correct){
+			list.compRT_unprimed.appendItem(trial.comp8.latency);
+		}		
+	}	
+]
+</trial>
+
+*****************************************************************
+Comparison Test Trials: miscellaneous trials
+*****************************************************************
+
+<trial ComparisonFeedbackDelay>
+/ stimulusframes = [1 = clearScreen]
+
+/ trialduration = parameters.comparisonFeedback_delay
+/ recorddata = false
+</trial>
+
+<trial ComparisonFeedback>
+/ stimulusframes = [1 = comparisonFeedback]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial performanceGoalsReminder>
+/ stimulusframes = [1= performanceGoals]
+/ validresponse = (" ")
+/ recorddata = false
+/ posttrialpause = parameters.comparison_iti
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+<block instructions>
+/ onblockbegin = [
+	values.selectInstructions = 0;
+]
+/ trials = [
+	1-4 = instruction; 
+	5 = instruction_sameExample; 
+	6 = instruction_differentExample; 
+	7-8 = instruction;
+]
+/ onblockend = [
+	values.practice = 1;
+]
+</block>
+
+<block testInstructions>
+/ onblockbegin = [
+	values.practice = 0;
+	values.round = 0;
+	values.selectInstructions = 8;
+	list.presentationOrder.reset();
+	list.recallQuestion.reset();
+	list.ACC_recall.reset();
+	list.RT_recall.reset();
+	list.compACC_primed.reset();
+	list.compRT_primed.reset();
+	list.compRT_primed_uncorrected.reset();
+	list.compACC_unprimed.reset();
+	list.compRT_unprimed.reset();
+	list.compRT_unprimed_uncorrected.reset();	
+]
+/ trials = [1-2 = instruction]
+</block>
+
+<block listPresentation>
+/ onblockbegin = [
+	values.compStem = "";
+	values.compAlt = "";
+	values.primeType = "";
+	values.leftCategory = "";
+	values.rightCategory = "";
+	values.responseCategory = "";
+	values.correctResponse = "";
+	values.round += 1;
+]
+/ trials = [
+	1 = getReadyWordlist; 
+	2 = listPresentation;
+]
+</block>
+
+<block recall>
+/ trials = [1 = recall]
+</block>
+
+<block comparison>
+/ onblockbegin = [
+	list.compACC_round.reset();
+	list.compRT_round.reset();
+	values.responseCategory = "";
+]
+/ trials = [
+	1 = getReadyComparison;
+	2-5 = noreplace(warmUp_different1, warmUp_different2, warmUp_same1, warmUp_same2);
+	6 = sequence(comp1, comp2, comp3, comp4, comp5, comp6, comp7, comp8);
+	7 = ComparisonFeedbackDelay;
+	8 = ComparisonFeedback;
+	9 = performanceGoalsReminder;
+]
+</block>
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt a>
+/ blocks = [
+	1 = instructions;
+	2-3 = sequence(listPresentation, recall, comparison); 	
+	4 = testInstructions;
+	5-22 =sequence(listPresentation, recall, comparison);
+	23 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

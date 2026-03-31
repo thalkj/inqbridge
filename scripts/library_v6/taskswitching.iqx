@@ -1,0 +1,3239 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+						*PREDICTABLE TASK SWITCHING TASK: alternating-runs paradigm*
+___________________________________________________________________________________________________________________	
+
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 11-14-2017
+last updated:  03-02-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 03-02-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a predictable alternating-runs paradigm switching task, an 
+executive function task
+
+The implemented procedure is based on:
+
+Rogers, R. D., & Monsell, S. (1995). The costs of a predictable switch
+between simple cognitive tasks. Journal of Experimental Psychology:
+General, 124, 207–231.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+This task switching task uses two simple categorization tasks and predictably alternates btw.
+the two by using a clockwise rotation of stimulus presentation in a 2x2 matrix as the predictable location cues:									  
+
+A 2 x 2 matrix is presented on screen. A pair of characters (e.g. '2F') appears in one of the matrix fields.
+For each new trial, the presented pair of characters moves in clockwise fashion to the next box,
+so that it is always predictable where the next character pair will appear.
+The task that needs to be performed depends on the box the character pair appears in (= location cue).
+
+Two tasks:
+Task A: letter task: "If one of the characters is a consonant press, key E. If one of the characters is a consonant, press key I"
+Task B: digit task: "If one of the characters is an even digit press, key E. If one of the characters is an odd digit, press key I"
+
+Each character pair consists of of a target character (depends on the target task) and a distractor character. The distractor character 
+can come from the opposite task or from an unrelated set of characters.
+
+Example:
+Participant has to perform the letter task every time the character pair appears in the top quadrants of the matrix
+and has to perform the digit task every time the character pair appears in the bottom quadrants of the matrix (this quadrant-task assignment
+can be set by experimenter).
+Letter Task: the character pair consists of of a target letter (e.g. 'G') and a distractor character, either a digit (e.g. '2') or an unrelated symbol (e.g. '#')
+Digit Task: the character pair consists of of a target digit (e.g. '3') and a distractor character, either a letter (e.g. 'A') or an unrelated symbol (e.g. '%')
+
+Because the presentation of the character pairs moves predictably in a clockwise fashion, every odd trial in this script 
+is a 'switch task' trial and every even trial is a 'nonswitch task' trial.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr.:
+
+Practice: ~15minutes
+Test: ~40minutes
+_____________________
+Total: ~55minutes
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'taskswitching_raw*.iqdat'*
+
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.
+										
+countPracticeBlocks:			practice block counter
+countTestBlocks:				test block counter 										
+																				
+(parameter) conditionSequence:			stores the sequence order: C for crosstalk condition, N = non-crosstalk condition
+										(Example: CCNN => block1-2: C; block3-4: N)
+(parameter) quadrantTaskAssignmnent:								
+										1 = top quadrants: letter task; bottom quadrants: digit task
+										symbols appearing in quadrant 1 (top, left) and quadrant 2 (top, right) =>  do letter task,
+										symbols appearing in quadrant 3 (bottom, right) and quadrant 4 (bottom, left) =>  do digit task
+										
+										2 = top quadrants: digit task; bottom quadrants: letter task
+										symbols appearing in quadrant 1 (top, left) and quadrant 2 (top, right) =>  do digit task,
+										symbols appearing in quadrant 3 (bottom, right) and quadrant 4 (bottom, left) =>  do letter task						
+						
+										3 = left quadrants: letter task; right quadrants: digit task
+										symbols appearing in quadrant 1 (top, left) and quadrant 4 (bottom, left) =>  do letter task
+										symbols appearing in quadrant 2 (top, left) and quadrant 3 (bottom, left) =>  do digit task
+						
+										4 = left quadrants: digit task; right quadrants: letter task
+										symbols appearing in quadrant 1 (top, left) and quadrant 4 (bottom, left) =>  do digit task
+										symbols appearing in quadrant 2 (top, left) and quadrant 3 (bottom, left) =>  do letter task										
+									
+congruentTasks:					stores the currently congruent tasks (based on key assignment)
+								"consonant-even; vowel-odd" vs. "consonant-odd; vowel-even";									
+
+switch:							0 = non-switch trial (even trials); 
+								1 = switch trials (odd trials)
+								
+quadrant:						1 = top, left; 
+								2 = top, right; 
+								3 = bottom, right; 
+								4 = bottom, left (clockwise)	
+								
+targetTask:						stores the task to be performed:  "letter task" vs. "digit task"
+targetCategory:					CONSONANT vs. VOWEL vs. EVEN vs. ODD							
+
+targetSymbol:					stores the current target symbol (either the target consonant, target vowel, target even number, target odd number)
+distractorSymbol:				stores the current distractor symbol
+targetPair:						stores the currently presented combined pair of target symbol and distractor symbol
+
+congruence:						for cross talk condition: 
+								1 = distractor symbol is a control symbol (no sharing of response keys); 
+								2 = congruent (distractor and target symbol share the same response key); 
+								3 = incongruent (distractor and target symbol have opposite response keys); 
+								
+stimulusitem:					the presented stimuli in order of trial presentation
+response:						the participant's response (scancode of response buttons)
+correct:						accuracy of response: 1 = correct response; 0 = otherwise
+latency: 						the response latency (in ms); measured from: onset of symbol pair
+
+
+(2) Summary data file: 'taskswitching_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)		
+								
+congruentTasks:					stores the currently congruent tasks (based on key assignment)
+								"consonant-even; vowel-odd" vs. "consonant-odd; vowel-even";							
+								
+(parameter) conditionSequence:			stores the sequence order: C for crosstalk condition, N = non-crosstalk condition
+										(Example: CCNN => block1-2: C; block3-4: N)
+(parameter) quadrantTaskAssignmnent:								
+										1 = top quadrants: letter task; bottom quadrants: digit task
+										symbols appearing in quadrant 1 (top, left) and quadrant 2 (top, right) =>  do letter task,
+										symbols appearing in quadrant 3 (bottom, right) and quadrant 4 (bottom, left) =>  do digit task
+										
+										2 = top quadrants: digit task; bottom quadrants: letter task
+										symbols appearing in quadrant 1 (top, left) and quadrant 2 (top, right) =>  do digit task,
+										symbols appearing in quadrant 3 (bottom, right) and quadrant 4 (bottom, left) =>  do letter task						
+						
+										3 = left quadrants: letter task; right quadrants: digit task
+										symbols appearing in quadrant 1 (top, left) and quadrant 4 (bottom, left) =>  do letter task
+										symbols appearing in quadrant 2 (top, left) and quadrant 3 (bottom, left) =>  do digit task
+						
+										4 = left quadrants: digit task; right quadrants: letter task
+										symbols appearing in quadrant 1 (top, left) and quadrant 4 (bottom, left) =>  do digit task
+										symbols appearing in quadrant 2 (top, left) and quadrant 3 (bottom, left) =>  do letter task										
+									
+
+Note: trials with latencies < 100ms and trials with 'no responses' are EXCLUDED from the following summary data
+(warm-up trials not included)
+
+C = crosstalk condition (distractors can be sampled from opposite task) vs. 
+N = non-crosstalk condition (distractors are always control characters such as '$')
+
+count_switchC:				number of switch crosstalk trial responses qualified for summary variables
+propCorrect_switchC:		proportion of correct switch trials in crosstalk condition 
+count_nonswitchC:			number of nonswitch crosstalk trial responses qualified for summary variables
+propCorrect_nonswitchC:		proportion of correct nonswitch trials in crosstalk condition 
+ACC_SwitchCost_C:			accuracy switchcosts in crosstalk condition 
+								(difference btw. proportion correct of switch trials and nonswitch trials)
+								=> negative value: participants were less accurate on switch trials (there was an accuracy cost to switching )
+
+meanRT_switchC:				mean latency of correctly responding to a switch trial in crosstalk condition
+meanRT_nonswitchC:			mean latency of correctly responding to a nonswitch trial in crosstalk condition
+RT_SwitchCost_C:			latency switchcosts in crosstalk condition 
+								(difference btw. mean correct latency of switch trials and nonswitch trials)
+								=> positive value: participants were slower on switch trials (there was a latency cost to switching)
+
+count_switchN:				number of switch noncrosstalk trial responses qualified for summary variables
+propCorrect_switchN:		proportion of correct switch trials in non-crosstalk condition condition 								
+count_nonswitchN:			number of nonswitch noncrosstalk trial responses qualified for summary variables
+propCorrect_nonswitchN:		proportion of correct nonswitch trials in non-crosstalk condition condition 
+ACC_SwitchCost_N:			accuracy switchcosts in non-crosstalk condition condition 
+								(difference btw. proportion correct of switch trials and nonswitch trials)
+								=> negative value: participants were less accurate on switch trials (there was an accuracy cost to switching )
+
+meanRT_switchN:				mean latency of correctly responding to a switch trial in non-crosstalk condition condition
+meanRT_nonswitchN:			mean latency of correctly responding to a nonswitch trial in non-crosstalk condition condition
+RT_SwitchCost_N:			latency switchcosts in non-crosstalk condition condition 
+								(difference btw. mean correct latency of switch trials and nonswitch trials)
+								=> positive value: participants were slower on switch trials  (there was a latency cost to switching)
+
+propExcluded:				proportion excluded (from summary variables) trials across all test trials (excluded because of no responses or because latency < 100ms)
+
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+
+(1) Extensive Practice of the key assignments for the Letter and Digit Tasks
+* 16 blocks of practice, alternating btw. letter task and digit task (8 blocks each)
+* each block presents 24 trials (= 16 blocks x 24 trials/block = 384 trials total)
+* key reminders are presented on screen during the first 8 blocks only
+* practice trials require a response correction to move on
+* during practice, one box with a character pair appears on screen; there is no response deadline
+
+(2) Test: the test session consists of C blocks and N blocks
+C = crosstalk condition (distractors can be sampled from opposite task) vs. 
+N = non-crosstalk condition (distractors are always control characters such as '$')
+
+* each block runs 48 trials 
+* by default, the script runs 8 C blocks, followed by 8 N blocks (total number of trials run: 16 blocks * 48 trials/block = 768 trials)
+	=> parameters.conditionSequence = "CCCCCCCCNNNNNNNN" (sequence order can be edited under section Editable Parameters)
+* quadrant-task Assignment see Editable Parameters (sets which quadrants are assigned to which task)
+
+
+Block Information (each block runs 48 trials)
+* Block Start: depending on values.quadrantTaskAssignment (1, 2, 3, 4) the first quadrant position is randomly determined (randomly WITH replacement)
+(and with it the first task is randomly determined)
+
+	Example: values.quadrantTaskAssignment = 1 (top quadrants = letter task; bottom quadrants = digit task)
+		=> the first selected quadrant is randomly selected to be either 1 (top left), or 3 (bottom right)
+			=> if start quadrant is 1: starting task is letter task
+				=> task sequence: AABBAABBAABB...AABB
+			=> if start quadrant is 3: starting task is digit task
+				=> task sequence: BBAABBAABBAA...BBAA
+
+* quadrant changes clockwise from one trial to the next: 1 = top left; 2 = top, right; 3 = bottom, right; 4 = bottom, left	
+* the task to be performed (letter task vs. digit task) depends on the quadrant
+	* if letter task: half the trials select consonants; half select vowels
+	* if digit task: half the trials select even numbers; half select odd numbers
+* consonants, vowels, even digits, odd digits, control symbols are selected randomly WITH replacement
+(constraint: the same consonant (vowel, even digit, odd digit, control symbol) canNOT be selected during the next
+drawing from the same list) 
+* the placement in the pair presented ('7#' vs. '#7') is randomly determined
+
+
+Crosstalk Condition (C): can run control characters, and characters from the opposite task as distractor items
+=> 3 types of congruency possible
+
+1: no congruence (control character)
+2: congruent (distractor comes from opposite task but requires the same response button)
+3: incongruent (distractor comes from opposite task AND requires the opposite response button)
+
+	
+C-warmup: 12 trials
+* 6 switch trials (all odd trials; counting the first one as a switch trial); 6 non-switch trials (all even trials)
+	=> 3 switch trials (non-switch trials) for letter task (same for digit task)
+		=> 1 control switch trial, 1 congruent switch trial, 1 incongruent switch trial (same for non-switch trials)
+		=> !!!type of congruence (control, congruent, incongruent) and switch type are balanced for CC conditions
+	
+* 6 letter task trials: half select'consonants'; half select 'vowels'
+* 6 digit task trials: half select 'even digits'; half select 'odd digits'
+
+C-Test: 36 trials
+* 18 switch trials
+	=> 9 switch trials (nonswitch trials) for letter task (same for digit task)
+		=> letter task: 3 control switch trials, 3 congruent switch trials, 3 incongruent switch trials
+		=> !!!type of congruence (control, congruent, incongruent) and switch type are balanced for CC conditions
+
+* 18 letter task trials: half select 'consonants'; half select 'vowels'
+* 18 digit task trials: half select 'even digits'; half select 'odd digits'
+
+
+NON-Crosstalk Condition (N): the same as for C condition but with only control characters as distractors (no congruent, incongruent pairings)
+
+
+Trial Information:
+target pair presentation-> 
+wait for response (response deadline: 5000ms) -> 
+correct response/timeout: ITI of 150ms; incorrect response: ITI of 1500ms (with errorfeedback)
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+vowels: "A", "E", "I", "U" (see list.vowels under section Editable Stimuli)
+consonants: "G", "K", "M", "R" (see list.consonants under section Editable Stimuli)
+odd: "3", "5", "7", "9" (see list.odd under section Editable Stimuli)
+even: "2", "4", "6", "8" (see list.even under section Editable Stimuli)
+control: "#", "%", "@", "&" (see list.control under section Editable Stimuli)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/conditionSequence:		stores the sequence order: C for crosstalk condition, N = non-crosstalk condition
+						(Example: CCCCCCCCNNNNNNNN - each block runs 48 trials)
+/quadrantTaskAssignmnent:		
+						1 = top quadrants:letter task; bottom quadrants: digit task
+							symbols appearing in quadrant 1 (top, left) and quadrant 2 (top, right) =>  do letter task,
+							symbols appearing in quadrant 3 (bottom, right) and quadrant 4 (bottom, left) =>  do digit task
+						2 = top quadrants: digit task; bottom quadrants: letter task
+							symbols appearing in quadrant 1 (top, left) and quadrant 2 (top, right) =>  do digit task,
+							symbols appearing in quadrant 3 (bottom, right) and quadrant 4 (bottom, left) =>  do letter task						
+						
+						3 = left quadrants: letter task; right quadrants: digit task
+							symbols appearing in quadrant 1 (top, left) and quadrant 4 (bottom, left) =>  do letter task
+							symbols appearing in quadrant 2 (top, left) and quadrant 3 (bottom, left) =>  do digit task
+						
+						4 = left quadrants: digit task; right quadrants: letter task
+							symbols appearing in quadrant 1 (top, left) and quadrant 4 (bottom, left) =>  do digit task
+							symbols appearing in quadrant 2 (top, left) and quadrant 3 (bottom, left) =>  do letter task	
+							
+						
+/maxPracticeBlocks:		the number of practice blocks run 
+						Notes:
+						* number should be evenshould be even to allow for the same number of Letter as Digit Tasks practice blocks
+						* minimum number is 4 (if smaller, practice is skipped altogether)
+						
+Key Assignments:
+/leftKey:				the left response button (default: "E")
+/rightKey:				the right response button (default: "I")
+
+/consonantKey:			the key assigned for consonants (default: parameters.leftKey)
+/vowelKey:				the key assigned for vowels (default: parameters.rightKey)
+
+/evenKey:				the key assigned for even digits (default: parameters.leftKey)
+/oddKey:				the key assigned for odd digits (default: parameters.rightKey)
+Note: the default assignments align consonants and even digits/vowels and odd digits
+
+Stimuli Sizing
+/quadrantSize:			the size of one of the box quadrants proportional to canvas height (default: 25%)
+/targetSize:			the height of the symbol pairs proportional to canvas height (default: 5%)
+
+Timing Parameters:
+/readyDuration:			the duration (in ms) of the 'get-ready' trial (default: 2000ms)
+/responseDeadline:		the amount of time (in ms) assigned for making a response during the test (default: 5000ms)
+/correctITI:			the duration (in ms) of the intertrial interval if response was correct (default: 150ms)
+/errorITI:				the duration (in ms) of the intertrial interval if response was incorrect (default: 1500ms)
+/blockstartDuration:	the duration (in ms) of the highlighted box at the start of a new block (default: 2000ms)
+
+For Summary Variables
+/minRT:					trials in which participant respond with latency < minRT are excluded from summary variables (default: 100ms)						
+							
+							
+							
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/conditionSequence = "CCCCCCCCNNNNNNNN"
+/quadrantTaskAssignment = 1
+
+/maxPracticeBlocks = 16
+
+/leftKey = "E"
+/rightKey = "I"
+
+/consonantKey = parameters.leftKey
+/vowelKey = parameters.rightKey
+/evenKey = parameters.leftKey
+/oddKey = parameters.rightKey
+
+/quadrantSize = 15%
+/targetSize = 4%
+
+/readyDuration = 2000
+/responseDeadline = 5000
+/correctITI = 150
+/errorITI = 1500
+/blockstartDuration = 2000
+/minRT = 100
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text errorFeedback>
+/ items = ("X")
+/ fontstyle = ("Arial", 10%, true, false, false, false, 5, 1)
+/ position = (50%, 75%)
+/ txcolor = red
+</text>
+
+
+<text blockcount>
+/ items = ("Blocks completed: <%values.countTestBlocks%> of <%length(parameters.conditionSequence)%> blocks")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ position = (50%, 30%)
+/ txcolor = gray
+/ size = (80%, 5%)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+<text spacebar>
+/ items = ("<SPACEBAR>")
+/ fontstyle = ("Courier New", 3%, false, false, false, false, 5, 1)
+/ txcolor = blue
+/ position = (50%, 95%)
+/ size = (80%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+</text>
+
+<text letterTaskReminder>
+/ items = ("Letter Task")
+/ fontstyle = ("Courier New", 5%, true, false, false, false, 5, 1)
+/ txcolor = blue
+/ size = (30%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+/ position = (50%, 80%)
+</text>
+
+<text digitTaskReminder>
+/ items = ("Digit Task")
+/ fontstyle = ("Courier New", 5%, true, false, false, false, 5, 1)
+/ txcolor = green
+/ size = (30%, 5%)
+/ hjustify = center
+/ vjustify = center
+/ erase = false
+/ position = (50%, 80%)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+</instruct>
+
+<page end>
+^^^^^^^You have reached the end of the task.
+^^Thank you!
+</page>
+
+
+<item instructions>
+/1 = "In this task you will be asked to perform two simple categorization tasks.
+You will alternately work on each task for several blocks.
+~n~nPress the Spacebar to get instructions for your first task."
+
+/2 = "~nIn this task you will be presented simple pairs of characters such as 'U%' or '$L'. One and only one of the characters is always a letter.
+~nYour task is to decide as fast as possible whether the letter is a CONSONANT or a VOWEL.
+~nPress the <%parameters.leftKey%> button if the letter is a <%expressions.left%>.
+Press the <%parameters.rightKey%> button if the letter is a <%expressions.right%>.
+~nIf you make a mistake, a red X appears. Simply correct your response and move on.
+~n~nPress the Spacebar to start practice."
+
+/3 = "~nIn this task you will be presented simple pairs of characters such as '4%' or '&9'. One and only one of the characters is always a digit.
+~nYour task is to decide as fast as possible whether the digit is an ODD or an EVEN digit.
+~nPress the <%parameters.leftKey%> button if the digit is an <%expressions.left%>.
+Press the <%parameters.rightKey%> button if the digit is an <%expressions.right%>.
+~nIf you make a mistake, a red X appears. Simply correct your response and move on.
+~n~nPress the Spacebar to start practice."
+
+/4 = "
+Number of Errors: <%values.countBlockErrors%>
+Mean Reaction Time: <%list.RT_block.mean%> ms
+
+Try to minimize reaction time while avoid making errors.
+~n~n~nContinue when you are ready."
+
+/5 = "Let's make the task a bit more difficult: From now on, there will be NO more response button reminders on the bottom of the screen."
+/6 = "Great! You have reached the end of the practice session.
+~n~nPress the Spacebar to receive instructions for the next phase."
+/7 = "~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~nDuring the part of the task, you will see the following setup:
+For each new trial, the pair of characters moves CLOCKWISE from one quadrant to the next."
+/8 = "~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~nDuring the part of the task, you will see the following setup:
+For each new trial, the pair of characters moves CLOCKWISE from one quadrant to the next."
+/9 = "~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~nWhen the character pair appears on the <%expressions.letterTaskQuadrants%>: do the LETTER TASK"
+/10 = "~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~nWhen the character pair appears on the <%expressions.digitTaskQuadrants%>: do the DIGIT TASK"
+/11 = ""
+/12 = "In this phase, you will have to rapidly shift from one task to the other. 
+~nMoreover, the character pairs themselves might contain both letters AND numbers and thus do not serve as a reliable cue. 
+BUT: because the character pairs always move in CLOCKWISE fashion, you will always know which task to perform next.
+
+Always Remember:
+~nLetter Task: <%expressions.letterTaskQuadrants%>
+Digit Task: <%expressions.digitTaskQuadrants%>"
+/13 = "~nLet's start the test. It will take appr. <%round((length(parameters.conditionSequence)*3*48)/60)%> minutes. After each block of 48 trials, you will get the opportunity to take a brief break.
+~nTo help you prepare for the first task in each block, the first character pair appears in a highlighted quadrant.
+~nAlways remember the task assignment:
+~nLetter Task: <%expressions.letterTaskQuadrants%>
+Digit Task: <%expressions.digitTaskQuadrants%>
+~nRespond as quickly and accurately as you can. You will have max.<%parameters.responseDeadline/1000%>s for each task.
+~nStart when you are ready."
+/14 = "
+
+Number of Errors: <%values.countBlockErrors%>
+Mean Reaction Time: <%list.RT_block.mean%> ms
+
+
+Continue when you are ready."
+</item>
+
+
+<item titles>
+/1 = "Welcome to the Task Switching Task!"
+/2 = "Letter Task: Consonant or Vowel?"
+/3 = "Digit Task: Odd or Even digit?"
+/4 = "Block Feedback"
+/5 = "!Alert!"
+/6 = "End of Practice"
+/7 = "Test Set-Up"
+/8 = "Test Set-Up"
+/9 = "Letter Task: <%expressions.letterTaskQuadrants%> Boxes"
+/10 = "Digit Task: <%expressions.digitTaskQuadrants%> Boxes"
+/11 = "Task Assignment"
+/12 = "!Keep in Mind!"
+/13 = "Start"
+/14 = "Block Summary"
+</item>
+
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/ items = ("Get Ready:
+~n<%expressions.buttoninstruct1%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"place your index fingers over the '<%parameters.leftKey%>' and '<%parameters.rightKey%>' buttons";} 
+else {"put your index fingers on the '<%parameters.leftKey%>' and <%parameters.rightKey%>' keys";}
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+**********************************************
+Practice
+* 24 trials per task
+*********************************************
+1 = show consonant
+2 = show vowel
+<list practice_taskA>
+/items = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
+/ replace = false
+</list>
+
+1 = show odd digit
+2 = show even digit
+<list practice_taskB>
+/items = (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)
+/ replace = false
+</list>
+
+
+**********************************************
+warmup 
+* first 12 trials
+* 6 of taskA and 6 of taskB
+*********************************************
+1 = show consonant
+2 = show vowel
+<list warmup_taskA>
+/items = (1, 1, 1, 2, 2, 2)
+/ replace = false
+</list>
+
+1 = show odd digit
+2 = show even digit
+<list warmup_taskB>
+/items = (1, 1, 1, 2, 2, 2)
+/ replace = false
+</list>
+
+***********************************************************************
+Balancing of task type, congruence and switch type for 12 warmup trials
+in C = crosstalk condition
+***********************************************************************
+
+1 = control symbol
+2 = congruent crosstalk symbol
+3 = incongruent crosstalk symbol
+
+<list Ccongruence_warmupTaskA_switch>
+/items = (1, 2, 3)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list Ccongruence_warmupTaskA_nonswitch>
+/items = (1, 2, 3)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list Ccongruence_warmupTaskB_switch>
+/items = (1, 2, 3)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list Ccongruence_warmupTaskB_nonswitch>
+/items = (1, 2, 3)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+**********************************************
+Test
+* 36 trials
+* 18 of taskA and 18 of taskB
+*********************************************
+1 = show consonant
+2 = show vowel
+<list test_taskA>
+/items = (1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2)
+/ replace = false
+</list>
+
+1 = show odd digit
+2 = show even digit
+<list test_taskB>
+/items = (1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2)
+/ replace = false
+</list>
+
+***********************************************************************
+Balancing of task type, congruence and switch type for 36 test trials
+in C = crosstalk condition
+***********************************************************************
+
+1 = control symbol
+2 = congruent crosstalk symbol
+3 = incongruent crosstalk symbol
+
+
+9 testTaskA switch trials: 3 with control symbol (1); 3 with congruent distractor symbol (2); 3 with incongruent distractor symbol (3)
+<list Ccongruence_testTaskA_switch>
+/items = (1, 1, 1, 2, 2, 2, 3, 3, 3)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list Ccongruence_testTaskA_nonswitch>
+/items = (1, 1, 1, 2, 2, 2, 3, 3, 3)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list Ccongruence_testTaskB_switch>
+/items = (1, 1, 1, 2, 2, 2, 3, 3, 3)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+<list Ccongruence_testTaskB_nonswitch>
+/items = (1, 1, 1, 2, 2, 2, 3, 3, 3)
+/ replace = false
+/ resetinterval = 0
+</list>
+
+************************************************
+for all
+************************************************
+
+<list vowels>
+/items = ("A", "E", "I", "U")
+/ replace = false
+/ not = [
+	values.avoidVowel;
+]
+</list>
+
+<list consonants>
+/items = ("G", "K", "M", "R")
+/ replace = true
+/ not = [
+	values.avoidConsonant;
+]
+</list>
+
+<list odd>
+/items = ("3", "5", "7", "9")
+/ replace = true
+/ not = [
+	values.avoidOdd;
+]
+</list>
+
+<list even>
+/items = ("2", "4", "6", "8")
+/ replace = true
+/ not = [
+	values.avoidEven;
+]
+</list>
+
+<list control>
+/items = ("#", "%", "@", "&")
+/ replace = true
+/ not = [
+	values.avoidControl;
+]
+</list>
+
+<list targetPairPosition>
+/items = (1, 2)
+/ replace = true
+</list>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+values.countPracticeBlocks, values.countTestBlocks, 
+parameters.conditionSequence, parameters.quadrantTaskAssignment,
+values.congruentTasks,
+values.switch, values.quadrant, values.targetTask, values.targetCategory, 
+values.targetSymbol, values.distractorSymbol, values.targetPair,values.congruence, 
+stimulusitem, response, correct, latency)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+values.congruentTasks, parameters.conditionSequence, parameters.quadrantTaskAssignment,
+expressions.count_switchC, expressions.propCorrect_switchC, 
+expressions.count_nonswitchC, expressions.propCorrect_nonswitchC, 
+expressions.ACC_SwitchCost_C,
+expressions.meanRT_switchC, expressions.meanRT_nonswitchC, expressions.RT_SwitchCost_C,
+expressions.count_switchN, expressions.propCorrect_switchN, 
+expressions.count_nonswitchN, expressions.propCorrect_nonswitchN, 
+expressions.ACC_SwitchCost_N,
+expressions.meanRT_switchN, expressions.meanRT_nonswitchN, expressions.RT_SwitchCost_N,
+expressions.propExcluded)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/congruentTasks:		stores the currently congruent tasks (based on key assignment)
+						"consonant-even; vowel-odd" vs. "consonant-odd; vowel-even";
+
+/quadrant:				1 = top, left; 
+						2 = top, right; 
+						3 = bottom, right; 
+						4 = bottom, left (clockwise)
+
+/x:						stores the assigned horizontal coordinate of the presented symbol pair (0% = left edge of canvas - 100% = right edge of canvas)
+/y:						stores the assigned vertical coordinate of the presented symbol pair  (0% = top edge of canvas - 100% = bottom edge of canvas)
+
+/switch:				0 = non-switch trial (even trials); 
+						1 = switch trials (odd trials)
+
+/taskA:					stores the label of task A: "letter task";
+/taskB:					stores the label of task B: "digit task";
+/targetTask:			stores the task to be performed:  "letter task" vs. "digit task"
+/taskCategory:			for letter task: 1 = consonant; 2 = vowel; for digit task: 1 = odd digit; 2 = even digit
+/congruence:			for cross talk condition: 
+						1 = distractor symbol is a control symbol (no sharing of response keys); 
+						2 = congruent (distractor and target symbol share the same response key); 
+						3 = incongruent (distractor and target symbol have opposite response keys); 
+
+/targetSymbol:			stores the current target symbol (either the target consonant, target vowel, target even number, target odd number)
+/distractorSymbol:		stores the current distractor symbol
+/targetPair:			stores the currently presented combined pair of target symbol and distractor symbol
+
+
+
+/iti:					stores the current intertrial interval
+
+/countExcludedTrials:	running total of all summary-eligible trials excluded from summary variables due to latency or no response
+/countTestTrials:		counts all summary-eligible test trials 
+/countPracticeBlocks:	running total of the number of practice blocks 
+
+
+helper Variables:
+/avoidConsonant = ""
+/avoidVowel = ""
+/avoidOdd = ""
+/avoidEven = ""
+/avoidControl = ""
+
+<values>
+/congruentTasks = ""
+
+/quadrant = 0
+/startQuadrant = 0
+
+/x = 25%
+/y = 75%
+
+/switch = 0
+
+/taskA = "letter task";
+/taskB = "digit task";
+/targetTask = ""
+/taskCategory = ""
+/targetCategory = ""
+/congruence = ""
+
+/targetSymbol = ""
+/distractorSymbol = ""
+/targetPair = "Q2"
+
+/iti = 0
+
+/countExcludedTrials = 0
+/countTestTrials = 0
+/countPracticeBlocks = 0
+/countTestBlocks = 0
+/nextBlock = ""
+
+/selectInstructions = 1
+
+/countBlockErrors = 0;
+
+/avoidConsonant = ""
+/avoidVowel = ""
+/avoidOdd = ""
+/avoidEven = ""
+/avoidControl = ""
+
+
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+/innerBoxSize:		calculates the size of the inner white part of the quadrant boxes
+/left:				function that returns the category associated with the left response key for the current task
+/right: 			function that returns the category associated with the right response key for the current task
+/letterTaskQuadrants:	function that returns the quadrants associated with the letter task
+/digitTaskQuadrants:	function that returns the quadrants associated with the digit task
+
+<expressions>
+/innerBoxSize = parameters.quadrantSize * 0.9
+/left = {
+	if (values.targetTask == values.taskA){
+		if (parameters.consonantKey == parameters.leftKey){
+			"CONSONANT";
+		} else {
+			"VOWEL";
+		}
+	} else {
+		if (parameters.evenKey == parameters.leftKey){
+			"EVEN";
+		} else {
+			"ODD";
+		}		
+	}
+}
+/right = {
+	if (values.targetTask == values.taskA){
+		if (parameters.consonantKey == parameters.rightKey){
+			"CONSONANT";
+		} else {
+			"VOWEL";
+		}
+	} else {
+		if (parameters.evenKey == parameters.rightKey){
+			"EVEN";
+		} else {
+			"ODD";
+		}		
+	}
+}
+
+/letterTaskQuadrants = {
+	if (parameters.quadrantTaskAssignment == 1){
+		"top";
+	} else if (parameters.quadrantTaskAssignment == 2){
+		"bottom";
+	} else if (parameters.quadrantTaskAssignment == 3){
+		"left";
+	} else if (parameters.quadrantTaskAssignment == 4){
+		"right";
+	}
+}
+/digitTaskQuadrants = {
+	if (parameters.quadrantTaskAssignment == 1){
+		"bottom";
+	} else if (parameters.quadrantTaskAssignment == 2){
+		"top";
+	} else if (parameters.quadrantTaskAssignment == 3){
+		"right";
+	} else if (parameters.quadrantTaskAssignment == 4){
+		"left";
+	}
+}
+</expressions>
+
+
+Note: 'no response trials' and all trials with latencies < 100ms are excluded from summary measures
+
+/propCorrect_switchC:		proportion of correct switch trials in crosstalk condition 
+/meanRT_switchC:			mean latency of correctly responding to a switch trial in crosstalk condition
+/propCorrect_nonswitchC:	proportion of correct nonswitch trials in crosstalk condition 
+/meanRT_nonswitchC:			mean latency of correctly responding to a nonswitch trial in crosstalk condition
+/ACC_SwitchCost_C:			accuracy switchcosts in crosstalk condition (difference btw. proportion correct of switch trials and nonswitch trials)
+/RT_SwitchCost_C:			latency switchcosts in crosstalk condition (difference btw. mean correct latency of switch trials and nonswitch trials)
+
+/propCorrect_switchN:		proportion of correct switch trials in non-crosstalk condition condition 
+/meanRT_switchN:			mean latency of correctly responding to a switch trial in non-crosstalk condition condition
+/propCorrect_nonswitchN:	proportion of correct nonswitch trials in non-crosstalk condition condition 
+/meanRT_nonswitchN:			mean latency of correctly responding to a nonswitch trial in non-crosstalk condition condition
+/ACC_SwitchCost_N:			accuracy switchcosts in non-crosstalk condition condition (difference btw. proportion correct of switch trials and nonswitch trials)
+/RT_SwitchCost_N:			latency switchcosts in non-crosstalk condition condition (difference btw. mean correct latency of switch trials and nonswitch trials)
+
+/count_switchC:				number of switch crosstalk trial responses qualified for summary variables
+/count_nonswitchC:			number of nonswitch crosstalk trial responses qualified for summary variables
+/count_switchN:				number of switch noncrosstalk trial responses qualified for summary variables
+/count_nonswitchN:			number of nonswitch noncrosstalk trial responses qualified for summary variables
+
+/propExcluded:				proportion excluded trials from summary variables (excluded because of no responses or because latency < 100ms)
+
+<expressions>
+/propCorrect_switchC = list.ACC_C_switch.mean
+/meanRT_switchC = list.RT_C_switch.mean
+/propCorrect_nonswitchC = list.ACC_C_nonswitch.mean
+/meanRT_nonswitchC = list.RT_C_nonswitch.mean
+/ACC_SwitchCost_C =  expressions.propCorrect_switchC - expressions.propCorrect_nonswitchC
+/RT_SwitchCost_C =  expressions.meanRT_switchC - expressions.meanRT_nonswitchC
+
+/propCorrect_switchN = list.ACC_N_switch.mean
+/meanRT_switchN = list.RT_N_switch.mean
+/propCorrect_nonswitchN = list.ACC_N_nonswitch.mean
+/meanRT_nonswitchN = list.RT_N_nonswitch.mean
+/ACC_SwitchCost_N = expressions.propCorrect_switchN - expressions.propCorrect_nonswitchN 
+/RT_SwitchCost_N =  expressions.meanRT_switchN - expressions.meanRT_nonswitchN
+
+/count_switchC = list.ACC_C_switch.itemCount
+/count_nonswitchC= list.ACC_C_nonswitch.itemCount
+/count_switchN = list.ACC_N_switch.itemCount
+/count_nonswitchN = list.ACC_N_nonswitch.itemCount
+
+/propExcluded = values.countExcludedTrials/values.countTestTrials
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+<text instructions>
+/ items = instructions
+/ select = values.selectInstructions
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ hjustify = left
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<text title>
+/ items = titles
+/ select = values.selectInstructions
+/ position = (50%, 20%)
+/ size = (80%, 8%)
+/ vjustify = center
+/ hjustify = center
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ txbgcolor = blue
+/ txcolor = white
+/ erase = false
+</text>
+
+
+<trial generalInstructions>
+/ ontrialbegin = [
+	values.selectInstructions = 1;
+]
+/ stimulusframes = [1 = instructions, title, spacebar]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial instructions_lettertask>
+/ ontrialbegin = [
+	values.selectInstructions = 2;
+]
+/ stimulusframes = [1 = clearScreen, instructions, title, spacebar]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial instructions_digittask>
+/ ontrialbegin = [
+	values.selectInstructions = 3;
+]
+/ stimulusframes = [1 = clearScreen, instructions, title, spacebar]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial instructions_practiceBlockFeedback>
+/ ontrialbegin = [
+	values.selectInstructions = 4;
+]
+/ stimulusframes = [1 = clearScreen, instructions, title, spacebar]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+
+<trial instructions_alert>
+/ ontrialbegin = [
+	values.selectInstructions = 5;
+	text.title.textBgColor = red;
+]
+/ stimulusframes = [1 = clearScreen, instructions, title, spacebar]
+/ validresponse = (" ")
+/ recorddata = false
+/ ontrialend = [
+	text.title.textBgColor = blue;
+]
+</trial>
+
+<trial instructions_practiceEnd>
+/ ontrialbegin = [
+	values.selectInstructions = 6;
+]
+/ stimulusframes = [1 = clearScreen, instructions, title, spacebar]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+Note: trial.instructions_testStart prepares the 2 x 2 matrix for the test instructions sequence
+<trial instructions_testStart>
+/ ontrialbegin = [
+	values.selectInstructions = 7;
+	
+	if (parameters.quadrantTaskAssignment == 1 || parameters.quadrantTaskAssignment == 2){
+		values.quadrant = replace(2,4);
+	} else if (parameters.quadrantTaskAssignment == 3 || parameters.quadrantTaskAssignment == 4){
+		values.quadrant = replace(1,3);
+	}	
+]
+/ trialduration = 0
+/ recorddata = false
+/ branch = [
+	return trial.instructions_test1;
+]
+</trial>
+
+Note: trial.instructions_test1
+* presents the 2x2 matrix and rotates the character pair through all 4 quadrants
+* then call trial.instructions_test1B (that provides spacebar to move on)
+<trial instructions_test1>	
+/ ontrialbegin = [
+	values.quadrant += 1;
+	if (values.quadrant > 4){
+		values.quadrant = 1;
+	}
+	
+	if (values.quadrant == 1){
+		values.x = shape.quadrant1_frame.hposition;
+		values.y = shape.quadrant1_frame.vposition;
+	} else if (values.quadrant == 2){
+		values.x = shape.quadrant2_frame.hposition;
+		values.y = shape.quadrant2_frame.vposition;	
+	} else if (values.quadrant == 3){
+		values.x = shape.quadrant3_frame.hposition;
+		values.y = shape.quadrant3_frame.vposition;	
+	} else if (values.quadrant == 4){
+		values.x = shape.quadrant4_frame.hposition;
+		values.y = shape.quadrant4_frame.vposition;	
+	}
+	
+	
+	if (parameters.quadrantTaskAssignment == 1){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}
+	} else if (parameters.quadrantTaskAssignment == 2){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}	
+	} else if (parameters.quadrantTaskAssignment == 4){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}		
+	}
+	
+	if (values.targetTask == values.taskA){
+		values.taskCategory = list.warmup_taskA.nextValue;
+		if (values.taskCategory == 1){
+			values.targetSymbol = list.consonants.nextValue;
+			values.avoidConsonant = values.targetSymbol;
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;					
+		} else {
+			values.targetSymbol = list.vowels.nextValue;
+			values.avoidVowel = values.targetSymbol;
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;			
+		}
+	} else {
+		values.taskCategory = list.warmup_taskB.nextValue;
+		if (values.taskCategory == 1){
+			values.targetSymbol = list.odd.nextValue;
+			values.avoidOdd = values.targetSymbol;					
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidConsonant = values.distractorSymbol;				
+		} else {
+			values.targetSymbol = list.even.nextValue;	
+			values.avoidEven = values.targetSymbol;			
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;			
+		}
+	}
+	
+	if (list.targetPairPosition.nextValue == 1){
+		values.targetPair = concat(values.targetSymbol, values.distractorSymbol);
+	} else {
+		values.targetPair = concat(values.distractorSymbol, values.targetSymbol);
+	}	
+		
+]
+/ stimulusframes = [1 = instructions, title, quadrant1_frame, quadrant1_inner, quadrant2_frame, quadrant2_inner, 
+quadrant3_frame, quadrant3_inner, quadrant4_frame, quadrant4_inner, targetPair]
+/timeout = 1000
+/ branch = [
+	If (trial.instructions_test1.trialcount < 4){
+		return trial.instructions_test1;		
+	} else {
+		return trial.instructions_test1_B;
+	}
+
+]
+/ recorddata = false
+</trial>
+
+Note: trial.instructions_test1_B provides the same information (= rotating character pair) as trial.instructions_test1
+but also provides a spacebar as a means to move on
+<trial instructions_test1_B>	
+/ ontrialbegin = [
+	values.selectInstructions = 8;
+	values.quadrant += 1;
+	if (values.quadrant > 4){
+		values.quadrant = 1;
+	}
+	
+	if (values.quadrant == 1){
+		values.x = shape.quadrant1_frame.hposition;
+		values.y = shape.quadrant1_frame.vposition;
+	} else if (values.quadrant == 2){
+		values.x = shape.quadrant2_frame.hposition;
+		values.y = shape.quadrant2_frame.vposition;	
+	} else if (values.quadrant == 3){
+		values.x = shape.quadrant3_frame.hposition;
+		values.y = shape.quadrant3_frame.vposition;	
+	} else if (values.quadrant == 4){
+		values.x = shape.quadrant4_frame.hposition;
+		values.y = shape.quadrant4_frame.vposition;	
+	}
+	
+	
+	if (parameters.quadrantTaskAssignment == 1){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}
+	} else if (parameters.quadrantTaskAssignment == 2){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}	
+	} else if (parameters.quadrantTaskAssignment == 4){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}		
+	}
+	
+	if (values.targetTask == values.taskA){
+		values.taskCategory = list.warmup_taskA.nextValue;
+		if (values.taskCategory == 1){
+			values.targetSymbol = list.consonants.nextValue;
+			values.avoidConsonant = values.targetSymbol;
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;					
+		} else {
+			values.targetSymbol = list.vowels.nextValue;
+			values.avoidVowel = values.targetSymbol;
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;			
+		}
+	} else {
+		values.taskCategory = list.warmup_taskB.nextValue;
+		if (values.taskCategory == 1){
+			values.targetSymbol = list.odd.nextValue;
+			values.avoidOdd = values.targetSymbol;					
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidConsonant = values.distractorSymbol;				
+		} else {
+			values.targetSymbol = list.even.nextValue;	
+			values.avoidEven = values.targetSymbol;			
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;			
+		}
+	}
+	
+	if (list.targetPairPosition.nextValue == 1){
+		values.targetPair = concat(values.targetSymbol, values.distractorSymbol);
+	} else {
+		values.targetPair = concat(values.distractorSymbol, values.targetSymbol);
+	}	
+		
+]
+/ stimulusframes = [1 = instructions, title, quadrant1_frame, quadrant1_inner, quadrant2_frame, quadrant2_inner, 
+quadrant3_frame, quadrant3_inner, quadrant4_frame, quadrant4_inner, targetPair, spacebar]
+/ validresponse = (" ")
+/ timeout = 1000
+/ branch = [
+	If (trial.instructions_test1_B.responseText != " "){
+		return trial.instructions_test1_B;		
+	} else {
+		if (parameters.quadrantTaskAssignment == 1){
+			values.quadrant = 4;
+		} else if (parameters.quadrantTaskAssignment == 2){
+			values.quadrant = 2;
+		} else if (parameters.quadrantTaskAssignment == 3){
+			values.quadrant = 3;
+		} else if (parameters.quadrantTaskAssignment == 2){
+			values.quadrant = 1;
+		}
+		return trial.instructions_test2;
+	}
+
+]
+/ recorddata = false
+</trial>
+
+Note: trial.instructions_test2 highlight the quadrants assigned to the letter task
+(character pair starts in highlighted quadrant)
+<trial instructions_test2>
+/ ontrialbegin = [
+	values.selectInstructions = 9;
+	shape.quadrant1_inner.color = white;
+	shape.quadrant2_inner.color = white;
+	shape.quadrant3_inner.color = white;
+	shape.quadrant4_inner.color = white;	
+	
+	if (parameters.quadrantTaskAssignment == 1){
+		shape.quadrant1_inner.color = yellow;
+		shape.quadrant2_inner.color = yellow;		
+	} else if (parameters.quadrantTaskAssignment == 2){
+		shape.quadrant3_inner.color = yellow;
+		shape.quadrant4_inner.color = yellow;		
+	} else if (parameters.quadrantTaskAssignment == 3){
+		shape.quadrant1_inner.color = yellow;
+		shape.quadrant4_inner.color = yellow;		
+	} else if (parameters.quadrantTaskAssignment == 4){
+		shape.quadrant2_inner.color = yellow;
+		shape.quadrant3_inner.color = yellow;		
+	}
+	
+	values.quadrant += 1;
+	if (values.quadrant > 4){
+		values.quadrant = 1;
+	}
+	
+	if (values.quadrant == 1){
+		values.x = shape.quadrant1_frame.hposition;
+		values.y = shape.quadrant1_frame.vposition;
+	} else if (values.quadrant == 2){
+		values.x = shape.quadrant2_frame.hposition;
+		values.y = shape.quadrant2_frame.vposition;	
+	} else if (values.quadrant == 3){
+		values.x = shape.quadrant3_frame.hposition;
+		values.y = shape.quadrant3_frame.vposition;	
+	} else if (values.quadrant == 4){
+		values.x = shape.quadrant4_frame.hposition;
+		values.y = shape.quadrant4_frame.vposition;	
+	}
+	
+	
+	if (parameters.quadrantTaskAssignment == 1){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}
+	} else if (parameters.quadrantTaskAssignment == 2){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}	
+	} else if (parameters.quadrantTaskAssignment == 4){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}		
+	}
+	
+	if (values.targetTask == values.taskA){
+		values.taskCategory = list.warmup_taskA.nextValue;
+		if (values.taskCategory == 1){
+			values.targetSymbol = list.consonants.nextValue;
+			values.avoidConsonant = values.targetSymbol;
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;					
+		} else {
+			values.targetSymbol = list.vowels.nextValue;
+			values.avoidVowel = values.targetSymbol;
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;			
+		}
+	} else {
+		values.taskCategory = list.warmup_taskB.nextValue;
+		if (values.taskCategory == 1){
+			values.targetSymbol = list.odd.nextValue;
+			values.avoidOdd = values.targetSymbol;					
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidConsonant = values.distractorSymbol;				
+		} else {
+			values.targetSymbol = list.even.nextValue;	
+			values.avoidEven = values.targetSymbol;			
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;			
+		}
+	}
+	
+	if (list.targetPairPosition.nextValue == 1){
+		values.targetPair = concat(values.targetSymbol, values.distractorSymbol);
+	} else {
+		values.targetPair = concat(values.distractorSymbol, values.targetSymbol);
+	}		
+	
+]
+/ stimulusframes = [1 = clearScreen, instructions, title, quadrant1_frame, quadrant1_inner, quadrant2_frame, quadrant2_inner, 
+quadrant3_frame, quadrant3_inner, quadrant4_frame, quadrant4_inner, targetPair, spacebar]
+/ ontrialend = [
+	shape.quadrant1_inner.color = white;
+	shape.quadrant2_inner.color = white;
+	shape.quadrant3_inner.color = white;
+	shape.quadrant4_inner.color = white;	
+]
+/ validresponse = (" ")
+/ timeout = 1000
+/ branch = [
+	if (trial.instructions_test2.responseText != " "){
+		return trial.instructions_test2;
+	} else {
+		if (parameters.quadrantTaskAssignment == 1){
+			values.quadrant = 2;
+		} else if (parameters.quadrantTaskAssignment == 2){
+			values.quadrant = 4;
+		} else if (parameters.quadrantTaskAssignment == 3){
+			values.quadrant = 1;
+		} else if (parameters.quadrantTaskAssignment == 2){
+			values.quadrant = 3;
+		}
+		return trial.instructions_test3;		
+	}
+
+]
+/ recorddata = false
+</trial>
+
+Note: trial.instructions_test2 highlight the quadrants assigned to the digit task
+(character pair starts in highlighted quadrant)
+<trial instructions_test3>
+/ ontrialbegin = [
+	values.selectInstructions = 10;
+	
+	if (parameters.quadrantTaskAssignment == 1){
+		shape.quadrant3_inner.color = yellow;
+		shape.quadrant4_inner.color = yellow;		
+	} else if (parameters.quadrantTaskAssignment == 2){
+		shape.quadrant1_inner.color = yellow;
+		shape.quadrant2_inner.color = yellow;		
+	} else if (parameters.quadrantTaskAssignment == 3){
+		shape.quadrant2_inner.color = yellow;
+		shape.quadrant3_inner.color = yellow;		
+	} else if (parameters.quadrantTaskAssignment == 4){
+		shape.quadrant1_inner.color = yellow;
+		shape.quadrant4_inner.color = yellow;		
+	}
+		
+	values.quadrant += 1;
+	if (values.quadrant > 4){
+		values.quadrant = 1;
+	}
+	
+	if (values.quadrant == 1){
+		values.x = shape.quadrant1_frame.hposition;
+		values.y = shape.quadrant1_frame.vposition;
+	} else if (values.quadrant == 2){
+		values.x = shape.quadrant2_frame.hposition;
+		values.y = shape.quadrant2_frame.vposition;	
+	} else if (values.quadrant == 3){
+		values.x = shape.quadrant3_frame.hposition;
+		values.y = shape.quadrant3_frame.vposition;	
+	} else if (values.quadrant == 4){
+		values.x = shape.quadrant4_frame.hposition;
+		values.y = shape.quadrant4_frame.vposition;	
+	}
+	
+	
+	if (parameters.quadrantTaskAssignment == 1){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}
+	} else if (parameters.quadrantTaskAssignment == 2){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}	
+	} else if (parameters.quadrantTaskAssignment == 4){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}		
+	}
+	
+	if (values.targetTask == values.taskA){
+		values.taskCategory = list.warmup_taskA.nextValue;
+		if (values.taskCategory == 1){
+			values.targetSymbol = list.consonants.nextValue;
+			values.avoidConsonant = values.targetSymbol;
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;					
+		} else {
+			values.targetSymbol = list.vowels.nextValue;
+			values.avoidVowel = values.targetSymbol;
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;			
+		}
+	} else {
+		values.taskCategory = list.warmup_taskB.nextValue;
+		if (values.taskCategory == 1){
+			values.targetSymbol = list.odd.nextValue;
+			values.avoidOdd = values.targetSymbol;					
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidConsonant = values.distractorSymbol;				
+		} else {
+			values.targetSymbol = list.even.nextValue;	
+			values.avoidEven = values.targetSymbol;			
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;			
+		}
+	}
+	
+	if (list.targetPairPosition.nextValue == 1){
+		values.targetPair = concat(values.targetSymbol, values.distractorSymbol);
+	} else {
+		values.targetPair = concat(values.distractorSymbol, values.targetSymbol);
+	}			
+]
+/ stimulusframes = [1 = clearScreen, instructions, title, quadrant1_frame, quadrant1_inner, quadrant2_frame, quadrant2_inner, 
+quadrant3_frame, quadrant3_inner, quadrant4_frame, quadrant4_inner, targetPair, spacebar]
+/ ontrialend = [
+	shape.quadrant1_inner.color = white;
+	shape.quadrant2_inner.color = white;
+	shape.quadrant3_inner.color = white;
+	shape.quadrant4_inner.color = white;	
+]
+/ validresponse = (" ")
+/ timeout = 1000
+/ branch = [
+	if (trial.instructions_test3.responseText != " "){
+		return trial.instructions_test3;
+	} else {
+		if (parameters.quadrantTaskAssignment == 1 || parameters.quadrantTaskAssignment == 2){
+			values.quadrant = replace(2,4);
+		} else if (parameters.quadrantTaskAssignment == 3 || parameters.quadrantTaskAssignment == 4){
+			values.quadrant = replace(1,3);
+		}		
+		return trial.instructions_test4;
+	}
+]
+/ recorddata = false
+</trial>
+
+Note: trial.instructions rotate the character pair through the 4 quadrants while flashing the 
+appropriate task reminder on screen (none of the quadrants are highlighted anymore)
+<trial instructions_test4>
+/ ontrialbegin = [
+	values.selectInstructions = 11;
+			
+	values.quadrant += 1;
+	if (values.quadrant > 4){
+		values.quadrant = 1;
+	}
+	
+	if (values.quadrant == 1){
+		values.x = shape.quadrant1_frame.hposition;
+		values.y = shape.quadrant1_frame.vposition;
+	} else if (values.quadrant == 2){
+		values.x = shape.quadrant2_frame.hposition;
+		values.y = shape.quadrant2_frame.vposition;	
+	} else if (values.quadrant == 3){
+		values.x = shape.quadrant3_frame.hposition;
+		values.y = shape.quadrant3_frame.vposition;	
+	} else if (values.quadrant == 4){
+		values.x = shape.quadrant4_frame.hposition;
+		values.y = shape.quadrant4_frame.vposition;	
+	}
+	
+	
+	if (parameters.quadrantTaskAssignment == 1){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}
+	} else if (parameters.quadrantTaskAssignment == 2){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}	
+	} else if (parameters.quadrantTaskAssignment == 4){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}		
+	}
+	
+	if (values.targetTask == values.taskA){
+		values.taskCategory = list.warmup_taskA.nextValue;
+		trial.instructions_test4.insertStimulusTime(text.letterTaskReminder, 0);		
+		if (values.taskCategory == 1){
+			values.targetSymbol = list.consonants.nextValue;
+			values.avoidConsonant = values.targetSymbol;
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;	
+
+		} else {
+			values.targetSymbol = list.vowels.nextValue;
+			values.avoidVowel = values.targetSymbol;
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;			
+		}
+	} else {
+		values.taskCategory = list.warmup_taskB.nextValue;
+		trial.instructions_test4.insertStimulusTime(text.digitTaskReminder, 0);		
+		if (values.taskCategory == 1){
+			values.targetSymbol = list.odd.nextValue;
+			values.avoidOdd = values.targetSymbol;					
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidConsonant = values.distractorSymbol;				
+		} else {
+			values.targetSymbol = list.even.nextValue;	
+			values.avoidEven = values.targetSymbol;			
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;			
+		}
+	}
+	
+	if (list.targetPairPosition.nextValue == 1){
+		values.targetPair = concat(values.targetSymbol, values.distractorSymbol);
+	} else {
+		values.targetPair = concat(values.distractorSymbol, values.targetSymbol);
+	}			
+]
+/ stimulusframes = [1 = clearScreen, instructions, title, quadrant1_frame, quadrant1_inner, quadrant2_frame, quadrant2_inner, 
+quadrant3_frame, quadrant3_inner, quadrant4_frame, quadrant4_inner, targetPair, spacebar]
+/ ontrialend = [
+	trial.instructions_test4.resetStimulusFrames();	
+]
+/ validresponse = (" ")
+/ timeout = 1000
+/ branch = [
+	if (trial.instructions_test4.responseText != " "){
+		return trial.instructions_test4;
+	} else {
+		return trial.instructions_test5;
+	}
+]
+/ recorddata = false
+</trial>
+
+Note: trial.instructions_test5 provides a bit more summarizing info before moving participants to start the test
+<trial instructions_test5>
+/ ontrialbegin = [
+	values.selectInstructions = 12;
+	text.title.textBgColor = red;
+]
+/ stimulusframes = [1 = instructions, title, spacebar]
+/ validresponse = (" ")
+/ ontrialend = [
+	text.title.textBgColor = blue;
+]
+/ branch = [
+	trial.instructions_test6;
+]
+/ recorddata = false
+</trial>
+
+Note; trial.instructions_test6 are the last instructions before starting the test
+<trial instructions_test6>
+/ ontrialbegin = [
+	values.selectInstructions = 13;
+]
+/ stimulusframes = [1 = instructions, title, spacebar]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+Note: trial.instructions_break provides instructions at the end of each block of 48 trials.
+<trial instructions_break>
+/ ontrialbegin = [
+	values.selectInstructions = 14;
+]
+/ stimulusframes = [1 = instructions, title, spacebar, blockcount]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+*************************************
+General Helper Instruction Trials/Blocks
+*************************************
+
+This trial is used when participants are asked to place their fingers on specific response
+buttons. On the touchscreen, this trial presents the (inactive) response buttons to the participants.
+<trial getReady_practice>
+/ stimulusframes = [1 = clearScreen, getReady, left, right]
+/ trialduration = parameters.readyDuration
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ beginresponsetime = parameters.readyDuration
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+<trial getReady_test>
+/ stimulusframes = [1 = clearScreen, getReady]
+/ trialduration = parameters.readyDuration
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ beginresponsetime = parameters.readyDuration
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+********************************************
+practice
+********************************************
+<shape practiceBox_frame>
+/ shape = rectangle
+/ size = (parameters.quadrantSize * 0.75, parameters.quadrantSize)
+/ color = black
+/ hposition = 50%
+/ vposition = 50%
+/ erase = false
+</shape>
+
+<shape practiceBox_inner>
+/ shape = rectangle
+/ size = (expressions.innerBoxSize * 0.75, expressions.innerBoxSize)
+/ color = white
+/ hposition = shape.practiceBox_frame.hposition
+/ vposition = shape.practiceBox_frame.vposition
+/ erase = false
+</shape>
+
+<text practiceTargetPair>
+/ items = ("<%values.targetPair%>")
+/ hposition = 50%
+/ vposition = 50%
+/ fontstyle = ("Courier New", parameters.targetSize, false, false, false, false, 5, 1)
+/ erase = false
+</text>
+
+<text practiceTargetPairEraser>
+/ items = ("<%values.targetPair%>")
+/ hposition = 50%
+/ vposition = 50%
+/ fontstyle = ("Courier New", parameters.targetSize, false, false, false, false, 5, 1)
+/ erase = false
+/ txcolor = white
+</text>
+
+
+<text left>
+/items = ("<%expressions.left%>")
+/ position = (25%, 90%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = gray
+/ erase = false
+/ size = (20%, 5%)
+/ hjustify = center
+/ vjustify = center
+</text>
+
+<text right>
+/items = ("<%expressions.right%>")
+/ position = (75%, 90%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = gray
+/ erase = false
+/ size = (20%, 5%)
+/ hjustify = center
+/ vjustify = center
+</text>
+
+<text left_HL>
+/items = ("<%expressions.left%>")
+/ position = (25%, 90%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = yellow
+/ erase = false
+/ size = (20%, 5%)
+/ hjustify = center
+/ vjustify = center
+</text>
+
+<text right_HL>
+/items = ("<%expressions.right%>")
+/ position = (75%, 90%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = yellow
+/ erase = false
+/ size = (20%, 5%)
+/ hjustify = center
+/ vjustify = center
+</text>
+
+********************************************
+test
+********************************************
+
+<shape quadrantBox>
+/ shape = rectangle
+/ size = (parameters.quadrantSize * 0.75, parameters.quadrantSize)
+/ color = white
+/ position = (50%, 50%)
+</shape>
+
+<shape quadrant1_frame>
+/ shape = rectangle
+/ size = (parameters.quadrantSize * 0.75, parameters.quadrantSize)
+/ color = black
+/ hposition = shape.quadrantBox.hposition - 0.5*shape.quadrantBox.width
+/ vposition = shape.quadrantBox.vposition - 0.5*shape.quadrantBox.height
+/ erase = false
+</shape>
+
+<shape quadrant1_inner>
+/ shape = rectangle
+/ size = (expressions.innerBoxSize * 0.75, expressions.innerBoxSize)
+/ color = white
+/ hposition = shape.quadrant1_frame.hposition
+/ vposition = shape.quadrant1_frame.vposition
+/ erase = false
+</shape>
+
+<shape quadrant2_frame>
+/ shape = rectangle
+/ size = (parameters.quadrantSize * 0.75, parameters.quadrantSize)
+/ color = black
+/ hposition = shape.quadrantBox.hposition + 0.5*shape.quadrantBox.width
+/ vposition = shape.quadrantBox.vposition - 0.5*shape.quadrantBox.height
+/ erase = false
+</shape>
+
+<shape quadrant2_inner>
+/ shape = rectangle
+/ size = (expressions.innerBoxSize * 0.75, expressions.innerBoxSize)
+/ color = white
+/ hposition = shape.quadrant2_frame.hposition
+/ vposition = shape.quadrant2_frame.vposition
+/ erase = false
+</shape>
+
+<shape quadrant3_frame>
+/ shape = rectangle
+/ size = (parameters.quadrantSize * 0.75, parameters.quadrantSize)
+/ color = black
+/ hposition = shape.quadrantBox.hposition + 0.5*shape.quadrantBox.width
+/ vposition = shape.quadrantBox.vposition + 0.5*shape.quadrantBox.height
+/ erase = false
+</shape>
+
+<shape quadrant3_inner>
+/ shape = rectangle
+/ size = (expressions.innerBoxSize * 0.75, expressions.innerBoxSize)
+/ color = white
+/ hposition = shape.quadrant3_frame.hposition
+/ vposition = shape.quadrant3_frame.vposition
+/ erase = false
+</shape>
+
+<shape quadrant4_frame>
+/ shape = rectangle
+/ size = (parameters.quadrantSize * 0.75, parameters.quadrantSize)
+/ color = black
+/ hposition = shape.quadrantBox.hposition - 0.5*shape.quadrantBox.width
+/ vposition = shape.quadrantBox.vposition + 0.5*shape.quadrantBox.height
+/ erase = false
+</shape>
+
+<shape quadrant4_inner>
+/ shape = rectangle
+/ size = (expressions.innerBoxSize * 0.75, expressions.innerBoxSize)
+/ color = white
+/ hposition = shape.quadrant4_frame.hposition
+/ vposition = shape.quadrant4_frame.vposition
+/ erase = false
+</shape>
+
+
+<text targetPair>
+/ items = ("<%values.targetPair%>")
+/ hposition = values.x
+/ vposition = values.y
+/ fontstyle = ("Courier New", parameters.targetSize, false, false, false, false, 5, 1)
+/ txbgcolor = transparent
+</text>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+the following list is used for block feedback at the end of a block:
+
+stores correct latencies for that block
+<list RT_block>
+</list>
+
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_C_switch>
+</list>
+
+<list ACC_C_nonswitch>
+</list>
+
+<list ACC_N_switch>
+</list>
+
+<list ACC_N_nonswitch>
+</list>
+
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_C_switch>
+</list>
+
+<list RT_C_nonswitch>
+</list>
+
+<list RT_N_switch>
+</list>
+
+<list RT_N_nonswitch>
+</list>
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS: PRACTICE
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note:
+* trial practice_taskA presents one box with a character pair
+* one character is a letter; one character is a control symbol
+* waits for response (if incorrect response, response needs to be corrected)
+* call trial.practiceITI
+<trial practice_taskA>
+/ ontrialbegin = [
+	values.taskCategory = list.practice_taskA.nextValue;
+	if (values.taskCategory == 1){
+		values.targetCategory = "CONSONANT";
+		values.targetSymbol = list.consonants.nextValue;
+		values.avoidConsonant = values.targetSymbol;
+	} else {
+		values.targetCategory = "VOWEL";
+		values.targetSymbol = list.vowels.nextValue;
+		values.avoidVowel = values.targetSymbol;
+	}
+	
+	values.distractorSymbol = list.control.nextValue;
+	values.avoidControl = values.distractorSymbol;
+	
+	if (list.targetPairPosition.nextValue == 1){
+		values.targetPair = concat(values.targetSymbol, values.distractorSymbol);
+	} else {
+		values.targetPair = concat(values.distractorSymbol, values.targetSymbol);
+	}
+]
+/ stimulustimes = [0 = practiceBox_frame, practiceBox_inner, practiceTargetPair, left, right]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ iscorrectresponse = [
+	return(
+	(values.taskCategory == 1 && trial.practice_taskA.responseText == parameters.consonantKey) || 
+	(values.taskCategory == 2 && trial.practice_taskA.responseText == parameters.vowelKey));
+]
+/ ontrialend = [
+	if (trial.practice_taskA.correct){
+		values.iti = parameters.correctITI;
+	} else {
+		values.iti = parameters.errorITI;
+	}
+	
+	values.countBlockErrors += trial.practice_taskA.error;
+	if (trial.practice_taskA.correct){
+		list.RT_block.appendItem(trial.practice_taskA.latency);
+	}
+]
+/ errormessage = true(errorFeedback, 2000)
+/ responsemessage = (parameters.leftKey, text.left_HL, 0)
+/ responsemessage = (parameters.rightKey, text.right_HL, 0)
+/ response = correct
+/ branch = [
+	return trial.practiceITI;
+]
+</trial>
+
+Note:
+* trial practice_taskB presents one box with a character pair
+* one character is a digit; one character is a control symbol
+* waits for response (if incorrect response, response needs to be corrected)
+* call trial.practiceITI
+<trial practice_taskB>
+/ ontrialbegin = [
+	values.taskCategory = list.practice_taskB.nextValue;
+	if (values.taskCategory == 1){
+		values.targetCategory = "ODD";
+		values.targetSymbol = list.odd.nextValue;
+		values.avoidOdd = values.targetSymbol;
+	} else {
+		values.targetCategory = "EVEN";
+		values.targetSymbol = list.even.nextValue;
+		values.avoidEven = values.targetSymbol;
+	}
+	
+	values.distractorSymbol = list.control.nextValue;
+	values.avoidControl = values.distractorSymbol;
+	
+	if (list.targetPairPosition.nextValue == 1){
+		values.targetPair = concat(values.targetSymbol, values.distractorSymbol);
+	} else {
+		values.targetPair = concat(values.distractorSymbol, values.targetSymbol);
+	}
+]
+/ stimulustimes = [0 = practiceBox_frame, practiceBox_inner, practiceTargetPair, left, right]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ iscorrectresponse = [
+	return(
+	(values.taskCategory == 1 && trial.practice_taskB.responseText == parameters.oddKey) || 
+	(values.taskCategory == 2 && trial.practice_taskB.responseText == parameters.evenKey));
+]
+/ ontrialend = [
+	if (trial.practice_taskB.correct){
+		values.iti = parameters.correctITI;
+	} else {
+		values.iti = parameters.errorITI;
+	}
+	
+	values.countBlockErrors += trial.practice_taskB.error;
+	if (trial.practice_taskB.correct){
+		list.RT_block.appendItem(trial.practice_taskB.latency);
+	}	
+]
+/ errormessage = true(errorFeedback, 2000)
+/ responsemessage = (parameters.leftKey, text.left_HL, 0)
+/ responsemessage = (parameters.rightKey, text.right_HL, 0)
+/ response = correct
+/ branch = [
+	return trial.practiceITI;
+]
+</trial>
+
+Note:
+trial.practiceITI adds an iti to each practice trial (it is longer for error trials)
+<trial practiceITI>
+//for touchscreens: present the inactive response buttons
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ isvalidresponse = [
+	return false;
+]
+
+/ stimulusframes = [1 = clearScreen, left, right]
+/ trialduration = values.iti
+/ recorddata = false
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS: TEST (CROSS TALK CONDITION)
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+Note:
+* trial.start presents an empty matrix with one highlighted (yellow) box
+* the highlighted box signals the location for the first character pair in the first switch trial 
+for either the letter task or the digit task
+* at the end of the trial, all quadrants are returned to a white background
+
+<trial C_start>
+/ ontrialbegin = [
+	values.startQuadrant = values.quadrant + 1;
+	if (values.startQuadrant > 4){
+		values.startQuadrant = 1;
+	}	
+	if (values.startQuadrant == 1){
+		shape.quadrant1_inner.color = yellow;
+	} else if (values.startQuadrant == 2){
+		shape.quadrant2_inner.color = yellow;
+	} else if (values.startQuadrant == 3){
+		shape.quadrant3_inner.color = yellow;
+	} else if (values.startQuadrant == 4){
+		shape.quadrant4_inner.color = yellow;
+	} 
+]
+/ stimulustimes = [0 = quadrant1_frame, quadrant1_inner, quadrant2_frame, quadrant2_inner, 
+quadrant3_frame, quadrant3_inner, quadrant4_frame, quadrant4_inner]
+
+//for touchscreens: present the inactive response buttons
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ isvalidresponse = [
+	return false;
+]
+
+/ trialduration = parameters.blockstartDuration
+/ recorddata = false
+/ ontrialend = [
+	shape.quadrant1_inner.color = white;
+	shape.quadrant2_inner.color = white;	
+	shape.quadrant3_inner.color = white;
+	shape.quadrant4_inner.color = white;	
+	
+	values.iti = parameters.correctITI;
+]
+</trial>
+
+
+Notes:
+* trial.C_warmup runs the first 12 trials in a block that do NOT count towards summary variables
+* establishes the switch nature of the trial based on assigned quadrant
+* it assembles the character pair based on:
+	- type of task (letter or digit => depends on current quadrant)
+	- type of sampled task category (letter task: consonant or vowel; digit task: even or odd)
+	- type of sampled congruence
+	- order of target and distractor symbol (random)
+* it presents the character pair in the assigned quadrant
+* waits for a response for max.5000ms
+* then calls trial.testITI
+
+<trial C_warmup>
+/ ontrialbegin = [
+	values.quadrant += 1;
+	if (values.quadrant > 4){
+		values.quadrant = 1;
+	}
+	
+	if (values.quadrant == 1){
+		values.x = shape.quadrant1_frame.hposition;
+		values.y = shape.quadrant1_frame.vposition;
+	} else if (values.quadrant == 2){
+		values.x = shape.quadrant2_frame.hposition;
+		values.y = shape.quadrant2_frame.vposition;	
+	} else if (values.quadrant == 3){
+		values.x = shape.quadrant3_frame.hposition;
+		values.y = shape.quadrant3_frame.vposition;	
+	} else if (values.quadrant == 4){
+		values.x = shape.quadrant4_frame.hposition;
+		values.y = shape.quadrant4_frame.vposition;	
+	}
+	
+	if (parameters.quadrantTaskAssignment == 1 || parameters.quadrantTaskAssignment == 2){
+		if (mod(values.quadrant, 2)== 0){
+			values.switch = 0;
+		} else {
+			values.switch = 1;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3 || parameters.quadrantTaskAssignment == 4){
+		
+		if (mod(values.quadrant, 2)== 0){
+			values.switch = 1;
+		} else {
+			values.switch = 0;
+		}	
+	}
+	
+	if (parameters.quadrantTaskAssignment == 1){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}
+	} else if (parameters.quadrantTaskAssignment == 2){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}	
+	} else if (parameters.quadrantTaskAssignment == 4){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}		
+	}
+	
+	if (values.targetTask == values.taskA){
+		values.taskCategory = list.warmup_taskA.nextValue;
+		if (values.taskCategory == 1){
+			values.targetCategory = "CONSONANT";
+			values.targetSymbol = list.consonants.nextValue;
+			values.avoidConsonant = values.targetSymbol;
+			if (values.switch == 0){
+				values.congruence = list.Ccongruence_warmupTaskA_nonswitch.nextValue;				
+			} else {
+				values.congruence = list.Ccongruence_warmupTaskA_switch.nextValue;
+			}
+		
+			if (values.congruence == 1)	{
+				values.distractorSymbol = list.control.nextValue;
+				values.avoidControl = values.distractorSymbol;
+			} else if (values.congruence == 2){
+				if (parameters.consonantKey == parameters.evenKey){
+					values.distractorSymbol = list.even.nextValue;
+					values.avoidEven = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.odd.nextValue;
+					values.avoidOdd = values.distractorSymbol;
+				}
+			} else if (values.congruence == 3){
+				if (parameters.consonantKey == parameters.evenKey){
+					values.distractorSymbol = list.odd.nextValue;
+					values.avoidOdd = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.even.nextValue;
+					values.avoidEven = values.distractorSymbol;
+				}
+			}				
+		} else {
+			values.targetCategory = "VOWEL";
+			values.targetSymbol = list.vowels.nextValue;
+			values.avoidVowel = values.targetSymbol;
+			if (values.switch == 0){
+				values.congruence = list.Ccongruence_warmupTaskA_nonswitch.nextValue;				
+			} else {
+				values.congruence = list.Ccongruence_warmupTaskA_switch.nextValue;
+			}
+
+			if (values.congruence == 1)	{
+				values.distractorSymbol = list.control.nextValue;
+				values.avoidControl = values.distractorSymbol;
+			} else if (values.congruence == 2){
+				if (parameters.vowelKey == parameters.evenKey){
+					values.distractorSymbol = list.even.nextValue;
+					values.avoidEven = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.odd.nextValue;
+					values.avoidOdd = values.distractorSymbol;
+				}
+			} else if (values.congruence == 3){
+				if (parameters.vowelKey == parameters.evenKey){
+					values.distractorSymbol = list.odd.nextValue;
+					values.avoidOdd = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.even.nextValue;
+					values.avoidEven = values.distractorSymbol;
+				}
+			}
+		}
+	} else {
+		values.taskCategory = list.warmup_taskB.nextValue;
+		if (values.taskCategory == 1){
+			values.targetCategory = "ODD";
+			values.targetSymbol = list.odd.nextValue;
+			values.avoidOdd = values.targetSymbol;		
+			if (values.switch == 0){
+				values.congruence = list.Ccongruence_warmupTaskB_nonswitch.nextValue;				
+			} else {
+				values.congruence = list.Ccongruence_warmupTaskB_switch.nextValue;
+			}
+	
+			if (values.congruence == 1)	{
+				values.distractorSymbol = list.control.nextValue;
+				values.avoidConsonant = values.distractorSymbol;
+			} else if (values.congruence == 2){
+				if (parameters.oddKey == parameters.consonantKey){
+					values.distractorSymbol = list.consonants.nextValue;
+					values.avoidConsonant = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.vowels.nextValue;
+					values.avoidVowel = values.distractorSymbol;
+				}
+			} else if (values.congruence == 3){
+				if (parameters.oddKey == parameters.consonantKey){
+					values.distractorSymbol = list.vowels.nextValue;
+					values.avoidVowel = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.consonants.nextValue;
+					values.avoidConsonant = values.distractorSymbol;
+				}
+			}				
+		} else {
+			values.targetCategory = "EVEN";
+			values.targetSymbol = list.even.nextValue;	
+			values.avoidEven = values.targetSymbol;
+			if (values.switch == 0){
+				values.congruence = list.Ccongruence_warmupTaskB_nonswitch.nextValue;			
+			} else {
+				values.congruence = list.Ccongruence_warmupTaskB_switch.nextValue;
+			}
+	
+			if (values.congruence == 1)	{
+				values.distractorSymbol = list.control.nextValue;
+				values.avoidControl = values.distractorSymbol;
+			} else if (values.congruence == 2){
+				if (parameters.evenKey == parameters.consonantKey){
+					values.distractorSymbol = list.consonants.nextValue;
+					values.avoidConsonant = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.vowels.nextValue;
+					values.avoidVowel = values.distractorSymbol;
+				}
+			} else if (values.congruence == 3){
+				if (parameters.evenKey == parameters.consonantKey){
+					values.distractorSymbol = list.vowels.nextValue;
+					values.avoidVowel = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.consonants.nextValue;
+					values.avoidConsonant = values.distractorSymbol;
+				}
+			}
+		}
+	}
+	
+	if (list.targetPairPosition.nextValue == 1){
+		values.targetPair = concat(values.targetSymbol, values.distractorSymbol);
+	} else {
+		values.targetPair = concat(values.distractorSymbol, values.targetSymbol);
+	}
+]
+/ stimulustimes = [0 = quadrant1_frame, quadrant1_inner, quadrant2_frame, quadrant2_inner, 
+quadrant3_frame, quadrant3_inner, quadrant4_frame, quadrant4_inner, targetPair]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ beginresponsetime = 0
+/ response = timeout(parameters.responseDeadline)
+/ iscorrectresponse = [
+	return(
+	(values.targetTask == values.taskA && values.taskCategory == 1 && trial.C_warmup.responseText == parameters.consonantKey) ||
+	(values.targetTask == values.taskA && values.taskCategory == 2 && trial.C_warmup.responseText == parameters.vowelKey) ||	
+	(values.targetTask == values.taskB && values.taskCategory == 1 && trial.C_warmup.responseText == parameters.oddKey) ||
+	(values.targetTask == values.taskB && values.taskCategory == 2 && trial.C_warmup.responseText == parameters.evenKey));
+]
+/ ontrialend = [
+	values.iti = parameters.correctITI;
+	if (trial.C_warmup.error && trial.C_warmup.response != 0){
+		values.iti = parameters.errorITI;
+		text.errorFeedback.hposition = values.x;
+		text.errorFeedback.vposition = values.y;		
+		trial.testITI.insertStimulusTime(text.errorFeedback, 0);		
+	}
+	
+	values.countBlockErrors += trial.C_warmup.error;
+	if (trial.C_warmup.correct){
+		list.RT_block.appendItem(trial.C_warmup.latency);
+	}	
+]
+/ branch = [
+	return trial.testITI;
+]
+</trial>
+
+
+
+Notes:
+* trial.C_test runs the remaining 36 trials in a block that DO potentially count towards summary variables
+* it assembles the character pair based on:
+	- type of task (letter or digit => depends on current quadrant)
+	- type of sampled task category (letter task: consonant or vowel; digit task: even or odd)
+	- type of sampled congruence
+	- order of target and distractor symbol (random)
+* it presents the character pair in the assigned quadrant
+* waits for a response for max.5000ms
+* updates summary variable list if appropriate
+* then calls trial.testITI
+<trial C_test>
+/ ontrialbegin = [
+	values.countTestTrials += 1;
+	values.quadrant += 1;
+	if (values.quadrant > 4){
+		values.quadrant = 1;
+	}
+	
+	if (values.quadrant == 1){
+		values.x = shape.quadrant1_frame.hposition;
+		values.y = shape.quadrant1_frame.vposition;
+	} else if (values.quadrant == 2){
+		values.x = shape.quadrant2_frame.hposition;
+		values.y = shape.quadrant2_frame.vposition;	
+	} else if (values.quadrant == 3){
+		values.x = shape.quadrant3_frame.hposition;
+		values.y = shape.quadrant3_frame.vposition;	
+	} else if (values.quadrant == 4){
+		values.x = shape.quadrant4_frame.hposition;
+		values.y = shape.quadrant4_frame.vposition;	
+	}
+	
+	if (parameters.quadrantTaskAssignment == 1 || parameters.quadrantTaskAssignment == 2){
+		if (mod(values.quadrant, 2)== 0){
+			values.switch = 0;
+		} else {
+			values.switch = 1;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3 || parameters.quadrantTaskAssignment == 4){
+		
+		if (mod(values.quadrant, 2)== 0){
+			values.switch = 1;
+		} else {
+			values.switch = 0;
+		}	
+	}
+	
+	if (parameters.quadrantTaskAssignment == 1){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}
+	} else if (parameters.quadrantTaskAssignment == 2){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}	
+	} else if (parameters.quadrantTaskAssignment == 4){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}		
+	}
+	
+	if (values.targetTask == values.taskA){
+		values.taskCategory = list.test_taskA.nextValue;
+		if (values.taskCategory == 1){
+			values.targetCategory = "CONSONANT";
+			values.targetSymbol = list.consonants.nextValue;
+			values.avoidConsonant = values.targetSymbol;
+			if (values.switch == 0){
+				values.congruence = list.Ccongruence_testTaskA_nonswitch.nextValue;				
+			} else {
+				values.congruence = list.Ccongruence_testTaskA_switch.nextValue;
+			}
+		
+			if (values.congruence == 1)	{
+				values.distractorSymbol = list.control.nextValue;
+				values.avoidControl = values.distractorSymbol;
+			} else if (values.congruence == 2){
+				if (parameters.consonantKey == parameters.evenKey){
+					values.distractorSymbol = list.even.nextValue;
+					values.avoidEven = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.odd.nextValue;
+					values.avoidOdd = values.distractorSymbol;
+				}
+			} else if (values.congruence == 3){
+				if (parameters.consonantKey == parameters.evenKey){
+					values.distractorSymbol = list.odd.nextValue;
+					values.avoidOdd = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.even.nextValue;
+					values.avoidEven = values.distractorSymbol;
+				}
+			}				
+		} else {
+			values.targetCategory = "VOWEL";
+			values.targetSymbol = list.vowels.nextValue;
+			values.avoidVowel = values.targetSymbol;
+			if (values.switch == 0){
+				values.congruence = list.Ccongruence_testTaskA_nonswitch.nextValue;				
+			} else {
+				values.congruence = list.Ccongruence_testTaskA_switch.nextValue;
+			}
+
+			if (values.congruence == 1)	{
+				values.distractorSymbol = list.control.nextValue;
+				values.avoidControl = values.distractorSymbol;
+			} else if (values.congruence == 2){
+				if (parameters.vowelKey == parameters.evenKey){
+					values.distractorSymbol = list.even.nextValue;
+					values.avoidEven = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.odd.nextValue;
+					values.avoidOdd = values.distractorSymbol;
+				}
+			} else if (values.congruence == 3){
+				if (parameters.vowelKey == parameters.evenKey){
+					values.distractorSymbol = list.odd.nextValue;
+					values.avoidOdd = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.even.nextValue;
+					values.avoidEven = values.distractorSymbol;
+				}
+			}
+		}
+	} else {
+		values.taskCategory = list.test_taskB.nextValue;
+		if (values.taskCategory == 1){
+			values.targetCategory = "ODD";
+			values.targetSymbol = list.odd.nextValue;
+			values.avoidOdd = values.targetSymbol;		
+			if (values.switch == 0){
+				values.congruence = list.Ccongruence_testTaskB_nonswitch.nextValue;				
+			} else {
+				values.congruence = list.Ccongruence_testTaskB_switch.nextValue;
+			}
+	
+			if (values.congruence == 1)	{
+				values.distractorSymbol = list.control.nextValue;
+				values.avoidConsonant = values.distractorSymbol;
+			} else if (values.congruence == 2){
+				if (parameters.oddKey == parameters.consonantKey){
+					values.distractorSymbol = list.consonants.nextValue;
+					values.avoidConsonant = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.vowels.nextValue;
+					values.avoidVowel = values.distractorSymbol;
+				}
+			} else if (values.congruence == 3){
+				if (parameters.oddKey == parameters.consonantKey){
+					values.distractorSymbol = list.vowels.nextValue;
+					values.avoidVowel = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.consonants.nextValue;
+					values.avoidConsonant = values.distractorSymbol;
+				}
+			}				
+		} else {
+			values.targetCategory = "EVEN";
+			values.targetSymbol = list.even.nextValue;	
+			values.avoidEven = values.targetSymbol;
+			if (values.switch == 0){
+				values.congruence = list.Ccongruence_testTaskB_nonswitch.nextValue;			
+			} else {
+				values.congruence = list.Ccongruence_testTaskB_switch.nextValue;
+			}
+	
+			if (values.congruence == 1)	{
+				values.distractorSymbol = list.control.nextValue;
+				values.avoidControl = values.distractorSymbol;
+			} else if (values.congruence == 2){
+				if (parameters.evenKey == parameters.consonantKey){
+					values.distractorSymbol = list.consonants.nextValue;
+					values.avoidConsonant = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.vowels.nextValue;
+					values.avoidVowel = values.distractorSymbol;
+				}
+			} else if (values.congruence == 3){
+				if (parameters.evenKey == parameters.consonantKey){
+					values.distractorSymbol = list.vowels.nextValue;
+					values.avoidVowel = values.distractorSymbol;
+				} else {
+					values.distractorSymbol = list.consonants.nextValue;
+					values.avoidConsonant = values.distractorSymbol;
+				}
+			}
+		}
+	}
+	
+	if (list.targetPairPosition.nextValue == 1){
+		values.targetPair = concat(values.targetSymbol, values.distractorSymbol);
+	} else {
+		values.targetPair = concat(values.distractorSymbol, values.targetSymbol);
+	}
+]
+/ stimulustimes = [0 = quadrant1_frame, quadrant1_inner, quadrant2_frame, quadrant2_inner, 
+quadrant3_frame, quadrant3_inner, quadrant4_frame, quadrant4_inner, targetPair]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ beginresponsetime = 0
+/ response = timeout(parameters.responseDeadline)
+/ iscorrectresponse = [
+	return(
+	(values.targetTask == values.taskA && values.taskCategory == 1 && trial.C_test.responseText == parameters.consonantKey) ||
+	(values.targetTask == values.taskA && values.taskCategory == 2 && trial.C_test.responseText == parameters.vowelKey) ||	
+	(values.targetTask == values.taskB && values.taskCategory == 1 && trial.C_test.responseText == parameters.oddKey) ||
+	(values.targetTask == values.taskB && values.taskCategory == 2 && trial.C_test.responseText == parameters.evenKey));
+]
+/ ontrialend = [
+	values.iti = parameters.correctITI;
+	if (trial.C_test.error && trial.C_test.response != 0){
+		values.iti = parameters.errorITI;
+		text.errorFeedback.hposition = values.x;
+		text.errorFeedback.vposition = values.y;
+		trial.testITI.insertStimulusTime(text.errorFeedback, 0);
+	}
+	
+	if (trial.C_test.response !=0 && trial.C_test.latency >= parameters.minRT){
+		if (values.switch == 0){
+			list.ACC_C_nonswitch.appendItem(trial.C_test.correct);
+			if (trial.C_test.correct){
+				list.RT_C_nonswitch.appendItem(trial.C_test.latency);
+			}						
+		} else {
+			list.ACC_C_switch.appendItem(trial.C_test.correct);
+			if (trial.C_test.correct){
+				list.RT_C_switch.appendItem(trial.C_test.latency);
+			}			
+		}
+	} else {
+		values.countExcludedTrials += 1;
+	}
+	
+	values.countBlockErrors += trial.C_test.error;
+	if (trial.C_test.correct){
+		list.RT_block.appendItem(trial.C_test.latency);
+	}		
+]
+/ branch = [
+	return trial.testITI;
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS: TEST (NON CROSS TALK CONDITION)
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial N_start>
+/ ontrialbegin = [
+	values.startQuadrant = values.quadrant + 1;
+	if (values.startQuadrant > 4){
+		values.startQuadrant = 1;
+	}	
+	if (values.startQuadrant == 1){
+		shape.quadrant1_inner.color = yellow;
+	} else if (values.startQuadrant == 2){
+		shape.quadrant2_inner.color = yellow;
+	} else if (values.startQuadrant == 3){
+		shape.quadrant3_inner.color = yellow;
+	} else if (values.startQuadrant == 4){
+		shape.quadrant4_inner.color = yellow;
+	} 
+]
+/ stimulustimes = [0 = quadrant1_frame, quadrant1_inner, quadrant2_frame, quadrant2_inner, 
+quadrant3_frame, quadrant3_inner, quadrant4_frame, quadrant4_inner]
+
+//for touchscreens: present the inactive response buttons
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ isvalidresponse = [
+	return false;
+]
+
+/ trialduration = parameters.blockstartDuration
+/ recorddata = false
+/ ontrialend = [
+	shape.quadrant1_inner.color = white;
+	shape.quadrant2_inner.color = white;	
+	shape.quadrant3_inner.color = white;
+	shape.quadrant4_inner.color = white;	
+	
+	values.iti = parameters.correctITI;
+]
+</trial>
+
+
+<trial N_warmup>
+/ ontrialbegin = [
+	values.quadrant += 1;
+	if (values.quadrant > 4){
+		values.quadrant = 1;
+	}
+	
+	if (values.quadrant == 1){
+		values.x = shape.quadrant1_frame.hposition;
+		values.y = shape.quadrant1_frame.vposition;
+	} else if (values.quadrant == 2){
+		values.x = shape.quadrant2_frame.hposition;
+		values.y = shape.quadrant2_frame.vposition;	
+	} else if (values.quadrant == 3){
+		values.x = shape.quadrant3_frame.hposition;
+		values.y = shape.quadrant3_frame.vposition;	
+	} else if (values.quadrant == 4){
+		values.x = shape.quadrant4_frame.hposition;
+		values.y = shape.quadrant4_frame.vposition;	
+	}
+	
+	if (parameters.quadrantTaskAssignment == 1 || parameters.quadrantTaskAssignment == 2){
+		if (mod(values.quadrant, 2)== 0){
+			values.switch = 0;
+		} else {
+			values.switch = 1;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3 || parameters.quadrantTaskAssignment == 4){
+		
+		if (mod(values.quadrant, 2)== 0){
+			values.switch = 1;
+		} else {
+			values.switch = 0;
+		}	
+	}
+	
+	if (parameters.quadrantTaskAssignment == 1){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}
+	} else if (parameters.quadrantTaskAssignment == 2){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}	
+	} else if (parameters.quadrantTaskAssignment == 4){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}		
+	}
+	
+	if (values.targetTask == values.taskA){
+		values.taskCategory = list.warmup_taskA.nextValue;
+		if (values.taskCategory == 1){
+			values.targetCategory = "CONSONANT";
+			values.targetSymbol = list.consonants.nextValue;
+			values.avoidConsonant = values.targetSymbol;
+
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;
+				
+		} else {
+			values.targetCategory = "VOWEL";
+			values.targetSymbol = list.vowels.nextValue;
+			values.avoidVowel = values.targetSymbol;
+
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;
+		}
+	} else {
+		values.taskCategory = list.warmup_taskB.nextValue;
+		if (values.taskCategory == 1){
+			values.targetCategory = "ODD";
+			values.targetSymbol = list.odd.nextValue;
+
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidConsonant = values.distractorSymbol;				
+		} else {
+			values.targetCategory = "EVEN";
+			values.targetSymbol = list.even.nextValue;	
+			values.avoidEven = values.targetSymbol;
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;
+		}
+	}
+	
+	if (list.targetPairPosition.nextValue == 1){
+		values.targetPair = concat(values.targetSymbol, values.distractorSymbol);
+	} else {
+		values.targetPair = concat(values.distractorSymbol, values.targetSymbol);
+	}
+]
+/ stimulustimes = [0 = quadrant1_frame, quadrant1_inner, quadrant2_frame, quadrant2_inner, 
+quadrant3_frame, quadrant3_inner, quadrant4_frame, quadrant4_inner, targetPair]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ beginresponsetime = 0
+/ response = timeout(parameters.responseDeadline)
+/ iscorrectresponse = [
+	return(
+	(values.targetTask == values.taskA && values.taskCategory == 1 && trial.N_warmup.responseText == parameters.consonantKey) ||
+	(values.targetTask == values.taskA && values.taskCategory == 2 && trial.N_warmup.responseText == parameters.vowelKey) ||	
+	(values.targetTask == values.taskB && values.taskCategory == 1 && trial.N_warmup.responseText == parameters.oddKey) ||
+	(values.targetTask == values.taskB && values.taskCategory == 2 && trial.N_warmup.responseText == parameters.evenKey));
+]
+/ ontrialend = [
+	values.iti = parameters.correctITI;
+	if (trial.N_warmup.error && trial.N_warmup.response != 0){
+		values.iti = parameters.errorITI;
+		text.errorFeedback.hposition = values.x;
+		text.errorFeedback.vposition = values.y;		
+		trial.testITI.insertStimulusTime(text.errorFeedback, 0);		
+	}
+	
+	values.countBlockErrors += trial.N_warmup.error;
+	if (trial.N_warmup.correct){
+		list.RT_block.appendItem(trial.N_warmup.latency);
+	}		
+]
+/ branch = [
+	return trial.testITI;
+]
+</trial>
+
+<trial N_test>
+/ ontrialbegin = [
+	values.countTestTrials += 1;
+	values.quadrant += 1;
+	if (values.quadrant > 4){
+		values.quadrant = 1;
+	}
+	
+	if (values.quadrant == 1){
+		values.x = shape.quadrant1_frame.hposition;
+		values.y = shape.quadrant1_frame.vposition;
+	} else if (values.quadrant == 2){
+		values.x = shape.quadrant2_frame.hposition;
+		values.y = shape.quadrant2_frame.vposition;	
+	} else if (values.quadrant == 3){
+		values.x = shape.quadrant3_frame.hposition;
+		values.y = shape.quadrant3_frame.vposition;	
+	} else if (values.quadrant == 4){
+		values.x = shape.quadrant4_frame.hposition;
+		values.y = shape.quadrant4_frame.vposition;	
+	}
+	
+	if (parameters.quadrantTaskAssignment == 1 || parameters.quadrantTaskAssignment == 2){
+		if (mod(values.quadrant, 2)== 0){
+			values.switch = 0;
+		} else {
+			values.switch = 1;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3 || parameters.quadrantTaskAssignment == 4){
+		
+		if (mod(values.quadrant, 2)== 0){
+			values.switch = 1;
+		} else {
+			values.switch = 0;
+		}	
+	}
+	
+	if (parameters.quadrantTaskAssignment == 1){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}
+	} else if (parameters.quadrantTaskAssignment == 2){
+		if (values.quadrant < 3){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}
+	} else if (parameters.quadrantTaskAssignment == 3){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskA;
+		} else {
+			values.targetTask = values.taskB;
+		}	
+	} else if (parameters.quadrantTaskAssignment == 4){
+		if (values.quadrant == 1 || values.quadrant == 4){
+			values.targetTask = values.taskB;
+		} else {
+			values.targetTask = values.taskA;
+		}		
+	}
+	
+	if (values.targetTask == values.taskA){
+		values.taskCategory = list.test_taskA.nextValue;
+		if (values.taskCategory == 1){
+			values.targetCategory = "CONSONANT";
+			values.targetSymbol = list.consonants.nextValue;
+			values.avoidConsonant = values.targetSymbol;
+
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;		
+		} else {
+			values.targetCategory = "VOWEL";
+			values.targetSymbol = list.vowels.nextValue;
+			values.avoidVowel = values.targetSymbol;
+
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;
+		}
+	} else {
+		values.taskCategory = list.test_taskB.nextValue;
+		if (values.taskCategory == 1){
+			values.targetCategory = "ODD";
+			values.targetSymbol = list.odd.nextValue;
+			values.avoidOdd = values.targetSymbol;		
+
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidConsonant = values.distractorSymbol;		
+		} else {
+			values.targetCategory = "EVEN";
+			values.targetSymbol = list.even.nextValue;	
+			values.avoidEven = values.targetSymbol;
+
+			values.distractorSymbol = list.control.nextValue;
+			values.avoidControl = values.distractorSymbol;
+		}
+	}
+	
+	if (list.targetPairPosition.nextValue == 1){
+		values.targetPair = concat(values.targetSymbol, values.distractorSymbol);
+	} else {
+		values.targetPair = concat(values.distractorSymbol, values.targetSymbol);
+	}
+]
+/ stimulustimes = [0 = quadrant1_frame, quadrant1_inner, quadrant2_frame, quadrant2_inner, 
+quadrant3_frame, quadrant3_inner, quadrant4_frame, quadrant4_inner, targetPair]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ beginresponsetime = 0
+/ response = timeout(parameters.responseDeadline)
+/ iscorrectresponse = [
+	return (
+	(values.targetTask == values.taskA && values.taskCategory == 1 && trial.N_test.responseText == parameters.consonantKey) ||
+	(values.targetTask == values.taskA && values.taskCategory == 2 && trial.N_test.responseText == parameters.vowelKey) ||	
+	(values.targetTask == values.taskB && values.taskCategory == 1 && trial.N_test.responseText == parameters.oddKey) ||
+	(values.targetTask == values.taskB && values.taskCategory == 2 && trial.N_test.responseText == parameters.evenKey));
+]
+/ ontrialend = [
+	values.iti = parameters.correctITI;
+	if (trial.N_test.error && trial.N_test.response != 0){
+		values.iti = parameters.errorITI;
+		text.errorFeedback.hposition = values.x;
+		text.errorFeedback.vposition = values.y;
+		trial.testITI.insertStimulusTime(text.errorFeedback, 0);
+	}
+	
+	if (trial.N_test.response !=0 && trial.N_test.latency >= parameters.minRT){
+		if (values.switch == 0){
+			list.ACC_N_nonswitch.appendItem(trial.N_test.correct);
+			if (trial.N_test.correct){
+				list.RT_N_nonswitch.appendItem(trial.N_test.latency);
+			}						
+		} else {
+			list.ACC_N_switch.appendItem(trial.N_test.correct);
+			if (trial.N_test.correct){
+				list.RT_N_switch.appendItem(trial.N_test.latency);
+			}			
+		}
+	} else {
+		values.countExcludedTrials += 1;
+	}
+	
+	values.countBlockErrors += trial.N_test.error;
+	if (trial.N_test.correct){
+		list.RT_block.appendItem(trial.N_test.latency);
+	}	
+]
+/ branch = [
+	return trial.testITI;
+]
+</trial>
+
+
+<trial testITI>
+
+//for touchscreens: present the inactive response buttons
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ isvalidresponse = [
+	return false;
+]
+
+/ trialduration = values.iti
+/ ontrialend = [
+	trial.testITI.resetStimulusFrames();
+]
+/ recorddata = false
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block generalInstructions>
+/ skip = [
+	parameters.maxPracticeBlocks < 4;
+]
+/ trials = [1 = generalInstructions]
+</block>
+
+
+<block practiceTaskA>
+/ skip = [
+	parameters.maxPracticeBlocks < 4;
+]
+/ onblockbegin = [
+	values.countPracticeBlocks += 1;
+	values.targetTask = values.taskA;
+	if (values.countPracticeBlocks >  parameters.maxPracticeBlocks/2){
+		text.left.skip = true;
+		text.right.skip = true;
+		text.left_HL.textColor = white;
+		text.right_HL.textColor = white;
+	}
+	
+	values.countBlockErrors = 0;
+	list.RT_block.reset();
+]
+/ trials = [
+	1 = instructions_lettertask; 
+	2 = getReady_practice; 
+	3-26 = practice_taskA; 
+	27 = instructions_practiceBlockFeedback;
+]
+/ branch = [
+	if (values.countPracticeBlocks < parameters.maxPracticeBlocks){
+		return block.practiceTaskB;
+	}
+]
+</block>
+
+<block practiceTaskB>
+/ skip = [
+	parameters.maxPracticeBlocks < 4;
+]
+/ onblockbegin = [
+	values.countPracticeBlocks += 1;
+	values.targetTask = values.taskB;
+	if (values.countPracticeBlocks >  parameters.maxPracticeBlocks/2){
+		text.left.skip = true;
+		text.right.skip = true;
+		text.left_HL.textColor = white;
+		text.right_HL.textColor = white;		
+	}
+
+	values.countBlockErrors = 0;
+	list.RT_block.reset();	
+]
+/ trials = [
+	1 = instructions_digittask; 
+	2 = getReady_practice; 
+	3-26 = practice_taskB; 
+	27 = instructions_practiceBlockFeedback;
+]
+/ branch = [
+	if (values.countPracticeBlocks ==  parameters.maxPracticeBlocks/2){
+		return block.warning;
+	} else if (values.countPracticeBlocks <  parameters.maxPracticeBlocks){
+		return block.practiceTaskA;
+	}
+]
+</block>
+
+<block warning>
+/ trials = [1 = instructions_alert]
+/ branch = [
+	return block.practiceTaskA;
+]
+</block>
+
+*******************************************************
+Test:
+*******************************************************
+
+block.testStart calls the sequence of test blocks
+<block testStart>
+/ trials = [1 = instructions_testStart]
+/ onblockend = [
+	values.countTestBlocks = 0;
+]
+/ branch = [
+	if (length(parameters.conditionSequence) > 0){
+		return block.blockSelection;
+	}
+]
+</block>
+
+Note: block.blockSelection selects the next block as specified by parameters.conditionSequence
+<block blockSelection>
+/ onblockbegin = [
+	values.nextBlock = subString(parameters.conditionSequence, values.countTestBlocks, 1);
+]
+/ branch = [
+	if (values.nextBlock == "C"){
+		return block.C;
+	} else {
+		return block.N;
+	}
+]
+</block>
+
+
+Note:
+- block.C samples the first task quadrant (!because the quadrant gets increased by 1 at the start of each trial, the sampled
+quadrant needs to be one less at block start)
+- runs 12 warmup trials and 36 test trials
+- returns to block.blockSelection unless all blocks have been run
+<block C>
+/ onblockbegin = [
+	values.countTestBlocks += 1;
+	
+	if (parameters.quadrantTaskAssignment == 1 || parameters.quadrantTaskAssignment == 2){
+		values.quadrant = replace(2,4);
+	} else if (parameters.quadrantTaskAssignment == 3 || parameters.quadrantTaskAssignment == 4){
+		values.quadrant = replace(1,3);
+	}
+	
+	list.warmup_taskA.reset();
+	list.warmup_taskB.reset();
+	list.Ccongruence_warmupTaskA_switch.reset();
+	list.Ccongruence_warmupTaskA_nonswitch.reset();	
+	list.Ccongruence_warmupTaskB_switch.reset();
+	list.Ccongruence_warmupTaskB_nonswitch.reset();
+	list.test_taskA.reset();
+	list.test_taskB.reset();
+	list.Ccongruence_testTaskA_switch.reset();
+	list.Ccongruence_testTaskA_nonswitch.reset();	
+	list.Ccongruence_testTaskB_switch.reset();
+	list.Ccongruence_testTaskB_nonswitch.reset();	
+
+	values.countBlockErrors = 0;
+	list.RT_block.reset();
+]
+/ trials = [
+	1 = getReady_test; 
+	2 = C_start; 
+	3-14 = C_warmup; 
+	15 - 50 = C_test; 
+	51 = instructions_break;
+]
+/ branch = [
+	if (values.countTestBlocks < length(parameters.conditionSequence)){
+		return block.blockSelection;
+	}
+]
+</block>
+
+
+- block.N samples the first task quadrant (!because the quadrant gets increased by 1 at the start of each trial, the sampled
+quadrant needs to be one less at block start)
+- runs 12 warmup trials and 36 test trials
+- returns to block.blockSelection unless all blocks have been run
+<block N>
+/ onblockbegin = [
+	values.countTestBlocks += 1;
+	values.congruence = 1;
+
+	if (parameters.quadrantTaskAssignment == 1 || parameters.quadrantTaskAssignment == 2){
+		values.quadrant = replace(2,4);
+	} else if (parameters.quadrantTaskAssignment == 3 || parameters.quadrantTaskAssignment == 4){
+		values.quadrant = replace(1,3);
+	}
+	
+	list.warmup_taskA.reset();
+	list.warmup_taskB.reset();
+	list.test_taskA.reset();
+	list.test_taskB.reset();
+	
+	values.countBlockErrors = 0;
+	list.RT_block.reset();	
+	
+]	
+/ trials = [
+	1 = getReady_test; 
+	2 = N_start; 
+	3-14 = N_warmup; 
+	15 - 50 = N_test; 
+	51 = instructions_break;
+]
+/ branch = [
+	if (values.countTestBlocks < length(parameters.conditionSequence)){
+		return block.blockSelection;
+	}
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt taskSwitching>
+/ onexptbegin = [	
+	if (parameters.consonantKey == parameters.evenKey){
+		values.congruentTasks = "consonant-even; vowel-odd";
+	} else if (parameters.consonantKey == parameters.oddKey){
+		values.congruentTasks = "consonant-odd; vowel-even";
+	}
+	
+	if (computer.touch && !computer.hasKeyboard){
+		text.spacebar.skip = true;
+	}
+]
+/ blocks = [
+	1 = generalInstructions;
+	2 = practiceTaskA;
+	3 = testStart;	
+]
+
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

@@ -1,0 +1,1003 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+									Brief Implicit Association Test (BIAT)
+									(German version)
+___________________________________________________________________________________________________________________
+
+Main Inquisit programming: Sean Draine (seandr@millisecond.com)
+last updated:  10-08-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-08-2024 Millisecond Software
+
+The University of Washington has applied for patent on the BIAT method. The patent 
+is managed by Project Implicit. Both the University of Washington and Project Implicit 
+authorize free use of the BIAT method and published stimuli for scholarly research, 
+provided that reports of the research clearly identify any modifications made to the 
+BIAT and appropriately cite the present article. Please contact Project Implicit 
+(E-mail: feedback@projectimplicit.net) to request a license for commercial or other 
+nonscholarly use of the BIAT.
+
+Millisecond Software thanks Dr. Sriram and Dr. Greenwald for providing generous feedback on this script!
+
+German translation provided by K. Borchert for Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+The Implicit Association Task (IAT: Greenwald, McGhee, & Schwartz, 1998) and the brief IAT (BIAT: Sriram & Greenwald, 2009)
+are widely-used cognitive-behavioral paradigms that measure the strength of automatic (implicit) associations 
+between concepts in people’s minds relying on latency measures in simple sorting tasks.
+ 
+The strength of an association between concepts is measured by the standardized mean difference score of 
+the 'hypothesis-inconsistent' pairings and 'hypothesis-consistent' pairings (d-score) (Greenwald, Nosek, & Banaji, 2003). 
+In general, the higher the d-score the stronger is the association between the 'hypothesis-consistent' pairings 
+(decided by researchers). Negative d-scores suggest a stronger association between the 'hypothesis-inconsistent' pairings.
+
+Inquisit calculates d scores using the improved scoring algorithm as described in Greenwald et al (2003). 
+Error trials are handled by requiring respondents to correct their responses according to recommendation (p.214).
+
+D-scores obtained with this script:
+Positive d-scores: support a stronger association between 'Flowers-Good' than for 'Insects-Good'
+Negative d-scores: support a stronger association between 'Insects-Good' than for 'Flowers-Good'
+
+
+References:
+Greenwald, A. G., McGhee, D. E., & Schwartz, J. K. L. (1998). Measuring individual differences in implicit cognition: 
+The Implicit Association Test. Journal of Personality and Social Psychology, 74, 1464-1480.
+
+Greenwald, A. G., Nosek, B. A., & Banaji, M. R. (2003). Understanding and Using the Implicit Association Test: 
+I. An Improved Scoring Algorithm. Journal of Personality and Social Psychology, 85, 197-216.
+
+Sriram, N. & Anthony G. Greenwald, A.G (2009).The Brief Implicit Association Test.
+Experimental Psychology, 56, 283–294. (see page. 285, Table 1 for an overview of the procedure)
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants are asked to categorize attributes (e.g. "joyful"; "tragic") and target items (e.g "daisy", "wasp") 
+into predetermined categories via keystroke presses. 
+For the test, participants are asked to sort categories into  paired/combined categories (e.g. 
+"Flower OR Good" on the left vs. "Anything else" on the right). The basic task is to press a left key (E) if an item 
+(e.g. "joyful" or "daisy") belongs to the category presented on the left (e.g. "Flower OR Good") and to press the right key (I) 
+if the word (e.g. "tragic" or "wasp") does not belong to the category on the left. Pairings are reversed for a second test 
+(e.g. "Insects OR Good" on the left vs. "Anything else" on the right). Order is counterbalanced by groupnumber.							  
+For practice, participants practice two shorter versions of the test.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'briefiat_german_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+
+subject, group, 				with the current subject/groupnumber
+										Note: odd/even groupnumbers balance the order in which 
+										hypothesis-compatible/incompatible blocks are run
+										odd = compatible - incompatible
+										even = incompatible - compatible
+										
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; 
+									even those that do not store data to the data file such as feedback trials
+										
+response:						the final trial response (scancodes of the keys pressed)
+										18 = E
+										23 = I
+										57 = spacebar press
+										Note: script saves the final and -by design- correct response for each trial
+										
+correct:						the accuracy of the initial response
+										0 = initial response was incorrect and needed to be corrected
+										1 = initial response is correct
+										
+latency:						the latency of the final (correct) response in ms; measured from onset of stim
+stimulusnumber:					the number of the current stimulus
+stimulusitem:					the currently presented item
+
+
+Only meaningful for the last row of data in the raw data file (upon completion of IAT):
+
+d1:								d-score of the first blocks
+d2 (if run):					d-score of the second blocks (run in extended version)
+d:								overall d-score 
+								for extended version: non-weighted mean of the 2 d-scores); main DV
+								otherwise: the overall D-score is simply the D-score of the first blocks
+
+								Suggested Interpretation:
+
+											D-score <= -0.65 => "a strong" preference for hypothesis-NONconforming pairings
+											D-score < -0.35 => "a moderate" preference for hypothesis-NONconforming pairings
+											D-score < -0.15 => "a slight" preference for hypothesis-NONforming pairings																						
+											-0.15 <= D-score <= 0.15 "little to no" preference
+											D-score > 0.15 => "a slight" preference for hypothesis-conforming pairings
+											D-score > 0.35 => "a moderate" preference for hypothesis-conforming pairings
+											D-score >= 0.65 => "a strong" preference for hypothesis-conforming pairings
+
+percentcorrect:     the overall percent correct score of initial responses in test trials of D-score qualifying latencies
+
+propRT300:			the proportion of response latencies < 300ms
+
+excludeCriteriaMet:	1 = yes, exclusion supported per Greenwald et al (2003, p.214, Table 4):
+					More than 10% of all response latencies are faster than 300ms
+					0 = otherwise
+									
+
+(2) Summary data file: 'briefiat_german_summary*.iqdat'
+
+inquisit.version: 				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+d1:								d-score of the first blocks
+d2 (if run):					d-score of the second blocks (run in extended version)
+d:								overall d-score 
+								for extended version: non-weighted mean of the 2 d-scores); main DV
+								otherwise: the overall D-score is simply the D-score of the first blocks
+
+								Suggested Interpretation:
+
+											D-score <= -0.65 => "a strong" preference for hypothesis-NONconforming pairings
+											D-score < -0.35 => "a moderate" preference for hypothesis-NONconforming pairings
+											D-score < -0.15 => "a slight" preference for hypothesis-NONforming pairings																						
+											-0.15 <= D-score <= 0.15 "little to no" preference
+											D-score > 0.15 => "a slight" preference for hypothesis-conforming pairings
+											D-score > 0.35 => "a moderate" preference for hypothesis-conforming pairings
+											D-score >= 0.65 => "a strong" preference for hypothesis-conforming pairings
+
+percentcorrect:     the overall percent correct score of initial responses in test trials of D-score qualifying latencies
+
+propRT300:			the proportion of response latencies < 300ms
+
+excludeCriteriaMet:	1 = yes, exclusion supported per Greenwald et al (2003, p.214, Table 4):
+					More than 10% of all response latencies are faster than 300ms
+					0 = otherwise
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+Hypothesis-consistent pairings vs. hypothesis-inconsistent pairings; tested within-subjects 
+=> order is counterbalanced by groupnumber assignment
+
+Sequence (odd groupnumbers):
+1. Short Block1 (hypothesis-consistent) 
+2. Short Block2 (hypothesis-inconsistent)
+3. Long Block (hypothesis consistent)
+4. Long Block (hypothesis inconsistent)
+3. Long Block (hypothesis consistent)* (the last two blocks are skipped if parameters.extended = false)
+4. Long Block (hypothesis inconsistent)
+
+In all Test Blocks:
+* attributes and targets alternate
+* attributes as well as targets are randomly selected without replacement
+* short blocks run 12 test trials; experimental blocks run 20 test trials by default
+* the first 4 trials (experimental blocks) = prefatory trials that are not included into subsequent analyses
+
+NOTE: if a participant goes through a sequence of BIATs the short blocks 
+short_a & short_b only need to be run for the very first BIAT in the sequence.
+Short Blocks are simply shorter versions (only 4 prefatory trial + 8 trials) of the longer Experimental Blocks. 
+They are intended as practice blocks as participants tend to be slower 
+during the first two blocks of a BIAT. They are not included into further data analyses.
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+Stimuli can be edited under section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+Instructions can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+The parameters you can change are:
+
+	The "skipsummary" variable in the values tag can be set to true to skip the final
+     summary page or false to display the page.
+
+	The "extended" variable in the values tag can be set to true to run a total of four 
+     test blocks, or false to run only 2 test blocks. 
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ skipsummary = false
+/ extended = true
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+     The following section defines the labels and stimulus items for attributes and 
+     categories. By default, attributes are GOOD and BD words, and categories are
+     FLOWERS and INSECTS.  The BIAT can be adapted to other domains by simply 
+     modifying these stimuli.
+
+***********************************************************************
+
+<item attributeAlabel>
+/ 1 = "GUT"
+</item>
+
+<item attributeA>
+/1 = "Wunderbar"
+/2 = "Großartig"
+/3 = "Super"
+/4 = "Vergnügen"
+</item>
+
+<item attributeBlabel>
+/ 1 = "SCHLECHT"
+</item>
+
+<item attributeB>
+/ 1 = "Tragisch"
+/ 2 = "Schrecklich"
+/ 3 = "Schmerzhaft"
+/ 4 = "Fürchterlich"
+</item>
+
+<item targetAlabel>
+/ 1 = "BLUMEN"
+</item>
+
+<item targetA>
+/ 1 = "Orchidee"
+/ 2 = "Lilie"
+/ 3 = "Veilchen"
+/ 4 = "Gänseblümchen"
+</item>
+
+<item targetBLabel>
+/1 = "INSEKTEN"
+</item>
+
+<item targetB>
+/ 1 = "Ameise"
+/ 2 = "Heuschrecke"
+/ 3 = "Biene"
+/ 4 = "Wespe"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item introinstructions>
+/ 1 = "Deine Aufgabe ist es, die rechte 'I' Taste zu drücken, wenn Worte auf dem Bildschirm erscheinen, die entweder der Kategorie '<%item.attributeALabel.items.1%>' oder einer weiteren Kategorie (<%item.targetALabel.1%> oder <%item.targetBLabel.1%>) angehören.
+Drücke die linke 'E' Taste für Worte der Kategorie '<%item.attributeBLabel.items.1%>' und für Worte, die der anderen der zwei Kategorien angehören. 
+~nDie ersten paar Runden werden Dir helfen, Dich an das Vorgehen zu gewöhnen.
+Ordne die Worte so schnell wie möglich ohne viele Fehler zu machen. Zu viele Fehler oder zu langsames Reagieren resultieren in einem ungültigen Ergebnis.
+Es ist okay einen gelegentlichen Fehler zu machen. Wenn Du einen Fehler machst, erscheint ein rotes X - um fortzufahren, drücke die andere Taste.
+~nDrücke die Leertaste, um zu beginnen."
+</item>
+
+<item testinstructions>
+/ 1 = "Drücke die rechte 'I' Taste für '<%item.attributeALabel.items.1%>' oder '<%values.currentTarget%>'.
+Drücke die linke 'E' Taste für alles andere.
+~n~nSei so schnell wie Du nur kannst.
+~nDrücke die Leertaste, um zu beginnen."
+</item>
+
+<text orLabel>
+/ items = ("oder")
+/ valign = top
+/ halign = center
+/ position = (50%, 10%)
+/ txcolor = white
+/ fontstyle = ("Arial", 3%)
+/ erase = false
+</text>
+
+<text orInstruct>
+/ items = ("oder")
+/ valign = center
+/ halign = center
+/ position = (50%, 17.5%)
+/ txcolor = white
+/ fontstyle = ("Arial", 3%)
+</text>
+
+<text progress>
+/ position = (50%, 95%)
+/ items = ("(Runde <%values.blockcount%> von <%expressions.totalblockcount %>)")
+/ color = white
+/ fontstyle = ("Arial", 2%)
+</text>
+
+***********************************************************************
+Performance summary
+***********************************************************************
+
+<trial summary>
+/ ontrialbegin = [
+	values.magnitude = "keine nennenswerte";
+	if ( abs(expressions.d) > 0.15 )
+		values.magnitude = "eine geringe";
+	if ( abs(expressions.d) > 0.35 )
+		values.magnitude = "eine moderate";
+	if ( abs(expressions.d) >= 0.65 )
+		values.magnitude = "eine starke";
+	if (expressions.d >= 0.0)
+		values.preferred = item.targetALabel.1;
+	if (expressions.d < 0.0)
+		values.preferred = item.targetBLabel.1;
+	if (expressions.d < 0.0)
+		values.notpreferred= item.targetALabel.1;
+	if (expressions.d >= 0.0)
+		values.notpreferred= item.targetBLabel.1;
+]
+/ stimulustimes = [0=summary]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<text summary>
+/ items = ("Dein IAT Wert (D) beträgt <% expressions.d %>, was auf <% values.magnitude %> automatische Präferenz für <% values.preferred %> im Vergleich zu <% values.notpreferred %> hindeutet.
+~n~nDrücke die Leertaste zum Beenden der Untersuchung.") 
+/ size = (60%, 60%)
+/ hjustify = left
+ </text>
+ 
+<text finish>
+/ items = ("Vielen Dank!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<Drücke die LEERTASTE, um das Programm zu beenden>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+ 
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ fontstyle = ("Arial", 3.5%)
+/ screencolor = black
+/ txbgcolor = black
+/ txcolor = white
+/ minimumversion = "6.5.2.0"
+/ canvasaspectratio = (4, 3)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+response, correct, latency, 
+stimulusnumber, stimulusitem, 
+expressions.d1, expressions.d2, expressions.d, expressions.percentcorrect, 
+expressions.propRT300, expressions.excludeCriteriaMet)
+</data>
+
+****************
+summary data
+****************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.d1, 
+expressions.d2, 
+expressions.d, 
+expressions.percentcorrect, 
+expressions.propRT300, 
+expressions.excludeCriteriaMet)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+<values>
+/ magnitude = "unknown"
+/ preferred = "unknown"
+/ notpreferred = "unknown"
+/ currentTarget = ""
+/ blockcount = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/ A1m:					mean latencies of correct responses in first compatible block A1
+/ A2m:					mean latencies of correct responses in second compatible block A2
+/ B1m:					mean latencies of correct responses in first incompatible block B1
+/ B2m:					mean latencies of correct responses in second incompatible block B2
+/ A1sd:					standard deviation of latencies of correct responses in first compatible block A1
+/ A2sd:					standard deviation of latencies of correct responses in second compatible block A2
+/ B1sd:					standard deviation of latencies of correct responses in first incompatible block B1
+/ B2sd:					standard deviation of latencies of correct responses in second incompatible block B2
+/ sd1:					standarddeviation of latencies in first blocks
+/ sd2:					standarddeviation of latencies in second blocks
+/ d1:					D-score for first blocks	
+/ d2:					D-score for second blocks	
+/ d:					overall D-score
+/ currentblocknumber:	stores the current block number
+/ totalblockcount:		counts the total blocks run
+/ percentcorrect:       the overall percent correct score of initial responses of test trials of D-score qualifying latencies
+
+
+<expressions>
+/ A1m = list.corrRT_A1.mean
+/ A2m = list.corrRT_A2.mean
+/ B1m = list.corrRT_B1.mean
+/ B2m = list.corrRT_B2.mean
+/ A1sd = list.corrRT_A1.standarddeviation
+/ A2sd = list.corrRT_A2.standarddeviation
+/ B1sd = list.corrRT_B1.standarddeviation
+/ B2sd = list.corrRT_B2.standarddeviation
+
+/ sd1 = list.corrRT_1.standarddeviation
+/ sd2 = list.corrRT_2.standarddeviation
+
+/ percentcorrect = list.ACC.mean * 100
+
+
+/ d1 = (expressions.B1m - expressions.A1m) / expressions.sd1
+/ d2 = (expressions.B2m - expressions.A2m) / expressions.sd2
+/ d = if ( parameters.extended ) { (expressions.d1+expressions.d2) / 2 } else { expressions.d1 }
+/ totalblockcount = if (parameters.extended) {6} else {4}
+/propRT300 = list.RT300.mean
+/excludeCriteriaMet = if (expressions.propRT300 > 0.1){
+	1;
+} else {
+	0;
+}
+</expressions>
+
+///////////////////////////////
+Data list to track correct
+latencies across the different 
+blocks
+//////////////////////////////
+
+<list corrRT_1>
+</list>
+
+<list corrRT_2>
+</list>
+
+<list corrRT_A1>
+</list>
+
+<list corrRT_A2>
+</list>
+
+<list corrRT_B1>
+</list>
+
+<list corrRT_B2>
+</list>
+
+//list stores accuracy data
+<list ACC>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text testInstructions>
+/ items = testInstructions
+/ size = (90%, 50%)
+/ position = (50%, 50%)
+/ valign = top
+/ hjustify = center
+/ vjustify = top
+/ fontstyle = ("Arial", 2.75%, false, false, false, false, 5, 1)
+</text>
+
+<text introinstructions>
+/ items = introinstructions
+/ size = (97%, 50%)
+/ position = (50%, 40%)
+/ select = sequence
+/ resetinterval = 20
+/ valign = top
+/ hjustify = center
+/ vjustify = top
+</text>
+
+<trial testinstructions>
+/ stimulustimes = [1=testinstructions, topFocusInstruct, orInstruct, bottomFocusInstruct, progress]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+<trial introinstructions>
+/ ontrialbegin = [
+	text.bottomFocusInstruct.1 = item.attributeAFocusInstruct.1; 
+	values.currentTarget = item.attributeAlabel.1;
+]
+/ stimulustimes = [1=introinstructions, bottomFocusInstruct]
+/ validresponse = (" ")
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+<text attributeAFocusLabel>
+/ items = attributeALabel
+/ valign = top
+/ halign = center
+/ position = (50%, 5%)
+/ txcolor = yellow
+/ fontstyle = ("Arial", 4%)
+/ erase = false
+</text>
+
+<text targetFocusLabel>
+/ items = ("<%values.currentTarget%>")
+/ valign = top
+/ halign = center
+/ position = (50%, 5%)
+/ txcolor = aqua
+/ fontstyle = ("Arial", 4%)
+/ erase = false
+</text>
+
+<text orAttributeAFocusLabel>
+/ items = attributeALabel
+/ valign = top
+/ halign = center
+/ position = (50%, 15%)
+/ txcolor = yellow
+/ fontstyle = ("Arial", 4%)
+/ erase = false
+</text>
+
+<shape eraseLabels>
+/ color = black
+/ shape = rectangle
+/ size = (50%, 20%)
+/ position = (50%,  10%)
+</shape>
+
+<text topFocusInstruct>
+/ items = ("")
+/ valign = bottom
+/ halign = center
+/ position = (50%, 15%)
+/ size = (100%, 12%)
+/ txcolor = aqua
+/ fontstyle = ("Arial", 5%)
+</text>
+
+<text bottomFocusInstruct>
+/ items = attributeAFocusInstruct
+/ valign = top
+/ halign = center
+/ position = (50%, 20%)
+/ size = (100%, 12%)
+/ txcolor = yellow
+/ fontstyle = ("Arial", 5%)
+</text>
+
+<item attributeAFocusInstruct>
+/ 1 = "<%item.attributeALabel.1%>~n<%item.attributeA.1%> <%item.attributeA.2%> <%item.attributeA.3%> <%item.attributeA.4%>"
+</item>
+
+<item targetAFocusInstruct>
+/ 1 = "<%item.targetALabel.1%>~n<%item.targetA.1%> <%item.targetA.2%> <%item.targetA.3%> <%item.targetA.4%>"
+</item>
+
+<item targetBFocusInstruct>
+/ 1 = "<%item.targetBLabel.1%>~n<%item.targetB.1%> <%item.targetB.2%> <%item.targetB.3%> <%item.targetB.4%>"
+</item>
+
+<trial showAttributeLabel>
+/ stimulusframes = [1=attributeAFocusLabel]
+/ response = noresponse
+/ recorddata = false
+</trial>
+
+<trial showLabels>
+/ stimulusframes = [1=targetFocusLabel, orLabel, orAttributeAFocusLabel]
+/ response = noresponse
+/ recorddata = false
+</trial>
+
+<trial eraseLabels>
+/ stimulusframes = [1=eraseLabels]
+/ response = noresponse
+/ recorddata = false
+</trial>
+
+<trial finish>
+/ recorddata = true
+/ stimulusframes = [1 = finish, exit]
+/ validresponse = (" ")
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************************************************************
+Experimental Stimuli
+***********************************************************************
+
+<text attributeA>
+/ items = attributeA
+/ fontstyle = ("Arial", 10%)
+/ txcolor = yellow
+</text>
+
+<text attributeB>
+/ items = attributeB
+/ fontstyle = ("Arial", 10%)
+/ txcolor = yellow
+</text>
+
+<text targetA>
+/ items = targetA
+/ fontstyle = ("Arial", 10%)
+/ txcolor = aqua
+</text>
+
+<text targetB>
+/ items = targetB
+/ fontstyle = ("Arial", 10%)
+/ txcolor = aqua
+</text>
+
+<text error>
+/ position = (50%, 75%)
+/ items = ("X")
+/ color = red
+/ fontstyle = ("Arial", 5%)
+</text>
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 for latencies < 300ms (0 otherwise)
+<list RT300>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial attributeA>
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/ stimulusframes = [1 = attributeA]
+/ posttrialpause = 250
+</trial>
+
+<trial attributeB>
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/ stimulusframes = [1 = attributeB]
+/ posttrialpause = 250
+</trial>
+
+<trial targetALeft>
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/ stimulusframes = [1 = targetA]
+/ posttrialpause = 250
+</trial>
+
+<trial targetARight>
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/ stimulusframes = [1 = targetA]
+/ posttrialpause = 250
+</trial>
+
+<trial targetBLeft>
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/ stimulusframes = [1 = targetB]
+/ posttrialpause = 250
+</trial>
+
+<trial targetBRight>
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/ stimulusframes = [1 = targetB]
+/ posttrialpause = 250
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+************************************
+Intro Block
+************************************
+
+<block intro>
+/ trials = [1 = introinstructions]
+/ onblockend = [
+	values.blockcount = 0;
+]
+
+</block>
+
+************************************
+Short Blocks
+************************************
+
+Note:
+Short Blocks are simply shorter versions (only 4 prefatory trial + 8 trials) of the longer Experimental Blocks. 
+They are intended as practice blocks as participants tend to be slower 
+during the first two blocks of an BIAT. They are not included into further data analyses.
+
+<block short_a>
+/ onblockbegin = [
+	values.currentTarget = item.targetALabel.1; 
+	text.topFocusInstruct.1 = item.targetAFocusInstruct.1;
+]
+/ trials = [
+	1=testInstructions; 
+	2=showLabels;
+  3-6 = noreplace(targetARight, targetBLeft);
+  8,10,12,14 = noreplace(targetARight, targetBLeft);
+  7,9,11,13 = noreplace(attributeA, attributeB);
+ ]
+/ errormessage = true(error,200)
+/ response = correct
+</block>
+
+<block short_b>
+/ onblockbegin = [
+	values.currentTarget = item.targetBLabel.1; 
+	text.topFocusInstruct.1 = item.targetBFocusInstruct.1;
+]
+/ trials = [
+	1=testInstructions; 
+	2=showLabels;
+  3-6 = noreplace(targetBRight, targetALeft);
+  8,10,12,14 = noreplace(targetBRight, targetALeft);
+  7,9,11,13 = noreplace(attributeA, attributeB);
+ ]
+/ errormessage = true(error,200)
+/ response = correct
+</block>
+
+************************************
+Experimental Blocks
+************************************
+Note:
+* experimental blocks run 20 trials by default
+* the first 4 trials = prefatory trials that are not included into subsequent analyses
+
+<block A>
+/ skip = [parameters.extended == false && block.A.totalcount >=1]
+/ onblockbegin = [
+	values.currentTarget = item.targetALabel.1; 
+	text.topFocusInstruct.1 = item.targetAFocusInstruct.1;
+]
+/ trials = [1=testInstructions; 2=showLabels;
+  3-6 = noreplace(targetARight, targetBLeft);
+  8,10,12,14,16,18,20,22 = noreplace(targetARight, targetBLeft);
+  7,9,11,13,15,17,19,21 = noreplace(attributeA, attributeB)]
+/ errormessage = true(error,200)
+/ response = correct
+/ ontrialend = [
+
+	if (block.A.latency  <= 10000 && block.A.currenttrialnumber >= 7 ) {
+		list.ACC.appendItem(block.A.correct);
+		if (block.A.totalcount == 0){
+			list.corrRT_A1.appendItem(block.A.latency);
+			list.corrRT_1.appendItem(block.A.latency);
+		} else if (block.A.totalcount == 1) {
+			list.corrRT_A2.appendItem(block.A.latency);
+			list.corrRT_2.appendItem(block.A.latency);
+		}
+	}	
+	
+	
+	if (block.A.currenttrialnumber >= 7){
+		if(block.A.latency  < 300) {
+			list.RT300.appendItem(1);
+		} else {
+			list.RT300.appendItem(0);
+		}		
+	}	
+]
+</block>
+
+<block B>
+/ skip = [parameters.extended == false && block.B.totalcount >=1]
+/ onblockbegin = [
+	values.currentTarget = item.targetBLabel.1; 
+	text.topFocusInstruct.1 = item.targetBFocusInstruct.1;
+]
+/ trials = [1=testInstructions;2=showLabels;
+  3-6 = noreplace(targetBRight, targetALeft);
+  8,10,12,14,16,18,20,22= noreplace(targetBRight, targetALeft);
+  7,9,11,13,15,17,19,21= noreplace(attributeA, attributeB)]
+/ errormessage = true(error,200)
+/ response = correct
+/ ontrialend = [
+
+	if (block.B.latency  <= 10000 && block.B.currenttrialnumber >= 7 ) {
+		list.ACC.appendItem(block.B.correct);
+		if (block.B.totalcount == 0){
+			list.corrRT_B1.appendItem(block.B.latency);
+			list.corrRT_1.appendItem(block.B.latency);
+		} else if (block.B.totalcount == 1) {
+			list.corrRT_B2.appendItem(block.B.latency);
+			list.corrRT_2.appendItem(block.B.latency);
+		}
+	}	
+	
+	if (block.B.currenttrialnumber >= 7){
+		if(block.B.latency  < 300) {
+			list.RT300.appendItem(1);
+		} else {
+			list.RT300.appendItem(0);
+		}		
+	}
+]
+</block>
+
+<block summary>
+/ trials = [1=summary]
+/ recorddata = false
+</block>
+
+<block end>
+/ trials = [1 = finish]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: 
+* counterbalanced by groupnumber
+* if a participant goes through a sequence of BIATs the short blocks 
+short_a & short_b only need to be run for the very first BIAT in the sequence
+
+<expt a>
+/ groups = (1 of 2)
+/ onblockbegin = [
+	values.blockcount += 1;
+]
+/ blocks = [
+	1 = intro; 
+	2 = short_a; 
+	3 = short_b; 
+	4 = A; 
+	5 = B; 
+	6 = A; 
+	7 = B; 
+	8 = summary;
+	9 = end;
+]
+</expt>
+
+<expt b>
+/ groups = (2 of 2)
+/ onblockbegin = [
+	values.blockcount += 1;
+]
+/ blocks = [
+	1 = intro; 
+	2 = short_b; 
+	3 = short_a; 
+	4 = B; 
+	5 = A; 
+	6 = B; 
+	7 = A; 
+	8 = summary;
+	9 = end;
+]
+</expt>
+
+***********************************************************************
+Test Monkey
+***********************************************************************
+
+<monkey>
+/ latencydistribution = normal(500, 100)
+/ percentcorrect = 90
+</monkey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

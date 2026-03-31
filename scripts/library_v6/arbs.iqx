@@ -1,0 +1,377 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							THE ADOLESCENT RISK BEHAVIOR SCREEN (ARBS)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 07-24-2014
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements The Adolescent Risk Behavior Screen (ARBS) as described in:
+
+Jankowski, MK, Rosenberg, HJ, Sengupta, A, Rosenberg, SD, & Wolford, GL (2007). Development of a  Screening Tool to 
+Identify Adolescents Engaged in Multiple Problem Behaviors: The Adolescent Risk Behavior Screen (ARBS). 
+Journal of Adolescent Health, 40, 180.e19 –180.e26.
+										
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+Participants fill out a 9 item survey to assess risk for high risk behavior in adolescents.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'arbs.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scales: 
+									1: 1 (never)-4 (always)
+									2,3,5: yes (2)/ no(1) 
+									4: 1 (0 times) - 3 (2 or more times)
+									6, 8: 1 (very wrong)- 4(not wrong at all); "I don't know" -> 3
+									7: 1 (no risk) - 4 (great risk); "I don't know" -> 3
+									9: 1 (none)-5 (five or more)
+									
+								In all questions, higher scores reflect higher risk
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'arbs_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+
+radiobuttons.gender.response:	the selected gender
+textbox.age.response:			the entered age
+
+totalscore:			the totalscore based on all answered questions
+					Range: 9-30
+					The higher the score the greater the risk
+									
+count_answeredquestions: 	counts all answered questions
+meanscore:					calculates the mean score (used as substitute if not all questions are answered)
+ARBS_score:					the ARBS score (based on totalscore)
+									!!!Note: for 1 or 2 missing questions => the mean is substituted
+									If more than 2 questions are left unanswered, the totalscore is not calculated in this 
+									
+riskassessment:				totalscore_ARBS > 17: high risk; totalscore_ARBS <= 17: not high risk (if not enough data => "Cannot be determined")
+							"For most purposes, we recommend using a cut-off of greater than 17 for both girls and boys." (Jankowski et al, 2007)
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________	
+* age/gender survey questions
+* 9 item survey to assess risk for high risk behavior in adolescents
+* lowest risk answer for each questions receives a score of 1 => minimum score = 9 (highest score = 30)
+* the questions in this script are not required to be answered
+To change: go to QUESTIONS and change /required = true to /required = true
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please select the answers that apply best.
+
+"
+</parameters>
+
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+radiobuttons.gender.response, textbox.age.response, 
+expressions.totalscore, values.count_answeredquestions, expressions.meanscore,
+expressions.ARBS_score, expressions.riskassessment)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES/EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<values>
+/count_answeredquestions = 0
+</values>
+
+/totalscore:				the totalscore based on all answered questions
+/count_answeredquestions: 	counts all answered questions
+/meanscore:					calculates the mean score (used as substitute if not all questions are answered)
+/ARBS_score:				the ARBS score (based on totalscore)
+							!!!Note: for 1 or 2 missing questions => the mean is substituted
+							If more than 2 questions are left unanswered, the totalscore is not calculated in this script
+/riskassessment:			totalscore_ARBS > 17: high risk; totalscore_ARBS <= 17: not high risk
+
+<expressions>
+/totalscore = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response +
+radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + 
+radiobuttons.q9.response
+
+/count_answeredquestions = {
+if (radiobuttons.q1.response != "") values.count_answeredquestions += 1;
+if (radiobuttons.q2.response != "") values.count_answeredquestions += 1;
+if (radiobuttons.q3.response != "") values.count_answeredquestions += 1;
+if (radiobuttons.q4.response != "") values.count_answeredquestions += 1;
+if (radiobuttons.q5.response != "") values.count_answeredquestions += 1;
+if (radiobuttons.q6.response != "") values.count_answeredquestions += 1;
+if (radiobuttons.q7.response != "") values.count_answeredquestions += 1;
+if (radiobuttons.q8.response != "") values.count_answeredquestions += 1;
+if (radiobuttons.q9.response != "") values.count_answeredquestions += 1}
+
+/meanscore = (radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response +
+radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + 
+radiobuttons.q9.response)/values.count_answeredquestions
+
+/ARBS_score = 
+if (values.count_answeredquestions == 9) {
+	radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response +
+	radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + 
+	radiobuttons.q9.response;	
+} else if (values.count_answeredquestions == 8) {
+	radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response +
+	radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + 
+	radiobuttons.q9.response + expressions.meanscore;	
+} else if (values.count_answeredquestions == 7) {
+	radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response +
+	radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + 
+	radiobuttons.q9.response + 2*expressions.meanscore;	
+} else if (values.count_answeredquestions < 7) {
+	"cannot be determined"
+}
+/riskassessment = if (values.count_answeredquestions < 7) "cannot be determined"
+else if (expressions.ARBS_score > 17) "high risk" else "not high risk"
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = true
+
+<radiobuttons gender>
+/caption = "Participant's Gender"
+/ options = ("male", "female")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<textbox age>
+/caption = "Participant's Age"
+/required = true
+/mask = integer
+/ range = (0, 120)
+</textbox>
+
+<radiobuttons q1>
+/caption = "1. How often do you wear a seat belt when riding in a car driven by someone else?"
+/ options = ("Never", "Sometimes", "Most of the time", "Always")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. During the past 12 months, did you ever feel so sad or hopeless almost every day for two weeks or more in a row that you stopped doing some usual activities?"
+/ options = ("Yes", "No")
+/ optionvalues = ("2", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. During the past 30 days, did you go without eating for 24 hours or more (also called fasting) to lose weight or to keep from gaining weight?"
+/ options = ("Yes", "No")
+/ optionvalues = ("2", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. During the past 12 months, how many times were you in a physical fight?"
+/ options = ("0 times", "1 time", "2 or more times")
+/ optionvalues = ("1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. Have close friends or relatives worried or complained about your drinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("2", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. How wrong do you think it is for someone your age to smoke marijuana?"
+/ options = ("Very wrong", "Wrong", "A little bit wrong", "Not wrong at all", "I don't know")
+/ optionvalues = ("1", "2", "3", "4", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. How much do you think people risk harming themselves (physically or in other ways) if they smoke marijuana regularly?"
+/ options = ("No risk", "Slight risk", "Moderate Risk", "Great Risk", "I don't know")
+/ optionvalues = ("4", "3", "2", "1", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. How wrong do you think it is for someone your age to use LSD, cocaine, amphetamines or another illegal drug?"
+/ options = ("Very wrong", "Wrong", "A little bit wrong", "Not wrong at all", "I don't know")
+/ optionvalues = ("1", "2", "3", "4", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. About how many adults have you known personally who in the past year have sold or dealt drugs?"
+/ options = ("None", "1 adult", "2 adults", "3–4 adults", "5 or more")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage ARBS_demographics>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = gender, age]
+</surveypage>
+
+<surveypage ARBS1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage ARBS2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage ARBS3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7, q8, q9]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey ARBS>
+/pages = [
+	1 =ARBS_demographics;
+	2 = ARBS1; 
+	3 = ARBS2; 
+	4 = ARBS3;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+/ onblockend = [
+	expressions.count_answeredquestions;
+]
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

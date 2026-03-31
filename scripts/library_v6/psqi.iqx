@@ -1,0 +1,845 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*PITTSBURGH SLEEP QUALITY INDEX (PSQI)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 09-25-2013
+last updated:  02-25-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-25-2022 Millisecond Software
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Pittsburgh Quality Sleep Index (PQSI) as described in:
+
+Buysse, D.J., Reynolds, C.F. III, Monk, T.H., Berman, S.R. & Kupfer, D.J. (1989).
+The Pittsburgh Sleep Quality Index: a new instrument for psychiatric practice and research. 
+Psychiatry Research, 28, 193-213.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+The PQSI poses 19 questions to participants (+ 5 optional ones to their partner at the very end).
+The 19 questions assess 7 different components (or subscales):
+
+Component1: Subjective Sleep Quality
+Component2: Sleep Latency
+Component3: Sleep Duration
+Component4: Habitual Sleep Efficiency
+Component5: Sleep Disturbances
+Component6: Use of Sleep Medication
+Component7: Daytime Dysfunction
+
+Each of those components are scored on a scale from 0-3.
+A Global PQSI Score is the sum of all those component scores (range: 0-21).
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'psqi.iqdat' 
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'psqi_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+Summarydata for each participant: file saves the scores for the subscales and totalscore 
+
+textbox.age.response:			the reported age of the participant
+skippartnerquestions:			1 = partner questions were omitted; 0 = partner questions were run
+
+included to check accuracy of scoring:
+bedduration:					the calculated time a participant spent in bed (though not necessarily sleeping)
+
+q5j:							contains the stored response for question 5j that is used to evaluate the response to calculate
+								the component 5 score. The defaultresponse is "Not during the past week" unless participant
+								provided another sleep disturbing reason AND selected a different response other than the defaultresponse.
+								The value recorded under values.q5j MAY differ from the response recorded under radiobuttons.q5j2.response (see raw data file).
+								This happens IF no other sleep disturbing reason was provided by participant but yet the defaultresponse
+								for radiobuttons.q5j2 was changed. In this case, values.q5j still stores the defaultresponse which
+								will evaluate to 0. 
+								=> Without another sleep disturbing reason provided, the response will always be scored as 0
+
+subcomponent scores on a scale from 0 (least problematic) to 3 (most problematic)								
+								
+							
+///Component 1 Score:
+comp1_subjectivesleepquality:	component1 score
+
+///Component 2 Score with subscores:
+comp2_sleeplatencyA
+comp2_sleeplatencyB
+comp2_sleeplatency
+
+///Component 3 Score: 
+!Note: the scoring guidelines in the article were a bit fuzzy in regard to the boundaries
+in this script: anything 7 or greater gets assigned a 0
+comp3_sleepduration
+
+///Component 4 Score:
+!Note: the scoring guidelines in the article were a bit fuzzy in regard to the boundaries
+in this script: anything 85 or greater gets assigned a 0
+comp4_habitsleepeffic
+
+///Component 5 Score with subscores:
+!Note: question 5j is optional as it requires participant to think of another reason
+that could potentially disturb their sleep. Since not all participants might think of
+something, this question was left optional (and the default response is "not during the past week")
+=> the guidelines still include question 5j
+comp5_sleepdisturb_5b-
+comp5_sleepdisturb_5j*
+comp5_sleepdisturb_sum
+comp5_sleepdisturb
+*Note: /comp5_sleepdisturb_5j uses values.q5j instead of radiobuttons.q5j2.response
+
+///Component 6 Score:
+comp6_sleepmedic
+
+///Component 7 Score with subscores:
+comp7_daytimedysfuncA 
+comp7_daytimedysfuncB
+comp7_daytimedysfunc
+
+///Global Score:
+Global_PSQIscoreR: sum of all sub component scores
+	
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to further customize your experiment.
+
+The parameters you can change are:
+
+/skippartnerquestions:			true = the last 5 questions (partner questions) are skipped (default)			
+								false = the last 5 questions are NOT skipped
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/skippartnerquestions = true
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<instruct>
+/ fontstyle = ("Arial", 2.50%, false, false, false, false, 5, 1)
+</instruct>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = black
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+The raw questionnaire data (responses and latencies) are saved under "PSQI.iqdat"
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+textbox.age.response, parameters.skippartnerquestions,
+values.bedduration, values.q5j,
+expressions.comp1_subjectivesleepquality , 
+expressions.comp2_sleeplatencyA, expressions.comp2_sleeplatencyB, expressions.comp2_sleeplatency, 
+expressions.comp3_sleepduration,
+expressions.comp4_habitsleepeffic, 
+expressions.comp5_sleepdisturb_5b, expressions.comp5_sleepdisturb_5c,expressions.comp5_sleepdisturb_5d,
+expressions.comp5_sleepdisturb_5e, expressions.comp5_sleepdisturb_5f, expressions.comp5_sleepdisturb_5g,
+expressions.comp5_sleepdisturb_5h, expressions.comp5_sleepdisturb_5i, expressions.comp5_sleepdisturb_5j,
+expressions.comp5_sleepdisturb_sum, expressions.comp5_sleepdisturb, 
+expressions.comp6_sleepmedic, 
+expressions.comp7_daytimedysfuncA, expressions.comp7_daytimedysfuncB, expressions.comp7_daytimedysfunc,
+expressions.Global_PSQIscore)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Variables to calculate the time participant stays in bed (time between going to bed and getting up)
+/bedduration: 				At the end of all calculations values.bedduration contains the number of hours a participant stayed in bed
+							(e.g. 6.75 => 6 hours and 45 minutes)
+/habit_sleepefficiency: 	contains the percentage of number of hours slept/number of hours stayed in bed
+
+
+/q5j:						defaultresponse = "Not during the past month"
+							contains the stored response for question 5j that is used to evaluate the response to calculate
+							the component 5 score. 
+							The value recorded under values.q5j may differ from the response recorded under radiobuttons.q5j2.response (raw data file).
+							This happens only IF no other sleep disturbing reason was provided by participant but yet the defaultresponse
+							for radiobuttons.q5j2 was changed. In this case, values.q5j still stores the defaultresponse which
+							will be scored as 0.
+							
+
+<values>
+/downhour = ""
+/downminutes = ""
+/uphour = ""
+/uphour2 = ""
+/upminutes = ""
+/bedduration = "not set yet"
+/habit_sleepefficiency = 0
+
+/q5j = "Not during the past month"
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/bedduration:					calculates the time a participant stays in bed
+
+Component 1 Score:
+/comp1_subjectivesleepquality:	component1 score
+
+Component 2 Score with subscores:
+/comp2_sleeplatencyA
+/comp2_sleeplatencyB
+/comp2_sleeplatency
+
+Component 3 Score: 
+!Note: the scoring guidelines in the article were a bit fuzzy in regard to the boundaries
+in this script: anything 7 or greater gets assigned a 0
+/comp3_sleepduration
+
+Component 4 Score:
+!Note: the scoring guidelines in the article were a bit fuzzy in regard to the boundaries
+in this script: anything 85 or greater gets assigned a 0
+/comp4_habitsleepeffic
+
+Component 5 Score with subscores:
+!Note: question 5j is optional as it requires participant to think of another reason
+that could potentially disturb their sleep. Since not all participants might think of
+something, this question was left optional (and the default response is "not during the past month")
+=> the guidelines still include question 5j
+/comp5_sleepdisturb_5b-
+/comp5_sleepdisturb_5j*
+/comp5_sleepdisturb_sum
+/comp5_sleepdisturb
+*Note: /comp5_sleepdisturb_5j uses values.q5j instead of radiobuttons.q5j2.response
+
+Component 6 Score:
+/comp6_sleepmedic
+
+Component 7 Score with subscores:
+/comp7_daytimedysfuncA 
+/comp7_daytimedysfuncB
+/comp7_daytimedysfunc
+
+Global Score:
+/Global_PSQIscore
+
+
+<expressions>
+/comp1_subjectivesleepquality = if (radiobuttons.q6.response == "Very good  ") 0;
+								else if (radiobuttons.q6.response == "Fairly good  ") 1;
+								else if (radiobuttons.q6.response == "Fairly bad  ") 2;
+								else if (radiobuttons.q6.response == "Very bad  ") 3
+								else "there is bug";
+
+/comp2_sleeplatencyA = if (textbox.q2.response <= 15) 0;
+						else if (textbox.q2.response  <= 30) 1;
+						else if (textbox.q2.response <= 60) 2;
+						else if (textbox.q2.response > 60) 3
+						else "there is a bug";
+						
+/comp2_sleeplatencyB = if (radiobuttons.q5a.response == "Not during the past month") 0;
+						else if (radiobuttons.q5a.response == "Less than once a week") 1;
+						else if (radiobuttons.q5a.response == "Once or twice a week") 2;
+						else if (radiobuttons.q5a.response == "Three or more times a week") 3;
+						else "there is a bug";
+						
+/comp2_sleeplatency = if ((expressions.comp2_sleeplatencya + expressions.comp2_sleeplatencyb) == 0) 0;
+					else if ((expressions.comp2_sleeplatencya + expressions.comp2_sleeplatencyb) == 1 || (expressions.comp2_sleeplatencya + expressions.comp2_sleeplatencyb) == 2) 1;
+					else if ((expressions.comp2_sleeplatencya + expressions.comp2_sleeplatencyb) == 3 || (expressions.comp2_sleeplatencya + expressions.comp2_sleeplatencyb) == 4) 2;
+					else if ((expressions.comp2_sleeplatencya + expressions.comp2_sleeplatencyb) == 5 || (expressions.comp2_sleeplatencya + expressions.comp2_sleeplatencyb) == 6) 3;
+					else "there is a bug";
+
+/comp3_sleepduration = 	if (textbox.q4.response >= 7) 0;
+						else if (textbox.q4.response >= 6) 1;
+						else if (textbox.q4.response >= 5) 2;
+						else if (textbox.q4.response < 5) 3;
+						else "there is a bug";
+	
+/comp4_habitsleepeffic = if (values.habit_sleepefficiency >= 85) 0;
+							else if (values.habit_sleepefficiency >= 75) 1;
+							else if (values.habit_sleepefficiency >= 65 ) 2;
+							else if (values.habit_sleepefficiency < 65) 3;
+							else "there is a bug";
+
+/comp5_sleepdisturb_5b = if (radiobuttons.q5b.response == "Not during the past month") 0;
+						else if (radiobuttons.q5b.response == "Less than once a week") 1;
+						else if (radiobuttons.q5b.response == "Once or twice a week") 2;
+						else if (radiobuttons.q5b.response == "Three or more times a week") 3;
+						else "there is a bug";						
+						
+/comp5_sleepdisturb_5c = if (radiobuttons.q5c.response == "Not during the past month") 0;
+						else if (radiobuttons.q5c.response == "Less than once a week") 1;
+						else if (radiobuttons.q5c.response == "Once or twice a week") 2;
+						else if (radiobuttons.q5c.response == "Three or more times a week") 3;
+						else "there is a bug";						
+						
+/comp5_sleepdisturb_5d = if (radiobuttons.q5d.response == "Not during the past month") 0;
+						else if (radiobuttons.q5d.response == "Less than once a week") 1;
+						else if (radiobuttons.q5d.response == "Once or twice a week") 2;
+						else if (radiobuttons.q5d.response == "Three or more times a week") 3;
+						else "there is a bug";						
+						
+/comp5_sleepdisturb_5e = if (radiobuttons.q5e.response == "Not during the past month") 0;
+						else if (radiobuttons.q5e.response == "Less than once a week") 1;
+						else if (radiobuttons.q5e.response == "Once or twice a week") 2;
+						else if (radiobuttons.q5e.response == "Three or more times a week") 3;
+						else "there is a bug";						
+						
+/comp5_sleepdisturb_5f = if (radiobuttons.q5f.response == "Not during the past month") 0;
+						else if (radiobuttons.q5f.response == "Less than once a week") 1;
+						else if (radiobuttons.q5f.response == "Once or twice a week") 2;
+						else if (radiobuttons.q5f.response == "Three or more times a week") 3;
+						else "there is a bug";						
+						
+/comp5_sleepdisturb_5g = if (radiobuttons.q5g.response == "Not during the past month") 0;
+						else if (radiobuttons.q5g.response == "Less than once a week") 1;
+						else if (radiobuttons.q5g.response == "Once or twice a week") 2;
+						else if (radiobuttons.q5g.response == "Three or more times a week") 3;
+						else "there is a bug";						
+						
+/comp5_sleepdisturb_5h = if (radiobuttons.q5h.response == "Not during the past month") 0;
+						else if (radiobuttons.q5h.response == "Less than once a week") 1;
+						else if (radiobuttons.q5h.response == "Once or twice a week") 2;
+						else if (radiobuttons.q5h.response == "Three or more times a week") 3;
+						else "there is a bug";						
+						
+/comp5_sleepdisturb_5i = if (radiobuttons.q5i.response == "Not during the past month") 0;
+						else if (radiobuttons.q5i.response == "Less than once a week") 1;
+						else if (radiobuttons.q5i.response == "Once or twice a week") 2;
+						else if (radiobuttons.q5i.response == "Three or more times a week") 3;
+						else "there is a bug";						
+						
+/comp5_sleepdisturb_5j = if (values.q5j == "Not during the past month") 0;
+						else if (values.q5j == "Less than once a week") 1;
+						else if (values.q5j == "Once or twice a week") 2;
+						else if (values.q5j == "Three or more times a week") 3;
+						else "there is a bug";						
+						
+/comp5_sleepdisturb_sum = expressions.comp5_sleepdisturb_5b + expressions.comp5_sleepdisturb_5c + expressions.comp5_sleepdisturb_5d+
+							expressions.comp5_sleepdisturb_5e + expressions.comp5_sleepdisturb_5f + expressions.comp5_sleepdisturb_5g +
+							expressions.comp5_sleepdisturb_5h + expressions.comp5_sleepdisturb_5i + expressions.comp5_sleepdisturb_5j
+							
+/comp5_sleepdisturb = if (expressions.comp5_sleepdisturb_sum <= 0) 0;
+							else if (expressions.comp5_sleepdisturb_sum <= 9) 1;
+							else if (expressions.comp5_sleepdisturb_sum <= 18) 2;
+							else if (expressions.comp5_sleepdisturb_sum > 18) 3;
+							else "there is a bug";							
+
+/comp6_sleepmedic =  if (radiobuttons.q7.response == "Not during the past month") 0;
+						else if (radiobuttons.q7.response == "Less than once a week") 1;
+						else if (radiobuttons.q7.response == "Once or twice a week") 2;
+						else if (radiobuttons.q7.response == "Three or more times a week") 3;
+						else "there is a bug";						
+
+/comp7_daytimedysfuncA = if (radiobuttons.q8.response == "Not during the past month") 0;
+						else if (radiobuttons.q8.response == "Less than once a week") 1; 
+						else if (radiobuttons.q8.response == "Once or twice a week") 2;
+						else if (radiobuttons.q8.response == "Three or more times a week") 3;
+						else "there is a bug";						
+						
+/comp7_daytimedysfuncB = if (radiobuttons.q9.response == "No problem at all") 0;
+						else if (radiobuttons.q9.response == "Only a very slight problem") 1;
+						else if (radiobuttons.q9.response == "Somewhat of a problem") 2;
+						else if (radiobuttons.q9.response == "A very big problem") 3;
+						else "there is a bug";						
+						
+/comp7_daytimedysfunc = if ((expressions.comp7_daytimedysfuncA + expressions.comp7_daytimedysfuncB) <= 0) 0;
+							else if ((expressions.comp7_daytimedysfuncA + expressions.comp7_daytimedysfuncB) <= 2) 1;
+							else if ((expressions.comp7_daytimedysfuncA + expressions.comp7_daytimedysfuncB) <= 4) 2;
+							else if ((expressions.comp7_daytimedysfuncA + expressions.comp7_daytimedysfuncB) > 4) 3;
+							else "there is a bug";						
+
+/Global_PSQIscore = expressions.comp1_subjectivesleepquality + expressions.comp2_sleeplatency + expressions.comp3_sleepduration +
+						expressions.comp4_habitsleepeffic + expressions.comp5_sleepdisturb + expressions.comp6_sleepmedic +
+							expressions.comp7_daytimedysfunc
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI/QUESTIONS:
+			check under each question whether the question is required (/required = true).
+			If you'd like to change that setting for a particular question, simply set /required = false.
+			Note: A change in these settings might have consequences for calculating the component scores
+			(a question with no response will still be counted towards the relevant component score and potentially 
+			skew the score).
+*******************************************************************************************************************
+*******************************************************************************************************************
+<textbox age>
+/caption = "Age:"
+/required = true
+/mask = integer
+</textbox>
+
+<dropdown q1>
+/caption = "1. During the past month, when have you usually gone to bed at night?
+USUAL BEDTIME (in military/astronomical time - for example, 21:00 for 9PM): 
+"
+/ options = ("00:00", "00:30", "01:00", "01:30", "02:00", "02:30", "03:00", "03:30", "04:00", "04:30", "05:00", "05:30", "06:00", "06:30",
+"07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
+"14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
+"21:00", "21:30", "22:00", "22:30", "23:00", "23:30")
+/ required = true
+</dropdown>
+
+<textbox q2>
+/caption = "2. During the past month, how long (in minutes) has it usually taken you to fall asleep each night?
+
+NUMBER OF MINUTES:"
+/mask = integer
+/ required = true
+/ monkeyresponse = (10, 15, 20)
+</textbox>
+
+<dropdown q3>
+/caption = "3. During the past month, when have you usually gotten up in the morning?
+
+USUAL GETTING UP TIME (in military/astronomical time - for example, 09:00 for 9AM):"
+/ options = ("00:00", "00:30", "01:00", "01:30", "02:00", "02:30", "03:00", "03:30", "04:00", "04:30", "05:00", "05:30", "06:00", "06:30",
+"07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
+"14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
+"21:00", "21:30", "22:00", "22:30", "23:00", "23:30")
+/ required = true
+</dropdown>
+
+<textbox q4>
+/caption = "4. During the past month, how many hours of actual sleep did you get at night? (This may be different than the number of hours you spend in bed.)
+
+HOURS OF SLEEP PER NIGHT:" 
+/ required = true
+/ monkeyresponse = (3, 6, 4)
+</textbox>
+
+<caption q5>
+/ caption = "5. During the past month, how often have you had trouble sleeping because you ..."
+</caption>
+
+<radiobuttons q5a>
+/caption = "(a) Cannot get to sleep within 30 minutes"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q5b>
+/caption = "(b) Wake up in the middle of the night or early morning"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q5c>
+/caption = "(c) Have to get up to use the bathroom"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q5d>
+/caption = "(d) Cannot breathe comfortabty"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q5e>
+/caption = "(e) Cough or snore loudly"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q5f>
+/caption = "(f) Feel too cold"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q5g>
+/caption = "(g) Feel too hot"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q5h>
+/caption = "(h) Had bad dreams"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q5i>
+/caption = "(i) Have pain"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+Note: question 5j is not required as not all participants might come up with a response
+the defaultresponse for question 5j (see under q5j2) is set to "not during the past month" (which evaluates to 0)
+as the scoring guidelines for Component 5 include question 5j.
+
+<textbox q5j1>
+/caption = "(j) Other reason(s), please describe:"
+/required = false
+</textbox>
+
+<radiobuttons q5j2>
+/caption = "How often during the past month have you had trouble sleeping because of this/these other reason(s)?"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = false
+</radiobuttons>
+
+<radiobuttons q6 >
+/caption = "6. During the past month, how would you rate your sleep quality overall?"
+/ options = ("Very good  ", "Fairly good  ", "Fairly bad  ", "Very bad  ")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. During the past month, how often have you taken medicine (prescribed or 'over the counter') to help you sleep?"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. During the past month, how often have you had trouble staying awake while driving, eating meals, or engaging in social activity?"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. During the past month, how much of a problem has it been for you to keep up enough enthusiasm to get things done?"
+/ options = ("No problem at all", "Only a very slight problem", "Somewhat of a problem", "A very big problem")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. Do you have a bed partner or roommate?"
+/ options = ("No bedpartner or roommate", "Partner or roommate in other room", "Partner in same room, but not same bed", "Partner in same bed")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+*******************************
+Additional Partner Questions : presented on separate surveypages that can be skipped
+Note: questions are set to be not required
+*******************************
+
+<caption q10_caption>
+/caption = "If you have a roommate or bed partner, ask him/her how often in the past month you have had ..."
+</caption>
+
+<radiobuttons q10a>
+/caption = "(a) Loud snoring:"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = false
+</radiobuttons>
+
+<radiobuttons q10b>
+/caption = "(b) Long pauses between breaths while asleep:"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = false
+</radiobuttons>
+
+<radiobuttons q10c>
+/caption = "(c) Legs twitching or jerking while you sleep:"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = false
+</radiobuttons>
+
+<radiobuttons q10d>
+/caption = "(d) Episodes of disorientation or confusion during sleep:"
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = false
+</radiobuttons>
+
+<textbox q10e>
+/caption = "(e) Other restlessness while you sleep; please describe:"
+/required = false
+</textbox>
+
+<radiobuttons q10f>
+/ options = ("Not during the past month", "Less than once a week", "Once or twice a week", "Three or more times a week")
+/orientation = vertical
+/required = false
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage PSQI1>
+/ caption ="<h2>Instructions:</h2><br>
+The following questions relate to your usual sleep habits during the past month only. 
+Your answers should indicate the most accurate reply for the majority of days and nights in the past month.<br><br>
+Please answer ALL questions.<br>"
+/ questions = [1 = age, q1]
+</surveypage>
+
+<surveypage PSQI2>
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q2, q3]
+</surveypage>
+
+<surveypage PSQI3>
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q4, q5, q5a]
+</surveypage>
+
+<surveypage PSQI4>
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q5, q5b, q5c]
+</surveypage>
+
+<surveypage PSQI5>
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q5, q5d, q5e]
+</surveypage>
+
+<surveypage PSQI6>
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q5, q5f, q5g]
+</surveypage>
+
+<surveypage PSQI7>
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q5, q5h, q5i]
+</surveypage>
+
+<surveypage PSQI8>
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q5, q5j1, q5j2]
+</surveypage>
+
+<surveypage PSQI9>
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q6, q7]
+</surveypage>
+
+<surveypage PSQI10>
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q8, q9]
+</surveypage>
+
+<surveypage PSQI11>
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q10]
+</surveypage>
+
+<surveypage PSQI12>
+/skip = [parameters.skippartnerquestions == true]
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q10_caption, q10a, q10b]
+</surveypage>
+
+<surveypage PSQI13>
+/skip = [parameters.skippartnerquestions == true]
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q10_caption, q10c, q10d]
+</surveypage>
+
+<surveypage PSQI14>
+/skip = [parameters.skippartnerquestions == true]
+/ caption ="For each of the remaining questions, check the one best response. Please answer ALL questions.
+"
+/ questions = [1 = q10_caption, q10e, q10f]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<survey PSQI>
+/ pages = [
+	1 = PSQI1; 
+	2 = PSQI2; 
+	3 = PSQI3; 
+	4 = PSQI4; 
+	5 = PSQI5; 
+	6 = PSQI6; 
+	7 = PSQI7; 
+	8 = PSQI8;
+	9 = PSQI9;
+	10 = PSQI10;
+	11 = PSQI11;
+	12 = PSQI12;
+	13 = PSQI13;
+	14 = PSQI14;
+]
+/ onblockend = [
+values.q5j = radiobuttons.q5j2.response;
+if (textbox.q5j1.response == "" || radiobuttons.q5j2.response =="") values.q5j = "Not during the past month";
+
+values.downhour = subString(dropdown.q1.response, 0, 2);
+values.downminutes = subString(dropdown.q1.response, 3, 2);
+values.uphour = subString(dropdown.q3.response, 0, 2);
+values.upminutes = subString(dropdown.q3.response, 3, 2);
+
+if (values.downhour == "01") values.downhour = 1;
+else if (values.downhour == "02") values.downhour = 2;
+else if (values.downhour == "03") values.downhour = 3;
+else if (values.downhour == "04") values.downhour = 4;
+else if (values.downhour == "05") values.downhour = 5;
+else if (values.downhour == "06") values.downhour = 6;
+else if (values.downhour == "07") values.downhour = 7;
+else if (values.downhour == "08") values.downhour = 8;
+else if (values.downhour == "09") values.downhour = 9;
+
+if (values.downminutes == "00") values.downminutes = 0;
+
+if (values.uphour == "01") values.uphour = 1;
+else if (values.uphour == "02") values.uphour = 2;
+else if (values.uphour == "03") values.uphour = 3;
+else if (values.uphour == "04") values.uphour = 4;
+else if (values.uphour == "05") values.uphour = 5;
+else if (values.uphour == "06") values.uphour = 6;
+else if (values.uphour == "07") values.uphour = 7;
+else if (values.uphour == "08") values.uphour = 8;
+else if (values.uphour == "09") values.uphour = 9;
+ 
+if (values.upminutes == "00") values.upminutes = 0;
+
+if (values.downhour == values.uphour){
+	if (values.upminutes - values.downminutes >= 0){
+		values.bedduration = values.upminutes - values.downminutes;	
+	} else {
+		values.bedduration = (24*60) - ((values.downhour+1)*60 - values.uphour*60) + values.downminutes;	
+	}
+} else if (values.downhour > values.uphour){
+		if (values.downminutes > 0){
+			values.bedduration = (24*60) - ((values.downhour+1)*60 - values.uphour*60) + values.downminutes + values.upminutes;	
+		} else {
+			values.bedduration = (24*60) - (values.downhour*60 - values.uphour*60) + values.upminutes;			
+		}		
+} else if (values.downhour < values.uphour){
+	values.bedduration = (values.uphour*60) - (values.downhour*60) + values.upminutes - values.downminutes;
+}
+values.bedduration = values.bedduration/60;
+
+values.habit_sleepefficiency = (textbox.q4.response/values.bedduration) * 100;
+
+]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showquestionnumbers = false
+/showpagenumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

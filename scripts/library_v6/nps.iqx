@@ -1,0 +1,410 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									*Neuropathy Pain Scale (NPS)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-06-2020
+last updated:  02-25-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-25-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the Neuropathy Pain Scale (NPS).
+
+Reference
+Galer, BS, and Mark P. Jensen, MP (1997). Development and of a pain measure preliminary validation 
+specific to neuropathic pain: The Neuropathic Pain Scale. Neurology, 48, 332-338.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+The Neuropathy Pain Scale asks 10 pain-related questions 
+(intense, sharp, hot, dull, cold, sensitive, itchy, unpleasant, deep, surface) 
+Most questions are 11-point likert type questions (scored on a scale 0-10).
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'nps.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		 with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									q1: intense (0-10) 
+									q2: sharp (0-10)
+									q3: hot (0-10)
+									q4: dull (0-10) 
+									q5: cold (0-10)
+									q6: sensitive (0-10) 
+									q7: itchy (0-10)
+									
+									q8: time of pain
+									
+									q9: unpleasant (0-10) 
+									q10a/b: deep, surface (0-10)
+									
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'nps_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+									
++ responses to individual questions									
+									q1: intense (0-10) 
+									q2: sharp (0-10)
+									q3: hot (0-10)
+									q4: dull (0-10) 
+									q5: cold (0-10)
+									q6: sensitive (0-10) 
+									q7: itchy (0-10)
+									
+									q8: time of pain
+									
+									q9: unpleasant (0-10) 
+									q10a/b: deep, surface (0-10)
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			general intro instructions
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please answer the following questions.
+"
+</parameters>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed,
+
+radiobuttons.q1.response,
+radiobuttons.q2.response,
+radiobuttons.q3.response,
+radiobuttons.q4.response,
+radiobuttons.q5.response,
+radiobuttons.q6.response,
+radiobuttons.q7.response,
+radiobuttons.q8.response,
+textbox.q8a1.response, textbox.q8a2.response, textbox.q8b.response, textbox.q8c.response,
+radiobuttons.q9.response,
+radiobuttons.q10a.response, radiobuttons.q10b.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. Please use the scale below to tell us how <b>intense</b> your pain is. Select the number that best describes 
+the intensity of your pain.<br>"
+/ options = ("0<br>No<br>pain", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br>The most<br><b>intense</b><br>pain<br>sensation<br>imaginable")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Please use the scale below to tell us how <b>sharp</b> your pain feels. 
+Words used to describe 'sharp' feelings include 'like a knife', 'like a spike', 'jabbing' or 'like jolts'.<br>"
+/ options = ("0<br>Not<br>sharp", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br>The most<br><b>sharp</b><br>sensation<br>imaginable<br>('like a knife')")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Please use the scale below to tell us how <b>hot</b> your pain feels. 
+Words used to describe very hot pain include 'burning', and 'on fire'.<br>"
+/ options = ("0<br>Not<br>hot", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br>The most<br><b>hot</b><br>sensation<br>imaginable<br>('on fire')")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. Please use the scale below to tell us how <b>dull</b> your pain feels. 
+Words used to describe very dull pain include 'like a dull toothache', 'dull pain', 'aching' and 'like a bruise'.<br>"
+/ options = ("0<br>Not<br>dull", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br>The most<br><b>dull</b><br>sensation<br>imaginable")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. Please use the scale below to tell us how <b>cold</b> your pain feels. 
+Words used to describe very cold pain include 'like ice', and 'freezing'.<br>"
+/ options = ("0<br>Not<br>cold", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br>The most<br><b>cold</b><br>sensation<br>imaginable")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Please use the scale below to tell us how <b>sensitive</b> your skin is to light touch or clothing. 
+Words used to describe sensitive skin include 'like sunburned skin' and 'raw skin'.<br>"
+/ options = ("0<br>Not<br>sensitive", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br>The most<br><b>sensitive</b><br>sensation<br>imaginable<br>('raw skin')")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. Please use the scale below to tell us how <b>itchy</b> your pain feels. 
+Words used to describe itchy pain include 'like poison oak' and 'like a mosquito bite'.<br>"
+/ options = ("0<br>Not<br>itchy", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br>The most<br><b>itchy</b><br>sensation<br>imaginable<br>('like poison oak')")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/ caption = "Which of the following best describes the <b>time</b> quality of your pain?<br>"
+/ options = (
+"a.) I feel a background pain <u>all of the time</u> <b>and</b> occasional flare-ups (break-through pain) <u>some of the time</u>.",
+"b.) I feel a single type of pain <u>all the time</u>",
+"c.) I feel a single type of pain only <u>sometimes</u>. Other times, I am pain free.")
+/ optionvalues = ("1", "2", "3")
+/ orientation = vertical
+/ required = true
+</radiobuttons>
+
+<textbox q8a1>
+/ caption = "If you selected (a), describe the background pain:"
+/ textboxsize = (50%, 3%)
+/ multiline = true
+/ required = false
+</textbox>
+
+<textbox q8a2>
+/ caption = "If you selected (a), describe the flare-up (break-through) pain:"
+/ textboxsize = (50%, 3%)
+/ multiline = true
+/ required = false
+</textbox>
+
+<textbox q8b>
+/ caption = "If you selected (b), describe the single type of pain:"
+/ textboxsize = (50%, 3%)
+/ multiline = true
+/ required = false
+</textbox>
+
+<textbox q8c>
+/ caption = "If you selected (c), describe the occasional pain:"
+/ textboxsize = (50%, 3%)
+/ multiline = true
+/ required = false
+</textbox>
+
+
+<radiobuttons q9>
+/caption = "9. Now that you told us the different physical aspects of your pain, the different types of sensations, we want you to tell us overall how <b>unpleasant</b> your pain is to you. Words used to describe very unpleasant pain include 'miserable' and 'intolerable'. Remember, pain can have a low intensity, but still feel extremely unpleasant, and some kinds of pain can have a high intensity but be very tolerable.<br><br>
+With this scale, please tell us how <b>unpleasant</b> your pain feels.<br>"
+/ options = ("0<br>Not<br>unpleasant", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br>The most<br><b>unpleasant</b><br>sensation<br>imaginable<br>('intolerable')")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<caption q10>
+/ caption = "10. Lastly, we want you to give us an estimate of the severity of your <u>deep</u> versus <u>surface</u> pain. We want you to rate each location of pain separately. We realize that it can be difficult to make these estimates, and most likely it will be a 'best guess', but please give your best estimate."
+
+</caption>
+
+
+<radiobuttons q10a>
+/caption = ""
+/ options = ("0<br>No<br><b>deep</b><br>pain", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br>The most<br><b>intense deep</b><br>pain sensation<br>imaginable")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10b>
+/caption = ""
+/ options = ("0<br>No<br><b>surface</b><br>pain", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10<br>The most<br><b>intense surface</b><br>pain sensation<br>imaginable")
+/ optionvalues = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage intro>
+/ caption = "<h1>NEUROPATHY PAIN SCALE</h1><br>
+<i>Instructions</i>: There are several different aspects of pain which we are interested in measuring: <b>pain sharpness,
+heathold, dullness, intensity,</b> overall <b>unpleasantness,</b> and <b>surface vs. deep</b> pain.<br><br>
+The distinction between these aspects of pain might be clearer if you think of taste. For example, people might agree on
+how sweet a piece of pie might be (the intensity of the sweetness), but some might enjoy it more if it were sweeter while
+others might prefer it to be less sweet. Similarly, people can judge the loudness of music and agree on what is more quiet
+and what is louder, but disagree on how it, makes them feel. Some prefer quiet music and some prefer it more loud. In
+short, the intensity of a sensation is not the same as how it makes you feel. A sound might be unpleasant and still be quiet
+(think of someone grating their fingernails along a chalkboard). A sound can be quiet and 'dull' or loud and 'dull.'<br><br>
+Pain is the same. Many people are able to tell the difference between many aspects of their pain: for example, how
+much it hurts and how unpleasant or annoying it is. Although often the intensity of pain has a strong influence on how
+unpleasant the experience of pain is, some people are able to experience more pain than others before they feel very bad
+about it.<br><br>
+There are scales for measuring different aspects of pain. For one patient, a pain might feel extremely hot, but not at all
+dull, while another patient may not experience any heat, but feel like their pain is very dull. We expect you to rate very
+high on some of the scales below and very low on others. We want you to use the measures that follow to tell us exactly
+what you experience."
+/ fontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ showpagenumbers = false
+</surveypage>
+
+
+<surveypage nps1>
+/ questions = [1 = q1, q2]
+</surveypage>
+
+<surveypage nps2>
+/ questions = [1 = q3, q4]
+</surveypage>
+
+<surveypage nps3>
+/ questions = [1 = q5, q6]
+</surveypage>
+
+<surveypage nps4>
+/ questions = [1 = q7]
+</surveypage>
+
+<surveypage nps5>
+/ questions = [1 = q8, q8a1, q8a2, q8b, q8c]
+</surveypage>
+
+<surveypage nps6>
+/ questions = [1 = q9]
+</surveypage>
+
+<surveypage nps7>
+/ questions = [1 = q10, q10a, q10b]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey nps>
+/pages = [
+	1 = intro;
+	2 = nps1;
+	3 = nps2;
+	4 = nps3;
+	5 = nps4;
+	6 = nps5;
+	7 = nps6;
+	8 = nps7;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Finish - Thank you!"
+</survey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

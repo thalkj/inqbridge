@@ -1,0 +1,573 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								LINGUISTIC ACCEPTABILITY JUDGMENTS
+___________________________________________________________________________________________________________________	
+
+
+Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-03-2014
+last updated:  11-06-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 11-06-2023 Millisecond Software
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+
+This Inquisit script implements a template to run Linguistic Acceptability Judgments (LAJ).
+LAJ take advantage of techniques used in psychophysics and provide a method to make linguistic
+judgments consistent and replicable.
+
+Reference:
+Bard, E. G., Robertson, D., & Sorace, A. (1996). Magnitude Estimation of Linguistic Acceptability. 
+Language, 72(1), 32–68. 
+https://doi.org/10.2307/416793
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants are asked to evaluate linguistic target sentences either on Likert scales (conventional) or/and by
+Magnitude Estimations (ME) (psychophysics).
+
+The sentences are presented visually.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'linguisticacceptabilityjudgments_raw*.iqdat'
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (winmaciosandroid)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block. 
+									
+judgmenttype:						"Likert" vs. "Magnitude Estimation"
+stimulus:							contains the current stimulus (for practice lines: the relative length of the target line)
+response:							the participant's response (depends on task)
+log_mejudgments:					log transform of the magnitude judgment (if applicable)
+latency: 							the response latency in ms
+
+
+(2) Summary data file: 'linguisticacceptabilityjudgments_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+Likert Method:
+* each likert trial presents a randomly selected target sentence (random selection without replacement)
+with a 5 point Likert scale and the following anchors: "extremely unnatural" to "extremely natural"
+	=> to change number of anchors and anchors go to TRIALS -> likert.LAJ_likert and follow further instructions
+* the Likert Method runs as many trials as specified under parameters.nr_judgments (editable parameter)
+
+Magnitude Estimation
+* each magnitude estimations presents the baseline sentence and a randomly selected target sentence (random selection without replacement)
+as well as a textbox to collect the judgments
+* the Magnitude Estimation Method runs as many judgments as specified under parameters.nr_judgments (editable parameter)
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+* the baseline sentence for Magnitude Estimations can be set under section Editable Stimuli-> item.me_baselinesentence
+* the target sentences can be set under section Editable Stimuli -> item.target_sentences
+	(also set parameters.nr_judgments under Editable Parameters)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+* instructions can be edited under section Editable Instructions
+=> LIKERT: item.likert_instructions
+=> MAGNITUDE ESTIMATIONS:
+	a) item.me_instructions
+	b) page.me_practice & page.me_test	
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/LikertMethod:						true = Likert Acceptability Method is run (default)
+									false = Likert Acceptability Method is NOT run
+
+/MagnitudeEstimation:				true = Magnitude Estimation Acceptability Method is run (default)
+									false = Magnitude Estimation Acceptability Method is NOT run
+
+/nr_judgments:						specifies the number of judgments to be made (default: 4)
+/fontsize_stimulus:					sets the size of the stimulus in percentage of screen height (default: 5%)
+/baselinelength:					the baseline line length in screen height proportion for ME practice (default: 25%)
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/LikertMethod = true
+/MagnitudeEstimation = true
+/nr_judgments = 4
+/fontsize_stimulus = 5%
+/baselinelinelength = 25%
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: contains all target sentences
+(example sentences taken from:
+Jon Sprouse, J., Schütze, C.T., & Diogo Almeida, D.(2013)  cA comparison of informal and formal acceptability judgments
+using a random sample from Linguistic Inquiry 2001--2010. Lingua, 134, 219-248. Table 8)
+<item target_sentences>
+/1 = "We proclaimed to the public John to be a hero."
+/2 = "There is likely a man to appear."
+/3 = "To whom did you give what?"
+/4 = "I expect that everyone will visit Mary that you do."
+</item>
+
+Note: contains the baseline sentence used for Magnitude Estimations
+<item ME_baselinesentence>
+/1 = "Bill knows that such books John only reads at home."
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = black
+/ screencolor = white
+</instruct>
+
+
+Note: contains the instructions for the Likert task
+<item Likert_Instructions>
+/1 = "Rate the following sentence on how natural it sounds"
+</item>
+
+Note: contains the instructions for the Magnitude Estimation task
+<item ME_Instructions>
+/1 = "Provide a numeric value above or below 100 to indicate how long or short the TARGET line is in proportion to the BASELINE line."
+/2 = "Provide a numeric value above or below 100 to indicate how good or bad the TARGET sentence is in proportion to the BASELINE sentence."
+</item>
+
+<page ME_practice>
+LINE LENGTH JUDGMENTS: 
+^^For the following  tasks, your are given two lines: a BASELINE line and a TARGET line.
+^^The BASELINE line always has the assigned value of 100. 
+^^Your task is to judge the length of the TARGET line relative to the BASELINE line by assigning a number above or
+below 100 that reflects the proportional difference in length.
+
+^^^EXAMPLE:
+^^If you think the TARGET line is only half as long as the BASELINE line, you would assign the value of 50
+to the TARGET LINE. 
+^^If you think the TARGET line is TWICE as long as the BASELINE, you would assign the value of 200 to 
+the TARGET LINE.
+</page>
+
+<page ME_test>
+LINGUISTIC JUDGMENTS
+
+^^For the previous task you judged the length of a TARGET line relative to a BASELINE line. 
+^^For the next tasks, you are given two sentences: a BASELINE sentence and a TARGET sentence.
+^^Just like during the line estimation tasks, the BASELINE sentence always has an assigned value of 100 and
+your task is to judge how good or bad the TARGET sentence is in proportion to the BASELINE sentence by
+assigning a number above or below 100.
+
+^^^Example:
+^BASELINE SENTENCE: "Mary saw her in the mirror"
+^TARGET SENTENCE: "The fox over the bunny jumped"
+
+^^If you think the TARGET SENTENCE is only half as good as the BASELINE sentence, you would assign a number of 50.
+^If you think the TARGET SENTENCE is about 80% as good as the BASELINE sentence, you would assign 80.
+</page>
+
+<page end>
+You have reached the end of the task. Thank you for your participation!
+</page>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: contains the lengths of the practice lines for the Magnitude Estimations
+relative to the predetermined baselinelength; by default 6 line lengths are run
+<list practicelinelengths>
+/items = (0.95, 1.05, 0.8, 1.2, 0.5, 1.5)
+/replace = false
+/resetinterval = 1
+</list>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ inputdevice = mouse
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ txcolor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, values.judgmenttype,
+values.stimulus, response, expressions.log_mejudgments, latency)
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+/judgmenttype:							"Likert" vs. "Magnitude Estimation"
+/stimulus:								contains the current stimulus (for practice lines: the relative length of the target line)
+/count_judgments:						updates the number of judgments that have been made
+/MEresponse:							stores the current magnitude estimation
+/targetlinelength:						stores the current target line length in screen height percentage
+											(only relevant for ME tasks)
+completed:								0 = script was not completed; 1 = script was completed (all conditions run)
+
+<values>
+/judgmenttype = ""
+/stimulus = ""
+/count_judgments = 0
+/MEresponse = 0
+/targetlinelength = 0
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/log_MEjudgments:  log transform of the magnitude judgment (if applicable)
+
+<expressions>
+/log_MEjudgments = if (values.MEresponse > 0) log(values.meresponse) else "NA"
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<text Likert_Instructions>
+/items = Likert_Instructions
+/select = 1
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (50%, 20%)
+/size = (70%, 10%)
+</text>
+
+<text ME_Instructions>
+/items = ME_Instructions
+/select = 2
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (50%, text.targetsentence_me.vposition + parameters.fontsize_stimulus + 10%)
+/size = (70%, 10%)
+</text>
+
+<text ME_PracticeInstructions>
+/items = ME_Instructions
+/select = 1
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (50%, shape.targetline.vposition + parameters.fontsize_stimulus + 10%)
+/size = (70%, 10%)
+</text>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note:
+* randomly selects one of the target sentences (without replacement) for the Likert Task
+<text targetsentence_Likert>
+/items = target_sentences
+/select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize_stimulus, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (50%, 30%)
+</text>
+
+<text baseline>
+/items = ("BASELINE (acceptability: 100)")
+/select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize_stimulus, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (50%, 20%)
+</text>
+
+<text ME_baselinesentence>
+/items = ME_baselinesentence
+/select = 1
+/ fontstyle = ("Arial", parameters.fontsize_stimulus, false, false, false, false, 5, 1)
+/position = (50%, text.baseline.vposition + parameters.fontsize_stimulus + 2%)
+/ txcolor = white
+/txbgcolor = black
+</text>
+
+<text target>
+/items = ("TARGET:")
+/select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize_stimulus, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (50%, text.me_baselinesentence.vposition + parameters.fontsize_stimulus + 10%)
+</text>
+
+Note:
+* randomly selects one of the target sentences (without replacement) for the Magnitude Estimation Task
+<text targetsentence_ME>
+/items = target_sentences
+/select = noreplace
+/ fontstyle = ("Arial", parameters.fontsize_stimulus, false, false, false, false, 5, 1)
+/ txcolor = white
+/txbgcolor = black
+/position = (50%, text.target.vposition + parameters.fontsize_stimulus + 2%)
+</text>
+
+********************************
+Practice Lines for Magnitude 
+Estimations
+********************************
+<text practicebaseline>
+/items = ("BASELINE (length: 100)")
+/select = noreplace
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (50%, 20%)
+</text>
+
+<shape baselineline>
+/shape = rectangle
+/size = (parameters.baselinelinelength, 1%)
+/color = black
+/position = (50%, 25%)
+</shape>
+
+<text practicetargetline>
+/items = ("TARGET")
+/select = noreplace
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = black
+/position = (50%, 35%)
+</text>
+
+<shape targetline>
+/shape = rectangle
+/size = (values.targetlinelength, 1%)
+/color = black
+/position = (50%, 40%)
+</shape>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	LIKERT TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+* presents a randomly selected target sentence and 5 point Likert scale
+* to change the number of scale points adjust /numpoints = 
+* to change the anchors, change /anchors = 
+* calls itself until the specified number of judgments has been made
+
+<likert LAJ_likert>
+/stimulusframes = [1 = targetsentence_likert, Likert_Instructions]
+/numpoints = 5
+/labels=("extremely unnatural", "somewhat unnatural", "possible", "somewhat natural", "extremely natural")
+/position=(50%,70%)
+/ontrialend = [
+	values.stimulus = text.targetsentence_likert.currentItem;
+	values.count_judgments += 1;
+]
+/branch = [return likert.laj_likert;]
+</likert>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	MAGNITUDE ESTIMATION TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*************************
+Practice
+*************************
+
+Notes:
+* presents the baseline line and a randomly selected target line
+* permits positive integers and 0 as responses
+
+<openended practice_ME>
+/ontrialbegin = [values.targetlinelength = 1% * list.practicelinelengths.nextValue * parameters.baselinelinelength]
+/stimulusframes = [1 = targetline, baselineline, me_practiceinstructions, practicebaseline, practicetargetline]
+/position = (50%, 75%)
+/mask = positiveintegerorzero
+/ monkeyresponse = ("110","105","85")
+/ontrialend = [
+	values.stimulus = list.practicelinelengths.currentValue;
+	values.MEresponse = openended.practice_me.response;
+]
+/branch = [
+	if (openended.practice_me.trialcount < list.practicelinelengths.itemCount) 
+		return openended.practice_me;
+	else return null;
+]
+</openended>
+
+*************************
+Test
+*************************
+
+Notes:
+* presents the baseline sentence and a randomly selected target sentence
+* permits positive integers and 0 as responses
+* calls itself until the specified number of judgments has been made
+<openended LAJ_ME>
+/stimulusframes = [1 = targetsentence_me, me_baselinesentence, baseline, target, ME_Instructions]
+/position = (50%, text.me_instructions.vposition + parameters.fontsize_stimulus + 3* parameters.fontsize_stimulus)
+/mask = positiveintegerorzero
+/ monkeyresponse = ("110","105","85")
+/ontrialend = [
+	values.stimulus = text.targetsentence_me.currentItem;
+	values.MEresponse = openended.laj_me.response;
+	values.count_judgments += 1;
+]
+/branch = [return openended.laj_me;]
+</openended>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: 
+* runs the Likert Language Acceptability Judgements 
+* is skipped if parameters.LikertMethod = false
+* stops when the specified number of judgments has been made
+<block LAJ_likert>
+/skip = [parameters.LikertMethod == false]
+/onblockbegin = [
+	values.count_judgments = 0;
+	values.judgmenttype = "Likert";
+]
+/trials = [1 = LAJ_likert]
+/stop = [values.count_judgments == parameters.nr_judgments]
+</block>
+
+Note: 
+* runs the Magnitude Estimation Acceptability Judgement Practice ("line judgments")
+* is skipped if parameters.MagnitudeEstimation = false
+* runs 6 practice trials
+<block LAJ_practiceME>
+/skip = [parameters.MagnitudeEstimation == false]
+/preinstructions = (ME_practice)
+/onblockbegin = [values.judgmenttype = "MagnitudeEstimation"]
+/trials = [1= practice_me]
+</block>
+
+Note: 
+* runs the Magnitude Estimation Acceptability Judgements 
+* is skipped if parameters.MagnitudeEstimation = false
+* stops when the specified number of judgments has been made
+<block LAJ_ME>
+/skip = [parameters.MagnitudeEstimation == false]
+/preinstructions = (ME_test)
+/onblockbegin = [
+	values.count_judgments = 0;
+	values.judgmenttype = "MagnitudeEstimation";
+]
+/trials = [1 = laj_me]
+/stop = [values.count_judgments == parameters.nr_judgments]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+<expt a>
+
+/blocks = [
+	1 = LAJ_Likert; 
+	2 = LAJ_practiceME; 
+	3 = LAJ_ME;
+]
+</expt>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

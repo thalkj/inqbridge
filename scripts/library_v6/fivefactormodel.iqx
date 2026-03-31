@@ -1,0 +1,897 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							FIVE FACTOR MODEL RATING FORM (FFMRF)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-08-2014
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Five Factor Model Rating Form (FFMRF) as described in:
+
+Mullins-Sweatt, S.N, Jamerson, J.E., Samuel, D.B., Olson. D.R., & Thomas A. Widiger, T.A. (2006).
+Psychometric Properties of an Abbreviated Instrument of the Five-Factor Model. Assessment, 13, 119-137.
+
+This script is based on a paper and pencil scoring form genereously shared by Dr. Samuel. 
+Millisecond Software thanks Dr. Samuel for his assistance with writing this script!
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+The FFMRF contains 6 5-choice Likert questions for each of the 5 personality factors:
+neuroticism (N), extraversion (E), openness (O), agreeableness (A), conscientiousness (C).
+The 30 questions are spread over 5 surveypages (one page per factor).
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'fivefactormodel.iqdat' 
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 1 (extremely low) - 5 (extremely high)
+									no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'fivefactormodel_summary*.iqdat'
+
+inquisit.version: 					Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+neuroticism - 
+conscientiousness: 				the scores for the 5 factors
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/completeinstructions:			the complete instructions that appear at the top of the first surveypage
+/repeatinstructions:			the instructions that appear on each subsequent page
+
+/responselegend:				the response legend
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/completeinstructions = "Please describe yourself on a 1 to 5 scale on each of the following 30 personality traits, where 1 is extremely low (i.e., extremely lower than the average person), 2 is low, 3 is neither high nor low (i.e., does not differ from the average person), 4 is high and 5 is extremely high.  Use any number from 1 to 5. Please provide a rating for all 30 traits.
+
+For example: on the first trait (anxiousness), a score of 1 would indicate that you think you are extremely low in anxiousness (i.e., relaxed, unconcerned, cool).  A score of 2 would indicate that you think you are low in anxiousness (lower than the average person, but not extremely low). A score of 5 would indicate that you think you are extremely high in anxiousness (i.e., fearful, apprehensive); a score of 4 would indicate you think you are higher than the average person in anxiousness, but not extremely high.  A score of 3 would indicate that you think you are neither high nor low in anxiousness (does not differ from the average person) or that you are unable to decide. <%expressions.buttoninstruct1%> the number that applies to you for each of the traits."
+
+/repeatinstructions = "<%expressions.buttoninstruct1%> the number that applies to you for each of the traits.
+"
+
+/responselegend = "5= Extremely high  4= High  3= Neither high nor low  2= Low  1=Extremely Low
+"
+</parameters>
+
+
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"Touch";} else {"Click";}
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+<page End>
+Thank you!
+</page>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ quitcommand = (Alt+18)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+raw data: FFMRF.iqx
+********************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.neuroticism, expressions.extraversion, expressions.openness, expressions.agreeableness, expressions.conscientiousness)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/Neuroticism - 
+/Conscientiousness: 			the scores for the 5 factors
+
+<expressions>
+/Neuroticism = radiobuttons.N_Anxiousness.response + radiobuttons.N_Hostility.response + radiobuttons.N_Depressiveness.response +
+radiobuttons.N_SelfConsciousness.response + radiobuttons.N_Impulsivity.response + radiobuttons.N_Vulnerability.response
+
+/Extraversion = radiobuttons.E_Warmth.response + radiobuttons.E_Gregariousness.response + radiobuttons.E_Assertiveness.response +
+radiobuttons.E_Activity.response + radiobuttons.E_ExcSeeking.response + radiobuttons.E_PosEmotion.response
+
+/Openness = radiobuttons.O_Fantasy.response + radiobuttons.O_Aesthetics.response + radiobuttons.O_Feelings.response +
+radiobuttons.O_Actions.response + radiobuttons.O_Ideas.response + radiobuttons.O_Values.response
+
+/Agreeableness = radiobuttons.A_Trust.response + radiobuttons.A_StraightForward.response + radiobuttons.A_Altruism.response +
+radiobuttons.A_Compliance.response + radiobuttons.A_Modesty.response + radiobuttons.A_TenderMindedness.response
+
+/Conscientiousness = radiobuttons.C_Competence.response + radiobuttons.C_Order.response + radiobuttons.C_Dutifulness.response +
+radiobuttons.C_Achievement.response + radiobuttons.C_SelfDiscipline.response + radiobuttons.C_Deliberation.response
+
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+************************
+Factor 1
+************************
+
+<caption Neuroticism>
+/caption = "Neuroticism versus Emotional Stability:"
+/fontstyle = ("Arial", 2%, true, true, true, false, 5, 1)
+/position = (10%, 46%)
+</caption>
+
+<caption N_AnxiousnessA>
+/caption = "1. Anxiousness (fearful, apprehensive)"
+/position = (10%, 51%)
+</caption>
+
+<radiobuttons N_Anxiousness>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 51%)
+</radiobuttons>
+
+<caption N_AnxiousnessB>
+/caption = "(relaxed, unconcerned, cool)"
+/position = (66%, 51%)
+</caption>
+
+<caption N_HostilityA>
+/caption = "2. Angry Hostility (angry, bitter)"
+/position = (10%, 57%)
+</caption>
+
+<radiobuttons N_Hostility>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 57%)
+</radiobuttons>
+
+<caption N_HostilityB>
+/caption = "(even-tempered)"
+/position = (66%, 57%)
+</caption>
+
+<caption N_DepressivenessA>
+/caption = "3. Depressiveness (pessimistic, glum)"
+/position = (10%, 63%)
+</caption>
+
+<radiobuttons N_Depressiveness>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 63%)
+</radiobuttons>
+
+<caption N_DepressivenessB>
+/caption = "(optimistic)"
+/position = (66%, 63%)
+</caption>
+
+<caption N_SelfConsciousnessA>
+/caption = "4. Self-consciousness (timid, embarrassed)"
+/position = (10%, 69%)
+</caption>
+
+<radiobuttons N_SelfConsciousness>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 69%)
+</radiobuttons>
+
+<caption N_SelfConsciousnessB>
+/caption = "(self-assured, glib, shameless)"
+/position = (66%, 69%)
+</caption>
+
+<caption N_ImpulsivityA>
+/caption = "5. Impulsivity (tempted, urgency)"
+/position = (10%, 75%)
+</caption>
+
+<radiobuttons N_Impulsivity>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 75%)
+</radiobuttons>
+
+<caption N_ImpulsivityB>
+/caption = "(controlled, restrained)"
+/position = (66%, 75%)
+</caption>
+
+<caption N_VulnerabilityA>
+/caption = "6. Vulnerability (helpless, fragile)"
+/position = (10%, 81%)
+</caption>
+
+<radiobuttons N_Vulnerability>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 81%)
+</radiobuttons>
+
+<caption N_VulnerabilityB>
+/caption = "(clear-thinking, fearless, unflappable)"
+/position = (66%, 81%)
+</caption>
+
+************************
+Factor 2
+************************
+<caption Extraversion>
+/caption = "Extraversion versus Introversion:"
+/fontstyle = ("Arial", 2%, true, true, true, false, 5, 1)
+/position = (10%, 25%)
+</caption>
+
+<caption E_WarmthA>
+/caption = "7. Warmth (cordial, affectionate, attached)"
+/position = (10%, 30%)
+</caption>
+
+<radiobuttons E_Warmth>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 30%)
+</radiobuttons>
+
+<caption E_WarmthB>
+/caption = "(cold, aloof, indifferent)"
+/position = (66%, 30%)
+</caption>
+
+<caption E_GregariousnessA>
+/caption = "8. Gregariousness (sociable, outgoing)"
+/position = (10%, 36%)
+</caption>
+
+<radiobuttons E_Gregariousness>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 36%)
+</radiobuttons>
+
+<caption E_GregariousnessB>
+/caption = "(withdrawn, isolated)"
+/position = (66%, 36%)
+</caption>
+
+<caption E_AssertivenessA>
+/caption = "9. Assertiveness (dominant, forceful)"
+/position = (10%, 42%)
+</caption>
+
+<radiobuttons E_Assertiveness>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 42%)
+</radiobuttons>
+
+<caption E_AssertivenessB>
+/caption = "(unassuming, quiet, resigned)"
+/position = (66%, 42%)
+</caption>
+
+<caption E_ActivityA>
+/caption = "10. Activity (vigorous, energetic, active)"
+/position = (10%, 48%)
+</caption>
+
+<radiobuttons E_Activity>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 48%)
+</radiobuttons>
+
+<caption E_ActivityB>
+/caption = "(passive, lethargic)"
+/position = (66%, 48%)
+</caption>
+
+<caption E_ExcSeekingA>
+/caption = "11. Excitement-Seeking (reckless, daring)"
+/position = (10%, 54%)
+</caption>
+
+<radiobuttons E_ExcSeeking>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 54%)
+</radiobuttons>
+
+<caption E_ExcSeekingB>
+/caption = "(cautious, monotonous, dull)"
+/position = (66%, 54%)
+</caption>
+
+<caption E_PosEmotionA>
+/caption = "12. Positive Emotions (high-spirited)"
+/position = (10%, 60%)
+</caption>
+
+<radiobuttons E_PosEmotion>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 60%)
+</radiobuttons>
+
+<caption E_PosEmotionB>
+/caption = "(placid, anhedonic)"
+/position = (66%, 60%)
+</caption>
+
+************************
+Factor 3
+************************
+<caption Openness>
+/caption = "Openness versus Closedness to one’s own Experience:"
+/fontstyle = ("Arial", 2%, true, true, true, false, 5, 1)
+/position = (10%, 25%)
+</caption>
+
+<caption O_FantasyA>
+/caption = "13. Fantasy (dreamer, unrealistic, imaginative)"
+/position = (10%, 30%)
+</caption>
+
+<radiobuttons O_Fantasy>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 30%)
+</radiobuttons>
+
+<caption O_FantasyB>
+/caption = "(practical, concrete)"
+/position = (66%, 30%)
+</caption>
+
+<caption O_AestheticsA>
+/caption = "14. Aesthetics (aberrant interests, aesthetic)"
+/position = (10%, 36%)
+</caption>
+
+<radiobuttons O_Aesthetics>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 36%)
+</radiobuttons>
+
+<caption  O_AestheticsB>
+/caption = "(uninvolved, no aesthetic interests)"
+/position = (66%, 36%)
+</caption>
+
+<caption O_FeelingsA>
+/caption = "15. Feelings (self-aware)"
+/position = (10%, 42%)
+</caption>
+
+<radiobuttons O_Feelings>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 42%)
+</radiobuttons>
+
+<caption  O_FeelingsB>
+/caption = "(constricted, unaware, alexithymic)"
+/position = (66%, 42%)
+</caption>
+
+
+<caption O_ActionsA>
+/caption = "16. Actions (unconventional, eccentric)"
+/position = (10%, 48%)
+</caption>
+
+<radiobuttons O_Actions>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 48%)
+</radiobuttons>
+
+<caption  O_ActionsB>
+/caption = "(routine, predictable, habitual, stubborn)"
+/position = (66%, 48%)
+</caption>
+
+
+<caption O_IdeasA>
+/caption = "17. Ideas (strange, odd, peculiar, creative)"
+/position = (10%, 54%)
+</caption>
+
+<radiobuttons O_Ideas>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 54%)
+</radiobuttons>
+
+<caption  O_IdeasB>
+/caption = "(pragmatic, rigid)"
+/position = (66%, 54%)
+</caption>
+
+
+<caption O_ValuesA>
+/caption = "18. Values (permissive, broad-minded)"
+/position = (10%, 60%)
+</caption>
+
+<radiobuttons O_Values>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 60%)
+</radiobuttons>
+
+<caption  O_ValuesB>
+/caption = "(traditional, inflexible, dogmatic)"
+/position = (66%, 60%)
+</caption>
+
+************************
+Factor 4
+************************
+
+<caption Agreeableness>
+/caption = "Agreeableness versus Antagonism:"
+/fontstyle = ("Arial", 2%, true, true, true, false, 5, 1)
+/position = (10%, 25%)
+</caption>
+
+<caption A_TrustA>
+/caption = "19. Trust (gullible, naïve, trusting)"
+/position = (10%, 30%)
+</caption>
+
+<radiobuttons A_Trust>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 30%)
+</radiobuttons>
+
+<caption  A_TrustB>
+/caption = "(skeptical, cynical, suspicious, paranoid)"
+/position = (66%, 30%)
+</caption>
+
+
+<caption A_StraightForwardA>
+/caption = "20. Straightforwardness (confiding, honest)"
+/position = (10%, 36%)
+</caption>
+
+<radiobuttons A_StraightForward>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 36%)
+</radiobuttons>
+
+<caption  A_StraightForwardB>
+/caption = "(cunning, manipulative, deceptive)"
+/position = (66%, 36%)
+</caption>
+
+<caption A_AltruismA>
+/caption = "21. Altruism (sacrificial, giving)"
+/position = (10%, 42%)
+</caption>
+
+<radiobuttons A_Altruism>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 42%)
+</radiobuttons>
+
+<caption  A_AltruismB>
+/caption = "(stingy, selfish, greedy, exploitative)"
+/position = (66%, 42%)
+</caption>
+
+<caption A_ComplianceA>
+/caption = "22. Compliance (docile, cooperative)"
+/position = (10%, 48%)
+</caption>
+
+<radiobuttons A_Compliance>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 48%)
+</radiobuttons>
+
+<caption  A_ComplianceB>
+/caption = "(oppositional, combative, aggressive)"
+/position = (66%, 48%)
+</caption>
+
+<caption A_ModestyA>
+/caption = "23. Modesty (meek, self-effacing, humble)"
+/position = (10%, 54%)
+</caption>
+
+<radiobuttons A_Modesty>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 54%)
+</radiobuttons>
+
+<caption  A_ModestyB>
+/caption = "(confident, boastful, arrogant)"
+/position = (66%, 54%)
+</caption>
+
+<caption A_TenderMindednessA>
+/caption = "24. Tender-Mindedness (soft, empathetic)"
+/position = (10%, 60%)
+</caption>
+
+<radiobuttons A_TenderMindedness>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 60%)
+</radiobuttons>
+
+<caption  A_TenderMindednessB>
+/caption = "(tough, callous, ruthless)"
+/position = (66%, 60%)
+</caption>
+
+************************
+Factor 5
+************************
+
+<caption Conscientiousness>
+/caption = "Conscientiousness versus Undependability:"
+/fontstyle = ("Arial", 2%, true, true, true, false, 5, 1)
+/position = (10%, 25%)
+</caption>
+
+<caption C_CompetenceA>
+/caption = "25. Competence (perfectionistic, efficient)"
+/position = (10%, 30%)
+</caption>
+
+<radiobuttons C_Competence>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 30%)
+</radiobuttons>
+
+<caption  C_CompetenceB>
+/caption = "(lax, negligent)"
+/position = (66%, 30%)
+</caption>
+
+<caption C_OrderA>
+/caption = "26. Order (ordered, methodical, organized)"
+/position = (10%, 36%)
+</caption>
+
+<radiobuttons C_Order>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 36%)
+</radiobuttons>
+
+<caption  C_OrderB>
+/caption = "(haphazard, disorganized, sloppy)"
+/position = (66%, 36%)
+</caption>
+
+<caption C_DutifulnessA>
+/caption = "27. Dutifulness (rigid, reliable, dependable)"
+/position = (10%, 42%)
+</caption>
+
+<radiobuttons C_Dutifulness>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 42%)
+</radiobuttons>
+
+<caption  C_DutifulnessB>
+/caption = "(casual, undependable, unethical)"
+/position = (66%, 42%)
+</caption>
+
+<caption C_AchievementA>
+/caption = "28. Achievement (workaholic, ambitious)"
+/position = (10%, 48%)
+</caption>
+
+<radiobuttons C_Achievement>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 48%)
+</radiobuttons>
+
+<caption  C_AchievementB>
+/caption = "(aimless, desultory)"
+/position = (66%, 48%)
+</caption>
+
+<caption C_SelfDisciplineA>
+/caption = "29. Self-Discipline (dogged, devoted)"
+/position = (10%, 54%)
+</caption>
+
+<radiobuttons C_SelfDiscipline>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 54%)
+</radiobuttons>
+
+<caption  C_SelfDisciplineB>
+/caption = "(hedonistic, negligent)"
+/position = (66%, 54%)
+</caption>
+
+<caption C_DeliberationA>
+/caption = "30. Deliberation (cautious, ruminative, reflective)"
+/position = (10%, 60%)
+</caption>
+
+<radiobuttons C_Deliberation>
+/ options = ("5", "4", "3", "2", "1")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/ orientation = horizontalequal
+/position = (45%, 60%)
+</radiobuttons>
+
+<caption  C_DeliberationB>
+/caption = "(hasty, careless, rash)"
+/position = (66%, 60%)
+</caption>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+<surveypage FFMRF_1>
+/caption ="<%parameters.completeinstructions%>"
+/subcaption = "<%parameters.responselegend%>"
+/questions = [1 = Neuroticism,
+N_AnxiousnessA, N_Anxiousness, N_AnxiousnessB,
+N_HostilityA, N_Hostility, N_HostilityB,
+N_DepressivenessA, N_Depressiveness,N_DepressivenessB,
+N_SelfConsciousnessA, N_SelfConsciousness,N_SelfConsciousnessB,
+N_ImpulsivityA, N_Impulsivity,N_ImpulsivityB,
+N_VulnerabilityA, N_Vulnerability, N_VulnerabilityB]
+</surveypage>
+
+<surveypage FFMRF_2>
+/caption ="<%parameters.repeatinstructions%>"
+/subcaption = "<%parameters.responselegend%>"
+/questions = [1 = Extraversion, 
+E_WarmthA, E_Warmth,E_WarmthB,
+E_GregariousnessA, E_Gregariousness,E_GregariousnessB,
+E_AssertivenessA, E_Assertiveness, E_AssertivenessB,
+E_ActivityA, E_Activity, E_ActivityB,
+E_ExcSeekingA, E_ExcSeeking, E_ExcSeekingB,
+E_PosEmotionA, E_PosEmotion,E_PosEmotionB ]
+</surveypage>
+
+
+<surveypage FFMRF_3>
+/caption ="<%parameters.repeatinstructions%>"
+/subcaption = "<%parameters.responselegend%>"
+/questions = [1 = Openness, 
+O_FantasyA, O_Fantasy,O_FantasyB,
+O_AestheticsA, O_Aesthetics,O_AestheticsB,
+O_FeelingsA, O_Feelings,O_FeelingsB,
+O_ActionsA, O_Actions,O_ActionsB,
+O_IdeasA, O_Ideas,O_IdeasB,
+O_ValuesA, O_Values, O_ValuesB]
+</surveypage>
+
+
+<surveypage FFMRF_4>
+/caption ="<%parameters.repeatinstructions%>"
+/subcaption = "<%parameters.responselegend%>"
+/questions = [1 = Agreeableness, 
+A_TrustA, A_Trust,A_TrustB,
+A_StraightForwardA, A_StraightForward,A_StraightForwardB,
+A_AltruismA, A_Altruism,A_AltruismB,
+A_ComplianceA, A_Compliance,A_ComplianceB,
+A_ModestyA, A_Modesty,A_ModestyB,
+A_TenderMindednessA, A_TenderMindedness, A_TenderMindednessB]
+</surveypage>
+
+<surveypage FFMRF_5>
+/caption ="<%parameters.repeatinstructions%>"
+/subcaption = "<%parameters.responselegend%>"
+/questions = [1 = Conscientiousness,
+C_CompetenceA, C_Competence,C_CompetenceB,
+C_OrderA, C_Order,C_OrderB,
+C_DutifulnessA, C_Dutifulness,C_DutifulnessB,
+C_AchievementA, C_Achievement,C_AchievementB,
+C_SelfDisciplineA, C_SelfDiscipline, C_SelfDisciplineB,
+C_DeliberationA, C_Deliberation,C_DeliberationB]
+
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+
+<survey FFMRF>
+/pages = [
+	1 = FFMRF_1; 
+	2 = FFMRF_2; 
+	3 = FFMRF_3; 
+	4 = FFMRF_4; 
+	5 = FFMRF_5;
+]
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.75%, true, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = false
+/ nextbuttonposition = (80%, 85%)
+/screencapture = false
+/ backbuttonposition = (15%, 90%)
+/nextbuttonposition = (65%, 90%)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

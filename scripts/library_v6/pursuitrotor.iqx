@@ -1,0 +1,790 @@
+<usermanual>															       
+___________________________________________________________________________________________________________________	
+
+										*PURSUIT ROTOR TASK*
+___________________________________________________________________________________________________________________	
+
+last updated:  02-25-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+Script Copyright © 02-25-2022 Millisecond Software
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the Pursuit Rotor Task; a task to measure manual dexterity and visual-motor tracking abilities.
+
+References:
+-The Multivariate Study of Pursuit Rotor Skill Development, 11 Aug. 2011, http://www.science.smith.edu/departments/EXER_SCI/Faculty/DS/PR.html
+-Measuring Hand/Eye Coordination, 11 Aug. 2011, http://www.psywww.com/intropsych/ch07_cognition/measuring_hand_eye_coordination.html
+-Pursuit Rotor, 11 Aug. 2011, http://sourceforge.net/apps/mediawiki/pebl/index.php?title=Pursuit_Rotor
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION
+___________________________________________________________________________________________________________________	
+Participant tracks a yellow target with a mouse cursor/finger, as the target moves steadily in a circular path. 
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'pursuitrotor_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block. 	
+
+///(Parameter) Settings
+usedCanvas_inmm:				data file variable that stores the dimension of the active canvas (in mm) used for the task										
+usedCanvas_inpx:				data file variable that stores the dimension of the active canvas (in pixels) used for the task
+trackRadius_inmm:				the radius of the track in mm				
+discRadius_inmm:				the radius of the disc in mm
+discRadius_inpx:				the radius of the target disc in pixels
+trialDuration:					the duration of one trial/one rotation in ms (default: 10000ms)
+
+///Data:
+sum_offDurations_trial:			the sum of the durations spent OFF the target disk per trial (in ms)
+timeOnTarget_trial:				the duration spent ON the target disk per trial (in ms)
+
+meanDistanceFromCenterDisc_trial:	the mean distance (in pixels) of recorded cursor positions from the center of the target disc per trial
+meanOffDistanceFromDiscEdge_trial: 	the mean distance (in pixels) from of the current cursor position from the perimeter of the target circle per trial for OFF target mouse positions
+
+										
+(2) Summary data file: 'pursuitrotor_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+///(Parameter) Settings
+usedCanvas_inmm:				data file variable that stores the dimension of the active canvas (in mm) used for the task										
+usedCanvas_inpx:				data file variable that stores the dimension of the active canvas (in pixels) used for the task
+trackRadius_inmm:				the radius of the track in mm				
+discRadius_inmm:				the radius of the disc in mm
+discRadius_inpx:				the radius of the target disc in pixels
+trialDuration:					the duration of one trial/one rotation in ms (default: 10000ms)
+
+///Data:
+trial.rotate.trialcount:		the number of trials that were run 
+
+meanTime_OFFTarget:				the average time (in ms) a participant spent OFF disc during a rotation trial
+sum_offDurations_total:			the sum of the durations spent OFF the target disk across all trials (in ms)
+timeOnTarget_total:				the duration spent ON the target disk across trials (in ms)
+
+meanDistanceFromCenterDisc_total:	the mean distance (in pixels) of recorded cursor positions from the center of the target disc across trials
+meanOffDistanceFromDiscEdge_total:	the mean distance (in pixels) of recorded mouse positions from the target disc (to edges of disc; not the center) across trials (= OFF target distances)
+
+										
+(3)	Mouse Cursor Position data file: 'pursuitrotor_stream*.iqdat'
+This data file records mouse positions and relevant data after each stimulusframe
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block. 	
+
+///(Parameter) Settings
+usedCanvas_inmm:				data file variable that stores the dimension of the active canvas (in mm) used for the task										
+usedCanvas_inpx:				data file variable that stores the dimension of the active canvas (in pixels) used for the task
+trackRadius_inmm:				the radius of the track in mm				
+discRadius_inmm:				the radius of the disc in mm
+discRadius_inpx:				the radius of the target disc in pixels
+trialDuration:					the duration of one trial/one rotation in ms (default: 10000ms)									
+
+rotationCount:						the count of the current rotation trial (1-4)
+mouse.x:							the recorded  horizontal coordinate of the cursor at the end of a vertical frame refresh (in screen pixels)
+mouse.y:							the recorded  vertical coordinate of the cursor at the end of a vertical frame refresh (in screen pixels)
+shape.animatedCircle.hposition:		the recorded  horizontal coordinate of the target disc at the end of a vertical frame refresh (in screen pixels)
+shape.animatedCircle.vposition:		the recorded  vertical coordinate of the target disc at the end of a vertical frame refresh (in screen pixels)
+distance:							the pixel distance from the mouse cursor to the center of the target disc
+OFFtarget:							"ON" or "OFF": compares distance to radius of disc
+elapsedTime:						the elapsed script time in ms at point of data recording
+offDuration:						stores the last calculated duration (in ms) participant spent off the disc
+	
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+- task runs 4 trials (default; can be edited under section Editable Parameters) 
+- each trial takes 10s (default; can be edited under section Editable Parameters)
+- the script records the position of cursor and disc every 16.7ms on a 60Hz monitor (vertical refresh rate of monitor) 
+in the datastream data file
+
+Note: the default active canvas is set to be 120mm x 120mm. All stimuli are defined in proportion to the
+height of the active canvas.
+If the script is run on a screen that does not support these dimensions, the script
+alerts participants and then aborts.
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+can be edited under section Editable Instructions
+	
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to further 
+customize your experiment.
+
+The parameters you can change are:
+
+User Interface: 	
+the active canvas (= the part of the screen used for the task) can be specified in mm.
+The radius of the track as well as the radius of the disc and all text stimuli
+are defined in proportion to the height of the active canvas.
+Note: the canvas in this script is defined with width:height = 1:1
+
+
+/canvasHeight_inmm:				The default height of the active canvas is 120mm							
+/trackRadius_propCanvasHeight:	the radius of the track as a proportion of the canvas height (default: 0.4 => 0.4*120 = 48mm)
+/discRadius_propCanvasHeight:	the radius of the disc as a proportion of the canvas height (default: 0.065 => 7.8mm)							
+
+
+
+/trialDuration:					the duration of one trial/one rotation in ms (default: 10000ms)
+/NumTrials:						the number of trials to run (default: 4)
+
+/presentSummaryFeedback:		true (1) = presents performance feedback at the end of the script (default)
+								false (0) = does not present performance feedback
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/canvasHeight_inmm = 120
+
+/trackRadius_propCanvasHeight = 0.4
+/discRadius_propCanvasHeight = 0.065
+
+/ trialDuration = 10000
+/ NumTrials = 4
+
+/presentSummaryFeedback = true
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item instructions>
+/ 1 = "In this task, you will track a yellow circle moving steadily around a circular track. 
+Try to keep your <%expressions.buttoninstruct1%> on the yellow circle at all times. 
+There will be a total of <%parameters.NumTrials%> trials, each lasting <%parameters.trialDuration/1000%> sec.
+~n<%expressions.buttoninstruct2%>."
+/ 2 = "Position your <%expressions.buttoninstruct1%> on the yellow circle and try to stay on the circle at all times.
+~n<%expressions.buttoninstruct2%> to begin - the circle will start moving immediately."
+/ 3 = "<%expressions.buttoninstruct2%> to start the next trial."
+/ 4 = "<%expressions.performanceFeedback%>
+
+Thank you! 
+
+<%expressions.buttoninstruct2%> to quit."
+</item>
+
+<expressions>
+/performanceFeedback = if (parameters.presentSummaryFeedback == true){
+	"On average, you spent <%expressions.meanTime_OFFTarget%>ms OFF the target during a <%parameters.trialDuration/1000%>s rotation.
+	";
+} else {
+	"";
+}
+</expressions>
+
+
+<text offTarget>
+/ items = ("OFF")
+/ position = (50%, 50%)
+/ txbgcolor = red
+/ size = (15%, 8%)
+/ vjustify = center
+/ fontstyle = ("Arial", 7%, false, false, false, false, 5, 1)
+</text>
+
+<text onTarget>
+/ items = ("ON")
+/ position = (50%, 50%)
+/ txbgcolor= green
+/ size = (15%, 8%)
+/ vjustify = center
+/ fontstyle = ("Arial", 7%, false, false, false, false, 5, 1)
+</text>
+
+<text displayAlert>
+/ items = ("The current display is too small to run this task.
+The display requires a height and width larger than <%parameters.canvasHeight_inmm/10%>cm")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ position = (50%, 25%)
+/ size = (80%, 30%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<button exitbutton>
+/ caption = "EXIT"
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (50%, 80%)
+/ size = (40%, 10%)
+/ valign = center
+/ halign = center
+</button>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/ buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"finger";} else {"mouse cursor";}
+/ buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"Tap your screen";} else {"Click mouse button";}
+</expressions>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0 or later
+
+<defaults>
+/ canvassize = (1mm * parameters.canvasHeight_inmm, 1mm * parameters.canvasHeight_inmm)
+/ canvasaspectratio = (1,1)
+/ screencolor = (124,124,124)
+/ txcolor = white
+/ txbgcolor = transparent
+/ minimumversion = "6.5.2.0"
+/ inputdevice = mouse
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, trialcode, trialnum,
+values.usedCanvas_inmm, values.usedCanvas_inpx, expressions.trackRadius_inmm, expressions.discRadius_inmm, expressions.discRadius_inpx,
+parameters.trialDuration,
+expressions.sum_offDurations_trial, expressions.timeOnTarget_trial,
+expressions.meanDistanceFromCenterDisc_trial, expressions.meanOffDistanceFromDiscEdge_trial)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+values.usedCanvas_inmm, values.usedCanvas_inpx, expressions.trackRadius_inmm, expressions.discRadius_inmm, expressions.discRadius_inpx, parameters.trialDuration, 
+trial.rotate.trialcount,
+expressions.meanTime_OFFTarget, expressions.sum_offDurations_total, expressions.timeOnTarget_total,
+expressions.meanDistanceFromCenterDisc_total, expressions.meanOffDistanceFromDiscEdge_total)
+</summarydata>
+
+***********************
+data stream data file
+***********************
+
+<datastream cursorcoordinates>
+/ columns = (
+build, computer.platform, display.refreshinterval, date, time, subject, group, session, blockcode, blocknum, trialcode, trialnum,
+values.usedCanvas_inmm, values.usedCanvas_inpx, expressions.trackRadius_inmm, expressions.discRadius_inmm, expressions.discRadius_inpx, 
+parameters.trialDuration,
+values.rotationCount, mouse.x, mouse.y, shape.animatedCircle.hposition, shape.animatedCircle.vposition,
+expressions.distance, expressions.OFFtarget, script.elapsedTime, values.offDuration)
+</datastream>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/startOffTarget:			records the script.elapsedTime when mouse goes off target
+/offDuration:				stores the duration (in ms) of the last time spent OFF target disc
+/usedCanvas_inpx:				data file variable that stores the dimension of the experimental canvas (in pixel) used for the task
+/offTarget:					1 = current mouse cursor at time of mouse event is off the disc
+							0 = current mouse cursor at time of mouse event is on the disc
+/rotationCount:				counts the number of Rotation Trials							
+					
+<values>
+/ startOffTarget = 0
+/ offDuration = 0
+/ usedCanvas_inpx = "("
+/usedCanvas_inmm = ""
+/offTarget = 0
+/rotationCount = 0
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/usedCanvas_inpx:							assembles a variable for the data file that contains the used canvas pixel information
+/usedCanvas_inmm:							assembles a variable for the data file that contains the used canvas mm information
+
+/radius_innerTrack_propCanvasHeight:		the proportion of the inner track circel relative to canvas height
+/radius_outerTrack_propCanvasHeight:		the proportion of the outer track circel relative to canvas height
+/radius_track_inpercent:					radius of the track in % of canvas height
+/trackRadius_inmm:							radius of the track in mm
+
+/discRadius_inpercent:						radius of the disc in % of canvas height
+/discRadius_inpx:							radius of the track in screen pixel
+/discRadius_inmm :							radius of the disc in mm
+
+
+/distance:								calculates the distance (in pixels) of the current mouse position (after each registered mouse event)
+										from the center of the animated disc 
+										
+/OFFtarget:								function that compares the distance from the mouse cursor to center of disc to size of disc
+										and uses that information to decide whether the currently recorded mouse position is OFF or ON
+										the disc. The function also stores relevant data such as distances and off-durations to the data lists.
+										
+/sum_offDurations_trial:				calculates the sum of the durations spent off the target disc per trial (in ms)
+/sum_offDurations_total:				calculates the sum of the durations spent off the target disc across all trials (in ms)
+/timeOnTarget_trial:					calculates the duration spent on the target disc per trial (in ms)
+/timeOnTarget_total:					calculates the duration spent on the target disc across trials (in ms)
+
+/meanTime_OFFTarget:			calculates the average time that participant spent OFF target during one rotation
+
+/meanDistanceFromCenterDisc_trial:		calculates the mean distance (in pixels) from of the mouse position from the center of the animated circle per trial
+/meanDistanceFromCenterDisc_total:		calculates the mean distance (in pixels) from of the mouse position from the center of the animated circle across trials
+
+/meanOffDistanceFromEdgeDisc_trial:	calulates the mean distance (in pixels) from of the mouse position from the perimeter of the animated circle per trial for mouse positions OFF target
+/meanOffDistanceFromEdgeDisc_total:	calculates the mean distance (in pixels) from of the mouse position from the perimeter of the animated circle across trials for mouse positions OFF target
+
+/meanOffDistanceDisc_trial:				calulates the mean distance (in pixels) from of the mouse position outside of the disc per trial
+/meanOffDistanceDisc_total:				calulates the mean distance (in pixels) from of the mouse position outside of the disc across trials
+
+
+<expressions>
+/ usedCanvas_inpx = {
+	values.usedCanvas_inpx = concat(values.usedCanvas_inpx, display.canvasWidth);
+	values.usedCanvas_inpx = concat(values.usedCanvas_inpx, ",");		
+	values.usedCanvas_inpx = concat(values.usedCanvas_inpx, display.canvasHeight);	
+	values.usedCanvas_inpx = concat(values.usedCanvas_inpx, ")");	
+}
+/usedCanvas_inmm = {
+	values.usedCanvas_inmm = concat(values.usedCanvas_inmm, parameters.canvasHeight_inmm);
+	values.usedCanvas_inmm = concat(values.usedCanvas_inmm, "mm");
+	values.usedCanvas_inmm = concat(values.usedCanvas_inmm, "x");
+	values.usedCanvas_inmm = concat(values.usedCanvas_inmm, parameters.canvasHeight_inmm);
+	values.usedCanvas_inmm = concat(values.usedCanvas_inmm, "mm");	
+}
+
+/radius_innerTrack_propCanvasHeight = parameters.trackRadius_propCanvasHeight - 0.2*parameters.discRadius_propCanvasHeight
+/radius_outerTrack_propCanvasHeight = parameters.trackRadius_propCanvasHeight + 0.2*parameters.discRadius_propCanvasHeight
+/radius_track_inpercent = 1%*parameters.trackRadius_propCanvasHeight*100
+/trackRadius_inmm = parameters.canvasHeight_inmm * parameters.trackRadius_propCanvasHeight
+
+/discRadius_inpercent = 1%*parameters.discRadius_propCanvasHeight*100
+/discRadius_inpx = display.getPixelsY(expressions.discRadius_inpercent)
+/discRadius_inmm = parameters.canvasHeight_inmm * parameters.discRadius_propCanvasHeight
+
+/ distance = sqrt(pow((mouse.x - shape.animatedCircle.hposition),2) + pow((mouse.y - shape.animatedCircle.vposition),2));
+/OFFtarget = if (expressions.distance > expressions.DiscRadius_inpx){
+	if (values.startOffTarget == 0){
+		values.startOffTarget = script.elapsedTime;		
+	}
+	values.offDuration = script.elapsedTime - values.startOffTarget;	
+	list.offTargetDistance_trial.appendItem(expressions.distance - expressions.DiscRadius_inpx);
+	list.offTargetDistance_total.appendItem(expressions.distance - expressions.DiscRadius_inpx);
+	list.targetDistances_trial.appendItem(expressions.distance);
+	list.targetDistances_total.appendItem(expressions.distance);	
+	return "OFF";
+} else {
+	if (values.startOffTarget != 0){
+		list.offDurations_trial.appendItem(values.offDuration);
+		list.offDurations_total.appendItem(values.offDuration);			
+	}
+	values.startOffTarget = 0;
+	list.targetDistances_trial.appendItem(expressions.distance);
+	list.targetDistances_total.appendItem(expressions.distance);	
+	return "ON";
+}
+
+
+
+/ sum_offDurations_trial = 
+if (list.offDurations_trial.itemCount > 0){
+	list.offDurations_trial.mean * list.offDurations_trial.itemCount	
+} else {
+	0;
+}
+/ sum_offDurations_total = 
+if (list.offDurations_total.itemCount > 0){
+	list.offDurations_total.mean * list.offDurations_total.itemCount	
+} else {
+	0;
+}
+/ timeOnTarget_trial = 
+	if (list.offDurations_trial.itemCount != 0) {
+		parameters.trialDuration - expressions.sum_offDurations_trial;
+	} else {
+		parameters.trialDuration;
+	}
+/ timeOnTarget_total = 
+	if (list.offDurations_total.itemCount != 0){
+		(parameters.trialDuration*trial.startRotate.trialcount) - expressions.sum_offDurations_total;
+	} else {
+		parameters.trialDuration * trial.startRotate.trialcount;	
+	}
+
+
+/meanTime_OFFTarget = expressions.sum_offDurations_total/values.rotationCount;
+	
+/ meanDistanceFromCenterDisc_trial = list.targetDistances_trial.mean
+/ meanDistanceFromCenterDisc_total = list.targetDistances_total.mean
+/ meanOffDistanceFromDiscEdge_trial = 
+if (list.offDurations_trial.itemCount > 0){
+	list.offTargetDistance_trial.mean
+} else {
+	"does not apply";
+}
+/ meanOffDistanceFromDiscEdge_total = 
+if (list.offDurations_total.itemCount > 0){
+	list.offTargetDistance_total.mean	
+} else {
+	"does not apply";
+}
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<text IntroTxt>
+/ items = instructions
+/ select = 1
+/ fontstyle = ("Verdana", 3%, false, false, false, false, 5, 0)
+/ txcolor = white
+/ position = (50%, 50%)
+/ size = (expressions.radius_track_inpercent, expressions.radius_track_inpercent*1.1)
+/ hjustify = left
+/ valign = center 
+/ vjustify = center
+</text>
+
+<text BetweenTest>
+/ items = instructions
+/ select = 3
+/ fontstyle = ("Verdana", 3%, false, false, false, false, 5, 0)
+/ position = (50%, 50%)
+/ size = (expressions.radius_track_inpercent, expressions.radius_track_inpercent)
+/ hjustify = left
+/ valign = center 
+/ vjustify = center
+</text>
+
+<text InstructTxt>
+/ items = instructions
+/ select = 2
+/ fontstyle = ("Verdana",3%, false, false, false, false, 5, 0)
+/ position = (50%, 50%)
+/ size = (expressions.radius_track_inpercent, expressions.radius_track_inpercent)
+/ hjustify = left
+/ valign = center 
+/ vjustify = center
+</text>
+
+<text PostTestTxt>
+/ items = instructions
+/ select = 4
+/ fontstyle = ("Verdana", 3%, false, false, false, false, 5, 0)
+/ txcolor = (0,255,255)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ hjustify = left
+/ valign = center 
+/ vjustify = center
+</text>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+<trial displayAlert>
+/ inputdevice = mouse
+/ stimulusframes = [1 = displayAlert, finish, exitButton]
+/ validresponse = (exitButton)
+/ recorddata = false
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: creates the inner circle (where instructions are posted)/track line
+<shape innerTrack>
+/ shape = circle
+/ size = (200%*expressions.radius_innerTrack_propCanvasHeight, 200%*expressions.radius_innerTrack_propCanvasHeight)
+/ position = (50%,50%)
+/ color = (124, 124, 124)
+/ erase = false
+</shape>
+
+Note: creates the outer track line
+<shape outerTrack>
+/ shape = circle
+/ size = (200%*expressions.radius_outerTrack_propCanvasHeight, 200%*expressions.radius_outerTrack_propCanvasHeight)
+/ position = (50%,50%)
+/ color = blue
+/ erase = false
+</shape>
+
+<shape animatedCircle>
+/ shape = circle
+/ size = (200%*parameters.discRadius_propCanvasHeight, 200%*parameters.discRadius_propCanvasHeight)
+/ animation = circle(parameters.trialDuration, 1, 0, 50%, 50%, expressions.radius_track_inpercent)
+/ color = yellow
+/ erase = false
+</shape>
+
+<shape staticCircle>
+/ shape = circle
+/ size = (200%*parameters.discRadius_propCanvasHeight, 200%*parameters.discRadius_propCanvasHeight)
+/ hposition = 1% * (50 + parameters.trackRadius_propCanvasHeight*100)
+/ vposition = 50%
+/ color = yellow
+/ erase = false
+</shape>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	LISTS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: stores the distance (in pixels) of each recorded mouse movement from the center of the target disc per trial (on and off)
+<list targetDistances_trial>
+</list>
+
+Note: stores the distance (in pixels) of each recorded mouse movement from the center of the target disc across trials (on and off)
+<list targetDistances_total>
+</list>
+
+Note: stores the distance (in pixels) of each recorded mouse movement that are OFF the target disc from the disc (measured from edge of disc) per trial
+<list offTargetDistance_trial>
+</list>
+
+Note: stores the distance (in pixels) of each recorded mouse movement that are OFF the target disc from the disc (measured from edge of disc) across trials
+<list offTargetDistance_total>
+</list>
+
+Note: stores the duration (in ms) of each recorded mouse movement that are OFF the target per trial
+<list offDurations_trial>
+</list>
+
+Note: stores the duration (in ms) of each recorded mouse movement that are OFF the target across trials
+<list offDurations_total>
+</list>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<trial intro>
+/ stimulusframes = [1 = outerTrack, innerTrack, introTxt]
+/ validresponse = (lbuttondown)
+/ branch = [
+	trial.startRotate
+]
+/ recorddata = false
+</trial>
+
+<trial startRotate>
+
+/ ontrialbegin = [
+	text.offTarget.skip = false;
+	text.onTarget.skip = false;
+]
+
+/ stimulusframes = [1 = outerTrack, innerTrack, staticCircle, InstructTxt]
+/ validresponse = (staticCircle)
+/ branch = [
+	trial.rotate
+]
+/ ontrialend = [
+	list.offDurations_trial.reset();
+	list.targetDistances_trial.reset();
+	list.offTargetDistance_trial.reset();
+	values.startOffTarget = 0;
+]
+/ recorddata = false
+</trial>
+		
+<trial rotate>
+/ ontrialbegin = [
+	values.rotationCount += 1;
+]
+/ stimulusframes = [1 = clearScreen, outerTrack, innerTrack, animatedCircle]
+/ validresponse = (mousemove)
+/ isvalidresponse = [
+	if (expressions.distance > expressions.DiscRadius_inpx) {
+		values.offTarget = 1;
+		text.offTarget.skip = false;
+		text.onTarget.skip = true;
+	} else if (expressions.distance <= expressions.DiscRadius_inpx) {
+		values.offTarget = 0;
+		text.offTarget.skip = true;
+		text.onTarget.skip = false;		
+	}
+	return true;
+]
+/ response = correct
+/ iscorrectresponse = [
+	return false;
+]
+/ timeout = parameters.trialDuration
+/ recorddata = true
+/ ontrialend = [
+	if (values.startOffTarget != 0){
+		list.offDurations_trial.appendItem(values.offDuration);
+		list.offDurations_total.appendItem(values.offDuration);			
+	}
+]
+/ responsemessage = ("mousemove", text.offTarget, 0);
+/ responsemessage = ("mousemove", text.onTarget, 0);
+/ datastreams = (cursorcoordinates)
+/ branch = [
+	if (values.rotationCount < parameters.NumTrials){
+		return trial.rest;		
+	} else {
+		return trial.end;
+	}
+
+]
+</trial>
+ 
+<trial rest>
+/ stimulusframes = [1 = clearScreen, outerTrack, innerTrack, BetweenTest]
+/ validresponse = (lbuttondown)
+/ branch = [
+	return trial.startRotate;
+]
+/ recorddata = false
+</trial>
+
+<trial end>
+/ stimulusframes = [1 = clearScreen, PostTestTxt]
+/ validresponse = (lbuttondown)
+/ recorddata = false
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<block screenTest>
+/skip = [
+	display.getmmy(display.height) >= parameters.canvasHeight_inmm;
+]
+/ trials = [1 = trial.displayAlert]
+/ onblockend = [
+	script.abort();
+]
+</block>
+
+<block rotate>
+/ trials = [1 = intro]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expt pursuitRotor>
+/ onexptbegin = [
+	expressions.usedCanvas_inpx;
+	expressions.usedCanvas_inmm;
+]
+/ blocks = [
+	1 = screenTest;
+	2 = rotate;
+	3 = finish;
+]
+</expt>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

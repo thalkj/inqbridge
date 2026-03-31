@@ -1,0 +1,725 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								'Me-not Me' Reaction Time Task
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 09-20-2017
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of the the 'Me-not me' reaction time task;
+a task to study self-concept particularly in the context of relationships.
+
+The implemented procedure is similarly to the one described in:
+
+Aron, A, Tudor, M, Aron, E, & Nelson, G. (1991). Close relationships as including other in the self. 
+Journal of Personality and Social Psychology, 60(Feb 91), 241-253.
+
+Slotter, E.B. ; Gardner, W.L. & Simpson, J. (2009). Where Do You End and I Begin? Evidence for Anticipatory, 
+Motivated Self–Other Integration Between Relationship Partners. 
+Journal of Personality and Social Psychology, Vol.96(6), pp.1137-1151
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants are presented a series of trait descriptors, one at a time in the middle of the screen,
+and are asked to sort the traits as fast as possible via a keypress into category 'me' (-> applies to me a lot)
+or 'not me' (-> doesn't really apply to me).
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'menotme_raw*.iqdat'*
+
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block.
+										
+countCategorizationBlocks:			running total of all test categorization blocks
+countCategorizationTrials:			running total of the trials within each categorization block
+stimulusitem:						the presented stimuli in order of trial presentation
+valence:							valence of the presented trait: "positive" vs. "negative" vs. "neutral"
+response:							scancode of the selected response key (e.g. 18 = E; 23 = I)
+responseCategory:					response category selected: "me" vs. "not me"
+latency: 							the response latency (in ms); measured from:
+
+
+(2) Summary data file: 'menotme_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+meanRT_me:						mean latency (in ms) of 'me' categorization across all trait words
+meanRT_notme:					mean latency (in ms) of 'notme' categorization across all trait words
+meanRT_me_positive:				mean latency (in ms) of 'me' categorization across all positive trait words
+meanRT_me_negative:				mean latency (in ms) of 'me' categorization across all negative trait words
+meanRT_me_neutral:				mean latency (in ms) of 'me' categorization across all neutral trait words
+meanRT_notme_positive:			mean latency (in ms) of 'not me' categorization across all positive trait words
+meanRT_notme_negative:			mean latency (in ms) of 'not me' categorization across all negative trait words
+meanRT_notme_neutral:			mean latency (in ms) of 'not me' categorization across all neutral trait words
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+(1) Practice Block: 5 practice traits are presented to practice the procedure
+The practice block turns into the test block without further instructions
+
+(2) Test Block:
+* by default the test blocks runs once (see editable parameters.nrCategorizationBlocks)
+
+* by default, each test block runs 45 items 
+(15 positively valenced descriptors, 15 neutral descriptors, 15 negatively valenced descriptors)
+=> number of traits presented adapts automatically to the number of traits listed under item.traits 
+(see section Editable Stimuli)
+
+* order of traits is selected randomly
+
+Trial Sequence:
+trait presented until categorization response -> ITI (default:1000ms)
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+
+trait words for this script were selected from:
+Anderson, N. H. (1968). Likableness ratings of 555 personality-trait
+words. Journal of Personality and Social Psychology. 9, 272-279.
+
+Positive Traits: likeability score > 450
+Neutral Traits: 350 > likeability score > 250
+Negative Traits: 150 > likeability score
+(the likeability scores of the default practice traits in this script fall outside these ranges)
+
+The traits can easily be adapted under section Editable Stimuli.
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+Response Keys: 
+/leftKey:					the left response key (here: E)
+/rightKey:					the right response key (here: I)
+
+/leftcategory:				1 = category 'me'; 2 = category 'not me' (left category is assigned 'me' category)
+/leftcategory:				label of left category ('me')
+/rightcategory:				1 = category 'me'; 2 = category 'not me' (right category is assigned 'not me' category)
+/rightcategory:				label of right category ('not me')
+
+/traitSize:					size of trait descriptor proportional to canvas height (default: 8%)
+/iti:						intertrial duration (in ms) (default: 1000ms)
+/readyDuration:				duration (in ms) of the 'get ready' trial (default: 5000ms)
+/nrCategorizationBlocks:	number of times the categorization blocks runs (default: 1)	
+
+
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/leftKey = "E"
+/rightKey = "I"
+
+/leftcategory = 1
+/leftcategory_label = "me"
+/rightcategory = 2
+/rightcategory_label = "not me"
+
+/traitSize = 8%
+/iti = 1000
+/readyDuration = 5000
+/nrCategorizationBlocks = 1
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+Anderson (1968):
+1-15: trait word ratings > 450 (positive)
+16-30: 350 < trait word ratings < 250 (neutral)
+31-45: 150 > trait word ratings (negative)
+
+!script automatically adapts trials to number of items
+!If the traits are edited, make sure to change item.traitvalences (below) accordingly (if of interest)
+
+<item traits>
+/1 = "sincere"
+/2 = "reliable"
+/3 = "open-minded"
+/4 = "cheerful"
+/5 = "tactful"
+/6 = "energetic"
+/7 = "polite"
+/8 = "efficient"
+/9 = "cooperative"
+/10 = "patient"
+/11 = "courageous"
+/12 = "observant"
+/13 = "creative"
+/14 = "helpful"
+/15 = "humorous"
+
+/16 = "outspoken"
+/17 = "perfectionistic"
+/18 = "reserved"
+/19 = "bold"
+/20 = "suave"
+/21 = "cautious"
+/22 = "shrewd"
+/23 = "impulsive"
+/24 = "emotional"
+/25 = "conservative"
+/26 = "skeptical"
+/27 = "eccentric"
+/28 = "opinionated"
+/29 = "naive"
+/30 = "unpredictable"
+
+/31 = "deceitful"
+/32 = "conceited"
+/33 = "selfish"
+/34 = "intolerant"
+/35 = "humorless"
+/36 = "careless"
+/37 = "irrational"
+/38 = "unreliable"
+/39 = "aimless"
+/40 = "superficial"
+/41 = "jealous"
+/42 = "nosey"
+/43 = "hostile"
+/44 = "lazy"
+/45 = "distrustful"
+</item>
+
+
+<item traitvalences>
+/1 = "positive"
+/2 = "positive"
+/3 = "positive"
+/4 = "positive"
+/5 = "positive"
+/6 = "positive"
+/7 = "positive"
+/8 = "positive"
+/9 = "positive"
+/10 = "positive"
+/11 = "positive"
+/12 = "positive"
+/13 = "positive"
+/14 = "positive"
+/15 = "positive"
+
+/16 = "neutral"
+/17 = "neutral"
+/18 = "neutral"
+/19 = "neutral"
+/20 = "neutral"
+/21 = "neutral"
+/22 = "neutral"
+/23 = "neutral"
+/24 = "neutral"
+/25 = "neutral"
+/26 = "neutral"
+/27 = "neutral"
+/28 = "neutral"
+/29 = "neutral"
+/30 = "neutral"
+
+/31 = "negative"
+/32 = "negative"
+/33 = "negative"
+/34 = "negative"
+/35 = "negative"
+/36 = "negative"
+/37 = "negative"
+/38 = "negative"
+/39 = "negative"
+/40 = "negative"
+/41 = "negative"
+/42 = "negative"
+/43 = "negative"
+/44 = "negative"
+/45 = "negative"
+</item>
+
+<item practiceTraits>
+/1 = "diligent"
+/2 = "charming"
+/3 = "idealistic"
+/4 = "sentimental"
+/5 = "cynical"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+</instruct>
+
+
+<page end>
+Thank you!
+</page>
+
+<item instructions>
+/ 1 = "Words describing traits will appear one by one in the middle of the screen. Sort these traits into the two categories at the top:
+
+If a trait applies to you a lot, press the '<%values.meKey%>' button (for 'me'). 
+Otherwise, press the '<%values.notmeKey%>' button (for 'not me').
+
+This is a timed sorting task. GO AS FAST AS YOU CAN.
+
+Press <Spacebar> to start the sorting task."
+</item>
+
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/ items = ("Get Ready:
+~n<%expressions.buttoninstruct1%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+</text>
+
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {
+"Place your index fingers over the '<%values.meKey%>' and <%values.notmeKey%> buttons";} 
+else {
+"Put your index fingers on the on '<%values.meKey%>' and '<%values.notmeKey%>' keys on your keyboard";}
+</expressions>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+values.countCategorizationBlocks, values.countCategorizationTrials, 
+stimulusitem, values.valence, response, values.responseCategory, latency)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.meanRT_me, expressions.meanRT_notme,
+expressions.meanRT_me_positive, expressions.meanRT_me_negative, expressions.meanRT_me_neutral,
+expressions.meanRT_notme_positive, expressions.meanRT_notme_negative, expressions.meanRT_notme_neutral)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/countCategorizationTrials:		running total of the trials within each categorization block
+/countCategorizationBlocks:		running total of all test categorization blocks
+/response:						response category selected: "me" vs. "not me"
+/valence:						valence of the presented trait: "positive" vs. "negative" vs. "neutral"
+
+/meKey:							helper variable: stores scancode of 'me' key
+/meKey:					helper variable: stores label of 'me' key
+/notmeKey:						helper variable: stores scancode of 'not me' key
+/notmeKey:				helper variable: stores label of 'not me' key
+
+/skipIntro:						true (1) = the intro and practice trials are skipped
+								false (0) = the intro and practice trials are run
+
+<values>
+/countCategorizationTrials = 0
+/countCategorizationBlocks = 0
+/responseCategory = ""
+/valence = ""
+
+/meKey = 0
+/notmeKey = 0
+/skipIntro = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/meanRT_me:						mean latency (in ms) of 'me' categorization across all trait words
+/meanRT_notme:					mean latency (in ms) of 'notme' categorization across all trait words
+/meanRT_me_positive:			mean latency (in ms) of 'me' categorization across all positive trait words
+/meanRT_me_negative:			mean latency (in ms) of 'me' categorization across all negative trait words
+/meanRT_me_neutral:				mean latency (in ms) of 'me' categorization across all neutral trait words
+/meanRT_notme_positive:			mean latency (in ms) of 'not me' categorization across all positive trait words
+/meanRT_notme_negative:			mean latency (in ms) of 'not me' categorization across all negative trait words
+/meanRT_notme_neutral:			mean latency (in ms) of 'not me' categorization across all neutral trait words
+
+<expressions>
+/meanRT_me = list.latencies_me.mean
+/meanRT_notme = list.latencies_notme.mean
+/meanRT_me_positive = list.latencies_me_pos.mean
+/meanRT_me_negative = list.latencies_me_neg.mean
+/meanRT_me_neutral = list.latencies_me_neu.mean
+/meanRT_notme_positive = list.latencies_notme_pos.mean
+/meanRT_notme_negative = list.latencies_notme_neg.mean
+/meanRT_notme_neutral = list.latencies_notme_neu.mean
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text instructions>
+/ items = instructions
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = left
+/ size = (80%, 50%)
+</text>
+
+<trial instructions>
+/ skip = [
+	values.skipIntro == 1;
+]
+/ stimulusframes = [1 = instructions]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+
+*************************************
+General Helper Instruction Trials/Blocks
+*************************************
+
+This trial is used when participants are asked to place their fingers on specific response
+buttons. On the touchscreen, this trial presents the (inactive) response buttons to the participants.
+<trial getReady>
+/ skip = [
+	values.skipIntro == 1;
+]
+/ stimulusframes = [1 = getReady]
+/ trialduration = parameters.readyDuration
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ beginresponsetime = parameters.readyDuration
+/ errormessage = false
+/ recorddata = false
+/ posttrialpause = 500
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text trait>
+/ items = traits
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.traitSize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.traitSize*1.5)
+</text>
+
+<text practiceTrait>
+/ items = practiceTraits
+/ select = noreplace
+/ fontstyle = ("Arial", parameters.traitSize, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = center
+/ size = (80%, parameters.traitSize*1.5)
+</text>
+
+<item anchors>
+/1 = "<%parameters.leftcategory_label%>"
+/2 = "<%parameters.rightcategory_label%>"
+</item>
+
+<text left>
+/ items = anchors
+/ select = 1
+/ select = noreplace
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (20%, 10%)
+/ vjustify = center
+/ hjustify = center
+/ size = (20%, 5%)
+/ txcolor = blue
+</text>
+
+<text right>
+/ items = anchors
+/ select = 2
+/ select = noreplace
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (80%, 10%)
+/ vjustify = center
+/ hjustify = center
+/ size = (20%, 5%)
+/ txcolor = blue
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies_me>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies_notme>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies_me_pos>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies_notme_pos>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies_me_neg>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies_notme_neg>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies_me_neu>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list latencies_notme_neu>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial categorizationPractice>
+/ skip = [
+	values.skipIntro == 1;
+]
+/ stimulustimes = [0 = practiceTrait]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ ontrialend = [
+	if (trial.categorizationPractice.responseText == values.meKey){
+		values.responseCategory = "me";
+	} else {
+		values.responseCategory = "not me";
+	}
+]
+/ branch = [
+	if (trial.categorizationPractice.trialcount < item.practiceTraits.itemCount){
+		return trial.categorizationPractice;
+	}
+]
+/ posttrialpause = parameters.iti
+</trial>
+
+<trial categorization>
+/ ontrialbegin = [
+	values.countCategorizationTrials += 1;
+]
+/ stimulustimes = [0 = trait]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ ontrialend = [
+	values.valence = item.traitvalences.item(text.trait.currentItemNumber);
+
+	if (trial.categorization.responseText == values.meKey){
+		list.latencies_me.appendItem(trial.categorization.latency);
+		values.responseCategory = "me";
+		if (values.valence == "positive"){
+			list.latencies_me_pos.appendItem(trial.categorization.latency);
+		} else if (values.valence == "negative"){
+			list.latencies_me_neg.appendItem(trial.categorization.latency);			
+		} else {
+			list.latencies_me_neu.appendItem(trial.categorization.latency);			
+		}
+	} else {
+		list.latencies_notme.appendItem(trial.categorization.latency);
+		values.responseCategory = "not me";
+		if (values.valence == "positive"){
+			list.latencies_notme_pos.appendItem(trial.categorization.latency);
+		} else if (values.valence == "negative"){
+			list.latencies_notme_neg.appendItem(trial.categorization.latency);			
+		} else {
+			list.latencies_notme_neu.appendItem(trial.categorization.latency);			
+		}		
+	}
+
+]
+/ branch = [
+	if (values.countCategorizationTrials < item.traits.itemCount){
+		return trial.categorization;		
+	}
+]
+/ posttrialpause = parameters.iti
+</trial>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block meCategorization>
+/ bgstim = (left, right)
+/ onblockbegin = [
+	values.countCategorizationBlocks += 1;
+	values.countCategorizationTrials = 0;
+]
+/ trials = [1 = instructions; 2 = getReady; 3 = categorizationPractice; 4 = categorization]
+/ onblockend = [
+	values.skipIntro = 1;
+]
+/ branch = [
+	if (values.countCategorizationBlocks < parameters.nrCategorizationBlocks){
+		return block.meCategorization;
+	}
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt meNotMe>
+/ onexptbegin = [
+	if (parameters.leftcategory == 1){
+		values.meKey = parameters.leftKey;
+		values.notmeKey = parameters.rightKey;
+	} else {
+		values.meKey = parameters.rightKey;
+		values.notmeKey = parameters.leftKey;	
+	}
+]
+/ blocks = [
+	1 = meCategorization;
+]
+
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

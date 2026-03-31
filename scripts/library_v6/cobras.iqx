@@ -1,0 +1,407 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									Color-Blind Racial Attitudes Scale (CoBRAS)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-02-2018
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of the Color-Blind Racial Attitudes Scale (CoBRAS) by:
+
+Neville et al (2000). Construction and Initial Validation of the Color-Blind Racial
+Attitudes Scale (CoBRAS). Journal of Counseling Psychology, Vol. 47. No. 1,59-70.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+20 6-point Likert scale questions, self-report
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'cobras.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values; 1-6; R-items are automatically reversed scored
+								1 = strongly disagree
+								6 = strongly agree
+								
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'cobras_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)		
+
+scored on a scale from 1-6 with higher scores implying greater endorsement of color-blind racial attitudes
+(Reversed items are automatically reversed scored)
+RacialPrivilege:				Range: 7-42 (1, 2, 6, 8, 12, 15, 20)
+InstitutionalDiscrimination:	Range: 7-42 (3, 4, 9, 13, 14, 16, 18)
+BlatantRacialIssues:			Range: 6-36 (5, 7, 10, 11, 17, 19)
+COBRAS_totalscore:				sum of all subscale scores: Range: 20 - 120
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP
+___________________________________________________________________________________________________________________	
+20 6-point Likert scale questions, self-report
+
+Anchors: "Strongly disagree", "Moderately disagree", "Slightly disagree", "Slightly agree", "Moderately agree", "Strongly agree"
+Higher scores  => greater endorsement of color-blind racial attitudes.
+
+3 subscales of color-blind racial attitudes
+RacialPrivilege:				the unawareness of afforded white privilege
+InstitutionalDiscrimination:	t	he unawareness of racial discrimination practiced in institutions
+BlatantRacialIssues:			the unawareness towards the pervasiveness of racial discrimination
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Below is a set of questions that deal with social issues in the United States (U.S.). Using the 6-point scale below, please give your honest rating about the degree to which you personally agree or disagree with each statement. Please be as open and honest as you can; there are no right or wrong answers.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.RacialPrivilege, expressions.InstitutionalDiscrimination, expressions.BlatantRacialIssues, expressions.COBRAS_totalscore)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/RacialPrivilege = radiobuttons.q1.response + radiobuttons.q12R.response + radiobuttons.q6R.response +
+radiobuttons.q20R.response + radiobuttons.q2R.response + radiobuttons.q8R.response + radiobuttons.q15R.response
+
+/InstitutionalDiscrimination = radiobuttons.q3.response + radiobuttons.q4R.response + radiobuttons.q9.response +
+radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q16.response + radiobuttons.q18.response
+
+/BlatantRacialIssues = radiobuttons.q5R.response + radiobuttons.q7.response + radiobuttons.q10.response +
+radiobuttons.q11R.response + radiobuttons.q17R.response + radiobuttons.q19.response
+
+/COBRAS_totalscore = expressions.RacialPrivilege + expressions.InstitutionalDiscrimination + expressions.BlatantRacialIssues
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "Everyone who works hard, no matter what race they are, has an equal chance to become rich. "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2R>
+/caption = "Race plays a major role in the type of social services (such as type of health care or day care) that people receive in the U.S."
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "It is important that people begin to think of themselves as American and not African American, Mexican American or Italian American.  "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4R>
+/caption = "Due to racial discrimination, programs such as affirmative action are necessary to help create equality.  "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5R>
+/caption = "Racism is a major problem in the U.S. "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6R>
+/caption = "Race is very important in determining who is successful and who is not.  "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "Racism may have been a problem in the past, it is not an important problem today."
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8R>
+/caption = "Racial and ethnic minorities do not have the same opportunities as white people in the U.S. "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "White people in the U.S. are discriminated against because of the color of their skin."
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "Talking about racial issues causes unnecessary tension.  "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11R>
+/caption = "It is important for political leaders to talk about racism to help work through or solve society's problems.  "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12R>
+/caption = "White people in the U.S. have certain advantages because of the color of their skin.  "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "Immigrants should try to fit into the culture and values of the U.S.  "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "English should be the only official language in the U.S.  "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15R>
+/caption = "White people are more to blame for racial discrimination than racial and ethnic minorities. "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "Social policies, such as affirmative action, discriminate unfairly against white people. "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17R>
+/caption = "It is important for public schools to teach about the history and contributions of racial and ethnic minorities. "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "Racial and ethnic minorities in the U.S. have certain advantages because of the color of their skin.  "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "Racial problems in the U.S. are rare, isolated situations.  "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20R>
+/caption = "Race plays an important role in who gets sent to prison.  "
+/ options = ("Strongly~ndisagree", "Moderately~ndisagree", "Slightly~ndisagree", "Slightly~nagree", "Moderately~nagree", "Strongly~nagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage COBRAS1>
+/ caption ="<%parameters.pageinstructions%>"
+/ questions = [1 = q1, q2R, q3]
+</surveypage>
+
+<surveypage COBRAS2>
+/ questions = [1 = q4R, q5R, q6R]
+</surveypage>
+
+<surveypage COBRAS3>
+/ questions = [1 = q7, q8R, q9]
+</surveypage>
+
+<surveypage COBRAS4>
+/ questions = [1 = q10, q11R, q12R]
+</surveypage>
+
+<surveypage COBRAS5>
+/ questions = [1 = q13, q14, q15R]
+</surveypage>
+
+<surveypage COBRAS6>
+/ questions = [1 = q16, q17R, q18]
+</surveypage>
+
+<surveypage COBRAS7>
+/ questions = [1 = q19, q20R]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey COBRAS>
+/pages = [
+	1 = COBRAS1;
+	2 = COBRAS2;
+	3 = COBRAS3;
+	4 = COBRAS4;
+	5 = COBRAS5;
+	6 = COBRAS6;
+	7 = COBRAS7;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = true
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

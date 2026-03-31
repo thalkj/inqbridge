@@ -1,0 +1,603 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							SCHUTTE SELF REPORT EMOTIONAL INTELLIGENCE TEST (SSEIT)
+							also referred to as: SCHUTTE EMOTIONAL INTELLIGENCE SCALES (SEIS) or
+							SELF REPORT EMOTIONAL INTELLIGENCE TEST (SREIT)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-07-2014
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Self Report Emotional Intelligence Test (SREIT) - also referred to as the
+the Schutte Emotional Intelligence Scales (SEIS)/Schutte Self Report Emotional Intelligence Test (SSEIT)-
+
+as described in:
+
+Schutte, N.S., Malouff, J.M., Hall, L.E., Haggerty, D.J., Cooper, J.T., Golden, C.J., & Dornheim, L. (1998).
+Development and validation of a measure of emotional intelligence. 
+Personality and Individual Differences, 25, 167-177.
+
+Normed Data based on:
+Nicola S. Schutte , John M. Malouff , Chad Bobik , Tracie D. Coston ,
+Cyndy Greeson , Christina Jedlicka , Emily Rhodes & Greta Wendorf (2001). Emotional
+Intelligence and Interpersonal Relations, The Journal of Social Psychology, 141:4, 523-536, DOI:
+10.1080/00224540109600569
+
+To link to this article: http://dx.doi.org/10.1080/00224540109600569
+
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+Participants work on 33 likert-type questions with 5 answer choices.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	 
+The default data stored in the data files are:
+
+(1) Raw data file: 'sseit.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	    with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									1 = "Strongly~nDisagree"
+									2 = "Disagree" 
+									3 = "Neither Agree nor Disagree"
+									4 = "Agree"
+									5 = "Strongly~nAgree"
+									for reversed questions "R" (5, 28, 33): the scale automatically reverses
+
+q*_latency:						how much time the participant spent on the surveypage with this particular question
+								(the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'sseit_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+(parameter) popMean:			weighted mean for Emotional Intelligence across 5 experiments (Schutte et al, 2001) used as estimate for population mean = 133.36
+(parameter) popSD:				weighted standard deviation for Emotional Intelligence across 5 experiments (Schutte et al, 2001) used as estimate for population standard deviation = 12.83
+
+SSEIT_totalscore:				the sum of all response scores
+
+z:								z-score of totalscore (uses weighted mean/weighted standard deviation based on 5 studies reported by Schutte et al, 2001, 
+								as estimates for population mean and standard deviation)
+								
+percentile:						percentile rank based on z-score
+
+
+___________________________________________________________________________________________________________________	
+QUESTIONNAIRE SET-UP
+___________________________________________________________________________________________________________________	
+
+* 33 questions with 5-point Likert scales
+	1 = "Strongly~nDisagree"
+	2 = "Disagree" 
+	3 = "Neither Agree nor Disagree"
+	4 = "Agree"
+	5 = "Strongly~nAgree"
+
+for reversed questions (5, 28, 33) the scoring is reversed.
+
+* The individual anchors (and number of anchors) can be edited under section QUESTIONS
+(the changes need to be made for each radiobutton question). Only anchor 1 and 5
+are original (the middle anchors were filled it by Millisecond Software).
+* a totalscore is calculated and saved in the summary data file
+* by default the questions are required to answer; to change go to section QUESTIONS
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+Surveypage instructions can be edited under Editable Parameters -> parameters.pageinstructions
+
+NORMED DATA (see Schutte et al, 2001)
+
+Emotional Intelligence:			
+		mean	SD		N
+Exp1	126.88	12.18	24
+Exp2	142.51	9.46	37
+Exp3	132.84	12.37	77
+Exp4	131.61	14.23	38
+Exp5	131.56	15.67	43
+						total N	219
+		
+=> weighted Mean = 133.36 => estimate for population mean for Emotional Intelligence Score
+=> weighted SD = 12.83 => estimate for population standard deviation of Emotional Intelligence Scores
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+/popMean:					weighted mean for Emotional Intelligence across 5 experiments (Schutte et al, 2001) used as estimate for population mean = 133.36
+/popSD:						weighted standard deviation for Emotional Intelligence across 5 experiments (Schutte et al, 2001) used as estimate for population standard deviation = 12.83
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ pageinstructions = "Please select the answers that apply best.
+"
+/ popMean = 133.36
+/ popSD = 12.83
+</parameters>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 5.0.11.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "5.0.11.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data: SREIT.iqdat
+********************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+parameters.popMean, parameters.popSD, expressions.SSEIT_totalscore, expressions.z, expressions.percentile)
+</summarydata>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/totalscore:	 	the sum of all response scores 
+/z:					z-score of totalscore (uses weighted mean/weighted standard deviation based on 5 studies reported by Schutte et al, 2001, as estimates for population mean and standard deviation)
+/percentile:		percentile rank based on z-score
+
+
+<expressions>
+/ SSEIT_totalscore = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response + 
+radiobuttons.q5R.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + 
+radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q11.response + radiobuttons.q12.response + 
+radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q15.response + radiobuttons.q16.response + 
+radiobuttons.q17.response + radiobuttons.q18.response + radiobuttons.q19.response + radiobuttons.q20.response + radiobuttons.q21.response +
+radiobuttons.q22.response + radiobuttons.q23.response + radiobuttons.q24.response + radiobuttons.q25.response +
+radiobuttons.q26.response + radiobuttons.q27.response + radiobuttons.q28R.response + radiobuttons.q29.response +
+radiobuttons.q30.response + radiobuttons.q31.response + radiobuttons.q32.response + radiobuttons.q33R.response
+
+/ z = (expressions.SSEIT_totalscore - parameters.popMean)/parameters.popSD
+/ percentile = pofz(expressions.z)*100
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/ caption = "1. I know when to speak about my personal problems to others."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/ caption = "2. When I am faced with obstacles, I remember times I faced similar obstacles and overcame them."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/ caption = "3. I expect that I will do well on most things I try."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/ caption = "4. Other people find it easy to confide in me."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5R>
+/ caption = "5. I find it hard to understand the non-verbal messages of other people."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/ caption = "6. Some of the major events of my life have led me to re-evaluate what is important and not important."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/ caption = "7. When my mood changes, I see new possibilities."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/ caption = "8. Emotions are one of the things that make my life worth living."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/ caption = "9. I am aware of my emotions as I experience them."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/ caption = "10. I expect good things to happen."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/ caption = "11. I like to share my emotions with others."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/ caption = "12. When I experience a positive emotion, I know how to make it last"
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/ caption = "13. I arrange events others enjoy."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14>
+/ caption = "14. I seek out activities that make me happy."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/ caption = "15. I am aware of the non-verbal messages I send to others."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16>
+/ caption = "16. I present myself in a way that makes a good impression on others."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17>
+/ caption = "17. When I am in a positive mood, solving problems is easy for me."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18>
+/ caption = "18. By looking at their facial expressions, I recognize the emotions people are experiencing."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19>
+/ caption = "19. I know why my emotions change."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20>
+/ caption = "20. When I am in a positive mood, I am able to come up with new ideas."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21>
+/ caption = "21. I have control over my emotions."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22>
+/ caption = "22. I easily recognize my emotions as I experience them."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23>
+/ caption = "23. I motivate myself by imagining a good outcome to tasks I take on."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q24>
+/ caption = "24. I compliment others when they have done something well."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q25>
+/ caption = "25. I am aware of the non-verbal messages other people send."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q26>
+/ caption = "26. When another person tells me about an important event in his or her life, I almost feel as though I have experienced this event myself."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q27>
+/ caption = "27. When I feel a change in emotions, I tend to come up with new ideas."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q28R>
+/ caption = "28. When I am faced with a challenge, I give up because I believe I will fail."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q29>
+/ caption = "29. I know what other people are feeling just by looking at them."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q30>
+/ caption = "30. I help other people feel better when they are down."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q31>
+/ caption = "31. I use good moods to help myself keep trying in the face of obstacles."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q32>
+/ caption = "32. I can tell how people are feeling by listening to the tone of their voice."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q33R>
+/ caption = "33. It is difficult for me to understand why people feel the way they do."
+/ options = ("Strongly~nDisagree", "Disagree", "Neither Agree~nnor Disagree", "Agree", "Strongly~nAgree")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/ required = true
+/ orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage SREIT1>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage SREIT2>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q4, q5R, q6]
+</surveypage>
+
+<surveypage SREIT3>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage SREIT4>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage SREIT5>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage SREIT6>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q16, q17, q18]
+</surveypage>
+
+<surveypage SREIT7>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q19, q20, q21]
+</surveypage>
+
+<surveypage SREIT8>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q22, q23, q24]
+</surveypage>
+
+<surveypage SREIT9>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q25, q26, q27]
+</surveypage>
+
+<surveypage SREIT10>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q28R, q29, q30]
+</surveypage>
+
+<surveypage SREIT11>
+/ caption = "<%parameters.pageinstructions%>"
+/ questions = [1 = q31, q32, q33R]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey SSEIT>
+/ pages = [
+	1 = SREIT1; 
+	2 = SREIT2; 
+	3 = SREIT3; 
+	4 = SREIT4; 
+	5 = SREIT5; 
+	6 = SREIT6;
+	7 = SREIT7;
+	8 = SREIT8;
+	9 = SREIT9;
+	10 = SREIT10;
+	11 = SREIT11;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+/ itemspacing = 10%
+</survey>
+
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

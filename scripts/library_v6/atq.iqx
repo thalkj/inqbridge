@@ -1,0 +1,546 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									ATQ (Effort Control Scale)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 07-26-2017
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of the ATQ (Effort Control Scale).
+
+Reference:
+Evans, D.E., & Rothbart, M.K. (2007). Development of a model for adult temperament. 
+Journal of Research in Personality, 41, 868-888.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+19 8-point Likert Scale questions
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________
+	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'atq.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (extremely untrue) - 7 (Extremely true)
+								R = automatically reversed scored questions (ATQ2,5,8,29,40,50,53,60,63,72)
+								Note: in this script, "NA" responses are coded with 0 (so that NA-answers do not affect ACV, ATT, INH scores)
+																		
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+
+
+(2) Summary data file: 'ATQ_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)
+
+Scale Scores: 
+ACV = mean (ATQ2r, ATQ8r, ATQ15, ATQ27, ATQ47, ATQ55, ATQ72r).
+count_ACV:	number of responses other than "NA" responses of ACV items
+
+ATT = mean (ATQ5r, ATQ29r, ATQ35, ATQ40r, ATQ50r).
+count_ATT:	number of responses other than "NA" responses of ATT items
+
+INH = mean (ATQ11, ATQ26, ATQ43, ATQ53r, ATQ60r, ATQ63r, ATQ76).
+count_INH:	number of responses other than "NA" responses of INH items
+
+Factor Scores:
+EFFORTFULCONTROL = mean (ATQ2r, ATQ8r, ATQ15, ATQ27, ATQ47, ATQ55, ATQ72r, 
+ATQ5r, ATQ29r, ATQ35, ATQ40r, ATQ50r, 
+ATQ11, ATQ26, ATQ43, ATQ53r, ATQ60r, ATQ63r, ATQ76).
+
+count_all: number of responses other than "NA" responses
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________
+19 8-point Likert Scale
+
+Scale:
+1 'Extremely Untrue' 2 'Quite Untrue' 3 'Slightly Untrue' 4 'Neither True nor False' 5 'Slightly True' 6 'Quite True' 7 'Extremely True' 0 'Not Applicable'.      
+
+10 questions are reversed scored with:
+7 'Extremely Untrue' 6 'Quite Untrue' 5 'Slightly Untrue' 4 'Neither True nor False' 3 'Slightly True' 2 'Quite True' 1 'Extremely True' 0 'Not Applicable'.      
+
+Scoring:
+1. Reversed Scoring: ATQ2R,5R,8R,29R,40R,50R,53R,60R,63R,72R
+2. Script counts how many ACV/ATT/INH items are responses other than "NA"
+3. Script sums up all ACV/ATT/IHN items and divides them by their respective non-"NA" number of responses
+
+Note: in this script, NA responses are coded with 0 (so that NA-answers do not affect ACV, ATT, INH scores)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+can be changed under section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Below you will find a series of statements that individuals can use to describe themselves. There are no correct or incorrect responses. All people are unique and different, and it is these differences which we are trying to learn about. Please read each statement carefully and give your best estimate of how well it describes you. Choose the appropriate response option below to indicate how well a given statement describes you.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+
+<page end>
+Thank you!
+</page>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed
+expressions.ACV, values.count_ACV, 
+expressions.ATT, values.count_ATT,
+expressions.INH, values.count_INH, 
+expressions.EFFORTFULCONTROL, values.count_all)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<values>
+/count_ACV = 0
+/count_ATT = 0
+/count_INH = 0
+
+/count_all = 0
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+COMPUTE acv = mean (ATQ2r, ATQ8r, ATQ15, ATQ27, ATQ47, ATQ55, ATQ72r).
+COMPUTE att = mean (ATQ5r, ATQ29r, ATQ35, ATQ40r, ATQ50r).
+COMPUTE inh = mean (ATQ11, ATQ26, ATQ43, ATQ53r, ATQ60r, ATQ63r, ATQ76).
+
+COMPUTE EFFORTFULCONTROL = mean (ATQ2r, ATQ8r, ATQ15, ATQ27, ATQ47, ATQ55, ATQ72r, 
+ATQ5r, ATQ29r, ATQ35, ATQ40r, ATQ50r, 
+ATQ11, ATQ26, ATQ43, ATQ53r, ATQ60r, ATQ63r, ATQ76).
+
+<expressions>
+/ACV = (radiobuttons.q1_ATQ2R.response + radiobuttons.q3_ATQ8R.response + radiobuttons.q5_ATQ15.response + radiobuttons.q7_ATQ27.response 
++ radiobuttons.q12_ATQ47.response + radiobuttons.q15_ATQ55.response + radiobuttons.q18_ATQ72R.response)/values.count_ACV
+/ATT = (radiobuttons.q2_ATQ5R.response + radiobuttons.q8_ATQ29R.response + radiobuttons.q9_ATQ35.response +
+radiobuttons.q10_ATQ40R.response + radiobuttons.q13_ATQ50R.response)/values.count_ATT
+/INH = (radiobuttons.q4_ATQ11.response + radiobuttons.q6_ATQ26.response + radiobuttons.q11_ATQ43.response + 
+radiobuttons.q14_ATQ53R.response + radiobuttons.q16_ATQ60R.response + radiobuttons.q17_ATQ63R.response + 
+radiobuttons.q19_ATQ76.response)/values.count_INH
+/EFFORTFULCONTROL = (radiobuttons.q1_ATQ2R.response + radiobuttons.q3_ATQ8R.response + radiobuttons.q5_ATQ15.response +
+radiobuttons.q7_ATQ27.response + radiobuttons.q12_ATQ47.response + radiobuttons.q15_ATQ55.response + 
+radiobuttons.q18_ATQ72R.response + 
+radiobuttons.q2_ATQ5R.response + radiobuttons.q8_ATQ29R.response + radiobuttons.q9_ATQ35.response +
+radiobuttons.q10_ATQ40R.response + radiobuttons.q13_ATQ50R.response +
+radiobuttons.q4_ATQ11.response + radiobuttons.q6_ATQ26.response + radiobuttons.q11_ATQ43.response + 
+radiobuttons.q14_ATQ53R.response + radiobuttons.q16_ATQ60R.response + radiobuttons.q17_ATQ63R.response + 
+radiobuttons.q19_ATQ76.response)/values.count_all
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_ATQ2R>
+/caption = "I am often late for appointments."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_ATQ5R>
+/caption = "It's often hard for me to alternate between two different tasks."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_ATQ8R>
+/caption = "I often make plans that I do not follow through with."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_ATQ11>
+/caption = "Even when I feel energized I can usually sit still without much trouble if it's necessary."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_ATQ15>
+/caption = "I can keep performing a task even when I would rather not do it"
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_ATQ26>
+/caption = "It is easy for me to hold back my laughter in a situation when laughter wouldn't be appropriate."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_ATQ27>
+/caption = "I can make myself work on a difficult task even when I don't feel like trying."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_ATQ29R>
+/caption = "When I am trying to focus my attention I am easily distracted."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_ATQ35>
+/caption = "When interrupted or distracted I usually can easily shift my attention back to whatever I was doing before."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10_ATQ40R>
+/caption = "It is very hard for me to focus my attention when I am distressed."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11_ATQ43>
+/caption = "I can easily resist talking out of turn even when I'm excited and want to express an idea."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12_ATQ47>
+/caption = "If I think of something that needs to be done I usually get right to work on it."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13_ATQ50R>
+/caption = "When I am happy and excited about an upcoming event I have a hard time focusing my attention on tasks that require concentration."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14_ATQ53R>
+/caption = "I often have trouble resisting my cravings for food, drink etc."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15_ATQ55>
+/caption = "I usually finish doing things before they are actually due, for example paying bills, finishing homework, etc."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16_ATQ60R>
+/caption = "When Im excited about something it's usually hard for me to resist jumping right into it before I've considered the possible consequences."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17_ATQ63R>
+/caption = "When I see an attractive item in the store it's usually very hard for me to resist buying it."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18_ATQ72R>
+/caption = "When I am afraid of how a situation might turn out I usually avoid dealing with it."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("7", "6", "5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19_ATQ76>
+/caption = "It is easy for me to inhibit fun behavior that would be inappropriate."
+/ options = ("Extremely~nUntrue", "Quite~nUntrue", "Slightly~nUntrue", "Neither True~nnor False", 
+"Slightly~nTrue", "Quite~nTrue", "Extremely~nTrue", "Not~nApplicable")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage ATQ1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1_ATQ2R, q2_ATQ5R, q3_ATQ8R]
+</surveypage>
+
+<surveypage ATQ2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4_ATQ11, q5_ATQ15, q6_ATQ26]
+</surveypage>
+
+<surveypage ATQ3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7_ATQ27, q8_ATQ29R, q9_ATQ35]
+</surveypage>
+
+<surveypage ATQ4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10_ATQ40R, q11_ATQ43, q12_ATQ47]
+</surveypage>
+
+<surveypage ATQ5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13_ATQ50R, q14_ATQ53R, q15_ATQ55]
+</surveypage>
+
+<surveypage ATQ6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q16_ATQ60R, q17_ATQ63R, q18_ATQ72R]
+</surveypage>
+
+<surveypage ATQ7>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q19_ATQ76]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey ATQ>
+/pages = [
+	1 = ATQ1;
+	2 = ATQ2;
+	3 = ATQ3;
+	4 = ATQ4;
+	5 = ATQ5;
+	6 = ATQ6;
+	7 = ATQ7;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 2.5%, false, true, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = true
+/itemspacing = 5%
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+/ onblockend = [
+	if (radiobuttons.q1_ATQ2R.response != 0){
+		values.count_ACV += 1;
+	}
+	if (radiobuttons.q2_ATQ5R.response != 0){
+		values.count_ATT += 1;
+	}	
+	if (radiobuttons.q3_ATQ8R.response != 0){
+		values.count_ACV += 1;
+	}	
+	if (radiobuttons.q4_ATQ11.response != 0){
+		values.count_INH += 1;
+	}	
+	if (radiobuttons.q5_ATQ15.response != 0){
+		values.count_ACV += 1;
+	}	
+	if (radiobuttons.q6_ATQ26.response != 0){
+		values.count_INH += 1;
+	}	
+	if (radiobuttons.q7_ATQ27.response != 0){
+		values.count_ACV += 1;
+	}	
+	if (radiobuttons.q8_ATQ29R.response != 0){
+		values.count_ATT += 1;
+	}	
+	if (radiobuttons.q9_ATQ35.response != 0){
+		values.count_ATT += 1;
+	}
+	if (radiobuttons.q10_ATQ40R.response != 0){
+		values.count_ATT += 1;
+	}	
+	if (radiobuttons.q11_ATQ43.response != 0){
+		values.count_INH += 1;
+	}
+	if (radiobuttons.q12_ATQ47.response != 0){
+		values.count_ACV += 1;
+	}
+	if (radiobuttons.q13_ATQ50R.response != 0){
+		values.count_ATT += 1;
+	}
+	if (radiobuttons.q14_ATQ53R.response != 0){
+		values.count_INH += 1;
+	}
+	if (radiobuttons.q15_ATQ55.response != 0){
+		values.count_ACV += 1;
+	}	
+	if (radiobuttons.q16_ATQ60R.response != 0){
+		values.count_INH += 1;
+	}
+	if (radiobuttons.q17_ATQ63R.response != 0){
+		values.count_INH += 1;
+	}
+	if (radiobuttons.q18_ATQ72R.response != 0){
+		values.count_ACV += 1;
+	}
+	if (radiobuttons.q19_ATQ76.response != 0){
+		values.count_INH += 1;
+	}	
+	values.count_all = values.count_ATT + values.count_ACV + values.count_INH;		
+]
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

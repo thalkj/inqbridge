@@ -1,0 +1,403 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									General Family Functioning Subscale (GFF-12/GFF-6)
+									from the Family Assessment Device (FAD)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-15-2017
+last updated:  02-23-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-23-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized version of the General Family Functioning Subscale (GFF-12/GFF-6) 
+of the Family Assessment Device (FAD):
+
+FAD:
+Epstein, N. B., Baldwin, L. M., & Bishop, D. S. (1983). The McMaster family assessment device. Journal of Marital
+and Family Therapy, 9(2), 171–180. doi:10.1111/j.1752-0606.1983.tb01497.x.
+
+GFF-12/GFF-6:
+Boterhoven de Haan, K.L. et al (2015). Reliability and Validity of a Short Version of the General Functioning Subscale 
+of the McMaster Family Assessment Device. Fam Proc, 54, 116–123.
+-> compares the GFF-6 (only positively worded statements) to GFF-12
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+
+GFF-12: 12 statements, rated on 4-point Likert Scales (positively and negatively worded statements)
+GFF-6: 	6 statements, rated on 4-point Likert Scales (only positively worded statements)								  
+	
+Note: by default, this script runs the GFF-12. To run the GFF-6, go to section Editable Parameters and
+change a script setting.
+	
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'generalfamilyfunctioningsubscale.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale: 1 (strongly agree) - 4 (strongly disagree)
+									R = automatically reversed scored questions
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'generalfamilyfunctioningsubscale_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+version:							"GFF-6" vs. "GFF-12" (depends on settings of parameters.runShortVersion)	
+							
+GFFScoreSum:						the sum of all 12(6) responses
+									Max GFF12: 48 (the higher the score the more dysfunctional is the family perceived by participant)
+									Max GFF6: 24
+								
+GFFScore:							the total score from 1.0-4.0 (values.GFFScoreSum divided by the number of questions)								
+
+12 individual responses
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+can be edited under section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the default instructions presented on each surveypage
+
+/runShortVersion:			true (1): the GFF-6 is run
+						false (0): the GFF-12 is run (default setting)
+
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "Please rate your agreement or disagreement with how well each statement describes your family.
+"
+/runShortVersion = false
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ txcolor = (black)
+</instruct>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+values.version, values.GFFScoreSum, values.GFFScore,
+radiobuttons.q1R.response,
+radiobuttons.q2.response,radiobuttons.q3R.response,radiobuttons.q4.response,
+radiobuttons.q5R.response,radiobuttons.q6.response,radiobuttons.q7R.response,radiobuttons.q8.response,
+radiobuttons.q9R.response,radiobuttons.q10.response,radiobuttons.q11R.response,radiobuttons.q12.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+/version:				"GFF-6" vs. "GFF-12"
+/GFFScoreSum:			the sum of all responses
+/GFFScore:				the total score from 1.0-4.0 (values.GFFScoreSum divided by the number of questions)
+
+<values>
+/version = ""
+/GFFScoreSum = ""
+/GFFScore = ""
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/GFF12 = radiobuttons.q1R.response + radiobuttons.q2.response + radiobuttons.q3R.response + radiobuttons.q4.response +
+radiobuttons.q5R.response + radiobuttons.q6.response + radiobuttons.q7R.response + radiobuttons.q8.response +
+radiobuttons.q9R.response + radiobuttons.q10.response + radiobuttons.q11R.response + radiobuttons.q12.response
+
+/GFF6 = radiobuttons.q2.response + radiobuttons.q4.response + radiobuttons.q6.response + 
+radiobuttons.q8.response + radiobuttons.q10.response + radiobuttons.q12.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1R>
+/caption = "Planning family activities is difficult because we misunderstand each other."
+/ options = ("Strongly Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "In times of crisis we can turn to each other for support."
+/ options = ("Strongly Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3R>
+/caption = "We cannot talk to each other about the sadness we feel."
+/ options = ("Strongly Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "Individuals are accepted for what they are."
+/ options = ("Strongly Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5R>
+/caption = "We avoid discussing our fears and concerns."
+/ options = ("Strongly Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "We can express feelings to each other."
+/ options = ("Strongly Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7R>
+/caption = "There are lots of bad feelings in our family."
+/ options = ("Strongly Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "We feel accepted for what we are."
+/ options = ("Strongly Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9R>
+/caption = "Making decisions is a problem for our family."
+/ options = ("Strongly Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "We are able to make decisions about how to solve problems."
+/ options = ("Strongly Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11R>
+/caption = "We don’t get along well together."
+/ options = ("Strongly Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "We confide in each other."
+/ options = ("Strongly Agree", "Agree", "Disagree", "Strongly Disagree")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage GFF12_1>
+/ skip = [
+	parameters.runShortVersion == true;
+]
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1R, q2, q3R, q4]
+</surveypage>
+
+<surveypage GFF12_2>
+/ skip = [
+	parameters.runShortVersion == true;
+]
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q5R, q6 q7R, q8]
+</surveypage>
+
+<surveypage GFF12_3>
+/ skip = [
+	parameters.runShortVersion == true;
+]
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q9R, q10, q11R, q12]
+/ nextlabel = "Finish"
+</surveypage>
+
+<surveypage GFF6_1>
+/ skip = [
+	parameters.runShortVersion != true;
+]
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q2, q4, q6, q8]
+</surveypage>
+
+<surveypage GFF6_2>
+/ skip = [
+	parameters.runShortVersion != true;
+]
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10, q12]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey generalfamilyfunctioningsubscale>
+/ onblockbegin = [
+	if (parameters.runShortVersion == true){
+		values.version = "GFF-6";
+	} else {
+		values.version = "GFF-12";
+	}
+]
+/pages = [
+	1 = GFF12_1; 
+	2 = GFF12_2; 
+	3 = GFF12_3;
+	4 = GFF6_1;
+	5 = GFF6_2;
+]
+/screencapture = false
+/ onblockend = [
+	if (parameters.runShortVersion == true){
+		values.GFFScoreSum = expressions.GFF6;
+		values.GFFScore = values.GFFScoreSum/6;
+	} else {
+		values.GFFScoreSum = expressions.GFF12;
+		values.GFFScore = values.GFFScoreSum/12;
+	}
+]
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = true
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

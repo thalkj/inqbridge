@@ -1,0 +1,1042 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Schedule of Racist Events (SRE)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-10-2022
+last updated:  05-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 05-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Schedule of Racist Events (SRE), a questionnaire to assess 
+the racial discrimination in the lives of African Americans by Landrine & Klonoff (1996).
+
+Reference:
+Landrine, H.,& Klonoff, E. A. (1996). The Schedule of Racist Events: A measure of racist discrimination
+and a study of its negative physical and mental health consequences. Journal of
+Black Psychology, 22(2), 144-168.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+Landrine & Klonoff (1996) describe the SRE as follows:
+
+"The Schedule of Racist Events (SRE) is an 18-item self report inventory that assesses the frequency 
+of racist discrimination (specific, stressful racist events) in the past (recent racist events) and 
+in one's entire life (lifetime racist events) and  measures the extent to which this discrimination 
+was evaluated (appraised) as stressful (appraised racist events)."
+
+The items are asses on the following scale:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4 minutes to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'sre.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 1-6
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'sre_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+								
+SREscore_pastyear:				the sum of all past year responses q1-q18 (Range: 18-108) 
+SREscore_lifelong:				the sum of all life responses q1-q18 (Range: 18-108) 
+SREscore_stresslevel:			the sum of all stress responses q1-q17 (Range: 17-102)
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+</usermanual>
+
+<parameters>
+/q15_nword = "n_____" 			//Note by the original scale authors (p.166):
+								//'The actual 'n' word, rather than 'n________' appears in the scale for item 15 
+								//was removed for publication by  the editors. When reproducing and using this scale, 
+								// we caution the reader to use the actual word in this item
+								//because that word appeared in the scale in this study.'
+								//This script uses the substitution by default.
+								
+</parameters>
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.SREscore_pastyear, expressions.SREscore_lifelong, expressions.SREscore_stresslevel)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/SREscore_pastyear = radiobuttons.q1a.response + radiobuttons.q2a.response + radiobuttons.q3a.response +
+radiobuttons.q4a.response + radiobuttons.q5a.response + radiobuttons.q6a.response +
+radiobuttons.q7a.response + radiobuttons.q8a.response + radiobuttons.q9a.response +
+radiobuttons.q10a.response + radiobuttons.q11a.response + radiobuttons.q12a.response +
+radiobuttons.q13a.response + radiobuttons.q14a.response + radiobuttons.q15a.response +
+radiobuttons.q16a.response + radiobuttons.q17a.response + radiobuttons.q18a.response
+
+/SREscore_lifelong = radiobuttons.q1b.response + radiobuttons.q2b.response + radiobuttons.q3b.response +
+radiobuttons.q4b.response + radiobuttons.q5b.response + radiobuttons.q6b.response +
+radiobuttons.q7b.response + radiobuttons.q8b.response + radiobuttons.q9b.response +
+radiobuttons.q10b.response + radiobuttons.q11b.response + radiobuttons.q12b.response +
+radiobuttons.q13b.response + radiobuttons.q14b.response + radiobuttons.q15b.response +
+radiobuttons.q16b.response + radiobuttons.q17b.response + radiobuttons.q18b.response
+
+/SREscore_stresslevel = radiobuttons.q1c.response + radiobuttons.q2c.response + radiobuttons.q3c.response +
+radiobuttons.q4c.response + radiobuttons.q5c.response + radiobuttons.q6c.response +
+radiobuttons.q7c.response + radiobuttons.q8c.response + radiobuttons.q9c.response +
+radiobuttons.q10c.response + radiobuttons.q11c.response + radiobuttons.q12c.response +
+radiobuttons.q13c.response + radiobuttons.q14c.response + radiobuttons.q15c.response +
+radiobuttons.q16c.response + radiobuttons.q17c.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are not required to be answered. To change
+/required = true
+
+//////////////////////
+q1
+//////////////////////
+
+<caption q1_caption>
+/ caption = "1. How many times have you been treated unfairly by <i>teachers and professors</i> because you are Black?"
+</caption>
+
+<radiobuttons q1a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q1b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q1c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+//////////////////////
+q2
+//////////////////////
+
+<caption q2_caption>
+/ caption = "2. How many times have you been treated unfairly by your <i>employers, bosses and supervisors</i> because you are Black?"
+</caption>
+
+<radiobuttons q2a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q3
+//////////////////////
+
+<caption q3_caption>
+/ caption = "3. How many times have you been treated unfairly by <i>your coworkers, fellow students and colleagues</i> because you are Black?"
+</caption>
+
+<radiobuttons q3a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q4
+//////////////////////
+
+<caption q4_caption>
+/ caption = "4. How many times have you been treated unfairly by <i>people in service jobs</i> (store clerks, waiters, bartenders, bank tellers and others) because you are Black?"
+</caption>
+
+<radiobuttons q4a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q5
+//////////////////////
+
+<caption q5_caption>
+/ caption = "5. How many times have you been treated unfairly by <i>strangers</i> because you are Black?"
+</caption>
+
+<radiobuttons q5a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q6
+//////////////////////
+
+<caption q6_caption>
+/ caption = "6. How many times have you been treated unfairly by <i>people in helping jobs</i> (doctors, nurses, psychiatrists, case workers, dentists, school counselors, therapists, social workers and others) because you are Black?"
+</caption>
+
+<radiobuttons q6a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q7
+//////////////////////
+
+<caption q7_caption>
+/ caption = "7. How many times have you been treated unfairly by <i>neighbors</i> because you are Black?"
+</caption>
+
+<radiobuttons q7a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q8
+//////////////////////
+
+<caption q8_caption>
+/ caption = "8. How many times have you been treated unfairly by <i>institutions</i> (schools, universities, law firms, the police, the courts, the Department of Social Services, the Unemployment Office and others) because you are Black?"
+</caption>
+
+<radiobuttons q8a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q9
+//////////////////////
+
+<caption q9_caption>
+/ caption = "9. How many times have you been treated unfairly by <i>people that you thought were your friends</i> because you are Black?"
+</caption>
+
+<radiobuttons q9a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q10
+//////////////////////
+
+<caption q10_caption>
+/ caption = "10. How many times have you been <i>accused or suspected of doing something wrong</i> (such as stealing, cheating, not doing your share of the work, or breaking the law) because you are Black?"
+</caption>
+
+<radiobuttons q10a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q11
+//////////////////////
+
+<caption q11_caption>
+/ caption = "11. How many times have people <i>misunderstood your intentions and motives</i> because you are Black?"
+</caption>
+
+<radiobuttons q11a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q12
+//////////////////////
+
+<caption q12_caption>
+/ caption = "12. How many times did you <i>want to tell someone off for being a racist but didn't say anything</i>?"
+</caption>
+
+<radiobuttons q12a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q13
+//////////////////////
+
+<caption q13_caption>
+/ caption = "13. How many times have you been <i>really angre about something racist that was done to you</i>?"
+</caption>
+
+<radiobuttons q13a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q14
+//////////////////////
+
+<caption q14_caption>
+/ caption = "14. How many times were you <i>forced to take drastic steps</i> (such as filing a grievance, filing a lawsuit, quitting your job, moving away, and other actions) to deal with some racist thing that was done to you?"
+</caption>
+
+<radiobuttons q14a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q15
+//////////////////////
+
+<caption q15_caption>
+/ caption = "15. How many times were you <i>been called a racist name like <%parameters.q15_nword%></i> coon, jungle bunny or other names?"
+</caption>
+
+<radiobuttons q15a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q16
+//////////////////////
+
+<caption q16_caption>
+/ caption = "16. How many times have you <i>gotten into an argument or a fight about something racist that was done to you or done to somebody else?</i>?"
+</caption>
+
+<radiobuttons q16a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q17
+//////////////////////
+
+<caption q17_caption>
+/ caption = "17. How many times have you <i>been fun of, picked on, pushed, shoved, hit or threatened with harm</i> because you are Black?"
+</caption>
+
+<radiobuttons q17a>
+/caption = "How many times in the <u>past year</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17b>
+/caption = "How many times in your <u>entire life</u>?"
+/ options = ("1", "2", "3", "4", "5", "6")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17c>
+/caption = "How stressful was this for you??"
+/ options = ("1<br>Not at all", "2", "3", "4", "5", "6<br>Extremely")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+//////////////////////
+q18
+//////////////////////
+
+<caption q18_caption>
+/ caption = "18. How <i>different</i> would your life be now if you HAD NOT BEEN treated in a racist and unfair way"
+</caption>
+
+<radiobuttons q18a>
+/caption = "In the <u>past year</u>?"
+/ options = ("Same<br>as now", 
+"A little<br>different"
+"Different<br>in a<br>few ways", 
+"Different<br>in a<br>lot of ways", 
+"Different<br>in<br>most ways", 
+"Totally<br>different")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18b>
+/caption = "In your <u>entire life</u>?"
+/ options = ("Same<br>as now", 
+"A little<br>different"
+"Different<br>in a<br>few ways", 
+"Different<br>in a<br>lot of ways", 
+"Different<br>in<br>most ways", 
+"Totally<br>different")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage sre_1>
+/ caption = "We are interested in your experiences with racism. As you answer the questions below, please think about your ENTIRE LIFE, from when you were a child to the present.
+
+For each question, please select the number (1-6) that best captures the things that have happened to you. 
+
+Answer each question TWICE, once for what has happened to your IN THE PAST YEAR, and once for what YOUR ENTIRE LIFE HAS BEEN LIKE.
+
+Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+</surveypage>
+
+<surveypage sre_2>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q1_caption, q1a, q1b, q1c]
+</surveypage>
+
+<surveypage sre_3>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q2_caption, q2a, q2b, q2c]
+</surveypage>
+
+<surveypage sre_4>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q3_caption, q3a, q3b, q3c]
+</surveypage>
+
+<surveypage sre_5>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q4_caption, q4a, q4b, q4c]
+</surveypage>
+
+<surveypage sre_6>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q5_caption, q5a, q5b, q5c]
+</surveypage>
+
+<surveypage sre_7>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q6_caption, q6a, q6b, q6c]
+</surveypage>
+
+<surveypage sre_8>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q7_caption, q7a, q7b, q7c]
+</surveypage>
+
+<surveypage sre_9>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q8_caption, q8a, q8b, q8c]
+</surveypage>
+
+<surveypage sre_10>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q9_caption, q9a, q9b, q9c]
+</surveypage>
+
+<surveypage sre_11>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q10_caption, q10a, q10b, q10c]
+</surveypage>
+
+<surveypage sre_12>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q11_caption, q11a, q11b, q11c]
+</surveypage>
+
+
+<surveypage sre_13>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q12_caption, q12a, q12b, q12c]
+</surveypage>
+
+<surveypage sre_14>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q13_caption, q13a, q13b, q13c]
+</surveypage>
+
+<surveypage sre_15>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q14_caption, q14a, q14b, q14c]
+</surveypage>
+
+<surveypage sre_16>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q15_caption, q15a, q15b, q15c]
+</surveypage>
+
+<surveypage sre_17>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q16_caption, q16a, q16b, q16c]
+</surveypage>
+
+<surveypage sre_18>
+/ subcaption = "Use these numbers:
+Select '1' = If this has NEVER happened to you
+Select '2' = If this has happened ONCE IN A WHILE (less than 10% of the time)
+Select '3' = If this has happened SOMETIMES (10%-25% of the time)
+Select '4' = If this has happened A LOT (26%-49% of the time)
+Select '5' = If this has happened MOST OF THE TIME (50%-70% of the time)
+Select '6' = If this has happened ALMOST ALL THE TIME (more than 70% of the time)"
+
+/questions = [1 = q17_caption, q17a, q17b, q17c]
+</surveypage>
+
+
+<surveypage sre_19>
+/questions = [1 = q18_caption, q18a, q18b]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+
+<survey sre>
+/pages = [
+	1 = sre_1;
+	2 = sre_2;
+	3 = sre_3;
+	4 = sre_4;
+	5 = sre_5;
+	6 = sre_6;
+	7 = sre_7;
+	8 = sre_8;
+	9 = sre_9;
+	10 = sre_10;
+	11 = sre_11;
+	12 = sre_12;
+	13 = sre_13;
+	14 = sre_14;
+	15 = sre_15;
+	16 = sre_16;
+	17 = sre_17;
+	18 = sre_18;
+	19 = sre_19;
+]
+/ itemspacing = 2%
+
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

@@ -1,0 +1,447 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Mini IPIP
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 09-28-2023
+last updated:  09-28-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 09-28-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements Millisecond's computerized version of the MiniIPIP, a short measure of the 
+Big Five factors of personality introduced by Donnellan et al (2006). The MiniIPIP is a 20 question survey using 
+a subset of the IPIP  (International Personality Item Pool) items used by the 50-item IPIP representation 
+of the Big-Five lexical markers (Goldberg, 1992).
+
+The IPIP data base is in the open domain as are all measures/scales using them. 
+No permission is needed to use any of these scales (https://ipip.ori.org/newPermission.htm).
+
+Reference:
+
+Donnellan, M. B., Oswald, F. L., Baird, B. M., & Lucas, R. E. (2006). 
+The Mini-IPIP scales: Tiny-yet-effective measures of the Big Five factors of personality. 
+Psychological Assessment, 18, 192-203.
+
+The reference for the original lexical scales on which the IPIP lexical Big-Five inventory is based
+Goldberg, L. R. (1992). The development of markers for the Big-Five factor structure. Psychological Assessment, 4, 26-42.
+
+IPIP item pool and general information about IPIP surveys: https://ipip.ori.org
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+self-report measure consisting of 20 5-point Likert Scale questions using 4 IPIP items each assessing the big 5 
+personality factors (Extraversion, Agreeableness, Conscientiousness, Neuroticism, Imagination)
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minute to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'mini_ipip.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (very inaccurate) - 5 (very accurate)
+								R: reversed coded questions
+								E = Extraversion
+								A = Agreeableness
+								C = Conscientiousness 
+								N = Neuroticism
+								I = Imagination
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'mini_ipip_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+															
+miniIPIP_Extraversion: 			sum of q1_E,q6R_E,q11_E,q16R_E, Range: 4-20 => higher scores imply higher Extraversion
+miniIPIP_Agreeableness: 		sum of q2_A,q7R_A,q12_A,q17R_A, Range: 4-20 => higher scores imply greater Agreeableness
+miniIPIP_Conscientiousness: 	sum of q3_C,q8R_C,q13_C,q18R_C, Range: 4-20 => higher scores imply greater Conscientiousness
+miniIPIP_Neuroticism: 			sum of q4_N,q9R_N,q14_N,q19R_N, Range: 4-20 => higher scores imply higher degree of Neuroticism (less Emotional Stability)
+miniIPIP_Imagination: 			sum of q5_I,q10R_I,q15R_I,q20R_I, Range: 4-20 => higher scores imply higher level of Imagination
+
++ individual responses
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.6.1.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.miniIPIP_Extraversion,
+expressions.miniIPIP_Agreeableness,
+expressions.miniIPIP_Conscientiousness,
+expressions.miniIPIP_Neuroticism,
+expressions.miniIPIP_Imagination,
+
+//raw responses
+radiobuttons.q1_E.response,
+radiobuttons.q2_A.response,
+radiobuttons.q3_C.response,
+radiobuttons.q4_N.response,
+radiobuttons.q5_I.response,
+radiobuttons.q6R_E.response,
+radiobuttons.q7R_A.response,
+radiobuttons.q8R_C.response,
+radiobuttons.q9R_N.response,
+radiobuttons.q10R_I.response,
+radiobuttons.q11_E.response,
+radiobuttons.q12_A.response,
+radiobuttons.q13_C.response,
+radiobuttons.q14_N.response,
+radiobuttons.q15R_I.response,
+radiobuttons.q16R_E.response,
+radiobuttons.q17R_A.response,
+radiobuttons.q18R_C.response,
+radiobuttons.q19R_N.response,
+radiobuttons.q20R_I.response
+)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/ miniIPIP_Extraversion = return (radiobuttons.q1_E.response + radiobuttons.q6R_E.response + radiobuttons.q11_E.response + radiobuttons.q16R_E.response)
+/ miniIPIP_Agreeableness = return (radiobuttons.q2_A.response + radiobuttons.q7R_A.response + radiobuttons.q12_A.response + radiobuttons.q17R_A.response)
+/ miniIPIP_Conscientiousness = return (radiobuttons.q3_C.response + radiobuttons.q8R_C.response + radiobuttons.q13_C.response + radiobuttons.q18R_C.response)
+/ miniIPIP_Neuroticism = return (radiobuttons.q4_N.response + radiobuttons.q9R_N.response + radiobuttons.q14_N.response + radiobuttons.q19R_N.response)
+/ miniIPIP_Imagination = return (radiobuttons.q5_I.response + radiobuttons.q10R_I.response + radiobuttons.q15R_I.response + radiobuttons.q20R_I.response)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_E>
+/caption = "1. Am the life of the party."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_A>
+/caption = "2. Sympathize with others’ feelings"
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_C>
+/caption = "3. Get chores done right away."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_N>
+/caption = "4. Have frequent mood swings."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_I>
+/caption = "5. Have a vivid imagination."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6R_E>
+/caption = "6. Don’t talk a lot"
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7R_A>
+/caption = "7. Am not interested in other people’s problems."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8R_C>
+/caption = "8. Often forget to put things back in their proper place."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9R_N>
+/caption = "9. Am relaxed most of the time."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10R_I>
+/caption = "10. Am not interested in abstract ideas."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11_E>
+/caption = "11. Talk to a lot of different people at parties."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12_A>
+/caption = "12. Feel others’ emotions."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13_C>
+/caption = "13. Like order."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14_N>
+/caption = "14. Get upset easily."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15R_I>
+/caption = "15. Have difficulty understanding abstract ideas."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16R_E>
+/caption = "16. Keep in the background."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17R_A>
+/caption = "17. Am not really interested in others."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18R_C>
+/caption = "18. Make a mess of things."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19R_N>
+/caption = "19. Seldom feel blue."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20R_I>
+/caption = "20. Do not have a good imagination."
+/ options = ("Very<br>Inaccurate", "Moderately<br>Inaccurate", "Neither Accurate<br>Nor Inaccurate", 
+"Moderately<br>Accurate", "Very<br>Accurate")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage mini_ipip_1>
+/ caption = "Describe yourself as you generally are now, not as you wish to be in the future. Describe yourself as you honestly see yourself, in relation to other people you know of the same sex as you are, and roughly your same age."
+/ subcaption = ""
+/questions = [1 = q1_E, q2_A, q3_C]
+</surveypage>
+
+<surveypage mini_ipip_2>
+/ caption = "Describe yourself as you generally are now, not as you wish to be in the future. Describe yourself as you honestly see yourself, in relation to other people you know of the same sex as you are, and roughly your same age."
+/ subcaption = ""
+/questions = [1 = q4_N, q5_I, q6R_E]
+</surveypage>
+
+<surveypage mini_ipip_3>
+/ caption = "Describe yourself as you generally are now, not as you wish to be in the future. Describe yourself as you honestly see yourself, in relation to other people you know of the same sex as you are, and roughly your same age."
+/ subcaption = ""
+/questions = [1 = q7R_A, q8R_C, q9R_N]
+</surveypage>
+
+<surveypage mini_ipip_4>
+/ caption = "Describe yourself as you generally are now, not as you wish to be in the future. Describe yourself as you honestly see yourself, in relation to other people you know of the same sex as you are, and roughly your same age."
+/ subcaption = ""
+/questions = [1 = q10R_I, q11_E, q12_A]
+</surveypage>
+
+<surveypage mini_ipip_5>
+/ caption = "Describe yourself as you generally are now, not as you wish to be in the future. Describe yourself as you honestly see yourself, in relation to other people you know of the same sex as you are, and roughly your same age."
+/ subcaption = ""
+/questions = [1 = q13_C, q14_N, q15R_I]
+</surveypage>
+
+<surveypage mini_ipip_6>
+/ caption = "Describe yourself as you generally are now, not as you wish to be in the future. Describe yourself as you honestly see yourself, in relation to other people you know of the same sex as you are, and roughly your same age."
+/ subcaption = ""
+/questions = [1 = q16R_E, q17R_A, q18R_C]
+</surveypage>
+
+<surveypage mini_ipip_7>
+/ caption = "Describe yourself as you generally are now, not as you wish to be in the future. Describe yourself as you honestly see yourself, in relation to other people you know of the same sex as you are, and roughly your same age."
+/ subcaption = ""
+/questions = [1 = q19R_N, q20R_I]
+</surveypage>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+
+<survey mini_ipip>
+/pages = [
+	1 = mini_ipip_1;
+	2 = mini_ipip_2;
+	3 = mini_ipip_3;	
+	4 = mini_ipip_4;	
+	5 = mini_ipip_5;	
+	6 = mini_ipip_6;	
+	7 = mini_ipip_7;		
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

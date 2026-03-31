@@ -1,0 +1,692 @@
+﻿<usermanual>			
+___________________________________________________________________________________________________________________	
+
+				*Sensitivity to Punishment and Sensitivity to Reward Questionnaire (SPSRQ)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 07-25-2017
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized version of the Sensitivity to Punishment and Sensitivity to 
+Reward Questionnaire (SPSRQ)  as described in:
+
+Torrubia, R., Avila, C., Molto, J., & Caseras, X. (2001). The Sensitivity to Punishment and Sensitivity to 
+Reward Questionnaire (SPSRQ)  as a measure of Gray’s anxiety and impulsivity dimensions. 
+Personality and Individual Differences, 31(6), 837-862.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+48 yes/no questions
+
+odd-numbered questions belong to subscale "Sensitivity to Punishment"
+even-numbered questions belong to subscale "Sensitivity to Reward"	
+										  
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	 
+The default data stored in the data files are:
+
+(1) Raw data file: 'spsrq.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	   	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1(yes), 0 (no)
+								no reversed scored questions
+								
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'spsrq_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+SensitivityToPunishment: 		total on subscale "sensitivity to punishment" (range: 0-24)
+								=> the higher the score the more sensitive to possible punishment
+								
+SensitivityToReward:	 		total on subscale "sensitivity to reward" (range: 0-24)
+								=> the higher the score the more sensitive to possible reward
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+can be edited under section "Editable Parameters"
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Answer each question by selecting 'yes' or 'no' after each one.There are no right or wrong answers, or trick questions. Work quickly and don't think too much about the exact meaning of the question.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.SensitivityToPunishment, expressions.SensitivityToReward)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/SensitivityToPunishment:		sum of all yes-responses to odd numbered questions
+
+/SensitivityToReward:			sum of all yes-responses to even numbered questions
+
+<expressions>
+/SensitivityToPunishment = radiobuttons.q1.response + radiobuttons.q3.response + radiobuttons.q5.response +
+radiobuttons.q7.response + radiobuttons.q9.response + radiobuttons.q11.response + radiobuttons.q13.response +
+radiobuttons.q15.response + radiobuttons.q17.response + radiobuttons.q19.response + radiobuttons.q21.response +
+radiobuttons.q23.response + radiobuttons.q25.response + radiobuttons.q27.response + radiobuttons.q29.response +
+radiobuttons.q31.response + radiobuttons.q33.response + radiobuttons.q35.response + radiobuttons.q37.response +
+radiobuttons.q39.response + radiobuttons.q41.response + radiobuttons.q43.response + radiobuttons.q45.response +
+radiobuttons.q47.response
+
+/SensitivityToReward = radiobuttons.q2.response + radiobuttons.q4.response + radiobuttons.q6.response +
+radiobuttons.q8.response + radiobuttons.q10.response + radiobuttons.q12.response + radiobuttons.q14.response +
+radiobuttons.q16.response + radiobuttons.q18.response + radiobuttons.q20.response + radiobuttons.q22.response +
+radiobuttons.q24.response + radiobuttons.q26.response + radiobuttons.q28.response + radiobuttons.q30.response +
+radiobuttons.q32.response + radiobuttons.q34.response + radiobuttons.q36.response + radiobuttons.q38.response +
+radiobuttons.q40.response + radiobuttons.q42.response + radiobuttons.q44.response + radiobuttons.q46.response +
+radiobuttons.q48.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "Do you often refrain from doing something because you are afraid of it being illegal?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "Does the good prospect of obtaining money motivate you strongly to do some things?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "Do you prefer not to ask for something when you are not sure you will obtain it?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "Are you frequently encouraged to act by the possibility of being valued in your work, in your studies, with your friends or with your family?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+                                 
+<radiobuttons q5>
+/caption = "Are you often afraid of new or unexpected situations?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "Do you often meet people that you find physically attractive?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "Is it difficult for you to telephone someone you do not know?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "Do you like to take some drugs because of the pleasure you get from them?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "Do you often renounce your rights when you know you can avoid a quarrel with a person or an organisation?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "Do you often do things to be praised?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+
+<radiobuttons q11>
+/caption = "As a child, were you troubled by punishments at home or in school?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "Do you like being the centre of attention at a party or a social meeting?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "In tasks that you are not prepared for, do you attach great importance to the possibility of failure?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "Do you spend a lot of your time on obtaining a good image?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "Are you easily discouraged in difficult situations?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "Do you need people to show their affection for you all the time?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "Are you a shy person?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "When you are in a group, do you try to make your opinions the most intelligent or the funniest?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "Whenever possible, do you avoid demonstrating your skills for fear of being embarrassed?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q20>
+/caption = "Do you often take the opportunity to pick up people you find attractive?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q21>
+/caption = "When you are with a group, do you have difficulties selecting a good topic to talk about?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "As a child, did you do a lot of things to get people's approval?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q23>
+/caption = "Is it often difficult for you to fall asleep when you think about things you have done or must do?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q24>
+/caption = "Does the possibility of social advancement move you to action, even if this involves not playing fair?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q25>
+/caption = "Do you think a lot before complaining in a restaurant if your meal is not well prepared?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q26>
+/caption = "Do you generally give preference to those activities that imply an immediate gain?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q27>
+/caption = "Would you be bothered if you had to return to a store when you noticed you were given the wrong change?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q28>
+/caption = "Do you often have trouble resisting the temptation of doing forbidden things?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q29>
+/caption = "Whenever you can, do you avoid going to unknown places?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q30>
+/caption = "Do you like to compete and do everything you can to win?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q31>
+/caption = "Are you often worried by things that you said or did?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q32>
+/caption = "Is it easy for you to associate tastes and smells to very pleasant events?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q33>
+/caption = "Would it be difficult for you to ask your boss for a raise (salary increase)?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q34>
+/caption = "Are there a large number of objects or sensations that remind you of pleasant events?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q35>
+/caption = "Do you generally try to avoid speaking in public?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q36>
+/caption = "When you start to play with a slot machine, is it often difficult for you to stop?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q37>
+/caption = "Do you, on a regular basis, think that you could do more things if it was not for insecurity or fear?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q38>
+/caption = "Do you sometimes do things for quick gains?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q39>
+/caption = "Comparing yourself to people you know, are you afraid of many things?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q40>
+/caption = "Does your attention easily stray from your work in the presence of an attractive stranger?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q41>
+/caption = "Do you often find yourself worrying about things to the extent that performance in intellectual abilities is impaired?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q42>
+/caption = "Are you interested in money to the point of being able to do risky jobs?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q43>
+/caption = "Do you often refrain from doing something you like in order not to be rejected or disapproved of by others?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q44>
+/caption = "Do you like to put competitive ingredients in all of your activities?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q45>
+/caption = "Generally, do you pay more attention to threats than to pleasant events?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q46>
+/caption = "Would you like to be a socially powerful person?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q47>
+/caption = "Do you often refrain from doing something because of your fear of being embarrassed?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q48>
+/caption = "Do you like displaying your physical abilities even though this may involve danger?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage SPSRQ1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage SPSRQ2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage SPSRQ3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage SPSRQ4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage SPSRQ5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage SPSRQ6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q16, q17, q18]
+</surveypage>
+
+<surveypage SPSRQ7>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q19, q20, q21]
+</surveypage>
+
+<surveypage SPSRQ8>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q22, q23, q24]
+</surveypage>
+
+<surveypage SPSRQ9>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q25, q26, q27]
+</surveypage>
+
+<surveypage SPSRQ10>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q28, q29, q30]
+</surveypage>
+
+<surveypage SPSRQ11>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q31, q32, q33]
+</surveypage>
+
+<surveypage SPSRQ12>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q34, q35, q36]
+</surveypage>
+
+<surveypage SPSRQ13>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q37, q38, q39]
+</surveypage>
+
+<surveypage SPSRQ14>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q40, q41, q42]
+</surveypage>
+
+<surveypage SPSRQ15>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q43, q44, q45]
+</surveypage>
+
+<surveypage SPSRQ16>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q46, q47, q48]
+</surveypage>
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey SPSRQ>
+/pages = [
+	1 = SPSRQ1;
+	2 = SPSRQ2;
+	3 = SPSRQ3;
+	4 = SPSRQ4;
+	5 = SPSRQ5;
+	6 = SPSRQ6;
+	7 = SPSRQ7;
+	8 = SPSRQ8;
+	9 = SPSRQ9;
+	10 = SPSRQ10;
+	11 = SPSRQ11;
+	12 = SPSRQ12;
+	13 = SPSRQ13;
+	14 = SPSRQ14;
+	15 = SPSRQ15;
+	16 = SPSRQ16;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = true
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

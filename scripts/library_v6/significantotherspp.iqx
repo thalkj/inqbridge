@@ -1,0 +1,1316 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+							*Significant Other Sequential Priming Paradigm*
+___________________________________________________________________________________________________________________	
+
+
+Script Author: Vivian Zayas, Ph.D. (vz29@cornell.edu)
+last updated:  08-07-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a sequential priming paradigm that assesses positive and negative evaluations 
+elicited by significant others.
+
+In general, priming procedures are simple response-timed binary categorization tasks of items from two target
+categories  (e.g. positive vs. negative adjectives). Priming Procedures are based on the assumption that 
+people respond faster if the target category was already 'mentally activated' by briefly presenting items 
+(called 'primes') that are closely connected in one's mind. Thus, a person should be faster to quickly categorize
+the target word 'good' as 'positive' after the brief presentation of the prime word 'ice-cream' than
+after the brief presentation of the prime word 'famine'.
+If the primes are presented with a temporal duration that can be consciously processed, the primes are
+called 'supraliminal'. If the duration of the primes is so short that they are outside one's conscious 
+awareness the primes are called 'subliminal'.
+
+In this script, target categories GOOD vs. BAD are primed by supraliminal information collected about 
+one's significant other (such as names) and resulting response times are analyzed.
+
+The script is based on:
+
+Zayas, V. & Shoda, Y. (2015). Love you? Hate you? Maybe it's both: Significant persons trigger bi-valent priming. 
+Social Psychological and Personality Science.
+
+Fazio, R., Sanbonmatsu, D., Powell, M., & Kardes, F. (1986). On the automatic activation of attitudes. 
+Journal of Personality and Social Psychology, 50, 229–238. 
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION
+___________________________________________________________________________________________________________________	
+After seeing a prime word (either a neutral word such as 'chair' or the name of the current significant other)
+participants are asked to categorize adjectives as positive or negative using the 'E' and 'I' key on their
+keyboards.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 15 minutes to complete
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'significantotherspp_raw*.iqdat'*
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+
+									odd groupnumbers run Version 1 [Unpleasant (on the left) vs. Pleasant (on the right) (Neutral Word: Table)]
+									even groupnumbers run Version 2 [Pleasant (on the left) vs. Unpleasant (on the right) (Neutral Word: Chair)]
+
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block. 
+									
+response:							the participant's response (scancode of response key)
+										18 = E 
+										23 = I
+									
+responseCat:						the interpreted key re sponse:"good" vs. "bad"
+									
+correct:							accuracy of response: 1 = correct response; 0 = otherwise
+latency: 							the response latency (in ms); measured from: onset of target
+
+stimulusitem.1:						for the practice/test trials: contains the prime word
+stimulusitem.2:						for the practice/test trials: empty
+stimulusitem.3:						for the practice/test trials: contains the target word
+
+
+
+
+(2) Summary data file: 'significantotherspp_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+																		
+									
+propCorrect_PartnerPleasant:	proportion correct responses for trials in which partner name preceded a positive target								
+meanRT_PartnerPleasant:			mean correct response time (in ms) in trials in which partner name preceded a positive target
+
+propCorrect_PartnerUnpleasant:	proportion correct responses for trials in which partner name preceded a negative target								
+meanRT_PartnerUnpleasant:		mean correct response time (in ms) in trials in which partner name preceded a negative target
+									
+propCorrect_NeutralPleasant:	proportion correct responses for trials in which Neutral object preceded a positive target								
+meanRT_NeutralPleasant:			mean correct response time (in ms) in trials in which Neutral object preceded a positive target
+
+propCorrect_NeutralUnpleasant:	proportion correct responses for trials in which Neutral object preceded a negative target								
+meanRT_NeutralUnpleasant:		mean correct response time (in ms) in trials in which Neutral object preceded a negative target
+
+DiffRT_Partner:					the difference 'corrRT(unpleasant targets) - corrRT(pleasant targets)' for partner condition
+								positive difference: it took longer to classify negative targets after partner's name than positive ones
+								=> partner's name primed positive items
+								negative difference: it took longer to classify positive targets after partner's name than negative ones
+								=> partner's name primed negative items
+										
+DiffRT_Neutral:					the difference 'corrRT(unpleasant targets) - corrRT(pleasant targets)' for neutral condition
+								=> control condition: the difference is expected to be around 0
+								the neutral prime words should neither prime positive nor negative targets
+																												
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+Version EXPT 1: UP: Unpleasant (on the left) vs. Pleasant (on the right) (Neutral Word: Table)
+Version EXPT 2: PU: Pleasant (on the left) vs. Unpleasant (on the right) (Neutral Word: Chair)
+Note: Participants are assigned to each version by groupnumber selection
+
+*** Primes are partner name and neutral word. Target stimuli are pleasant/unpleasant words.  
+Discrimination is UNPLEASANT - PLEASANT or PLEASANT - UNPLEASANT.
+BLOCK 3 = practice (16 trials) Note: practice is repeated if mean response time > 1500ms and/or accuracy < 0.8
+BLOCK 4,5 = DATA (80 trials each, in total 160 trials- 40 for each critical block, 
+i.e., partner-pleasant, partner-unpleasant, neutral-pleasant, neutral-unpleasant) 
+
+Trial: 
+PRIME (200MS), PAUSE (100MS), TARGET WORD (until response)
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+provided by authors (Name of Significant Other entered by participant)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by authors
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+
+</usermanual>
+
+
+------------------------------------------------------------------------------------
+*** DEFAULTS ****
+------------------------------------------------------------------------------------
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ screencolor = black
+/ txbgcolor = black
+/ txcolor = white
+/ pretrialpause = 1000
+/ posttrialpause = 1000
+/ inputdevice = keyboard
+</defaults>
+
+------------------------------------------------------------------------------------
+*** DATA ****
+------------------------------------------------------------------------------------
+
+***********************
+raw data file
+***********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+response, values.responseCat, correct, latency, 
+stimulusitem, stimulusitem, stimulusitem)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.propCorrect_PartnerPleasant, expressions.meanRT_PartnerPleasant,
+expressions.propCorrect_PartnerUnpleasant, expressions.meanRT_PartnerUnpleasant,
+expressions.propCorrect_NeutralPleasant, expressions.meanRT_NeutralPleasant,
+expressions.propCorrect_NeutralUnpleasant, expressions.meanRT_NeutralUnpleasant,
+expressions.DiffRT_Partner, expressions.DiffRT_Neutral
+)
+</summarydata>
+
+------------------------------------------------------------------------------------
+*** VALUES ****
+------------------------------------------------------------------------------------
+
+<values>
+/ errorrate = ""
+/ meanrt = ""
+/responseCat = ""
+</values>
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_partnerPleasant>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_partnerPleasant>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_partnerUnpleasant>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_partnerUnpleasant>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_neutralPleasant>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_neutralPleasant>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_neutralUnpleasant>
+</list>
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT_neutralUnpleasant>
+</list>
+
+<expressions>
+/propCorrect_PartnerPleasant = list.ACC_partnerPleasant.mean
+/meanRT_PartnerPleasant = list.RT_partnerPleasant.mean
+
+/propCorrect_PartnerUnpleasant = list.ACC_partnerUnpleasant.mean
+/meanRT_PartnerUnpleasant = list.RT_partnerUnpleasant.mean
+
+/DiffRT_Partner = expressions.meanRT_PartnerUnpleasant-expressions.meanRT_PartnerPleasant
+
+/propCorrect_NeutralPleasant = list.ACC_NeutralPleasant.mean
+/meanRT_NeutralPleasant = list.RT_NeutralPleasant.mean
+
+/propCorrect_NeutralUnpleasant = list.ACC_NeutralUnpleasant.mean
+/meanRT_NeutralUnpleasant = list.RT_NeutralUnpleasant.mean
+
+/DiffRT_Neutral = expressions.meanRT_NeutralUnpleasant-expressions.meanRT_NeutralPleasant
+</expressions>
+
+
+------------------------------------------------------------------------------------
+*** INSTRUCTIONS *****
+------------------------------------------------------------------------------------
+
+-------------------BOTH---------------------------------------
+
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard){
+"Place your index fingers over the 'E' and 'I' response buttons";
+} else {
+"Place your index fingers on the 'E' and 'I' keys"	
+}
+
+</expressions>
+
+<text getReady>
+/items = ("Get Ready:
+~n<%expressions.buttoninstruct1%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+</text>
+
+<trial getReady>
+/ stimulusframes = [1 = getReady]
+/ trialduration = 5000
+/ validresponse = ("E", "I")
+/ beginresponsetime = 5000
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+<text spacebar>
+/ items = ("Press the SPACE BAR to continue")
+/ position = (50%, 95%)
+/ valign = bottom
+</text>
+
+
+<item intro>
+/ 1 = "Welcome to the Sequential Priming Task! 
+
+We thank you for your interest in this task and would like to give some brief information about it." 
+</item>
+
+<text intro>
+/ items = intro
+/ hjustify = left
+/ size = (90%, 60%)
+/ position = (50%, 85%)
+/ valign = bottom
+/ select = sequence
+</text>
+
+<trial intro>
+/ stimulustimes = [1=intro, spacebar]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+<item blockintro2>
+/ 1 = "For each trial, you have a second task. 
+
+Immediately after categorizing the target word, you are to recite OUT LOUD the MEMORY word (the FIRST stimulus presented). 
+
+If the memory word is a word, such as 'GLOVE', please say 'GLOVE'.
+
+If the memory word is a non-word letter string, such as 'NNN', please say 'three N's'.
+
+Please speak clearly but not too loudly. We will monitor your responses for accuracy."
+</item>
+
+<text blockintro2>
+/ items = blockintro2
+/ hjustify = left
+/ size = (90%, 60%)
+/ position = (50%, 85%)
+/ valign = bottom
+/ select = sequence
+</text>
+
+<trial blockintro2>
+/ stimulustimes = [1=blockintro2, spacebar]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+
+<item readyprac2>
+/ 1 = "Please try to keep your response times to an average below 1 second (1000 ms) and your error rates low (though occasional errors are okay).
+
+In the practice block your response time was <%values.meanrt%> ms and your error rate was <%values.errorrate%>%.
+
+This practice block will continue to repeat until your average response time is less than 1 second (1000 ms) and your error rate is below 20%."
+</item> 
+
+<text readyprac2>
+/ items = readyprac2
+/ hjustify = left
+/ size = (90%, 60%)
+/ position = (50%, 85%)
+/ valign = bottom
+/ select = sequence
+</text>
+
+<trial readyprac2>
+/ stimulustimes = [1=readyprac2, spacebar]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+
+--------------------------UP----------------------------------
+
+<item intro1UP>
+/ 1 = "This task consists of a series of trials and should take approximately 15 minutes. 
+
+Each trial consists of a MEMORY word (either a word, such as 'GLOVE' or a non-word letter string, such as 'NNN') followed by a TARGET word.  
+
+On each trial, your task is to indicate whether the TARGET word (the SECOND stimulus presented) is BAD or GOOD.
+
+Going too slow or making too many errors will result in an uninterpretable score. So, please categorize the TARGET word as QUICKLY and ACCURATELY as possible by pressing:
+
+the left ('E') key if the target word is BAD.
+or
+the right ('I') key if the target word is GOOD."
+</item>
+
+<text intro1UP>
+/ items = intro1UP
+/ hjustify = left
+/ size = (90%, 60%)
+/ position = (50%, 85%)
+/ valign = bottom
+/ select = sequence
+/ fontstyle = ("Arial", 3.25%, false, false, false, false, 5, 1)
+</text>
+
+<trial intro1UP>
+/ stimulustimes = [1=intro1UP, spacebar]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+
+<item readyprac1UP>
+/ 1 = "After this page, you will be presented with a series of practice trials so that you become familiar with the categorization task.
+
+Please categorize each TARGET word (the SECOND stimulus presented) as QUICKLY and ACCURATELY as possible by pressing:
+
+the left ('E') key if the target word is BAD.
+or
+the right ('I') key if the target word is GOOD.
+
+After categorizing the target word, remember to recite the MEMORY word (the FIRST stimulus presented). Please speak clearly but not too loudly. We will monitor your responses for accuracy."
+</item>
+
+<text readyprac1UP>
+/ items = readyprac1UP
+/ hjustify = left
+/ size = (90%, 60%)
+/ position = (50%, 85%)
+/ valign = bottom
+/ select = sequence
+</text>
+
+<trial readyprac1UP>
+/ stimulustimes = [1=readyprac1UP, spacebar]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+
+<item readyblock1UP>
+/ 1 = "You just completed the practice trials. ON THE NEXT SCREEN, YOU WILL BEGIN THE ACTUAL EXPERIMENT. 
+
+As a reminder, please categorize each TARGET word (the SECOND stimulus presented) as QUICKLY and ACCURATELY as possible by pressing:
+
+the left ('E') key if the target word is BAD.
+or
+the right ('I') key if the target word is GOOD.
+
+After categorizing the target word, remember to recite the MEMORY word (the FIRST stimulus presented). Please speak clearly but not too loudly. 
+
+If you have any questions, please ask them to the experimenter now before you move on the actual experiment."
+</item>
+
+<text readyblock1UP>
+/ items = readyblock1UP
+/ hjustify = left
+/ size = (90%, 60%)
+/ position = (50%, 85%)
+/ valign = bottom
+/ select = sequence
+</text>
+
+<trial readyblock1UP>
+/ stimulustimes = [1=readyblock1UP, spacebar]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+
+<item readyblock2UP>
+/ 1 = "On the next screen, you will continue with the actual experiment. Your task remains the same.  
+
+Please categorize each TARGET word (the SECOND stimulus presented) as QUICKLY and ACCURATELY as possible by pressing:
+
+the left ('E') key if the target word is BAD.
+or
+the right ('I') key if the target word is GOOD.
+
+After categorizing the target word, remember to recite the MEMORY word (the FIRST stimulus presented). Please speak clearly but not too loudly. We will monitor your responses for accuracy."
+</item>
+
+<text readyblock2UP>
+/ items = readyblock2UP
+/ hjustify = left
+/ size = (90%, 60%)
+/ position = (50%, 85%)
+/ valign = bottom
+/ select = sequence
+</text>
+
+<trial readyblock2UP>
+/ stimulustimes = [1=readyblock2UP, spacebar]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+------------------PU-------------------------------
+
+<item intro1PU>
+/ 1 = "This task consists of a series of trials and should take approximately 15 minutes.    
+
+Each trial consists of a MEMORY word (either a word, such as 'GLOVE' or a non-word letter string, such as 'NNN') followed by a TARGET word.  
+
+On each trial, your task is to indicate whether the TARGET word (the second stimulus presented) is GOOD or BAD.
+
+Going too slow or making too many errors will result in an uninterpretable score. So, please categorize the TARGET word as QUICKLY and ACCURATELY as possible by pressing:
+
+the left ('E') key if the target word is GOOD.
+or
+the right ('I') key if the target word is BAD."
+</item>
+
+<text intro1PU>
+/ items = intro1PU
+/ hjustify = left
+/ size = (90%, 60%)
+/ position = (50%, 85%)
+/ valign = bottom
+/ select = sequence
+/ fontstyle = ("Arial", 3.25%, false, false, false, false, 5, 1)
+</text>
+
+<trial intro1PU>
+/ stimulustimes = [1=intro1PU, spacebar]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+
+<item readyprac1PU>
+/ 1 = "After this page, you will be presented with a series of practice trials so that you become familiar with the categorization task.
+
+Please categorize each TARGET word (the SECOND stimulus presented) as QUICKLY and ACCURATELY as possible by pressing:
+
+the left ('E') key if the target word is GOOD.
+or
+the right ('I') key if the target word is BAD.
+
+After categorizing the target word, remember to recite the MEMORY word (the FIRST stimulus presented). Please speak clearly but not too loudly. We will monitor your responses for accuracy."
+</item>
+
+<text readyprac1PU>
+/ items = readyprac1PU
+/ hjustify = left
+/ size = (90%, 60%)
+/ position = (50%, 85%)
+/ valign = bottom
+/ select = sequence
+</text>
+
+<trial readyprac1PU>
+/ stimulustimes = [1=readyprac1PU, spacebar]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+
+<item readyblock1PU>
+/ 1 = "You just completed the practice trials. ON THE NEXT SCREEN, YOU WILL BEGIN THE ACTUAL EXPERIMENT. 
+
+As a reminder, please categorize each TARGET word (the SECOND stimulus presented) as QUICKLY and ACCURATELY as possible by pressing:
+
+the left ('E') key if the target word is GOOD.
+or
+the right ('I') key if the target word is BAD.
+
+After categorizing the target word, remember to recite the MEMORY word (the FIRST stimulus presented). Please speak clearly but not too loudly. 
+
+If you have any questions, please ask them to the experimenter now before you move on the actual experiment."
+</item>
+
+<text readyblock1PU>
+/ items = readyblock1PU
+/ hjustify = left
+/ size = (90%, 60%)
+/ position = (50%, 85%)
+/ valign = bottom
+/ select = sequence
+</text>
+
+<trial readyblock1PU>
+/ stimulustimes = [1=readyblock1PU, spacebar]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+
+<item readyblock2PU>
+/ 1 = "On the next screen, you will continue with the actual experiment. Your task remains the same.  
+
+Please categorize each TARGET word (the SECOND stimulus presented) as QUICKLY and ACCURATELY as possible by pressing:
+
+the left ('E') key if the target word is GOOD.
+or
+the right ('I') key if the target word is BAD.
+
+After categorizing the target word, remember to recite the MEMORY word (the FIRST stimulus presented). Please speak clearly but not too loudly. We will monitor your responses for accuracy."
+</item>
+
+<text readyblock2PU>
+/ items = readyblock2PU
+/ hjustify = left
+/ size = (90%, 60%)
+/ position = (50%, 85%)
+/ valign = bottom
+/ select = sequence
+</text>
+
+<trial readyblock2PU>
+/ stimulustimes = [1=readyblock2PU, spacebar]
+/ correctresponse = (" ")
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+------------------------------------------------------------------------------------
+*** STIMULI *****
+------------------------------------------------------------------------------------
+
+**** Practice Primes ****
+
+<text prac_concept>
+
+/ items = prac_concept
+/ txcolor = white
+/ fontstyle = ("Arial", 5%)
+/ select = noreplace
+</text>
+
+<item prac_concept>
+/ 1 =  "GLOVE"
+/ 2 =  "GLOVE"
+/ 3 =  "GLOVE"
+/ 4 =  "GLOVE"
+</item>
+
+<text prac_base>
+
+/ items = prac_base
+/ txcolor = white
+/ fontstyle = ("Arial", 5%)
+/ select = noreplace
+</text>
+
+<item prac_base>
+/ 1 =  "NNN"
+/ 2 =  "NNN"
+/ 3 =  "NNN"
+/ 4 =  "NNN"
+</item>
+
+
+**** Primes ****
+
+<item partner>
+</item>
+
+<text partner>
+
+/ items = partner
+/ txcolor = white
+/ fontstyle = ("Arial", 5%)
+/ select = noreplace
+</text>
+
+<item neutralUP>
+/1 = "TABLE"
+</item>
+
+<item neutralPU>
+/1 = "CHAIR"
+</item>
+
+<text neutralUP>
+/ items = neutralUP
+/ txcolor = white
+/ fontstyle = ("Arial", 5%)
+</text>
+
+<text neutralPU>
+/ items = neutralPU
+/ txcolor = white
+/ fontstyle = ("Arial", 5%)
+</text>
+
+<text goodtarget>
+/ items = good
+/ txcolor = white
+/ fontstyle = ("Arial", 5%)
+</text>
+
+<item good>
+/ 1 = "HONOR"
+/ 2 = "LUCKY"
+/ 3 = "DIAMOND"
+/ 4 = "LOYAL"
+/ 5 = "FREEDOM"
+/ 6 = "RAINBOW"
+/ 7 = "LOVE"
+/ 8 = "HONEST"
+/ 9 = "PEACE"
+/10 = "HEAVEN"
+</item>
+
+<text badtarget>  
+/ items = bad
+/ txcolor = white
+/ fontstyle = ("Arial", 5%)
+</text>
+
+<item bad>
+/ 1 = "EVIL"
+/ 2 = "CANCER"
+/ 3 = "SICKNESS"
+/ 4 = "DISASTER"
+/ 5 = "POVERTY"
+/ 6 = "VOMIT"
+/ 7 = "BOMB"
+/ 8 = "ROTTEN"
+/ 9 = "ABUSE"
+/10 = "MURDER"
+</item>
+
+<text blanks>  
+/ items = ("                              ", "                              ", "                              ")
+/ select = noreplace
+</text>
+
+
+**** Miscellaneous Stimuli ****
+
+<text pleasantreminder_right>  
+
+/ items = ("GOOD")
+/ valign = top
+/ halign = right
+/ position = (95%, 5%)
+/ txcolor = white
+/ fontstyle = ("Arial", 5%)
+</text>
+
+<text unpleasantreminder_left>  
+
+/ items = ("BAD") 
+/ valign = top
+/ halign = left
+/ position = (5%, 5%)
+/ txcolor = white
+/ fontstyle = ("Arial", 5%)
+</text>
+
+<text unpleasantreminder_right>  
+
+/ items = ("BAD")
+/ valign = top
+/ halign = right
+/ position = (95%, 5%)
+/ txcolor = white
+/ fontstyle = ("Arial", 5%)
+</text>
+
+<text pleasantreminder_left>  
+
+/ items = ("GOOD") 
+/ valign = top
+/ halign = left
+/ position = (5%, 5%)
+/ txcolor = white
+/ fontstyle = ("Arial", 5%)
+</text>
+
+<text errormessage>  
+/ position = (50%, 75%)
+/ items = ("ERROR")
+/ color = red
+/ fontstyle = ("Arial", 10%, true)
+</text>
+
+
+-----------------------------------------------------------------------------------
+*** TRIALS *****
+-----------------------------------------------------------------------------------
+
+**** Trial for gathering items ****
+
+<item getItemsPartnerInstructions>
+/ 1 = "But first, please enter the name you most associate with your CURRENT ROMANTIC PARTNER in the text box provided and click the button
+
+
+Important Note: Please DO NOT ENTER THE FULL NAME (first and last name) of your partner, just ENTER THE NAME YOU MOST ASSOCIATE WITH HIM OR HER (this could be the person's FIRST NAME or NICKNAME)"
+</item>
+
+<text getItemsPartnerInstructions>
+/ items = getItemsPartnerInstructions
+/ position = (50%, 30%)
+/ valign = top
+/ fontstyle = ("Arial", 3%)
+/ size = (66%, 33%)
+</text>
+
+<openended getItemsPartner>
+/ stimulusframes = [1=getItemsPartner, getItemsPartnerInstructions]
+/ charlimit = 25
+/ size = (25%, 4%)
+/ position = (50%, 72%)
+/ fontstyle = ("Arial", 3%)
+/ ontrialend = [item.Partner.appendItem(toupper(openended.getItemsPartner.response))]
+/ required = true
+</openended>
+
+<text getItemsPartner>
+/ items = partner
+/ position = (50%, 40%)
+/ valign = bottom
+/ fontstyle = ("Arial", 3%)
+/ txcolor = white
+</text>
+
+
+**** Practice trials ****UP = left unpleasant response key; right pleasant response key
+
+<trial prac_concept_posUP>
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/ stimulustimes = [0 = noreplace (prac_concept); 200 = blanks; 300 = replace (goodtarget)]
+/ ontrialend = [
+	if (trial.prac_concept_posUP.responseText == "E"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+]
+</trial>
+
+<trial prac_concept_negUP>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/ stimulustimes = [0 = noreplace (prac_concept); 200 = blanks; 300 = replace (badtarget)]
+/ ontrialend = [
+	if (trial.prac_concept_negUP.responseText == "E"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+]
+</trial>
+
+<trial prac_base_posUP>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/ stimulustimes = [0 = noreplace (prac_base); 200 = blanks; 300 = replace (goodtarget)]
+/ ontrialend = [
+	if (trial.prac_base_posUP.responseText == "E"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+]
+</trial>
+
+<trial prac_base_negUP>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/ stimulustimes = [0 = noreplace (prac_base); 200 = blanks; 300 = replace (badtarget)]
+/ ontrialend = [
+	if (trial.prac_base_negUP.responseText == "E"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+]
+</trial>
+
+
+**** Practice trials ****PU = left pleasant response key, right unpleasant response key
+
+<trial prac_concept_posPU>
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/ stimulustimes = [0 = noreplace (prac_concept); 200 = blanks; 300 = replace (goodtarget)]
+/ ontrialend = [
+	if (trial.prac_concept_posPU.responseText == "I"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+]
+</trial>
+
+<trial prac_concept_negPU>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/ stimulustimes = [0 = noreplace (prac_concept); 200 = blanks; 300 = replace (badtarget)]
+/ ontrialend = [
+	if (trial.prac_concept_negPU.responseText == "I"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+]
+</trial>
+
+<trial prac_base_posPU>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/ stimulustimes = [0 = noreplace (prac_base); 200 = blanks; 300 = replace (goodtarget)]
+/ ontrialend = [
+	if (trial.prac_base_posPU.responseText == "I"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+]
+</trial>
+
+<trial prac_base_negPU>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/ stimulustimes = [0 = noreplace (prac_base); 200 = blanks; 300 = replace (badtarget)]
+/ ontrialend = [
+	if (trial.prac_base_negPU.responseText == "I"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+]
+</trial>
+
+
+**** Object trials ****UP = left unpleasant response key; right pleasant response key
+
+<trial partner_posUP>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/ stimulustimes = [0 = noreplace (partner); 17 = blanks; 50 =  replace (goodtarget)]
+/ ontrialend = [
+	if (trial.partner_posUP.responseText == "E"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+	
+	list.ACC_partnerPleasant.appendItem(trial.partner_posUP.correct);
+	if (trial.partner_posUP.correct){
+		list.RT_partnerPleasant.appendItem(trial.partner_posUP.latency);
+	}
+]
+</trial>
+
+<trial partner_negUP>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/ stimulustimes = [0 = noreplace (partner); 17 = blanks; 50 =  replace (badtarget)]
+/ ontrialend = [
+	if (trial.partner_negUP.responseText == "E"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+	
+	list.ACC_partnerUnpleasant.appendItem(trial.partner_negUP.correct);
+	if (trial.partner_negUP.correct){
+		list.RT_partnerUnpleasant.appendItem(trial.partner_negUP.latency);
+	}
+]
+</trial>
+
+
+**** Object trials ****PU = left pleasant response key, right unpleasant response key
+
+<trial partner_posPU>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/ stimulustimes = [0 = noreplace (partner); 17 = blanks; 50 =  replace (goodtarget)]
+/ ontrialend = [
+	if (trial.partner_posPU.responseText == "I"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+	
+	list.ACC_partnerPleasant.appendItem(trial.partner_posPU.correct);
+	if (trial.partner_posPU.correct){
+		list.RT_partnerPleasant.appendItem(trial.partner_posPU.latency);
+	}
+]
+</trial>
+
+<trial partner_negPU>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/ stimulustimes = [0 = noreplace (partner); 17 = blanks; 50 =  replace (badtarget)]
+/ ontrialend = [
+	if (trial.partner_negPU.responseText == "I"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+	
+	list.ACC_partnerUnpleasant.appendItem(trial.partner_negPU.correct);
+	if (trial.partner_negPU.correct){
+		list.RT_partnerUnpleasant.appendItem(trial.partner_negPU.latency);
+	}
+]
+</trial>
+
+
+**** Neutral Trials ****UP = left unpleasant response key; right pleasant response key
+
+<trial neutral_posUP>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/ stimulustimes = [0 = noreplace (neutralUP); 17 = blanks; 50 =  replace (goodtarget)]
+/ ontrialend = [
+	if (trial.neutral_posUP.responseText == "E"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+	
+	list.ACC_neutralPleasant.appendItem(trial.neutral_posUP.correct);
+	if (trial.neutral_posUP.correct){
+		list.RT_neutralPleasant.appendItem(trial.neutral_posUP.latency);
+	}
+]
+</trial>
+
+<trial neutral_negUP>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/ stimulustimes = [0 = noreplace (neutralUP); 17 = blanks; 50 =  replace (badtarget)]
+/ ontrialend = [
+	if (trial.neutral_negUP.responseText == "E"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+	
+	list.ACC_neutralUnpleasant.appendItem(trial.neutral_negUP.correct);
+	if (trial.neutral_negUP.correct){
+		list.RT_neutralUnpleasant.appendItem(trial.neutral_negUP.latency);
+	}
+]
+</trial>
+
+
+**** Neutral Trials ****PU = left pleasant response key, right unpleasant response key
+
+<trial neutral_posPU>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("E")
+/ stimulustimes = [0 = noreplace (neutralPU); 17 = blanks; 50 =  replace (goodtarget)]
+/ ontrialend = [
+	if (trial.neutral_posPU.responseText == "I"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+	
+	list.ACC_neutralPleasant.appendItem(trial.neutral_posPU.correct);
+	if (trial.neutral_posPU.correct){
+		list.RT_neutralPleasant.appendItem(trial.neutral_posPU.latency);
+	}
+]
+</trial>
+
+<trial neutral_negPU>  
+/ validresponse = ("E", "I")
+/ correctresponse = ("I")
+/ stimulustimes = [0 = noreplace (neutralPU); 17 = blanks; 50 =  replace (badtarget)]
+/ ontrialend = [
+	if (trial.neutral_negPU.responseText == "I"){
+		values.responseCat = "bad";
+	} else {
+		values.responseCat = "good";
+	}
+	
+	list.ACC_neutralUnpleasant.appendItem(trial.neutral_negPU.correct);
+	if (trial.neutral_negPU.correct){
+		list.RT_neutralUnpleasant.appendItem(trial.neutral_negPU.latency);
+	}
+]
+</trial>
+
+
+-----------------------------------------------------------------------------------
+***	BLOCKS *****
+-----------------------------------------------------------------------------------
+
+**** Common Blocks ****
+
+<block intro>
+/ trials = [1=intro]
+</block>
+
+<block getItemsPartner>
+/ trials = [1=getItemsPartner]
+</block>
+
+
+**** Priming Blocks ****
+
+<block practiceUP1>
+/ onblockend = [
+	values.errorrate = 100-block.practiceUP1.percentcorrect;
+	values.meanrt = block.practiceUP1.meanlatency;
+]
+/ bgstim = (unpleasantreminder_left, pleasantreminder_right)
+/ trials = [
+	1 = intro1UP; 
+	2 = blockintro2; 
+	3 = readyprac1UP; 
+	4 = getReady; 
+	5-20 = random(prac_concept_posUP, prac_concept_negUP, prac_base_posUP, prac_base_negUP);
+]
+/ errormessage = (errormessage, 200)
+/ branch = [
+	if (monkey.monkeyMode){
+		return null;
+	} else if (block.practiceUP1.meanlatency > 1500) {
+		return block.practiceUP2;
+	} else if (block.practiceUP1.percentcorrect < 80) {
+		return block.practiceUP2;
+	}
+]
+</block>
+
+<block practiceUP2>
+/ onblockend = [
+	values.errorrate = 100-block.practiceUP2.percentcorrect;
+	values.meanrt = block.practiceUP2.meanlatency;
+]
+/ bgstim = (unpleasantreminder_left, pleasantreminder_right)
+/ trials = [
+	1 = readyprac2; 
+	2-17 = random(prac_concept_posUP, prac_concept_negUP, prac_base_posUP, prac_base_negUP);
+]
+/ errormessage = (errormessage, 200)
+/ branch = [
+	if (monkey.monkeyMode){
+		return null;
+	} else if (block.practiceUP2.meanlatency > 1500) {
+		return block.practiceUP2;
+	} else if (block.practiceUP2.percentcorrect < 80) {
+		return block.practiceUP2;
+	}
+]
+</block>
+
+<block practicePU1>
+/ onblockend = [
+	values.errorrate = 100-block.practicePU1.percentcorrect;
+	values.meanrt = block.practicePU1.meanlatency;
+]
+/ bgstim = (pleasantreminder_left, unpleasantreminder_right)
+/ trials = [
+	1 = intro1PU; 
+	2 = blockintro2; 
+	3 = readyprac1PU; 
+	4 = getReady; 
+	5-20 = random(prac_concept_posPU, prac_concept_negPU, prac_base_posPU, prac_base_negPU);
+]
+/ errormessage = (errormessage, 200)
+/ branch = [
+	if (monkey.monkeyMode){
+		return null;
+	} else if (block.practicePU1.meanlatency > 1500) {
+		return block.practicePU2;
+	} else if (block.practicePU1.percentcorrect < 80) {
+		return block.practicePU2;
+	}
+]
+</block>
+
+<block practicePU2>
+/ onblockend = [
+	values.errorrate = 100-block.practicePU2.percentcorrect;
+	values.meanrt = block.practicePU2.meanlatency;
+]
+/ bgstim = (pleasantreminder_left, unpleasantreminder_right)
+/ trials = [
+	1 = readyprac2; 
+	2-17 = random(prac_concept_posPU, prac_concept_negPU, prac_base_posPU, prac_base_negPU);
+]
+/ errormessage = (errormessage, 200)
+/ branch = [
+	if (monkey.monkeyMode){
+		return null;
+	} else if (block.practicePU2.meanlatency > 1500) {
+		return block.practicePU2;
+	} else if (block.practicePU2.percentcorrect < 80) {
+		return block.practicePU2;
+	}
+]
+</block>
+
+
+<block dataUP1>
+/ bgstim = (unpleasantreminder_left, pleasantreminder_right)
+/ trials = [
+	1 = readyblock1UP; 
+	2 = getReady; 
+	3-82 = random(partner_posUP, partner_negUP, neutral_posUP, neutral_negUP);
+]
+</block>
+
+<block dataUP2>
+/ bgstim = (unpleasantreminder_left, pleasantreminder_right)
+/ trials = [
+	1 = readyblock2UP; 
+	2 = getReady; 
+	3-82 = random(partner_posUP, partner_negUP, neutral_posUP, neutral_negUP);
+]
+</block>
+
+
+<block dataPU1>
+/ bgstim = (pleasantreminder_left, unpleasantreminder_right)
+/ trials = [
+	1 = readyblock1PU; 
+	2 = getReady; 
+	3-82 = random(partner_posPU, partner_negPU, neutral_posPU, neutral_negPU);
+]
+</block>
+
+<block dataPU2>
+/ bgstim = (pleasantreminder_left, unpleasantreminder_right)
+/ trials = [
+	1 = readyblock2PU; 
+	2 = getReady; 
+	3-82 = random(partner_posPU, partner_negPU, neutral_posPU, neutral_negPU);
+]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+------------------------------------------------------------------------------------
+*** EXPERIMENT  ****
+------------------------------------------------------------------------------------
+
+<expt a>
+/ groups = (1 of 2)
+/ blocks = [
+	1=intro; 
+	2=getItemsPartner; 
+	3=practiceUP1; 
+	4=dataUP1; 
+	5=dataUP2;
+	6 = finish;
+]
+</expt>
+
+<expt b>
+/ groups = (2 of 2)
+/ blocks = [
+	1=intro; 
+	2=getItemsPartner; 
+	3=practicePU1; 
+	4=dataPU1; 
+	5=dataPU2;
+	6 = finish;
+]
+</expt>
+
+------------------------------------------------------------------------------------
+*** End of File  ****
+------------------------------------------------------------------------------------

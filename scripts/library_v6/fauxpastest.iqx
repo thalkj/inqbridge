@@ -1,0 +1,1092 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Faux Pas Test (FPT)
+___________________________________________________________________________________________________________________	
+
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-08-2024
+last updated:  04-22-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 04-22-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements Millisecond Software's version of the Faux Pas Test (FPT), a test of Theory-of-Mind (ToM) 
+abilities that require social sensitivity (Stone et al, 1998, Gregory et al, 2002).
+Millisecond Software's test uses Pennington's et al (2023) materials, made available under the
+Commons Attribution 4.0 International License 
+(CC BY 4.0; http://creativecommons.org/licenses/by/4.0).
+
+The materials (as well as the original psychopy script) can be downloaded here: 
+https://osf.io/2bhmy/
+
+References:	
+
+Stone, V. E., Baron-Cohen, S., & Knight, R. T. (1998). Frontal Lobe Contributions to Theory of Mind. 
+Journal of Cognitive Neuroscience, 10(5), 640–656. 
+https://doi.org/10.1162/089892998562942
+										
+Gregory, C., Lough, S., Stone, V., Erzinclioglu, S., Martin, L., Baron-Cohen,
+S., & Hodges, J. R. (2002). Theory of mind in patients with frontal variant
+frontotemporal dementia and Alzheimer’s disease: Theoretical and practical
+implications. Brain: A Journal of Neurology, 125(4), 752–764. https://
+doi.org/10.1093/brain/awf079
+
+Pennington, C. R., Oxtoby, M. C.-S.-Y., & Shaw, D. J. (2023). Social cognitive disruptions in multiple sclerosis: 
+The role of executive (dys)function. Neuropsychology. 
+https://doi.org/10.1037~neu0000917
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+
+Participants read 20 social scenarios. Half of these scenarios contain a 'faux pas' (e.g. something said 
+unintentionally that should have been confidential or could be perceived as hurtful or inappropriate).
+Participants are asked several questions about the potential faux pas as well as several comprehension questions
+about the scenarios.
+
+Note: Millisecond Software converted the openended comprehension questions used by Pennington et al (2023)
+into 4-choice multiple choice questions to simplify accuracy assessments.
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 7 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'fauxpastest_raw*.iqdat'
+
+build:						The specific Inquisit version used (the 'build') that was run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+date, time: 				date and time script was run 
+subject:					with the current subject id
+group: 						with the current group id
+session:					with the current session id
+
+blockcode, blocknum:		the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 		the name and number of the currently recorded trial (built-in Inquisit variable)
+								Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+								that do not store data to the data file. 
+								
+								NOTE: trialcode 'scenarioEnd' stores all relevant DVs for the current scenario
+								
+scenarioCounter:			counts the number of scenarios run								
+scenarioIndex: 				the index number of the currently presented scenario
+scenario: 					the actually presented scenario
+category: 					"F" (faux pas) vs. "C" (control)
+
+//overall scenario performance:
+fpACC: 							1 = q1 and q2 were answered correctly; 0 = otherwise
+compACC: 						1 = q7 and q8 were answered correctly; 0 = otherwise
+scenarioACC: 					= fpACC * compACC => 1 = both fpACC AND compACC are correct; 0 = otherwise
+
+countCatFCorr: 				number of CategoryF scenarios with scenarioACC = 1
+countCatCCorr: 				number of CategoryC scenarios with scenarioACC = 1
+
+fauxpasDetectionScore:		ratio of 'countCatFCorr/countCatCCorr'
+							=> higher fauxpasDetectionScore indicate better ToM (Theory of Mind)
+
+//individual questions:
+//////////faux pas questions
+q1CorrAnswer: 				stores the currently correct answer to q1 (yes or no)
+q1Resp: 					participant's response to q1
+q1ACC: 						1 = participant's response to q1 was correct; 0 = otherwise
+
+q2CorrAnswers: 				stores the currently correct answer(s) to q2 (Note: answers try to anticipate spelling errors)
+q2Resp: 					participant's response to q2
+q2ACC: 						1 = participant's response to q2 was correct; 0 = otherwise
+
+q3Resp- q6Resp:				responses given to q3-q6 (responses are not further evaluated in this script)
+
+
+//////////comprehension questions (in this script: multiple choice with 4 answer choices)
+q7CorrAnswer: 				stores the currently correct answer to q7
+q7Resp: 					participant's response to q7
+q7ACC: 						1 = participant's response to q7 was correct; 0 = otherwise							
+
+q8CorrAnswer: 				stores the currently correct answer to q8								
+q8Resp: 					participant's response to q8
+q8ACC: 						1 = participant's response to q8 was correct; 0 = otherwise									
+								
+								
+//built-in DV
+response:					the response of participant in the current trial
+correct:					correctness of response (1 = correct, 0 = error);
+latency:					response latency (in ms)
+
+
+(2) Summary data file: 'fauxpastest_summary*.iqdat'
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)
+						
+scenarioCounter:			counts the number of scenarios run						
+
+countCatFCorr: 				number of CategoryF scenarios with scenarioACC = 1
+countCatCCorr: 				number of CategoryC scenarios with scenarioACC = 1
+
+fauxpasDetectionScore:		ratio of 'countCatFCorr/countCatCCorr'
+							=> higher fauxpasDetectionScore indicate better ToM (Theory of Mind)						
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+Test: 20 scenarios (Pennington et al, 2023)
+- by default, the order of the scenarios is set to be sequential in this script.
+
+****Scenario sequence*****
+
+Question1: "Did anyone say something they shouldn't have said or something awkward? (Yes/No Answer)"
+-> scenario is presented alone for 8000ms
+-> the scenario question as well as the response buttons are added to the scenario (Scenario still visible)
+-> no timelimit 
+
+IF Answer is 'YES' (faux pas detected): Question2-Question6
+
+Question2: "Who said something they shouldn't have said or something awkward?"
+-> openended question (with scenario still visible, to keep demand on working memory minimal (Gregory et al, 2002))
+-> no timelimit
+Note: see item.q2CorrAnswers for all answers that are accepted as correct in this script. 
+All responses are converted to lowercase letters (as are the correct answers), so capitalization is ignored
+in the accuracy assessment
+
+Question3: "Why shouldn't he/she have said it or why was it awkward?"
+Question4: "Why do you think he/she said it?"
+Question5: specific to scenario, asks about the 'insulted' person's knowledge of the situation 
+Question6: "How do you think X felt? "
+-> no timelimit; all questions appear on the same page
+Note: these questions have no bearings on performance assessments
+
+ALL participants are asked the following COMPREHENSION questions q7-q8:
+-> each comprehension question appears on its own page
+-> no timelimits
+Note: in contrast to Pennington et al (2023), the comprehension questions in this script are provided as
+multiple-choice questions with 4 answer choices (as opposed to open-ended questions as done by
+Pennington et al, 2023) to simplify automatic scoring
+
+-> q8 is followed by a blank screen of 500ms (iti)
+
+Faux-Pas Performance Assessment:
+- q1/q2: if both responses are correct, faux pas detection is set to 1 (see values.fpACC) - otherwise 0
+Note: for correctly identifying non faux-pas situations, q2 is automatically set to be correctly answered
+
+Comprehension Performance Assessment:
+- if answers to both comprehension questions q7/q8 are correct, comprehension performance is set ot 1 (see values.compACC) - otherwise 0
+
+Overall Scenario Accuracy:
+- only if both Faux Pas Performance AND Comprehension Performance are 1, is the scenario accuracy set to 1 (see values.scenarioACC)
+
+An overall Faux Pas Detection Score is calculated as the ratio of 
+number of correct FP detections with correct comprehension / number of correct FP rejections with correct comprehension
+
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________
+
+Scenarios provided by Pennington's et al (2023) under the
+Commons Attribution 4.0 International License 
+(CC BY 4.0; http://creativecommons.org/licenses/by/4.0).
+
+The materials can be downloaded here: 
+https://osf.io/2bhmy/ - can be edited under section 'Editable Stimuli'
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+
+provided by Millisecond Software - can be edited under section 'Editable Instructions'
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+/ scenarioDuration_inms = 8000  //duration (in ms) that the scenario is presented before the response buttons are added to the screen
+/ iti_inms = 500				//the intertrial duration (in ms)
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+//timing parameters
+/ scenarioDuration_inms = 8000  //duration (in ms) that the scenario is presented before the response buttons are added to the screen
+/ iti_inms = 500				//the intertrial duration (in ms)
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list scenarios>
+/ poolSize = item.scenarios.itemCount
+/ selectionMode = sequence //by default the categories are selected in sequence
+</list>
+
+<item scenarios>
+/ 1 = "Vicky was at a party at her friend Oliver’s house. She was talking to Oliver when another woman came up to them. She was one of Oliver’s neighbours. The woman said, 'Hello,' then turned to Vicky and said, ' I don't think we've met. I’m Maria, what's your name?'~n~n'I’m Vicky.'~n~n'Would anyone like something to drink?' Oliver asked."
+/ 2 = "Helen's husband was throwing a surprise party for her birthday. He invited Sarah, a friend of Helen's, and said, 'Don't tell anyone, especially Helen.' The day before the party, Helen was over at Sarah's and Sarah spilled some coffee on a new dress that was hanging over her chair.~n~n'Oh!' said Sarah, 'I was going to wear this to your party!'~n~n'What party?' said Helen.~n~n'Come on,' said Sarah, 'Let's go see if we can get the stain out.'"
+/ 3 = "Jim was shopping for a shirt to match his suit. The salesman showed him several shirts. Jim looked at them and finally found one that was the right colour. But when he went to the fitting room and tried it on, it didn't fit. 'I'm afraid it's too small,' he said to the salesman.~n~n'Not to worry,' the salesman said. 'We'll get some in next week in a larger size.'~n~n'Great. I'll just come back then,' Jim said."
+/ 4 = "Jill had just moved into a new flat. Jill went shopping and bought some new curtains for her bedroom. When she had just finished decorating the flat, her best friend, Lisa, came over. Jill gave her a tour of the flat and asked, 'How do you like my bedroom?'~n~n'Those curtains are horrible,' Lisa said. 'I hope you're going to get some new ones!'"
+/ 5 = "Bob went to the barber for a haircut. 'How would you like it cut?' the barber asked.  ~n~n'I'd like the same style as I have now, only take about an inch off,' Bob replied.  ~n~nThe barber cut it a little uneven in the front, so he had to cut it shorter to even it out. 'I'm afraid it's a bit shorter than you asked for,' said the barber.  ~n~n'Oh well,' Bob said, 'it'll grow out.' "
+/ 6 = "John stopped off at the petrol station on the way home to fill up his car. He gave the cashier his credit card. The cashier ran it through the machine at the counter. 'I'm sorry,' she said, 'the machine won't accept your card.'  ~n~n'Hmmm, that's funny,' John said. 'Well, I'll just pay in cash.'  He gave her fifty and said, 'I filled up the tank with unleaded.'"
+/ 7 = "Sally is a three-year-old girl with a round face and short blonde hair. She was at her Aunt Carol's house. The doorbell rang and her Aunt Carol answered it. It was Mary, a neighbour.  ~n~n'Hi,' Aunt Carol said, 'Nice of you to stop by.'  ~n~nMary said, 'Hello,' then looked at Sally and said, 'Oh, I don't think I've met this little boy. What's your name?' "
+/ 8 = "Joan took her dog, Zack, out to the park. She threw a stick for him to chase.  ~n~nWhen they had been there a while, Pam, a neighbour of hers, passed by. They chatted for a few minutes. Then Pam asked, 'Are you heading home? Would you like to walk together?'  ~n~n'Sure,' Joan said. She called Zack, but he was busy chasing pigeons and didn't come. 'It looks like he's not ready to go,' she said. 'I think we'll stay.'  ~n~n'OK,' Pam said. 'I'll see you later.' "
+/ 9 = "Joanne had had a major role in last year's school play and she really wanted the lead role this year. She took acting classes, and in the spring, she auditioned for the play. The day the decisions were posted, she went before class to check the list of who had made the play.  ~n~nShe hadn't made the lead and had instead been cast in a minor role. She ran into her boyfriend in the hall and told him what had happened. 'I'm sorry,' he said. 'You must be disappointed.'  ~n~n'Yes,' Joanne answered, 'I have to decide whether to take this role.' "
+/ 10 = "Joe was at the library. He found the book he wanted about sailing in the Mediterranean and went up to the front counter to check it out. When he looked in his wallet, he discovered he had left his library card at home. 'I'm sorry,' he said to the woman behind the counter. 'I seem to have left my library card at home.'  ~n~n'That's OK,' she answered. 'Tell me your name, and if we have you in the computer, you can check out the book just by showing me your driving license.'"
+/ 11 = "Jean West, a manager in Abco Software Design, called a meeting for all of the staff. 'I have something to tell you,' she said. 'John Morehouse, one of our accountants, is very sick with cancer and he's in hospital.'  ~n~nEveryone was quiet, absorbing the news, when Robert, a software engineer, arrived late. 'Hey, I heard this great joke last night!' Robert said. 'What did the terminally ill patient say to his doctor?' Jean said, 'Okay, let's get down to business in the meeting.' "
+/ 12 = "Mike, a nine-year-old boy, just started at a new school. He was in one of the cubicles in the toilets at school. Joe and Peter, two other boys, came in and were standing at the sinks talking.~n~nJoe said, 'You know that new guy in the class? His name's Mike. Doesn't he look weird? And he's so short!'~n~nMike came out of the cubicle and Joe and Peter saw him.~n~nPeter said, 'Oh hi, Mike! Are you going out to play football now?'"
+/ 13 = "Kim's cousin, Scott, was coming to visit and Kim made an apple pie especially for him. After dinner, she said, 'I made a pie just for you. It's in the kitchen.'  ~n~n'Mmmm,' replied Scott, 'It smells great! I love pies, except for apple, of course.' "
+/ 14 = "Jeannette bought her friend, Anne, a crystal bowl for a wedding gift. Anne had a big wedding and there were a lot of presents to keep track of.  ~n~nAbout a year later, Jeannette was over one night at Anne's for dinner. Jeannette dropped a wine bottle by accident on the crystal bowl and the bowl shattered. 'I'm really sorry. I've broken the bowl,' said Jeannette.  ~n~n'Don't worry,' said Anne. 'I never liked it anyway. Someone gave it to me for my wedding.' "
+/ 15 = "At Fernhaven Elementary School, there was a story competition. Everyone was invited to enter. Several of the fifth graders did so. Christine, a fifth grader, loved the story she had entered in the competition.  ~n~nA few days later, the results of the competition were announced: Christine’s story had not won anything and a classmate, Jake, had won first prize. The following day, Christine was sitting on a bench with Jake. They were looking at his first prize trophy. Jake said, 'It was so easy to win that contest. All of the other stories in the competition were terrible.' ~n~n'Where are you going to put your trophy?' asked Christine. "
+/ 16 = "Tim was in a restaurant. He spilled some coffee on the floor by accident. 'I'll get you another cup of coffee,' said the waiter. The waiter was gone for a while.  ~n~nJack was another customer in the restaurant, standing by the cashier waiting to pay. Tim went up to Jack and said, 'I spilled coffee over by my table. Can you mop it up?' "
+/ 17 = "Eleanor was waiting at the bus stop. The bus was late and she had been standing there a long time. She was 65 and it made her tired to stand for so long. When the bus finally came, it was crowded and there were no seats left. She saw a neighbour, Paul, standing in the aisle of the bus. 'Hello, Eleanor,' he said. 'Were you waiting there long?'  ~n~n'About 20 minutes,' she replied.  ~n~nA young man who was sitting down got up. 'Ma'am, would you like my seat?' "
+/ 18 = "Roger had just started work at a new office. One day, in the coffee room, he was talking to a new friend, Andrew. 'What does your wife do?' Andrew asked.  ~n~n'She's a lawyer,' answered Roger.  ~n~nA few minutes later, Claire came into the coffee room looking irritated. 'I just had the worst phone call,' she told them. 'Lawyers are all so arrogant and greedy. I can't stand them.' ~n~n'Do you want to come look over these reports?' Andrew asked Claire.  ~n~n'Not now,' she replied, 'I need my coffee.' "
+/ 19 = "Richard bought a new car, a red Peugeot. A few weeks after he bought it, he backed it into his neighbour Ted's car, an old beat-up Volvo.  ~n~nHis new car wasn’t damaged at all and he didn’t do much damage to Ted’s car either -- just a scratch in the paint above the wheel. Still, he went up and knocked on the door. When Ted answered, Richard said, 'I'm really sorry. I've just put a small scratch on your car.'  ~n~nTed came out and looked at it and said, 'Don't worry. It was only an accident.' "
+/ 20 = "Louise went to the butcher to buy some meat. It was crowded and noisy in the shop. She asked the butcher, 'Do you have any free-range chickens?'  ~n~nHe nodded and started to wrap up a roasted chicken for her.  ~n~n'Excuse me,' she said, 'I must not have spoken clearly. I asked if you had any free-range chickens.' 'Oh, sorry,' the butcher said, 'we're all out of them.' "
+</item>
+
+C = no Faux Pas
+F = Faux Pas
+<item categories>
+/ 1 = "C"
+/ 2 = "F"
+/ 3 = "C"
+/ 4 = "F"
+/ 5 = "C"
+/ 6 = "C"
+/ 7 = "F"
+/ 8 = "C"
+/ 9 = "C"
+/ 10 = "C"
+/ 11 = "F"
+/ 12 = "F"
+/ 13 = "F"
+/ 14 = "F"
+/ 15 = "F"
+/ 16 = "F"
+/ 17 = "C"
+/ 18 = "F"
+/ 19 = "C"
+/ 20 = "C"
+</item>
+
+Note: these answers anticipate possible spelling mistakes.
+You can add or delete items here but all responses deemed correct should end with a ','
+<item q2CorrAnswers>
+/ 1 = ""
+/ 2 = "Sarah, Sara,Sahra,"
+/ 3 = ""
+/ 4 = "Lisa, Liza,"
+/ 5 = ""
+/ 6 = ""
+/ 7 = "Mary,"
+/ 8 = ""
+/ 9 = ""
+/ 10 = ""
+/ 11 = "Robert,"
+/ 12 = "Joe,Jo,"
+/ 13 = "Scott,"
+/ 14 = "Anne, An,"
+/ 15 = "Jake, Jack,"
+/ 16 = "Tim,"
+/ 17 = ""
+/ 18 = "Claire,Clare,"
+/ 19 = ""
+/ 20 = ""
+</item>
+
+<text fauxPasQuestion1>
+/ items = ("<center><b><u>Question:</u><br>
+Did anyone say something they shouldn't have said or something awkward?</b><br><br>
+Press the<br>corresponding button</center>")
+/ vJustify = center
+/ fontStyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ position = (50%,80%)
+</text>
+
+<text fauxPasQuestion2>
+/ items = ("Who said something they shouldn't have said or something awkward?")
+/ vJustify = center
+/ fontStyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ position = (50%,75%)
+/ erase = false
+</text>
+
+<textbox fauxPasQuestion3>
+/ caption = "Why shouldn't he/she have said it or why was it awkward?"
+/ textboxSize = (80%,10%)
+/ multiline = true
+</textbox>
+
+<textbox fauxPasQuestion4>
+/ caption = "Why do you think he/she said it?"
+/ textboxSize = (80%,10%)
+/ multiline = true
+</textbox>
+
+<item fauxPasQuestions5>
+/ 1 = "Did Vicky and Maria know each other?"
+/ 2 = "Did Sarah remember that the party was a surprise party?"
+/ 3 = "When he tried on the shirt, did Jim know they didn’t have it in his size?"
+/ 4 = "Did Lisa know who had bought the curtains?"
+/ 5 = "While he was getting the haircut, did Bob know the barber was cutting it too short?"
+/ 6 = "When he handed his card to the cashier, did John know the machine wouldn’t take his card?"
+/ 7 = "Did Mary know that Sally was a girl?"
+/ 8 = "When she invited her, did Pam know that Joan wouldn’t be able to walk home with her?"
+/ 9 = "When he first ran into her in the hall, did Joanne’s boyfriend know that she hadn’t gotten the role?"
+/ 10 = "When Joe went into the library, did he realize he didn’t have his library card?"
+/ 11 = "When he came in, did Robert know that the accountant was sick with cancer?"
+/ 12 = "When Joe was talking to Peter, did he know that Mike was in one of the cubicles?"
+/ 13 = "When he smelled the pie, did Scott know it was an apple pie?"
+/ 14 = "Did Anne remember that Jeannette had given her the bowl?"
+/ 15 = "Did Jake know that Christine had entered a story in the contest?"
+/ 16 = "Did Tim know that Jack was another customer?"
+/ 17 = "When Eleanor got on the bus, did Paul know how long she had been waiting?"
+/ 18 = "Did Claire know that Roger’s wife was a lawyer?"
+/ 19 = "Did Richard know what his neighbor Ted’s reaction would be?"
+/ 20 = "When he started wrapping up a chicken for Louise, did the butcher know that she wanted a freerange chicken?"
+</item>
+
+<textbox fauxPasQuestion5>
+/ caption = "<%item.fauxPasQuestions5.item(values.scenarioIndex)%>"
+/ textboxSize = (80%,10%)
+/ multiline = true
+</textbox>
+
+<item fauxPasQuestions6>
+/ 1 = "How do you think Vicky felt? "
+/ 2 = "How do you think Helen felt?"
+/ 3 = "How do you think Jim felt? "
+/ 4 = "How do you think Jill felt?"
+/ 5 = "How do you think Bob felt? "
+/ 6 = "How do you think John felt?"
+/ 7 = "How do you think Sally felt?"
+/ 8 = "How do you think Pam felt?"
+/ 9 = "How do you think Joanne felt?"
+/ 10 = "How do you think Joe felt?"
+/ 11 = "How do you think Jean, the manager, felt?"
+/ 12 = "How do you think Mike felt?"
+/ 13 = "How do you think Kim felt?"
+/ 14 = "How do you think Jeannette felt?"
+/ 15 = "How do you think Christine felt?"
+/ 16 = "How do you think Jack felt?"
+/ 17 = "How do you think Eleanor felt?"
+/ 18 = "How do you think Roger felt?"
+/ 19 = "How do you think Ted felt?"
+/ 20 = "How do you think Louise felt?"
+</item>
+
+<textbox fauxPasQuestion6>
+/ caption = "<%item.fauxPasQuestions6.item(values.scenarioIndex)%>"
+/ textboxSize = (80%,10%)
+/ multiline = true
+</textbox>
+
+<item fauxPasQuestions7>
+/ 1 = "In the story, where was Vicky? "
+/ 2 = "In the story, who was the surprise party for? "
+/ 3 = "In the story, what was Jim shopping for? "
+/ 4 = "In the story, what had Jill just bought?"
+/ 5 = "In the story, how did Bob want his hair cut?"
+/ 6 = "In the story, what did John stop off to buy?"
+/ 7 = "In the story, where was Sally?"
+/ 8 = "In the story, where had Joan taken Zack?"
+/ 9 = "In the story, what role did Joanne get?"
+/ 10 = "In the story, what book did Joe get at the library?"
+/ 11 = "In the story, what did Jean, the manager, tell the people in the meeting?"
+/ 12 = "In the story, where was Mike while Joe and Peter were talking?"
+/ 13 = "In the story, what kind of pie did Kim make?"
+/ 14 = "In the story, what did Jeannette give Anne for her wedding?"
+/ 15 = "In the story, who won the contest?"
+/ 16 = "In the story, why was Jack standing by the cashier?"
+/ 17 = "In the story, why was Eleanor waiting at the bus stop for 20 minutes?"
+/ 18 = "In the story, what does Roger's wife do for a living?"
+/ 19 = "In the story, what did Richard do to Ted’s car?"
+/ 20 = "In the story, where did Louise go?"
+</item>
+
+Note: the 4 answer choices to q7 were generated by Millisecond Software.
+They are NOT original to Pennington et al (2023)
+<item fauxPasQuestions7AnswersA>
+/ 1 = "Vicky was at a party"
+/ 2 = "Helen"
+/ 3 = "a shirt"
+/ 4 = "curtains"
+/ 5 = "Bob wanted his hair cut 1 inch shorter"
+/ 6 = "petrol"
+/ 7 = "Sally was at her aunt's house"
+/ 8 = "to the park"
+/ 9 = "Joanne got a minor role in the school play"
+/ 10 = "a book about sailing"
+/ 11 = "Jean talked about a colleague who was in the hospital with cancer"
+/ 12 = "he was in a toilet cubicle"
+/ 13 = "apple pie"
+/ 14 = "a crystal bowl"
+/ 15 = "Jake"
+/ 16 = "Jack wanted to pay"
+/ 17 = "the bus was late"
+/ 18 = "Roger's wife is a lawyer"
+/ 19 = "Richard scratched Ted's car"
+/ 20 = "Louise went to the butcher"
+</item>
+
+<item fauxPasQuestions7AnswersB>
+/ 1 = "Vicky was at the office"
+/ 2 = "Sarah"
+/ 3 = "a pair of trousers"
+/ 4 = "a sofa"
+/ 5 = "Bob wanted his hair cut 5 inches shorter"
+/ 6 = "some milk"
+/ 7 = "Sally was at home"
+/ 8 = "to the zoo"
+/ 9 = "Joanne got no role at all in the school play"
+/ 10 = "a book about football"
+/ 11 = "Jean talked about the importance of meeting deadlines"
+/ 12 = "he was hiding inside a closet"
+/ 13 = "banana pie"
+/ 14 = "a crystal vase"
+/ 15 = "Christine"
+/ 16 = "Jack had a question"
+/ 17 = "Eleanor was too early"
+/ 18 = "Roger's wife is a physician"
+/ 19 = "Richard totalled Ted's car"
+/ 20 = "Louise went to the supermarket"
+</item>
+
+<item fauxPasQuestions7AnswersC>
+/ 1 = "Vicky was at a restaurant"
+/ 2 = "Helen's husband"
+/ 3 = "a coat"
+/ 4 = "a rug"
+/ 5 = "Bob wanted a buzz cut"
+/ 6 = "the newspaper"
+/ 7 = "Sally was at her grandma's house"
+/ 8 = "to the vet"
+/ 9 = "Joanne got a major role in the school play"
+/ 10 = "a cook book"
+/ 11 = "Jean talked about a colleague who had died of cancer"
+/ 12 = "he was behind a curtain"
+/ 13 = "cherry pie"
+/ 14 = "a coffee maker"
+/ 15 = "Helena"
+/ 16 = "Jack was waiting with his friend"
+/ 17 = "Eleanor had misread the schedule"
+/ 18 = "Roger's wife is a teacher"
+/ 19 = "Richard painted Ted's car"
+/ 20 = "Louise went to the bakery"
+</item>
+
+<item fauxPasQuestions7AnswersD>
+/ 1 = "Vicky was at a conference"
+/ 2 = "Sarah's husband"
+/ 3 = "a pair of shoes"
+/ 4 = "a lamp"
+/ 5 = "Bob wanted a perm"
+/ 6 = "some beer"
+/ 7 = "Sally was at daycare"
+/ 8 = "to the forest"
+/ 9 = "Joanne gets to be an understudy in the school play"
+/ 10 = "a book about stamps"
+/ 11 = "Jean talked about a colleague who just had a baby"
+/ 12 = "he was right there with them"
+/ 13 = "peach pie"
+/ 14 = "champagne flutes"
+/ 15 = "Robert"
+/ 16 = "Jack had a complaint"
+/ 17 = "the bus was cancelled"
+/ 18 = "Roger's wife is a nurse"
+/ 19 = "Richard dirtied Ted's car"
+/ 20 = "Lousie went to the chicken coup"
+</item>
+
+<radiobuttons fauxPasQuestion7>
+/ caption = "<%item.fauxPasQuestions7.item(values.scenarioIndex)%><br>"
+/ options = ("<%item.fauxPasQuestions7AnswersA.item(values.scenarioIndex)%>",
+"<%item.fauxPasQuestions7AnswersB.item(values.scenarioIndex)%>",
+"<%item.fauxPasQuestions7AnswersC.item(values.scenarioIndex)%>",
+"<%item.fauxPasQuestions7AnswersD.item(values.scenarioIndex)%>",
+)
+/ order = random
+</radiobuttons>
+
+<item fauxPasQuestions8>
+/ 1 = "Who was hosting the party?"
+/ 2 = "What got spilled on the dress?" 
+/ 3 = "Why was he going to come back next week?"
+/ 4 = "How long had Jill lived in this flat?"
+/ 5 = "How did the barber cut his hair?"
+/ 6 = "Why did he pay in cash?"
+/ 7 = "Who came to visit?"
+/ 8 = "Why didn’t she walk with her friend Pam?"
+/ 9 = "What kind of role had she had the previous year?"
+/ 10 = "Was he going to be able to check it out?"
+/ 11 = "Who arrived late to the meeting?"
+/ 12 = "What did Joe say about Mike?"
+/ 13 = "How did Kim and Scott know each other?"
+/ 14 = "How did the bowl get broken?"
+/ 15 = "Did Christine’s story win anything?"
+/ 16 = "What did Tim spill?"
+/ 17 = "Were there any seats available on the bus when she got on?"
+/ 18 = "Where were Roger and Andrew talking?"
+/ 19 = "How did Ted react?"
+/ 20 = "Why did the butcher start to wrap up a roasted chicken for her?"
+</item>
+
+<radiobuttons fauxPasQuestion8>
+/ caption = "<%item.fauxPasQuestions8.item(values.scenarioIndex)%><br>"
+/ options = ("<%item.fauxPasQuestions8AnswersA.item(values.scenarioIndex)%>",
+"<%item.fauxPasQuestions8AnswersB.item(values.scenarioIndex)%>",
+"<%item.fauxPasQuestions8AnswersC.item(values.scenarioIndex)%>",
+"<%item.fauxPasQuestions8AnswersD.item(values.scenarioIndex)%>",
+)
+/ order = random
+</radiobuttons>
+
+Note: the 4 answer choices to q8 were generated by Millisecond Software.
+They are NOT original to Pennington et al (2023)
+<item fauxPasQuestions8AnswersA>
+/ 1 = "Oliver"
+/ 2 = "coffee"
+/ 3 = "because the store did not have his size"
+/ 4 = "Jill had just moved in"
+/ 5 = "cut it too short"
+/ 6 = "because his card was rejected"
+/ 7 = "neighbour Mary"
+/ 8 = "because her dog was not ready to leave"
+/ 9 = "she had a major role last year"
+/ 10 = "yes, he just needed to show identification"
+/ 11 = "Robert"
+/ 12 = "Joe said that Mike looked weird"
+/ 13 = "They were cousins"
+/ 14 = "The bowl broke because Jeannette dropped a bottle on the bowl"
+/ 15 = "Christine's story did not win anything"
+/ 16 = "coffee"
+/ 17 = "no, but somebody offered her a seat"
+/ 18 = "they talked in the coffee room"
+/ 19 = "Ted was chill about the scratch"
+/ 20 = "The butcher had misunderstood the order"
+</item>
+
+<item fauxPasQuestions8AnswersB>
+/ 1 = "Sarah"
+/ 2 = "wine"
+/ 3 = "because he forgot his wallet"
+/ 4 = "Jill has been living there for 6 months"
+/ 5 = "left it too long"
+/ 6 = "because he forgot his card"
+/ 7 = "neighbour Jim"
+/ 8 = "because they had a disagreement"
+/ 9 = "she didn't participate in the play last year"
+/ 10 = "yes, somebody else checked it out for him"
+/ 11 = "John "
+/ 12 = "Joe said that Mike smelled bad"
+/ 13 = "They were friends"
+/ 14 = "The bowl broke because Jeannette bumped the table"
+/ 15 = "Christine's story won second place"
+/ 16 = "tea"
+/ 17 = "no, and nobody offered her a seat"
+/ 18 = "they talked at a conference"
+/ 19 = "Ted was furious about the scratch"
+/ 20 = "The roasted chicken was on sale that day"
+</item>
+
+<item fauxPasQuestions8AnswersC>
+/ 1 = "Maria"
+/ 2 = "milk"
+/ 3 = "because he ran out of time"
+/ 4 = "Jill has been living there for 1 year"
+/ 5 = "cut it just right"
+/ 6 = "because the store did not accept cards"
+/ 7 = "grandma Catherine"
+/ 8 = "because she had taken the car"
+/ 9 = "she only had a minor role last year"
+/ 10 = "no, he had to reserve the book for a later check out"
+/ 11 = "the manager"
+/ 12 = "Joe said that Mike was bad at football"
+/ 13 = "They were siblings"
+/ 14 = "The bowl broke because Jeannette's dog bumped the table"
+/ 15 = "Christine's story won first place"
+/ 16 = "water"
+/ 17 = "yes, there were plenty of empty seats left"
+/ 18 = "they talked in Roger's office "
+/ 19 = "Ted was unhappy about the scratch but let it go"
+/ 20 = "Louise had ordered roasted chicken"
+</item>
+
+<item fauxPasQuestions8AnswersD>
+/ 1 = "John"
+/ 2 = "tea"
+/ 3 = "because the store was closing"
+/ 4 = "Jill is not living in the flat any longer"
+/ 5 = "nobody got a hair cut"
+/ 6 = "because he only had cash"
+/ 7 = "grandpa Bob"
+/ 8 = "because her dog got sick"
+/ 9 = "she was the lead last year"
+/ 10 = "no, he decided against checking out the book"
+/ 11 = "everybody was on time"
+/ 12 = "Joe said that Mike was acting weird"
+/ 13 = "They were colleagues"
+/ 14 = "The bowl broke when Jeannette dropped it"
+/ 15 = "Christine's story won third place"
+/ 16 = "hot chocolate"
+/ 17 = "yes, but only one empty seat was left"
+/ 18 = "they talked in the elevator"
+/ 19 = "Ted accused Richard of having purposefully scratched his car"
+/ 20 = "The butcher simply did not pay attention"
+</item>
+
+<button yes>
+/ caption = "YES"
+/ position = (75%, 90%)
+/ size = (20%, 10%)
+/ fontStyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</button>
+
+<button no>
+/ caption = "NO"
+/ position = (25%, 90%)
+/ size = (20%, 10%)
+/ fontStyle = ("Arial", 5%, false, false, false, false, 5, 1)
+</button>
+
+<text scenarioHeader>
+/ items = ("Story <%values.scenarioCounter%> of <%item.scenarios.itemCount%>")
+/ position = (50%, 5%)
+/ txcolor = gray
+/ erase = false
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ finishLabel = "START"
+</instruct>
+
+<page intro>
+<h1>The Faux Pas Test</h1><hr><br>
+In a moment, you’ll be presented with 20 short stories about social situations.<br><br>
+Read the stories <u>carefully</u>. You'll be asked questions following each story.<br><br>
+Please answer each question as best as you can using your <%expressions.buttonInstruct%> to select your answers.<br><br><br>
+When you are ready, press START to continue to the first story.
+</page>
+
+<expressions>
+/ buttonInstruct = if (computer.touch){
+	return "fingers";
+} else {
+	return "mouse";
+}
+</expressions>
+
+
+**************************************************************************************************************
+finish trial
+**************************************************************************************************************
+
+<text finish>
+/ items = ("<center><h1>Thank you!</h1></center>")
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (50%, 50%)
+</text>
+
+<button exit>
+/ caption = "exit"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (30%, 8%)
+</button>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = true
+</trial>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.6.1.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ txcolor = black
+/ inputDevice = mouse
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session,  
+blockcode, blocknum, trialcode, trialnum,
+
+values.scenarioCounter, values.scenarioIndex, values.scenario, values.category, 
+values.fpACC, values.compACC, values.scenarioACC, 
+values.countCatFCorr, values.countCatCCorr, expressions.fauxpasDetectionScore,
+values.q1CorrAnswer, values.q1Resp, values.q1ACC, 
+values.q2CorrAnswers, values.q2Resp, values.q2ACC,
+values.q3Resp, values.q4Resp, values.q5Resp, values.q6Resp,
+values.q7CorrAnswer,values.q7Resp, values.q7ACC,
+values.q8CorrAnswer,values.q8Resp, values.q8ACC,
+
+response, correct, latency)	
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, values.scenarioCounter,
+values.countCatFCorr, values.countCatCCorr, expressions.fauxpasDetectionScore,)
+</summarydata>
+	
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<values>
+/ scenarioCounter = 0
+/ scenarioIndex = 0
+/ scenario = ""
+/ category = ""
+/ q1CorrAnswer = ""
+/ q2CorrAnswers = ""
+/ q7CorrAnswer = ""
+/ q8CorrAnswer = ""
+
+/ q1Resp = ""
+/ q2Resp = ""
+/ q3Resp = ""
+/ q4Resp = ""
+/ q5Resp = ""
+/ q6Resp = ""
+/ q7Resp = ""
+/ q8Resp = ""
+
+/ q1ACC = ""
+/ q2ACC = ""
+/ q7ACC = ""
+/ q8ACC = ""
+
+/ fpACC = 0
+/ compACC = 0
+/ scenarioACC = 0
+
+/ countCatFCorr= 0
+/ countCatCCorr = 0
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/ fauxpasDetectionScore = return (values.countCatFCorr/values.countCatCCorr)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	LISTS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+******************************************************
+Data Lists
+
+accuracy: store 1 for each correct trial; 0 = otherwise
+latency: store the latency of correct responses
+******************************************************
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<shape outerframe>
+/ shape = rectangle
+/ color = black
+/ size = (80%, 60%)
+/ position = (50%,37%)
+/ erase = false
+</shape>
+
+<text scenario>
+/ items = scenarios
+/ select = values.scenarioIndex
+/ size = (79%, 59%)
+/ hPosition = shape.outerframe.hPosition
+/ vPosition = shape.outerframe.vPosition
+/ vJustify = center
+/ fontStyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ txBgColor = white
+/ erase = false
+</text>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<trial q1>
+/ onTrialBegin = [
+	values.q1Resp = "";
+	values.q2Resp = "";
+	values.q3Resp = "";
+	values.q4Resp = "";
+	values.q5Resp = "";
+	values.q6Resp = "";
+	values.q7Resp = "";
+	values.q8Resp = "";
+	values.q1ACC = null;
+	values.q2ACC = null;
+	values.q7ACC = null;
+	values.q8ACC = null;
+	values.fpACC = null;
+	values.compACC = null;
+	values.scenarioACC = null;
+	
+	values.scenarioCounter += 1;
+	values.scenarioIndex = list.scenarios.nextIndex;
+	values.scenario = item.scenarios.item(values.scenarioIndex);
+	values.category = item.categories.item(values.scenarioIndex);
+	if (values.category == "F"){
+		values.q1CorrAnswer = "yes";	//Note: for translations, keep 'yes' as it refers to the button called 'yes'
+	} else {
+		values.q1CorrAnswer = "no"; //Note: for translations, keep 'no' as it refers to the button called 'no'
+	}
+	values.q2CorrAnswers = toLower(item.q2CorrAnswers.item(values.scenarioIndex));	
+	
+	//dynamic stimuli insertions (due to parameterized duration of scenario)
+	trial.q1.insertStimulusTime(text.fauxPasQuestion1, parameters.scenarioDuration_inms);
+	trial.q1.insertStimulusTime(button.yes, parameters.scenarioDuration_inms);	
+	trial.q1.insertStimulusTime(button.no, parameters.scenarioDuration_inms);		
+]
+/ stimulusTimes = [0 = clearScreen, outerFrame, scenario, scenarioHeader]
+/ beginResponseTime = parameters.scenarioDuration_inms
+/ validResponse = (yes, no)
+/ correctResponse = (values.q1CorrAnswer)
+/ onTrialEnd = [
+	trial.q1.resetStimulusFrames();
+	values.q1Resp = trial.q1.response;
+	values.q1ACC = trial.q1.correct;
+	if (values.category == "C"){//correct non-faux pas responses do automatically get q2 'correct'
+		if (values.q1ACC){
+			values.q2ACC = 1;
+		}
+	}
+]
+/ branch = [
+	if (trial.q1.response == "yes"){
+		return openended.q2;
+	} else {
+		return surveypage.q7;
+	}
+]
+</trial>
+
+<openended q2>
+/ stimulusTimes = [0 = clearScreen, outerFrame, scenario, fauxPasQuestion2, scenarioHeader]
+/ position = (50%,90%)
+/ size = (40%,6%)
+/ multiline = true
+/ responseFontStyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ navigationButtonFontStyle = ("Arial", 3.5%, false, false, false, false, 5, 1)
+/ isCorrectResponse = [
+	var resp = toLower(openended.q2.response);
+	resp = replaceAll(resp, " ", ""); //remove any empty spaces
+	resp = concat(resp, ",");	
+	return (contains(values.q2CorrAnswers, resp));//checks if response is contained in values.q2CorrAnswers
+]
+/ required = true
+/ onTrialEnd = [
+	values.q2ACC = openended.q2.correct;
+	values.q2Resp = openended.q2.response;
+]
+/ branch = [
+	return surveypage.q3To6;
+]
+</openended>
+
+<surveyPage q3To6>
+/ questions = [1 = fauxPasQuestion3, fauxPasQuestion4, fauxPasQuestion5, fauxPasQuestion6]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ onTrialEnd = [
+	values.q3Resp = textbox.fauxPasQuestion3.response;
+	values.q4Resp = textbox.fauxPasQuestion4.response;
+	values.q5Resp = textbox.fauxPasQuestion5.response;
+	values.q6Resp = textbox.fauxPasQuestion6.response;
+]
+/ branch = [
+	return surveypage.q7;
+]
+</surveyPage>
+
+<surveyPage q7>
+/ questions = [1 = fauxPasQuestion7]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ onTrialEnd = [
+	values.q7CorrAnswer = item.fauxPasQuestions7AnswersA.item(values.scenarioIndex);
+	values.q7Resp = radiobuttons.fauxPasQuestion7.response;
+	values.q7ACC = (values.q7Resp == values.q7CorrAnswer);
+]
+/ branch = [
+	return surveyPage.q8;
+]
+</surveyPage>
+
+<surveyPage q8>
+/ questions = [1 = fauxPasQuestion8]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ onTrialEnd = [
+	values.q8CorrAnswer = item.fauxPasQuestions8AnswersA.item(values.scenarioIndex);
+	values.q8Resp = radiobuttons.fauxPasQuestion8.response;
+	values.q8ACC = (values.q8Resp == values.q8CorrAnswer);
+]
+/ branch = [
+	return trial.scenarioEnd;
+]
+</surveyPage>
+
+//records one line of data per scenario
+<trial scenarioEnd>
+/ onTrialBegin = [
+	values.fpACC = values.q1ACC * values.q2ACC;
+	values.compACC = values.q7ACC * values.q8ACC;
+	values.scenarioACC = values.fpACC * values.compACC;
+	
+	if (values.category == "F"){
+		values.countCatFCorr += values.scenarioACC;
+	} else {
+		values.countCatCCorr += values.scenarioACC;
+	}
+]
+/ isCorrectResponse = [
+	return (values.scenarioACC);
+]
+/ stimulusFrames = [1 = clearScreen]
+/ trialDuration = parameters.iti_inms
+/ recordData = true
+</trial>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<block test>
+/ trials = [1-20 = q1] //q1 automatically branches to other questions
+</block>
+
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expt a>
+/ preInstructions = (intro)
+/ blocks = [
+	1 = test;
+	2 = finish;
+]
+</expt>
+
+<monkey>
+/ latencydistribution=normal(100, 80)
+</monkey>
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

@@ -1,0 +1,311 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+													*The LANSS Pain Scale*
+									Leeds Assessment of Neuropathic Symptoms and Signs
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-19-2021
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements The LANSS Pain Scale, a tool to identify patients in whom neuropathic mechanisms dominate
+their pain experience.
+
+Reference
+Bennett M. The LANSS Pain Scale: the Leeds assessment of neuropathic symptoms and signs. 
+Pain. 2001 May;92(1-2):147-57. 
+doi: 10.1016/s0304-3959(00)00482-6. PMID: 11323136.
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+5 yes/no pain questionnaire questions as well as 2 yes/no sensory testing questions
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'lanss.iqdat'
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale: yes/no
+									pain questionnaire: q1, q2 (yes = 5); q3 (yes = 3), q4 (yes = 2), q5 (yes = 1).
+									No = 0 points
+									Sensory testing: q1 (yes = 5), q2 (yes = 2)
+									No = 0 points
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'lanss_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+lanss_totalscore:				the sum of all individual responses (range: 0 - 24)		
+								If score < 12, neuropathic mechanisms are UNLIKELY to be contributing to the patient's pain
+								If score >= 12, neuropathic mechanisms are LIKELY to be contributing to the patient's pain
+									
++ 7 individual questions									
+pain questionnaire: q1, q2 (yes = 5); q3 (yes = 3), q4 (yes = 2), q5 (yes = 1).
+No = 0 points
+Sensory testing: q1 (yes = 5), q2 (yes = 2)
+No = 0 points									
+
+</usermanual>
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed, expressions.lanss_totalscore,
+radiobuttons.q1_pain.response,radiobuttons.q2_pain.response,radiobuttons.q3_pain.response,
+radiobuttons.q4_pain.response,radiobuttons.q5_pain.response,radiobuttons.q1_sensory.response, 
+radiobuttons.q2_sensory.response)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES/EXPRESSIONS: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/lanss_totalscore = radiobuttons.q1_pain.response + radiobuttons.q2_pain.response + radiobuttons.q3_pain.response +
+radiobuttons.q4_pain.response + radiobuttons.q5_pain.response + radiobuttons.q1_sensory.response + 
+radiobuttons.q2_sensory.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES/QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: by default all questions are required to be answered. To change
+/required = false
+
+***********************************
+page 1
+***********************************
+
+<surveypage lanss_1>
+/ caption ="<center><b><h1>THE LANSS PAIN SCALE</h1></b>
+Leeds Assessment of Neuropathic Symptoms and Signs</center><br>"
+/ subcaption = "This pain scale can help to determine whether the nerves that are carrying your pain signals are working normally or not. It is important to find this out in case different treatments are needed to control pain."
+</surveypage>
+
+***********************************
+page 2
+***********************************
+
+<surveypage lanss_2>
+/ caption = "<b><font size='4'>A. PAIN QUESTIONNAIRE</font></b><br><br>
+&bull; Think about <u>how your pain has felt over the last week.</u><br>
+&bull; Please say whether any of the descriptions match your pain exactly.</u><br>"
+/ questions = [1 = q1_pain, q2_pain]
+</surveypage>
+
+<radiobuttons q1_pain>
+/ caption = "1) Does your pain feel like strange, unpleasant sensations in your skin? Words like pricking, tingling, pins and needles might describe these sensations.<br>"
+/ options = ("a) NO - My pain doesn't really feel like this", "b) Yes, I get these sensations quite a lot")
+/ orientation = vertical
+/ optionvalues = ("0", "5")
+/ required = true
+</radiobuttons>
+
+<radiobuttons q2_pain>
+/ caption = "2) Does your pain make the skin in the painful area look different from normal? Words like mottled or looking more red or pink might describe the appearance.<br>"
+/ options = ("a) NO - My pain doesn't affect the colour of my skin", "b) Yes, I've noticed that the pain does make my skin look different from normal")
+/ orientation = vertical
+/ optionvalues = ("0", "5")
+/ required = true
+</radiobuttons>
+
+***********************************
+page 3
+***********************************
+
+<surveypage lanss_3>
+/ questions = [1 = q3_pain, q4_pain, q5_pain]
+</surveypage>
+
+<radiobuttons q3_pain>
+/ caption = "3) Does your pain make the affected skin abnormally sensitive to touch? Getting unpleasant sensation when lightly stroking the skin, or getting pain when wearing tight clothes might describe the abnormal sensitivity.<br>"
+/ options = (
+"a) NO - My pain doesn't make my skin abnormally sensitive in that area", 
+"b) Yes, My skin seems abnormally sensitive to touch in that area")
+/ orientation = vertical
+/ optionvalues = ("0", "3")
+/ required = true
+</radiobuttons>
+
+<radiobuttons q4_pain>
+/ caption = "4) Does your pain come on suddently and in bursts for no apparent reason when you're still. Words like electric shocks, jumping and bursting describe these sensations.<br>"
+/ options = (
+"a) NO - My pain doesn't really feel like this", 
+"b) Yes, I get these sensations quite a lot")
+/ orientation = vertical
+/ optionvalues = ("0", "2")
+/ required = true
+</radiobuttons>
+
+<radiobuttons q5_pain>
+/ caption = "5) Does your pain feel as if the skin temperature in the painful areas has changed abnormally? Words like hot and burning describe these sensations.<br>"
+/ options = (
+"a) NO - I don't really get these sensations", 
+"b) Yes, I get these sensations quite a lot")
+/ orientation = vertical
+/ optionvalues = ("0", "1")
+/ required = true
+</radiobuttons>
+
+***********************************
+page 4
+***********************************
+
+<surveypage lanss_4>
+/ caption = "<b><font size='4'>B. SENSORY TESTING</font></b><br><br>
+
+Skin sensitivity can be examined by comparing the painful area with a contralateral or adjacent non-painful area for the presence of allodynia and an altered pin-prick threshold (PPT).<br>"
+/ questions = [1 = q1_sensory]
+</surveypage>
+
+<radiobuttons q1_sensory>
+/ caption = "<font size='4'><b>1) ALLODYNIA</b></font><br>
+Examine the response to lightly stroking cotton wool across the non-painful area and then the painful area. If normal sensations
+are experienced in the non-painful site, but pain or unpleasant sensations (tingling, nausea) are experienced in the painful
+are when stroking, allodynia is present.<br>"
+/ options = (
+"a) NO, normal sensation in both areas", 
+"b) Yes, allodynia in painful area only")
+/ orientation = vertical
+/ optionvalues = ("0", "5")
+/ required = true
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+</radiobuttons>
+
+***********************************
+page 5
+***********************************
+
+<surveypage lanss_5>
+/ questions = [1 = q2_sensory, end]
+</surveypage>
+
+<radiobuttons q2_sensory>
+/ caption = "<font size='4'><b>2) ALTERED PIN-PRICKED THRESHOLD</b></font><br>
+Determine the pin-prick threshold by comparing the response to a 23 gauge (blue) needle mounted inside 
+a 2 ml syringe barrel placed gently on to the skin in a non-painful and then painful areas.<br><br>
+If a sharp pin prick is felt in the non-painful area, but a different sensation is experienced in the painful
+area e.g. non / blunt only (raised PPT) or a very painful sensation (lowered PPT), an altered PPT is present.<br><br>
+If a pinprick is not felt in either area, mount the syringe onto the needle to increase the weight and repeat.<br>"
+/ options = (
+"a) NO, equal sensation in both areas", 
+"b) Yes, altered PPT in painful area")
+/ orientation = vertical
+/ optionvalues = ("0", "3")
+/ required = true
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+</radiobuttons>
+
+<caption end>
+/ caption = "- END OF QUESTIONNAIRE -"
+/ position = (45%, 93%)
+/ fontstyle = ("Arial", 2%, false, true, false, false, 5, 1)
+/ txcolor = gray
+</caption>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey lanss>
+/pages = [
+	1 = lanss_1;
+	2 = lanss_2;
+	3 = lanss_3;
+	4 = lanss_4;
+	5 = lanss_5;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2.75%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Submit"
+</survey>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

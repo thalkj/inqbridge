@@ -1,0 +1,308 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+						The Cannabis Use Disorder Identification Test - Revised (CUDIT-R)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-27-2018
+last updated:  02-21-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-21-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized version of the Cannabis Use Disorder Identification Test - Revised (CUDIT-R)
+by:
+
+Adamson SJ, Kay-Lambkin FJ, Baker AL, Lewin TJ, Thornton L, Kelly BJ, and Sellman JD. (2010). An
+Improved Brief Measure of Cannabis Misuse: The Cannabis Use Disorders Identification Test – Revised
+(CUDIT-R). Drug and Alcohol Dependence 110:137-143.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+8 5-point Likert questions regarding cannabis use over the last 6 months, self-report											  
+
+The first question asks about cannabis use during the last 6 months. If no cannabis use is reported for this
+time frame, the remaining questions are skipped.											  
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes less than 1 minute to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'cudit_r.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values - depends on question)
+								cannabis use: 0 = no; 1 = yes
+								q1-q7: 0 (never) - 4 (almost daily)
+								q8: 0 (never), 2, 4 (during the last 6 months)
+								No reversed scored questions
+								
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'cudit_r_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+cudit_r_Score:						sum of all individual scores (range: 0-32)
+									scores >= 8 indicates hazardous cannabis use,
+									scores >= 12 indicate possible cannabis use disorder for which further use might be required
+							
+
+radiobuttons.cannabisuse.response (first question): 1 = yes; 0 = no 
++ remaining 8 questions
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see section SURVEYPAGES (change/edit captions under each surveypage)
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.cudit_r_Score,
+radiobuttons.cannabisuse.response, radiobuttons.q1.response, radiobuttons.q2.response,
+radiobuttons.q3.response, radiobuttons.q4.response, radiobuttons.q5.response,
+radiobuttons.q6.response, radiobuttons.q7.response, radiobuttons.q8.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/cudit_r_Score = if (radiobuttons.cannabisuse.response == 0){
+	0;
+} else {
+	radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response +
+	radiobuttons.q4.response + radiobuttons.q5.response + radiobuttons.q6.response +
+	radiobuttons.q7.response + radiobuttons.q8.response	
+}
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons cannabisuse>
+/ caption = "Have you used any cannabis over the past six months?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/ required = true
+</radiobuttons>
+
+
+<radiobuttons q1>
+/caption = "1. How often do you use cannabis?"
+/ options = ("Never", "Monthly~nor less", "2-4 times~na month", "2-3 times~na week", "4 or more times~na week")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. How many hours were you “stoned” on a typical day when you had been using cannabis?"
+/ options = ("Less than 1", "1 or 2", "3 or 4", "5 or 6", "7 or more")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+ 
+<radiobuttons q3>
+/caption = "3. How often during the past 6 months did you find that you were not able to stop using cannabis once you had started?"
+/ options = ("Never", "Less than~nmonthly", "Monthly", "Weekly", "Daily~nor almost daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. How often during the past 6 months did you fail to do what was normally expected from you because of using cannabis?"
+/ options = ("Never", "Less than~nmonthly", "Monthly", "Weekly", "Daily~nor almost daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>  
+
+<radiobuttons q5>
+/caption = "5. How often in the past 6 months have you devoted a great deal of your time to getting, using, or recovering from cannabis?"
+/ options = ("Never", "Less than~nmonthly", "Monthly", "Weekly", "Daily~nor almost daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>  
+
+<radiobuttons q6>
+/caption = "6. How often in the past 6 months have you had a problem with your memory or concentration after using cannabis?"
+/ options = ("Never", "Less than~nmonthly", "Monthly", "Weekly", "Daily~nor almost daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons> 
+
+<radiobuttons q7>
+/caption = "7. How often do you use cannabis in situations that could be physically hazardous, such as driving, operating machinery, or caring for children:"
+/ options = ("Never", "Less than~nmonthly", "Monthly", "Weekly", "Daily~nor almost daily")
+/ optionvalues = ("0", "1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>   
+
+<radiobuttons q8>
+/caption = "8. Have you ever thought about cutting down, or stopping, your use of cannabis?"
+/ options = ("Never", "Yes,~nbut not in the past 6 months", "Yes~nduring the past 6 months")
+/ optionvalues = ("0", "2","4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>  
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage cudit_r1>
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ caption ="The Cannabis Use Disorder Identification Test - Revised (CUDIT-R)
+"
+/ questions = [1 = cannabisuse]
+</surveypage>
+
+<surveypage cudit_r2>
+/ skip = [
+	radiobuttons.cannabisuse.response == 0;
+]
+/ caption ="Please answer the following questions about your cannabis use. Select the response that is most correct for you in relation to your cannabis use over the PAST 6 MONTHS
+"
+/ questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage cudit_r3>
+/ skip = [
+	radiobuttons.cannabisuse.response == 0;
+]
+/ caption ="Please answer the following questions about your cannabis use. Select the response that is most correct for you in relation to your cannabis use over the PAST 6 MONTHS
+"
+/ questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage cudit_r4>
+/ skip = [
+	radiobuttons.cannabisuse.response == 0;
+]
+/ caption ="Please answer the following questions about your cannabis use. Select the response that is most correct for you in relation to your cannabis use over the PAST 6 MONTHS
+"
+/ questions = [1 = q7, q8]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey cudit_r>
+/pages = [
+	1 = cudit_r1;
+	2 = cudit_r2;
+	3 = cudit_r3;
+	4 = cudit_r4;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

@@ -1,0 +1,970 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*Cognitive Reflection Test*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-08-2020
+last updated:  02-18-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-18-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the Cognitive Reflection Test (CRT).
+
+The CRT is a simple 3-problem test. The correct solution to each problem is easily understood once 
+explained but the problems require the suppression of 'foil' responses that easily come to mind.
+
+Reference
+
+Frederick, S. (2005). Cognitive Reflection and Decision Making, 
+The Journal of Economic Perspectives, 19, pp. 25-42.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+
+Participants see three problems on the same page with response boxes placed next to them.
+They can select to respond to each problem by pressing on the response box next to each problem.
+Once the response box is pressed, number buttons are provided and participants can select their
+response.
+
+Participants can correct their responses whenever they want (they also can go back and forth between problems).
+The computer records any responses participants make (including pressing the correction button) 
+for future analyses.
+
+The script provides the option to run this task as a timed vs. an untimed test.
+Note: By default, participants have to provide a response to each problem before the 
+submit button becomes activated
+(if the timelimit has been reached in the timed condition, the task terminates regardless)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 8 minutes to complete
+(depends on how much time participants spend on the problems)
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'cognitivereflectiontest_raw*.iqdat'*
+
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+										
+runTimedTest:						true (1) = the test is timed; false (0) = the test is untimed 
+timeLimit:							the time limit for a timed test (in ms)										
+																				
+response:							the participant's response (scancode of response buttons)
+latency: 							the response latency (in ms) of the current trial; measured from: onset of trial 
+
+problem1_allResponses:				a string variable that collects all button presses made when working on problem 1 (will show corrections) 
+problem1Response:					the current response to problem 1
+
+problem1CorrectAnswer:				the correct answer to problem 1 
+problem1Correct:					1 = current provided solution is correct, 0 = otherwise 
+
+problem1FoilAnswer:					the foil answer to problem 1
+problem1Foil:						1 = the current provided solution is the foil answer; 0 = otherwise
+problem1FoilDetected:				1 = participant has provided foil answer at some point; 0 = no foil answer detected for problem 1
+problem1_countCorrections:			counts the number of corrections made for problem 1
+
+problem1_duration:					sums up all trial.problem1 latencies (in ms) up to this point
+
+(same for problem2/problem3)
+
+
+(2) Summary data file: 'cognitivereflectiontest_summary*.iqdat'*
+
+inquisit.version:			Inquisit version run
+computer.platform:			the platform the script was run on (win/mac/ios/android)
+startDate:					date script was run
+startTime:					time script was started
+subjectid:					assigned subject id number
+groupid:					assigned group id number
+sessionid:					assigned session id number
+elapsedTime:				time it took to run script (in ms); measured from onset to offset of script
+completed:					0 = script was not completed (prematurely aborted); 
+							1 = script was completed (all conditions run)		
+									
+runTimedTest:				true (1) = the test is timed; false (0) = the test is untimed 
+timeLimit:					the time limit for a timed test (in ms)	
+
+testDuration_s:				the duration of the test (in seconds)									
+									
+countCorrect:				counts all correct responses (Max: 3)
+									
+problem1_allResponses:		a string variable that collects all button presses made when working on problem 1 (will show corrections) 
+							Example: |10|done|5|correction|5|done|
+							=> first time participant responded to problem 1, participant typed a 1 and a 0, then clicked 'done'
+							=> second time participant responded to problem 1, participant added a 5 to current response (it appeared as 105)
+							then clicked correction and then typed a single 5 again and clicked 'done'
+
+problem1Response:			the final response to problem 1
+
+problem1CorrectAnswer:		the correct answer to problem 1 
+problem1Correct:			1 = final provided solution is correct, 0 = otherwise 
+
+problem1FoilAnswer:			the foil answer to problem 1
+problem1Foil:				1 = the final provided solution is the foil answer; 0 = otherwise
+problem1FoilDetected:		1 = participant has provided foil answer at some point; 0 = no foil answer detected for problem 1
+							Note: this variable is conservative in detecting foil responses. It might miss subtle Foil Responses 
+							such as: |105|correction|5|done 
+							=> participant first typed 10, then might have changed his mind and typed 5
+							but then noticed that the 5 was just added to the 10 (appearing as 105). Thus, participant hit
+							correction button and re-typed a single 5 and was done.
+							The current algorithm to detect the foil looks for |10| sequences in 'problem1_all Responses'
+							and thus would have missed the subtle foil response.
+
+
+problem1_countCorrections:		counts the number of corrections made for problem 1
+
+problem1_duration:				sums up all trial.problem1 latencies (in ms)
+
+(same for problem2/problem3)
+																								
+							
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+trial.problempage: screen presents all three problems and their response boxes in black as well 
+as the 'Submit' button (Submit button becomes active once all three problems have a solution)
+Participants can select the response box of each problem to activate the problem.
+
+trial.problem1: 'activates' problem1 by highlightening it in blue font (problem2/3 turn gray)
+Response number buttons (0-9) as well as a 'correction' and 'done' button are provided.
+Participants can select any number button, the correction button (in this case the previous
+response gets erased) or the 'done' button. Once the 'done' button is pressed,
+participants return to trial.problempage.
+(same for trial.problem2/trial.problem3)
+
+The computer tracks any of the responses made.
+For a timed test, the task terminates after the maximum time allowed. 
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+provided by Millisecond Software - can be edited under section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are (see below):
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/problem1CorrectAnswer = "5" //stores the officially correct response to problem1
+/problem2CorrectAnswer = "5" //stores the officially correct response to problem2
+/problem3CorrectAnswer = "47" //stores the officially correct response to problem3
+
+/problem1FoilAnswer = "10" //stores the foil response to problem1
+/problem2FoilAnswer = "100" //stores the foil response to problem2
+/problem3FoilAnswer = "24" //stores the foil response to problem3
+
+/runTimedTest = false //true = the test is timed; false = the test is not timed
+/timeLimit = 300000 //the time limit (in ms) if parameters.runTimedTest = true (default: 5 minutes)
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item problems>
+/1 = "1. A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost? ____ cents"
+/2 = "2. If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets?____ minutes"
+/3 = "3. In a lake, there is a patch of lily pads. Every day, the patch doubles in size. If it takes 48 days for the patch to cover the entire lake, how long would it take for the patch to cover half of the lake?____ days"
+</item>
+
+<text AnswerHeader>
+/ items = ("Answer")
+/ fontstyle = ("Arial", 3%, true, false, true, false, 5, 1)
+/ hposition = shape.problem1ResponseFrame.hposition
+/ vposition = shape.problem1ResponseFrame.vposition - 7%
+/ halign = left
+/ valign = top
+/ width = shape.problem1ResponseFrame.width
+/height = 5%
+/ txbgcolor = white
+/ vjustify = center
+/ erase = false
+</text>
+
+<button done>
+/ erase = false
+/ caption = "done"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 0)
+/ position = (75%, 93%)
+/ size = (30%, 8%)
+</button>
+
+<button correction>
+/ erase = false
+/ caption = "correction"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 0)
+/ position = (25%, 93%)
+/ size = (30%, 8%)
+</button>
+
+<button submit>
+/ erase = false
+/ caption = "submit"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 0)
+/ position = (50%, 90%)
+/ size = (30%, 8%)
+</button>
+
+<text ResponseInstruct>
+/ items = ("Press the answer boxes to respond or edit your responses.
+Press 'submit' when you have answered all three problems.")
+/ hposition = 50%
+/ vposition = 80%
+/ size = (80%, 10%)
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ txbgcolor = white
+/ txcolor = blue
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<button exitbutton>
+/ caption = "EXIT"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (30%, 8%)
+/ valign = center
+/ halign = center
+</button>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<instruct>
+/ windowsize = (50%, 50%)
+/ inputdevice = mouse
+/ navigationbuttonfontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ nextlabel = "Start"
+/ finishlabel = "Start"
+</instruct>
+
+<page intro>
+^In this test, you will be given three problems to solve. 
+^^<%expressions.timeLimitInstruct%>
+^^Start when you are ready^
+</page>
+
+<expressions>
+/timeLimitInstruct = {
+	if (parameters.runTimedTest){
+		"You will have <%parameters.timeLimit/1000/60%> minutes to complete your responses.";
+	} else {
+		"There is no time limit.";
+	}
+}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 4.5%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+/ inputdevice = mouse
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+response, latency,
+
+parameters.runTimedTest, parameters.timeLimit,
+
+values.problem1_allResponses, values.problem1Response, 
+parameters.problem1CorrectAnswer, values.problem1Correct, 
+parameters.problem1FoilAnswer,values.problem1Foil, values.problem1FoilDetected, values.problem1_countCorrections,
+values.problem1_duration,
+
+values.problem2_allResponses, values.problem2Response, 
+parameters.problem2CorrectAnswer, values.problem2Correct, 
+parameters.problem2FoilAnswer, values.problem2Foil, values.problem2FoilDetected, values.problem2_countCorrections,
+values.problem2_duration,
+
+values.problem3_allResponses, values.problem3Response, 
+parameters.problem3CorrectAnswer, values.problem3Correct, 
+parameters.problem3FoilAnswer,values.problem3Foil, values.problem3FoilDetected, values.problem3_countCorrections,
+values.problem3_duration,
+)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+parameters.runTimedTest, parameters.timeLimit,
+values.testDuration_s,
+expressions.countCorrect,
+
+values.problem1_allResponses, values.problem1Response, 
+parameters.problem1CorrectAnswer, values.problem1Correct, 
+parameters.problem1FoilAnswer,values.problem1Foil, values.problem1FoilDetected, values.problem1_countCorrections,
+values.problem1_duration,
+
+values.problem2_allResponses, values.problem2Response, 
+parameters.problem2CorrectAnswer, values.problem2Correct, 
+parameters.problem2FoilAnswer, values.problem2Foil, values.problem2FoilDetected, values.problem2_countCorrections,
+values.problem2_duration,
+
+values.problem3_allResponses, values.problem3Response, 
+parameters.problem3CorrectAnswer, values.problem3Correct, 
+parameters.problem3FoilAnswer,values.problem3Foil, values.problem3FoilDetected, values.problem3_countCorrections,
+values.problem3_duration,
+)
+
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/problem1Response = ""
+/problem2Response = ""
+/problem3Response = ""
+
+/problem1_allResponses = "|"
+/problem2_allResponses = "|"
+/problem3_allResponses = "|"
+
+/problem1Correct = 0
+/problem2Correct = 0
+/problem3Correct = 0
+
+/problem1Foil = 0
+/problem2Foil = 0
+/problem3Foil = 0
+
+/problem1FoilDetected = 0
+/problem2FoilDetected = 0
+/problem3FoilDetected = 0
+
+/problem1_duration = ""
+/problem2_duration = ""
+/problem3_duration = ""
+
+/problem1_countCorrections = 0
+/problem2_countCorrections = 0
+/problem3_countCorrections = 0
+
+/testDuration_s = ""
+/testStart = ""
+/currentResponse = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+concat(values.helperFoil1Response, subString(parameters.problem1FoilAnswer, i, 1));
+		values.helperFoil1Response = concat(values.helperFoil1Response, "|");
+<expressions>
+/countCorrect = values.problem1Correct + values.problem2Correct + values.problem3Correct
+
+//generate the Foil Responses that might be contained in the string variables that collect all responses for each problem:
+/Foil1Response = {
+
+	var Foil1Response = "|";
+	Foil1Response = concat(Foil1Response, parameters.problem1FoilAnswer);
+	Foil1Response = concat(Foil1Response, "|");
+
+	return (Foil1Response);
+}
+/Foil2Response = {
+	var Foil2Response = "|";
+	Foil2Response = concat(Foil2Response, parameters.problem2FoilAnswer);
+	Foil2Response = concat(Foil2Response, "|");
+
+	return (Foil2Response);
+}
+/Foil3Response = {
+	var Foil3Response = "|";
+	Foil3Response = concat(Foil3Response, parameters.problem3FoilAnswer);
+	Foil3Response = concat(Foil3Response, "|");
+
+	return (Foil3Response);
+}
+</expressions>
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+finish trial
+**************************************************************************************************************
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text problem1>
+/ items = problems
+/ select = 1
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (0%, 10%)
+/ halign = left
+/ valign = top
+/ size = (50%, 20%)
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<text problem2>
+/ items = problems
+/ select = 2
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ hposition = text.problem1.hposition
+/ vposition = text.problem1.vposition + text.problem1.height
+/ halign = left
+/ valign = top
+/ size = (50%, 20%)
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<text problem3>
+/ items = problems
+/ select = 3
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ hposition = text.problem1.hposition
+/ vposition = text.problem2.vposition + text.problem1.height
+/ halign = left
+/ valign = top
+/ size = (50%, 20%)
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<shape problem1ResponseFrame>
+/ hposition = text.problem1.hposition + text.problem1.width
+/ vposition = text.problem1.vposition
+/ halign = left
+/ valign = top
+/ size = (18%, 8%)
+/ color = black
+/ erase = false
+</shape>
+
+<text problem1Response>
+/ items = ("<%values.problem1Response%>")
+/ hposition = shape.problem1ResponseFrame.hposition + 0.5%
+/ vposition = shape.problem1ResponseFrame.vposition + 0.5%
+/ halign = left
+/ valign = top
+/ vjustify = center
+/ width = shape.problem1ResponseFrame.width - 1%
+/ height = shape.problem1ResponseFrame.height - 1%
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<shape problem2ResponseFrame>
+/ hposition = text.problem2.hposition + text.problem2.width
+/ vposition = text.problem2.vposition
+/ halign = left
+/ valign = top
+/ size = (18%, 8%)
+/ color = black
+/ erase = false
+</shape>
+
+<text problem2Response>
+/ items = ("<%values.problem2Response%>")
+/ hposition = shape.problem2ResponseFrame.hposition + 0.5%
+/ vposition = shape.problem2ResponseFrame.vposition + 0.5%
+/ halign = left
+/ valign = top
+/ vjustify = center
+/ width = shape.problem2ResponseFrame.width - 1%
+/ height = shape.problem2ResponseFrame.height - 1%
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ erase = false
+</text>
+
+<shape problem3ResponseFrame>
+/ hposition = text.problem3.hposition + text.problem3.width
+/ vposition = text.problem3.vposition
+/ halign = left
+/ valign = top
+/ size = (18%, 8%)
+/ color = black
+/ erase = false
+</shape>
+
+<text problem3Response>
+/ items = ("<%values.problem3Response%>")
+/ hposition = shape.problem3ResponseFrame.hposition + 0.5%
+/ vposition = shape.problem3ResponseFrame.vposition + 0.5%
+/ halign = left
+/ valign = top
+/ vjustify = center
+/ width = shape.problem3ResponseFrame.width - 1%
+/ height = shape.problem3ResponseFrame.height - 1%
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ erase = false
+</text>
+
+
+***************************
+Response Pad
+***************************
+
+<button 00>
+/ erase = false
+/ caption = "0"
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = 10%
+/ vposition = 80%
+/ halign = left
+/ size = (7%, 7%)
+</button>
+
+<button 1>
+/ erase = false
+/ caption = "1"
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = button.00.hposition + button.00.width + 1%
+/ vposition = button.00.vposition
+/ halign = left
+/ size = (7%, 7%)
+</button>
+
+<button 2>
+/ erase = false
+/ caption = "2"
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = button.1.hposition + button.00.width + 1%
+/ vposition = button.00.vposition
+/ halign = left
+/ size = (7%, 7%)
+</button>
+
+<button 3>
+/ erase = false
+/ caption = "3"
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = button.2.hposition + button.00.width + 1%
+/ vposition = button.00.vposition
+/ halign = left
+/ size = (7%, 7%)
+</button>
+
+<button 4>
+/ erase = false
+/ caption = "4"
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = button.3.hposition + button.00.width + 1%
+/ vposition = button.00.vposition
+/ halign = left
+/ size = (7%, 7%)
+</button>
+
+<button 5>
+/ erase = false
+/ caption = "5"
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = button.4.hposition + button.00.width + 1%
+/ vposition = button.00.vposition
+/ halign = left
+/ size = (7%, 7%)
+</button>
+
+<button 6>
+/ erase = false
+/ caption = "6"
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = button.5.hposition + button.00.width + 1%
+/ vposition = button.00.vposition
+/ halign = left
+/ size = (7%, 7%)
+</button>
+
+<button 7>
+/ erase = false
+/ caption = "7"
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = button.6.hposition + button.00.width + 1%
+/ vposition = button.00.vposition
+/ halign = left
+/ size = (7%, 7%)
+</button>
+
+<button 8>
+/ erase = false
+/ caption = "8"
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = button.7.hposition + button.00.width + 1%
+/ vposition = button.00.vposition
+/ halign = left
+/ size = (7%, 7%)
+</button>
+
+<button 9>
+/ erase = false
+/ caption = "9"
+/ fontstyle = ("Verdana", 5%, true, false, false, false, 5, 0)
+/ hposition = button.8.hposition + button.00.width + 1%
+/ vposition = button.00.vposition
+/ halign = left
+/ size = (7%, 7%)
+</button>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+//trial presents all three problems on the same page
+//all problems and response boxes are presented in black font
+//participants can choose to select to respond to an individual question by pressing the corresponding response box
+//or participants can choose to submit their response
+<trial problemPage>
+/ ontrialbegin = [
+	text.problem1.textColor = black;
+	text.problem2.textColor = black;	
+	text.problem3.textColor = black;
+	shape.problem1ResponseFrame.color = black;
+	shape.problem2ResponseFrame.color = black;
+	shape.problem3ResponseFrame.color = black;
+
+	values.problem1Correct = (values.problem1Response == parameters.problem1CorrectAnswer);
+	values.problem2Correct = (values.problem2Response == parameters.problem2CorrectAnswer);	
+	values.problem3Correct = (values.problem3Response == parameters.problem3CorrectAnswer);	
+	
+	values.problem1Foil = (values.problem1Response == parameters.problem1FoilAnswer);
+	values.problem2Foil = (values.problem2Response == parameters.problem2FoilAnswer);
+	values.problem3Foil = (values.problem3Response == parameters.problem3FoilAnswer);	
+	
+	//check if the Foil responses have been made:
+	if (values.problem1FoilDetected == 0){
+		if (contains(values.problem1_allResponses, expressions.Foil1Response)){
+			values.problem1FoilDetected = 1;
+		}		
+	}
+
+	if (values.problem2FoilDetected == 0){
+		if (contains(values.problem2_allResponses, expressions.Foil2Response)){
+			values.problem2FoilDetected = 1;
+		}		
+	}
+
+	if (values.problem3FoilDetected == 0){
+		if (contains(values.problem3_allResponses, expressions.Foil3Response)){
+			values.problem3FoilDetected = 1;
+		}		
+	}	
+]
+
+/ stimulusframes = [1 = clearScreen, AnswerHeader, problem1, problem2, problem3,
+problem1ResponseFrame, problem1response, 
+problem2ResponseFrame, problem2response,
+problem3ResponseFrame, problem3response,
+submit, ResponseInstruct]
+/ validresponse = (problem1ResponseFrame, problem2ResponseFrame, problem3ResponseFrame, submit)
+//submit is only active if all three questions have an answer
+/ isvalidresponse = [
+	if (trial.problemPage.response != "submit"){
+		return true;
+	} else {
+		return (trial.problemPage.response == "submit" && values.problem1Response != "" && 
+		values.problem2Response != "" && values.problem3Response != "")
+	}
+]
+/ branch = [
+	if (trial.problemPage.response == "problem1ResponseFrame"){
+		return trial.problem1;
+	} else if (trial.problemPage.response == "problem2ResponseFrame"){
+		return trial.problem2;
+	} else if (trial.problemPage.response == "problem3ResponseFrame"){
+		return trial.problem3;
+	} else {
+		return trial.finish;
+	}
+]
+</trial>
+
+
+<trial problem1>
+/ ontrialbegin = [
+	text.problem1.textColor = blue;//active
+	text.problem2.textColor = gray;	//inactive
+	text.problem3.textColor = gray;	//inactive
+	
+	shape.problem1ResponseFrame.color = blue;//active
+	shape.problem2ResponseFrame.color = gray;//inactive
+	shape.problem3ResponseFrame.color = gray;//inactive	
+
+]
+/ stimulusframes = [1 = clearScreen,AnswerHeader, problem1, problem2, problem3,
+problem1ResponseFrame, problem1response, 
+problem2ResponseFrame, problem2response,
+problem3ResponseFrame, problem3response,
+00, 1, 2, 3, 4, 5, 6, 7, 8, 9, done, correction]
+/ validresponse = (00, 1, 2, 3, 4, 5, 6, 7, 8, 9, done, correction)
+/ ontrialend = [
+	if (trial.problem1.response !="correction" && trial.problem1.response !="done"){	
+		values.problem1_allResponses = concat(values.problem1_allResponses, evaluate(trial.problem1.response));					
+	} else {
+		values.problem1_allResponses = concat(values.problem1_allResponses, "|");
+		values.problem1_allResponses = concat(values.problem1_allResponses, trial.problem1.response);
+		values.problem1_allResponses = concat(values.problem1_allResponses, "|");		
+	}
+
+	if (trial.problem1.response == "correction"){
+		values.problem1Response = "";
+		values.problem1_countCorrections += 1;
+	} else if (trial.problem1.response != "done"){
+		values.problem1Response = concat(values.problem1Response, evaluate(trial.problem1.response));
+	}
+	
+	values.problem1_duration += trial.problem1.latency;
+]
+/ branch = [
+	if (trial.problem1.response == "done"){
+		return trial.problemPage;
+	} else {
+		return trial.problem1;
+	}
+]
+
+</trial>
+
+<trial problem2>
+/ ontrialbegin = [
+	text.problem2.textColor = blue;//active
+	text.problem1.textColor = gray;	//inactive
+	text.problem3.textColor = gray;	//inactive
+	
+	shape.problem2ResponseFrame.color = blue;//active
+	shape.problem1ResponseFrame.color = gray;//inactive
+	shape.problem3ResponseFrame.color = gray;//inactive	
+]
+/ stimulusframes = [1 = clearScreen,AnswerHeader, problem1, problem2, problem3,
+problem1ResponseFrame, problem1response, 
+problem2ResponseFrame, problem2response,
+problem3ResponseFrame, problem3response,
+00, 1, 2, 3, 4, 5, 6, 7, 8, 9, done, correction]
+/ validresponse = (00, 1, 2, 3, 4, 5, 6, 7, 8, 9, done, correction)
+/ ontrialend = [
+	if (trial.problem2.response !="correction" && trial.problem2.response !="done"){
+		values.problem2_allResponses = concat(values.problem2_allResponses, evaluate(trial.problem2.response));					
+	} else {
+		values.problem2_allResponses = concat(values.problem2_allResponses, "|");
+		values.problem2_allResponses = concat(values.problem2_allResponses, trial.problem2.response);
+		values.problem2_allResponses = concat(values.problem2_allResponses, "|");		
+	}
+	
+
+	if (trial.problem2.response == "correction"){
+		values.problem2Response = "";
+		values.problem2_countCorrections += 1;
+	} else if (trial.problem2.response != "done"){
+		values.problem2Response = concat(values.problem2Response, evaluate(trial.problem2.response));
+	}
+	
+	values.problem2_duration += trial.problem2.latency;
+]
+/ branch = [
+	if (trial.problem2.response == "done"){
+		return trial.problemPage;
+	} else {
+		return trial.problem2;
+	}
+]
+
+</trial>
+
+<trial problem3>
+/ ontrialbegin = [
+	text.problem3.textColor = blue;//active
+	text.problem1.textColor = gray;	//inactive
+	text.problem2.textColor = gray;	//inactive
+	
+	shape.problem3ResponseFrame.color = blue;//active
+	shape.problem1ResponseFrame.color = gray;//inactive
+	shape.problem2ResponseFrame.color = gray;//inactive	
+]
+/ stimulusframes = [1 = clearScreen,AnswerHeader, problem1, problem2, problem3,
+problem1ResponseFrame, problem1response, 
+problem2ResponseFrame, problem2response,
+problem3ResponseFrame, problem3response,
+00, 1, 2, 3, 4, 5, 6, 7, 8, 9, done, correction]
+/ validresponse = (00, 1, 2, 3, 4, 5, 6, 7, 8, 9, done, correction)
+/ ontrialend = [
+	if (trial.problem3.response !="correction" && trial.problem3.response !="done"){
+		values.problem3_allResponses = concat(values.problem3_allResponses, evaluate(trial.problem3.response));					
+	} else {
+		values.problem3_allResponses = concat(values.problem3_allResponses, "|");
+		values.problem3_allResponses = concat(values.problem3_allResponses, trial.problem3.response);
+		values.problem3_allResponses = concat(values.problem3_allResponses, "|");		
+	}
+	
+	if (trial.problem3.response == "correction"){
+		values.problem3Response = "";
+		values.problem3_countCorrections += 1;
+	} else if (trial.problem3.response != "done"){
+		values.problem3Response = concat(values.problem3Response, evaluate(trial.problem3.response));
+	}
+	
+	values.problem3_duration += trial.problem3.latency;
+]
+/ branch = [
+	if (trial.problem3.response == "done"){
+		return trial.problemPage;
+	} else {
+		return trial.problem3;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block cft_untimed>
+/ skip = [
+	parameters.runTimedTest == true;
+]
+/ trials = [1 = problemPage]
+/ onblockend = [
+	values.testDuration_s = (script.elapsedTime - block.cft_untimed.timestamp)/1000;
+]
+</block>
+
+<block cft_timed>
+/ skip = [
+	parameters.runTimedTest == false;
+]
+/ timeout = parameters.timeLimit
+/ trials = [1 = problemPage]
+/ onblockend = [
+	values.testDuration_s = (script.elapsedTime - block.cft_timed.timestamp)/1000;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt a>
+/ preinstructions = (intro)
+/ blocks = [
+	1 = cft_untimed;
+	2 = cft_timed;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

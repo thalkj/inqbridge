@@ -1,0 +1,1097 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								*Reaction Time Concealed Information Test (RT-CIT)*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 03-24-2021
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a 'Reaction Time Concealed Information Test' (RT-CIT), a procedure  
+to detect information a person tries to conceal (Suchotzki et al, 2021).
+
+The RT-CIT compares 'no' reaction time responses to probe and control items.
+The RT-CIT effect describes that people who deceptively deny recognizing information (the probes,
+e.g. crime relevant information) respond slower to the probe items than to control items
+(crime irrelevant information), particularly if a response timeout is built into the task 
+which seems to reduce faking abilities (Suchotzki et al, 2021).
+
+
+Reference
+Suchotzki, K., Verschuere, B., & Gamer, M. (2021)
+How Vulnerable is the Reaction Time Concealed Information Test to Faking?,
+Journal of Applied Research in Memory and Cognition,
+https://doi.org/10.1016/j.jarmac.2020.10.003.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+
+The task involves responding to target, probe, and control items as soon as possible.
+The target items are the items to which participant should respond "Yes, I know them".
+The probe and control items are words to which participant should respond "No, I don't know them".
+
+The 5 target ('Yes') items are learned at the beginning of the test.
+Probe items are items that are relevant to the task (e.g. crime-relevant information).
+Control items are items that task irrelevant. 
+
+The order of the items during the reaction time portion of the test are presented
+in random order.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 8 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'reactiontimeconcealedinformationtest_raw*.iqdat'*
+
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+										
+										
+trialCounter:						tracks the number of trials run during the test
+word:								stores the currently presented word 
+itemnumber:							stores the currently presented itemnumber of the word
+
+response:							the participant's response (scancode of response buttons)
+									30 = A
+									38 = L
+									57 = space
+										
+responseText:						the label of the pressed response key (Note: it appears empty for space)										
+
+correct:							accuracy of response: 1 = correct response; 0 = otherwise
+latency: 							the response latency (in ms); measured from: onset of word
+
+//learning phase: 
+recall1:							the 1. recalled item (in 'cleaned' format)
+recall2:							the 2. recalled item (in 'cleaned' format) 
+recall3:							the 3. recalled item (in 'cleaned' format) 
+recall4:							the 4. recalled item (in 'cleaned' format)
+recall5:							the 5. recalled item (in 'cleaned' format) 
+
+targetStorage:						stores all the target words (in 'cleaned' format) 
+countCorrectRecall:					tracks the number of correctly recalled items										
+
+
+(2) Summary data file: 'reactiontimeconcealedinformationtest_summary*.iqdat'*
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+									
+									
+learningBlockCounter:				tracks the number of learning rounds run 
+countCorrectRecall:					the number of correctly recalled items after the last learning round 
+learningPass:						1 = the learning criterium was reached; 0 = otherwise
+
+//Note: no response time 'cleaning' was done for the following summary statistics:
+
+propCorrect_targets:				proportion correctly categorized targets (as YES)
+NR_targets:							the number of No responses to target items within the allotted response timeout
+mean_hit_RT_targets:				mean response time (in ms) of correctly categorizing targets
+
+propCorrect_probes:					proportion correctly categorized probes  (as NO)
+NR_probes:							the number of No responses to probe items within the allotted response timeout
+mean_CR_RT_probes:					mean response time (in ms) of correctly categorizing probes
+
+propCorrect_controls:				proportion correctly categorized controls (as NO) 
+NR_controls:						the number of No responses to control items within the allotted response timeout
+mean_CR_RT_controls:				mean response time (in ms) of correctly categorizing controls
+SD_CR_RT_controls:					standard deviation of response times of correctly categorizing controls (in ms)
+
+
+RTDiff:				the response time difference of ('mean response time (in ms) of correctly categorizing probes' - 'mean response time (in ms) of correctly categorizing controls')
+
+RT_CIT_Effect:		1: participant was on average slower to categorize probe items compared to control items
+					0: everything else
+														
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+(1) Learning Phase: (see section Editable Parameters for 'Learning Phase' parameter settings)
+By default, at least 3 learning rounds are run. If participants have recalled all five items
+correctly after the last round, they move on to the test phase. Otherwise, another learning
+round is added (up to 10, see section Editable Parameters).
+
+- Learning screen: all 5 items are presented on screen for 30s
+- Recall screen: 5 textboxes to enter the five items (in any order)
+
+The computer compares the recalled items to the target items and counts the 
+number of correctly recalled items.
+Note: the algorithm implemented converts all items to lower case letter and removes empty spaces
+commas and periods. However, spelling errors will still be identified as 'errors'.
+
+(2) Test Phase:
+- 5 target items repeated 6 times (30 trials)
+- 5 probe items repeated 6 times (30 trials)
+- 20 control items repeated 6 times (120 trials)
+=> total of 180 trials, order is randomized (after 90 trials, a break trial is presented)
+
+Trial Sequence:
+
+word (Max: 800ms or until response)* -> variable iti (randomly selected from 500ms-1000ms in 100ms increments)
+* if no response was made within 800ms: a 'too slow' message was presented for 1000ms before the iti.
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+provided by Millisecond Software as template stimuli only - can be edited under section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+//timing parameters
+/targetLearningDuration = 30000				//the duration (in ms) that all five target words are presented during the learning phase
+/getReadyDuration = 5000					//the duration (in ms) of the get-ready sign before the start of the test
+
+/maxStimDuration = 800						//the maximum duration (in ms) that the words are on screen
+											//Note: this is also the response timeout (default: 800ms)
+											
+/feedbackDuration = 1000					//the duration (in ms) of the 'too slow' feedback message (default: 1000ms)											
+											
+//UI parameters
+/stimSize = 5%
+
+//expt-design parameters
+/minLearningBlocks = 3						//the minimum number of times block.targetLearning has to run (default: 3 times)
+/maxLearningBlocks = 10						//the maximum number of times block.targetLearning has to run (default: 10 times)
+
+/learningCriteriumACC = 100%				//the percent correct recall of the 5 target words after the last learning block
+
+/prematureAbort_learningFail = false		//true = the script prematurely ends if the learning criterium has not been reached after all learning blocks have run
+											//false = the script moves from learning to test even if the learning criterium has not been reached
+
+
+//ResponseKey Assignment
+/leftKey = "A"
+/rightKey = "L"
+/yesKey = parameters.leftKey
+/noKey = parameters.rightKey
+</parameters>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: targetItems and probeItems were taken from Suchotzki et al (2021)
+
+//targets = go words
+<item targetItems>
+/1 = "key"
+/2 = "shelf"
+/3 = "Prof. Shuffenhauer"
+/4 = "liquor"
+/5 = "Eiffel Tower"
+</item>
+
+//probe = critical (nogo) words
+<item probeItems>
+/1 = "USB-stick"
+/2 = "flower pot"
+/3 = "Prof. Meykenhorst"
+/4 = "beer"
+/5 = "stones"
+</item>
+
+Note: these are made-up words by Millisecond Software
+//control = nogo words
+<item controlItems>
+/1 = "ring"
+/2 = "glasses"
+/3 = "wallet"
+/4 = "computer"
+/5 = "handbag"
+/6 = "armchair"
+/7 = "bicyle"
+/8 = "office"
+/9 = "Prof. Hildebrandt"
+/10 = "Prof. Shaffner"
+/11 = "Prof. Ninehouse"
+/12 = "Prof. Heidelburg"
+/13 = "cola"
+/14 = "whisky"
+/15 = "water"
+/16 = "vodka"
+/17 = "castles"
+/18 = "people"
+/19 = "ocean"
+/20 = "Tower Bridge"
+</item>
+
+<text responseFeedback>
+/ items = ("Too Slow!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ txcolor = red
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+</instruct>
+
+**************************************************************************************************************
+general  Introduction
+**************************************************************************************************************
+<text generalIntroduction>
+/ items = ("<h1>Reaction Time Test</h1><hr><br>
+This is a reaction time test to quickly and correctly categorize words into the categories 'Old Words' versus 'New Words'.<br><br>
+There will only be <u>five words</u> that belong to the category 'Old Words'. We will refer to these words as the 'targets'.
+Study these words well, so that you readily recognize them for the reaction time test.<br><br>
+Go on to study your 5 target words now.")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+</text>
+
+<text continue>
+/ onprepare = [
+	if (!computer.hasKeyboard){
+		text.continue.skip = true;
+	}
+]
+/ items = ("press [space] to continue")
+/ position = (75%, 95%)
+/ vjustify = center
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = lightGray
+/ size = (30%, 5%)
+</text>
+
+
+<trial generalIntroduction>
+/ stimulusframes = [1 = generalIntroduction, continue]
+/ validresponse = (" ")
+</trial>
+
+**************************************************************************************************************
+target Introduction
+**************************************************************************************************************
+
+<text targetIntroduction>
+/ items = ("<center><h1>Target Words</h1><hr><br>
+<%item.targetItems.item(1)%><br><br>
+<%item.targetItems.item(2)%><br><br>
+<%item.targetItems.item(3)%><br><br>
+<%item.targetItems.item(4)%><br><br>
+<%item.targetItems.item(5)%><br></center>
+")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+</text>
+
+<trial targetIntroduction>
+/ stimulusframes = [1 = targetIntroduction]
+/ trialduration = parameters.targetLearningDuration
+</trial>
+
+<textbox target1>
+/ caption = "Target 1:"
+/ required = true
+/ textboxsize = (80%,4%)
+/ multiline = false
+/ monkeyresponse = ("Key", "key|", "xxxx", "kEY;")
+</textbox>
+
+<textbox target2>
+/ caption = "Target 2:"
+/ required = true
+/ textboxsize = (80%,4%)
+/ multiline = false
+/ monkeyresponse = ("liquor", "LIQUOR|", "xxxx", "liquor;")
+</textbox>
+
+<textbox target3>
+/ caption = "Target 3:"
+/ required = true
+/ textboxsize = (80%,4%)
+/ multiline = false
+/ monkeyresponse = ("shelf", "shelf|", "xxxx", "SHELF;")
+</textbox>
+
+<textbox target4>
+/ caption = "Target 4:"
+/ required = true
+/ textboxsize = (80%,4%)
+/ multiline = false
+/ monkeyresponse = ("Prof. Shuffenhauer", "Prof. Shuffenhauer|", "xxxx", "PrOf. Shuffenhauer")
+</textbox>
+
+<textbox target5>
+/ caption = "Target 5:"
+/ required = true
+/ textboxsize = (80%,4%)
+/ multiline = false
+/ monkeyresponse = ("Eiffel Tower", "Eiffel Tower|", "xxxx", "EiFFel Tower")
+</textbox>
+
+<surveypage recallTargetWords>
+/ caption ="Enter the target words <u>in any order</u>:<br>"
+/ questions = [1 = target1, target2, target3, target4, target5]
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ ontrialend = [
+	values.recall1 = tolower(textbox.target1.response);
+	values.recall = values.recall1;
+	values.recall1 = expressions.cleanRecall;
+
+	values.recall2 = tolower(textbox.target2.response);
+	values.recall = values.recall2;
+	values.recall2 = expressions.cleanRecall;
+	
+	values.recall3 = tolower(textbox.target3.response);
+	values.recall = values.recall3;
+	values.recall3 = expressions.cleanRecall;
+
+	values.recall4 = tolower(textbox.target4.response);
+	values.recall = values.recall4;
+	values.recall4 = expressions.cleanRecall;	
+	
+	values.recall5 = tolower(textbox.target5.response);
+	values.recall = values.recall5;
+	values.recall5 = expressions.cleanRecall;	
+
+	values.countCorrectRecall = expressions.checkRecall;
+]
+</surveypage>
+
+**************************************************************************************************************
+test Start
+**************************************************************************************************************
+
+**************************************************************************************************************
+general  Introduction
+**************************************************************************************************************
+
+<text testIntroduction>
+/ items = ("<h1>Reaction Time Test</h1><hr><br>
+We will now test your ability to quickly and correctly categorize words into the categories
+'Old Words' versus 'New Words'.<br><br>
+Whenever you see one of the <u>5 target words</u>, press the <b>YES-key '<%parameters.yesKey%>'</b>.
+This means that you recognize that 'Yes, this is an 'Old Word'.<br><br>
+For <u>any other word</u>, press the <b>NO-key '<%parameters.noKey%>'</b>. All these words are 'New Words'.<br><br>
+<center><i>Be as fast as you can possibly be without making errors.</i></center>")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+</text>
+
+<text start>
+/ onprepare = [
+	if (!computer.hasKeyboard){
+		text.continue.skip = true;
+	}
+]
+/ items = ("press [space] to start")
+/ position = (75%, 95%)
+/ vjustify = center
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = lightGray
+/ size = (30%, 5%)
+</text>
+
+<trial testIntroduction>
+/ stimulusframes = [1 = testIntroduction, start]
+/ validresponse = (" ")
+</trial>
+
+
+
+**************************************************************************************************************
+get-Ready trial
+**************************************************************************************************************
+
+<text getReady>
+/ items = ("Get Ready:
+
+<%expressions.buttonInstruct_getReady%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+/ vjustify = center
+</text>
+
+<expressions>
+/buttonInstruct_getReady = {
+	if (computer.touch && !computer.hasKeyboard){
+		"Place your response fingers over the left and right response buttons";
+	} else {
+		"Put your index fingers on the <%parameters.leftKey%> and <%parameters.rightKey%> Key on your keyboard";		
+	}
+}
+</expressions>
+
+<text yesResponseReminder>
+/ onprepare = [
+	if (parameters.yesKey == parameters.leftKey){
+		text.yesResponseReminder.hposition = 25%;
+	} else {
+		text.yesResponseReminder.hposition = 75%;
+	}
+]
+/ items = ("YES")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ txcolor = gray
+/ vposition = 90%
+/ erase = false
+</text>
+
+<text yesResponseReminder_HL>
+/ onprepare = [
+	if (parameters.yesKey == parameters.leftKey){
+		text.yesResponseReminder_HL.hposition = 25%;
+	} else {
+		text.yesResponseReminder_HL.hposition = 75%;
+	}
+]
+/ items = ("YES")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ txcolor = yellow
+/ vposition = 90%
+/ erase = false
+</text>
+
+<text noResponseReminder>
+/ onprepare = [
+	if (parameters.noKey == parameters.leftKey){
+		text.noResponseReminder.hposition = 25%;
+	} else {
+		text.noResponseReminder.hposition = 75%;
+	}
+]
+/ items = ("NO")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ txcolor = gray
+/ vposition = 90%
+/ erase = false
+</text>
+
+<text noResponseReminder_HL>
+/ onprepare = [
+	if (parameters.noKey == parameters.leftKey){
+		text.noResponseReminder_HL.hposition = 25%;
+	} else {
+		text.noResponseReminder_HL.hposition = 75%;
+	}
+]
+/ items = ("NO")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ txcolor = yellow
+/ vposition = 90%
+/ erase = false
+</text>
+
+
+This trial is used when participants are asked to place their fingers on specific response
+buttons. On the touchscreen, this trial presents the (inactive) response buttons to the participants.
+<trial getReady>
+/ stimulusframes = [1 = getReady, yesResponseReminder, noResponseReminder]
+/ timeout = parameters.getReadyDuration
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ beginresponsetime = parameters.getReadyDuration
+/ errormessage = false
+/ recorddata = false
+/ posttrialpause = 500
+</trial>
+
+**************************************************************************************************************
+general  Introduction
+**************************************************************************************************************
+<text breakInformation>
+/ items = ("<center><h1>Break</h1><hr><br>
+Continue when you are ready to go on.</center>")
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+</text>
+
+<trial break>
+/ skip = [
+	values.trialCounter >= 180;
+]
+/ stimulusframes = [1 = clearScreen, breakInformation, start]
+/ validresponse = (" ")
+/ responsemessage = (" ", text.noResponseReminder, 0)
+/ responsemessage = (" ", text.yesResponseReminder, 0)
+/ posttrialpause = 500
+</trial>
+
+**************************************************************************************************************
+finish trial
+**************************************************************************************************************
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list iti>
+/ items = (500, 600, 700, 800, 900, 1000)
+/ replace = true
+</list>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, values.trialCounter,
+values.word, values.itemnumber, response, responseText, correct, latency, 
+values.recall1, values.recall2, values.recall3, values.recall4, values.recall5, 
+values.targetStorage, values.countCorrectRecall)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+values.learningBlockCounter, values.countCorrectRecall, values.learningPass,
+
+expressions.propCorrect_targets, values.NR_targets, expressions.mean_hit_RT_targets,
+expressions.propCorrect_probes, values.NR_probes, expressions.mean_CR_RT_probes,
+expressions.propCorrect_controls, values.NR_controls, expressions.mean_CR_RT_controls, expressions.SD_CR_RT_controls,
+expressions.RTDiff, expressions.RT_CIT_Effect)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/learningBlockCounter = 0
+/learningRoundCounter = 0
+/learningPass = 0
+
+/trialCounter = 0
+/targetStorage = ""
+/recall = ""
+/recall1 = ""
+/recall2 = ""
+/recall3 = ""
+/recall4 = ""
+/recall5 = ""
+/countCorrectRecall = 0
+
+/word = ""
+/itemnumber = ""
+/iti = ""
+
+/RESP = ""
+/NR_targets = 0
+/NR_probes = 0
+/NR_controls = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/createTargetStorage = {
+	var i = 1;
+	var currentItem = "";
+	values.targetStorage = ",";
+	while (i <= item.targetItems.itemCount){
+		currentItem = tolower(item.targetItems.item(i));
+		currentItem = replaceAll(currentItem, " ", "");	
+		currentItem = replaceAll(currentItem, "\", "");
+		currentItem = replaceAll(currentItem, "|", "");	
+		currentItem = replaceAll(currentItem, "/", "");	
+		currentItem = replaceAll(currentItem, ";", "");		
+		currentItem = replaceAll(currentItem, ":", "");
+		currentItem = replaceAll(currentItem, ".", "");
+		currentItem = replaceAll(currentItem, ",", "");	
+		currentItem = replaceAll(currentItem, "-", "");			
+		
+		values.targetStorage = concat(values.targetStorage, currentItem);//store the target items in lowercase letters
+		values.targetStorage = concat(values.targetStorage, ",");
+		i += 1;
+	}//at this point targetStorage should contain all targetwords as lowercase letters sandwhiched btw. two commas (e.g. ,target1,target2,....)	
+}
+/cleanRecall = {
+	var recall = values.recall;
+	
+	recall = replaceAll(recall, " ", "");	
+	recall = replaceAll(recall, "\", "");
+	recall = replaceAll(recall, "|", "");	
+	recall = replaceAll(recall, "/", "");	
+	recall = replaceAll(recall, ";", "");		
+	recall = replaceAll(recall, ":", "");
+	recall = replaceAll(recall, ".", "");
+	recall = replaceAll(recall, ",", "");	
+	recall = replaceAll(recall, "-", "");
+	
+	recall = concat(",", recall);
+	
+	//end trailing comma if not yet added
+	if (!endswith(recall, ",")){
+		recall = concat(recall, ",");	
+	}	
+	
+	return (recall); //at this point 'recall' should be a lowercase word sandwiched btw. two commas (e.g. ",target1,")
+}
+/checkRecall = {
+	var countCorrectRecall = 0;
+	var tempStorage = values.targetStorage;
+
+	if (contains(tempStorage, values.recall1)){
+		countCorrectRecall += 1;
+		tempStorage = replaceAll(tempStorage, values.recall1, "");
+	}
+	if (contains(tempStorage, values.recall2)){
+		countCorrectRecall += 1;
+		tempStorage = replaceAll(tempStorage, values.recall2, "");
+	}
+	if (contains(tempStorage, values.recall3)){
+		countCorrectRecall += 1;
+		tempStorage = replaceAll(tempStorage, values.recall3, "");
+	}	
+	if (contains(tempStorage, values.recall4)){
+		countCorrectRecall += 1;
+		tempStorage = replaceAll(tempStorage, values.recall4, "");
+	}	
+	if (contains(tempStorage, values.recall5)){
+		countCorrectRecall += 1;
+		tempStorage = replaceAll(tempStorage, values.recall5, "");
+	}
+	return(countCorrectRecall);
+}
+</expressions>
+
+//summary statistics
+<expressions>
+/propCorrect_targets = list.ACC_targets.mean
+/mean_hit_RT_targets = list.HIT_RT_targets.mean
+/propCorrect_probes = list.ACC_probes.mean
+/mean_CR_RT_probes = list.CR_RT_probes.mean
+/propCorrect_controls = list.ACC_controls.mean
+/mean_CR_RT_controls = list.CR_RT_controls.mean
+/SD_CR_RT_controls = list.CR_RT_controls.standarddeviation
+
+/RTDiff = expressions.mean_CR_RT_probes - expressions.mean_CR_RT_controls
+/RT_CIT_Effect = if (expressions.RTDiff > 0){
+	1;
+} else {
+	0;
+}
+
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text target>
+/ items = targetItems
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.StimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ resetinterval = 0
+</text>
+
+<text probe>
+/ items = probeItems
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.StimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ resetinterval = 0
+</text>
+
+<text control>
+/ items = controlItems
+/ select = noreplace
+/ resetinterval = 0
+/ fontstyle = ("Arial", parameters.StimSize, false, false, false, false, 5, 1)
+/ vjustify = center
+/ resetinterval = 0
+</text>
+
+<shape wordEraser>
+/ shape = rectangle
+/ height = 1.1 * parameters.stimSize
+/ width = 100%
+/ color = white
+/ erase = false
+</shape>
+
+<shape feedbackEraser>
+/ shape = rectangle
+/ height = 9%
+/ width = 100%
+/ color = white
+/ erase = false
+</shape>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+<list ACC_targets>
+</list>
+
+<list ACC_probes>
+</list>
+
+<list ACC_controls>
+</list>
+
+<list HIT_RT_targets>
+</list>
+
+<list CR_RT_probes>
+</list>
+
+<list CR_RT_controls>
+</list>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial target>
+/ ontrialbegin = [
+	values.iti = list.iti.nextValue;
+	values.trialCounter += 1;
+]
+/ stimulusframes = [1 = clearScreen, target, yesResponseReminder, noResponseReminder]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ monkeyresponse = (parameters.leftKey, parameters.rightKey)
+/ correctresponse = (parameters.yesKey)
+/ response = timeout(parameters.maxStimDuration)
+/ responsemessage = (parameters.yesKey, text.yesResponseReminder_HL, 0)
+/ responsemessage = (parameters.noKey, text.noResponseReminder_HL, 0)
+/ ontrialend = [
+	values.word = text.target.currentItem;
+	values.itemnumber = text.target.currentItemNumber;
+	list.ACC_targets.appendItem(trial.target.correct);
+	if (trial.target.correct){
+		list.HIT_RT_targets.appendItem(trial.target.latency);
+	}
+	
+	if (trial.target.correct){
+		values.RESP = "1"; //correct response
+	} else if (trial.target.response != 0){
+		values.RESP = "2"; //error response
+	} else {
+		values.RESP = 0;//no response
+		values.NR_targets += 1;
+	}
+]
+/ branch = [
+	return trial.iti;
+]
+</trial>
+
+<trial probe>
+/ ontrialbegin = [
+	values.iti = list.iti.nextValue;
+	values.trialCounter += 1;
+]
+/ stimulusframes = [1 = clearScreen, probe, yesResponseReminder, noResponseReminder]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ monkeyresponse = (parameters.leftKey, parameters.rightKey)
+/ correctresponse = (parameters.noKey)
+/ response = timeout(parameters.maxStimDuration)
+/ responsemessage = (parameters.yesKey, text.yesResponseReminder_HL, 0)
+/ responsemessage = (parameters.noKey, text.noResponseReminder_HL, 0)
+/ ontrialend = [
+	values.word = text.probe.currentItem;
+	values.itemnumber = text.probe.currentItemNumber;
+	list.ACC_probes.appendItem(trial.probe.correct);
+	if (trial.probe.correct){
+		list.CR_RT_probes.appendItem(trial.probe.latency);
+	}
+	
+	if (trial.probe.correct){
+		values.RESP = "1"; //correct response
+	} else if (trial.probe.response != 0){
+		values.RESP = "2"; //error response
+	} else {
+		values.RESP = 0;//no response
+		values.NR_probes += 1;
+	}
+]
+/ branch = [
+	return trial.iti;
+]
+</trial>
+
+<trial control>
+/ ontrialbegin = [
+	values.iti = list.iti.nextValue;
+	values.trialCounter += 1;
+]
+/ stimulusframes = [1 = clearScreen, control, yesResponseReminder, noResponseReminder]
+/ validresponse = (parameters.leftKey, parameters.rightKey)
+/ monkeyresponse = (parameters.leftKey, parameters.rightKey)
+/ correctresponse = (parameters.noKey)
+/ response = timeout(parameters.maxStimDuration)
+/ responsemessage = (parameters.yesKey, text.yesResponseReminder_HL, 0)
+/ responsemessage = (parameters.noKey, text.noResponseReminder_HL, 0)
+/ ontrialend = [
+	values.word = text.control.currentItem;
+	values.itemnumber = text.control.currentItemNumber;
+	list.ACC_controls.appendItem(trial.control.correct);
+	if (trial.control.correct){
+		list.CR_RT_controls.appendItem(trial.control.latency);
+	}
+	
+	if (trial.control.correct){
+		values.RESP = "1"; //correct response
+	} else if (trial.control.response != 0){
+		values.RESP = "2"; //error response
+	} else {
+		values.RESP = 0;//no response
+		values.NR_controls += 1;
+	}
+]
+/ branch = [
+	return trial.iti;
+]
+</trial>
+
+<trial iti>
+/ ontrialbegin = [
+	values.word = "";
+	if (values.RESP == 0){
+		trial.iti.insertStimulusTime(text.responseFeedback, 0);
+		trial.iti.insertStimulusTime(shape.feedbackEraser, parameters.feedbackDuration);
+		values.iti += parameters.feedbackDuration;
+	}
+]
+/ stimulustimes = [100 = yesResponseReminder, noResponseReminder]
+/ trialduration = values.iti
+/ recorddata = false
+/ ontrialend = [
+	trial.iti.resetStimulusFrames();
+]
+/ branch = [
+	if (mod(values.trialCounter, 90) == 0){
+		return trial.break;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block intro>
+/ onblockbegin = [
+	expressions.createTargetStorage;
+]
+/ trials = [1 = generalIntroduction]
+</block>
+
+<block targetLearning>
+/ onblockbegin = [
+	values.learningBlockCounter += 1;
+]
+/ trials = [
+	1 = trial.targetIntroduction; 
+	2 = surveypage.recallTargetWords;
+]
+/ branch = [
+	if (values.learningBlockCounter < parameters.minLearningBlocks){
+		return block.targetLearning;		
+	} else if ((values.countCorrectRecall/5)*100 < parameters.learningCriteriumACC){//check the performance of the last block
+		if (values.learningBlockCounter < parameters.maxLearningBlocks){
+			return block.targetLearning; //add another learning block
+		} else {
+			if (parameters.prematureAbort_learningFail && !monkey.monkeyMode){
+				return block.prematureEnd;
+			}			
+		}
+	} else {
+		values.learningPass = 1;
+	}
+]
+</block>
+
+<block prematureEnd>
+/ trials = [1 = finish]
+/ onblockend = [
+	script.abort();
+]
+</block>
+
+<block test>
+/ trials = [
+	1 = testIntroduction;
+	2 = getReady;
+	3-182 = noreplace(target, probe, control, control, control, control);
+]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt rt>
+/ blocks = [
+	1 = intro;
+	2 = targetLearning;
+	3 = test;
+	4 = finish;
+]
+</expt>
+
+monkey>
+/ latencydistribution = normal(600,300)
+</monkey>
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

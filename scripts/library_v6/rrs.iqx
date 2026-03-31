@@ -1,0 +1,403 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Ruminative Responses Scale Scale (RRS)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 10-24-2022
+last updated:  12-30-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 12-30-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a computerized version of the Ruminative Responses Scale (RRS, Treynor et al, 2003).
+Rumination can be described as a tendency to use 'repetitive and passive focus on one's negative
+emotions' and has been linked to depression. 
+
+Reference:
+
+Treynor, W., Gonzalez, R. & Nolen-Hoeksema, S. Rumination Reconsidered: A Psychometric Analysis. 
+Cognitive Therapy and Research 27, 247–259 (2003). 
+https://doi.org/10.1023/A:1023910315561
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+The RRS scale is a self-report measure consisting of 22 4-point Likert Scale questions
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minute to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'RRS.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 1 (almost never) - 4 (almost always)
+								_D: depression-related
+								_B: brooding
+								_R: reflection
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'RRS_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+
+Total_RRS:						the total rumination response scale score,
+								calculated as the sum of the individual 22 responses
+								Range: 22 - 88, the higher the score the more 
+								participants tend to ruminate
+								
++22 individual responses								
+								
+
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.6.1.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+expressions.total_RRS,
+
+radiobuttons.q1_D.response, radiobuttons.q2_D.response, radiobuttons.q3_D.response,
+radiobuttons.q4_D.response, radiobuttons.q5_B.response, radiobuttons.q6_D.response,
+radiobuttons.q7_R.response, radiobuttons.q8_D.response, radiobuttons.q9_D.response,
+radiobuttons.q10_B.response, radiobuttons.q11_R.response, radiobuttons.q12_R.response, radiobuttons.q13_B.response,
+radiobuttons.q14_D.response, radiobuttons.q15_B.response, radiobuttons.q16_B.response,
+radiobuttons.q17_D.response, radiobuttons.q18_D.response, radiobuttons.q19_D.response,
+radiobuttons.q20_R.response, radiobuttons.q21_R.response, radiobuttons.q22_D.response)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/total_RRS = radiobuttons.q1_D.response + radiobuttons.q2_D.response + radiobuttons.q3_D.response +
+radiobuttons.q4_D.response + radiobuttons.q5_B.response + radiobuttons.q6_D.response +
+radiobuttons.q7_R.response + radiobuttons.q8_D.response + radiobuttons.q9_D.response +
+radiobuttons.q10_B.response + radiobuttons.q11_R.response + radiobuttons.q12_R.response + radiobuttons.q13_B.response +
+radiobuttons.q14_D.response + radiobuttons.q15_B.response + radiobuttons.q16_B.response +
+radiobuttons.q17_D.response + radiobuttons.q18_D.response + radiobuttons.q19_D.response +
+radiobuttons.q20_R.response + radiobuttons.q21_R.response + radiobuttons.q22_D.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_D>
+/caption = "1. think about how alone you feel"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_D>
+/caption = "2. think “I won’t be able to do my job if I don’t snap out of this”"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_D>
+/caption = "3. think about your feelings of fatigue and achiness"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_D>
+/caption = "4. think about how hard it is to concentrate"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_B>
+/caption = "5. think “What am I doing to deserve this?”"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_D>
+/caption = "6. think about how passive and unmotivated you feel."
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_R>
+/caption = "7. analyze recent events to try to understand why you are depressed"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_D>
+/caption = "8. think about how you don’t seem to feel anything anymore"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_D>
+/caption = "9. think “Why can’t I get going?”"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10_B>
+/caption = "10. think “Why do I always react this way?”"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11_R>
+/caption = "11. go away by yourself and think about why you feel this way"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12_R>
+/caption = "12. write down what you are thinking about and analyze it"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13_B>
+/caption = "13. think about a recent situation, wishing it had gone better"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14_D>
+/caption = "14. think “I won’t be able to concentrate if I keep feeling this way.”"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15_B>
+/caption = "15. think “Why do I have problems other people don’t have?”"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16_B>
+/caption = "16. think “Why can’t I handle things better?”"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17_D>
+/caption = "17. think about how sad you feel."
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18_D>
+/caption = "18. think about all your shortcomings, failings, faults, mistakes"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19_D>
+/caption = "19. think about how you don’t feel up to doing anything"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20_R>
+/caption = "20. analyze your personality to try to understand why you are depressed"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21_R>
+/caption = "21.go someplace alone to think about your feelings"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22_D>
+/caption = "22. think about how angry you are with yourself"
+/ options = ("almost never", "sometimes", "often", "almost always")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage RRS_1>
+/ caption = "<br>People think and do many different things when they feel depressed. Please read each of the
+items below and indicate whether you almost never, sometimes, often, or almost always think or
+do each one when you feel down, sad, or depressed. Please indicate what you <i>generally</i> do, not
+what you think you should do.<br><br>"
+/ subcaption = "When you feel down, sad, or depressed, you <i>generally</i>...<br>"
+/questions = [1 = q1_D, q2_D]
+</surveypage>
+
+<surveypage RRS_2>
+/ subcaption = "When you feel down, sad, or depressed, you <i>generally</i>...<br>"
+/questions = [1 = q3_D, q4_D, q5_B, q6_D]
+</surveypage>
+
+<surveypage RRS_3>
+/ subcaption = "When you feel down, sad, or depressed, you <i>generally</i>...<br>"
+/questions = [1 = q7_R, q8_D, q9_D, q10_B]
+</surveypage>
+
+<surveypage RRS_4>
+/ subcaption = "When you feel down, sad, or depressed, you <i>generally</i>...<br>"
+/questions = [1 = q11_R, q12_R, q13_B, q14_D]
+</surveypage>
+
+<surveypage RRS_5>
+/ subcaption = "When you feel down, sad, or depressed, you <i>generally</i>...<br>"
+/questions = [1 = q15_B, q16_B, q17_D, q18_D]
+</surveypage>
+
+<surveypage RRS_6>
+/ subcaption = "When you feel down, sad, or depressed, you <i>generally</i>...<br>"
+/questions = [1 = q19_D, q20_R, q21_R, q22_D]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+
+<survey RRS>
+/pages = [
+	1 = RRS_1;
+	2 = RRS_2;
+	3 = RRS_3;
+	4 = RRS_4;
+	5 = RRS_5;
+	6 = RRS_6;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

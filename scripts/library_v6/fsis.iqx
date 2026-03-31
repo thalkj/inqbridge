@@ -1,0 +1,287 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Future Self-Identification Scale (FSIS)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-26-2024
+last updated:  01-26-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 01-26-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements Millisecond's computerized version of the Future Self-Identification Scale (FSIS) by
+Bixter et al (2020). The FSIS investigates perceived relatedness (connection and similarity) to future self,
+ability to imagine future self as well how positive one feels about one's future self.
+
+Reference:
+
+Bixter MT, McMichael SL, Bunker CJ, Adelman RM, Okun MA, Grimm KJ, et al. (2020).
+A test of a triadic conceptualization of future self-identification. 
+PLoS ONE 15(11): e0242504. https://doi.org/10.1371/journal.pone.0242504
+
+Copyright: © 2020 Bixter et al. This is an open access article distributed under the terms of the 
+Creative Commons Attribution License, which permits unrestricted use, distribution, and reproduction
+in any medium, provided the original author and source are credited.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+self-report measure consisting of 6 7-point Likert Scale questions on three subscales:
+
+relatedness to future self: q1 + q2
+vividness of imagination about future self: q3 + q4
+positivity regarding future self/future: q5 + q6
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minute to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'fsis.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (not at all) - 7 (very)
+								(slightly worded differently for each question => higher number more positive feelings of relatedness to future)
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'fsis
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+							
+FSIS_total:						Total score (Range: 6-42)
+FSIS_relatedness:				Subscale Relatedness (q1 + q2): Range 2-14 (higher numbers indicate more affirmative responses towards feeling relatedness to future self) 
+FSIS_vividness:					Subscale Vividness (q3 + q4): Range 2-14 (higher numbers indicate more affirmative responses towards feeling able to vividly imagine future self) 
+FSIS_positivity:				Subscale Positivity (q5 + q6): Range 2-14 (higher numbers indicate more affirmative responses towards feeling positive regarding future self and future) 
+
+
+//individual responses
+radioButtons.q1Similarity.response,
+radioButtons.q2Connectedness.response,
+radioButtons.q3Clarity.response,
+radioButtons.q4Visualization.response,
+radioButtons.q5Liking.response,
+radioButtons.q6Valence.response								
+
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.6.1.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+expressions.FSIS_total, expressions.FSIS_relatedness, expressions.FSIS_vividness, expressions.FSIS_positivity,
+
+//individual responses
+radioButtons.q1Similarity.response,
+radioButtons.q2Connectedness.response,
+radioButtons.q3Clarity.response,
+radioButtons.q4Visualization.response,
+radioButtons.q5Liking.response,
+radioButtons.q6Valence.response)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/ FSIS_total = return (radioButtons.q1Similarity.response + 
+radioButtons.q2Connectedness.response + 
+radioButtons.q3Clarity.response + 
+radioButtons.q4Visualization.response + 
+radioButtons.q5Liking.response + 
+radioButtons.q6Valence.response)
+
+/ FSIS_relatedness = return (radioButtons.q1Similarity.response + 
+radioButtons.q2Connectedness.response)
+/ FSIS_vividness = return (radioButtons.q3Clarity.response + 
+radioButtons.q4Visualization.response)
+/ FSIS_positivity = return (radioButtons.q5Liking.response + 
+radioButtons.q6Valence.response)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1Similarity>
+/caption = "1. How <u>similar</u> do you feel to your future self?<br>"
+/ options = ("1<br>not at all<br> similar to <br>my<br>future self", 
+"2", "3", "4", "5", "6",
+"7<br>very<br>similar to<br>my<br>future self")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2Connectedness>
+/caption = "2. How <u>connected</u> do you feel to your future self?<br>"
+/ options = ("1<br>not at all<br>connected<br> to my<br>future self", 
+"2", "3", "4", "5", "6",
+"7<br>very<br>connected<br>to my<br>future self")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3Clarity>
+/caption = "3. When you imagine your future self, how vividly do you picture it?<br>"
+/ options = ("1<br><b>not at all<br>vividly</b>;<br>I do <u>not</u><br>have a<br>clear image<br>in my head<br>of my<br>future self", 
+"2", "3", "4", "5", "6",
+"7<br><b>very<br>vividly</b>;<br>I have a<br>very clear<br>image in<br>my head<br>of my<br>future self ")
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4Visualization>
+/caption = "4. How easy is it for you to visualize a mental picture of your future self?<br>"
+/ options = ("1<br><font color='white'>11</font>Very<font color='white'>11</font><br><font color='white'>11</font>difficult<font color='white'>11</font>",
+"2", "3", "4", "5", "6",
+"7<br><font color='white'>111</font>Very<font color='white'>111</font><br>
+<font color='white'>1111</font>easy<font color='white'>1111</font>") //code 'gymnastics' to make scale appear the same size as q3
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5Liking>
+/caption = "5. How much do you like your future self?<br>"
+/ options = ("1<br>don't like<br>at all", 
+"2", "3", "4", "5", "6",
+"7<br>like as<br>much as<br><font color='white'>11</font>possible<font color='white'>1</font>")//code 'gymnastics' to make scale appear a similar size to q3
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6Valence>
+/caption = "6. Please characterize your future:<br>"
+/ options = ("1<br>very<br><font color='white'>1</font>negative<font color='white'>1</font>", 
+"2", "3", "4", "5", "6",
+"7<br>very<br><font color='white'>1</font>positive<font color='white'>11</font>")//code 'gymnastics' to make scale appear a similar size to q5
+/ optionvalues = ("1", "2", "3", "4", "5", "6", "7")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage FSIS_1>
+/ caption = "Below are questions about your relationship between you and your future self. Please answer the questions as best as you can.<br>"
+/ subcaption = ""
+/questions = [1 = q1Similarity, q2Connectedness]
+</surveypage>
+
+<surveypage FSIS_2>
+/ caption = ""
+/ subcaption = ""
+/questions = [1 = q3Clarity, q4Visualization]
+</surveypage>
+
+<surveypage FSIS_3>
+/ caption = ""
+/ subcaption = ""
+/questions = [1 = q5Liking, q6Valence]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+
+<survey FSIS>
+/pages = [
+	1 = FSIS_1;
+	2 = FSIS_2;
+	3 = FSIS_3;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Courier New", 2%, false, false, false, false, 5, 1)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

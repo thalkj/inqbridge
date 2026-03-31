@@ -1,0 +1,569 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+						Short Form of the Metacognitions Questionnaire (MCQ-30)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-20-2018
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a computerized version of the Short Form of the Metacognitions Questionnaire (MCQ-30) 
+as described in:
+
+Wells, A., & Cartwright-Hatton, S. (2004). A short form of the metacognitions questionnaire:
+Properties of the MCQ-30. Behaviour Research and Therapy, 42(4), 385-396. doi:10.1016/S0005-7967(03)00147-5
+
+Long Form of the Metacognitions Questionnaire (MCQ):
+
+Cartwright-Hatton, S., & Wells, A. (1997). Beliefs about worry and intrusions: the metacognitions 
+questionnaire and its correlates. Journal of Anxiety Disorders, 11, 279–296.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+30 4-point likert scale, self-report
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'mcq_30_survey.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (do not agree) - 4 (agree very much)
+								no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+								
+
+(2) Summary data file: 'mcq_30_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+Score Interpretation: higher scores => higher levels of unhelpful metacognition
+
+Total:	sum of all responses (score range: 30-120)
+zTotal: z-score of Total Score with Mean = 48.41, SD = 13.31 (see Wells & Cartwright-Hatton, 2004, Table 1, p.389)
+pTotal: percentile rank of z-score
+
+Subscales are calculated by summing the following items (score range: 6-24): 
+
+cognitiveConfidence (lack of)= sum of (q8,q14,q17,q24,q26,q29)
+zCognitiveConfidence: z-score with Mean = 9.51, SD = 4.06 (see Wells & Cartwright-Hatton, 2004, Table 1, p.389)
+pCognitiveConfidence: percentile rank of z-score
+
+positiveBeliefs (about worry)=sum of (q1,q7,q10,q19,q23,q28)
+zPositiveBeliefs: z-score with Mean = 9.60, SD = 3.46 (see Wells & Cartwright-Hatton, 2004, Table 1, p.389)
+pPositiveBeliefs: percentile rank of z-score
+
+cognitiveSelfConsciousness = sum of (q3,q5,q12,q16,q18,q30)
+zCognitiveSelfConsciousness: z-score with Mean 11.65, SD = 4.68 (see Wells & Cartwright-Hatton, 2004, Table 1, p.389)
+pCognitiveSelfConsciousness: percentile rank of z-score
+
+uncontrollabilityDanger (negative beliefs about) = sum of (q2,q4,q9,q11,q15,q21)
+zUncontrollabilityDanger: z-score with Mean = 9.30, SD = 4.00 (see Wells & Cartwright-Hatton, 2004, Table 1, p.389)
+pUncontrollabilityDanger: percentile rank of z-score
+
+needControlThoughts = sum of (q6,q13,q20,q22,q25,q27)
+zNeedControlThoughts: z-score with Mean = 8.34, SD = 2.62 (see Wells & Cartwright-Hatton, 2004, Table 1, p.389)
+pNeedControlThoughts: percentile rank of z-score
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+slightly adapted from Cartwright-Hatton & Wells, A. (1997), see section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "This questionnaire is concerned with beliefs people have about their thinking. Listed below are a number of beliefs that people have expressed. Please read each item and indicate how much you generally agree with it.
+
+Please respond to all the items, there are no right or wrong answers.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.Total, expressions.zTotal, expressions.pTotal,
+expressions.cognitiveConfidence, expressions.zCognitiveConfidence, expressions.pCognitiveConfidence,
+expressions.positiveBeliefs, expressions.zPositiveBeliefs, expressions.pPositiveBeliefs,
+expressions.cognitiveSelfConsciousness, expressions.zCognitiveSelfConsciousness, expressions.pCognitiveSelfConsciousness,
+expressions.uncontrollabilityDanger, expressions.zUncontrollabilityDanger, expressions.pUncontrollabilityDanger,
+expressions.needControlThoughts, expressions.zNeedControlThoughts, expressions.pNeedControlThoughts)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/cognitiveConfidence = radiobuttons.q8_cc.response + radiobuttons.q14_cc.response + radiobuttons.q17_cc.response +
+radiobuttons.q24_cc.response + radiobuttons.q26_cc.response + radiobuttons.q29_cc.response
+/positiveBeliefs=radiobuttons.q1_pb.response + radiobuttons.q7_pb.response + radiobuttons.q10_pb.response +
+radiobuttons.q19_pb.response + radiobuttons.q23_pb.response + radiobuttons.q28_pb.response
+/cognitiveSelfConsciousness = radiobuttons.q3_cs.response + radiobuttons.q5_cs.response + radiobuttons.q12_cs.response +
+radiobuttons.q16_cs.response + radiobuttons.q18_cs.response + radiobuttons.q30_cs.response
+/uncontrollabilityDanger = radiobuttons.q2_ud.response + radiobuttons.q4_ud.response + radiobuttons.q9_ud.response +
+radiobuttons.q11_ud.response + radiobuttons.q15_ud.response + radiobuttons.q21_ud.response
+/needControlThoughts = radiobuttons.q6_ct.response + radiobuttons.q13_ct.response + radiobuttons.q20_ct.response +
+radiobuttons.q22_ct.response + radiobuttons.q25_ct.response + radiobuttons.q27_ct.response
+
+/Total = expressions.cognitiveConfidence + expressions.positiveBeliefs + expressions.cognitiveSelfConsciousness +
+expressions.uncontrollabilityDanger + expressions.needControlThoughts
+
+
+/zCognitiveConfidence = (expressions.cognitiveConfidence - 9.51)/4.06
+/zPositiveBeliefs = (expressions.positiveBeliefs - 9.60)/3.46
+/zCognitiveSelfConsciousness = (expressions.cognitiveSelfConsciousness - 11.65)/4.68
+/zUncontrollabilityDanger = (expressions.uncontrollabilityDanger - 9.30)/4.00
+/zNeedControlThoughts = (expressions.needControlThoughts - 8.34)/2.62
+
+/zTotal = (expressions.Total - 48.41)/13.31
+
+/pCognitiveConfidence = pofz(expressions.zCognitiveConfidence)
+/pPositiveBeliefs = pofz(expressions.zPositiveBeliefs)
+/pCognitiveSelfConsciousness = pofz(expressions.zCognitiveSelfConsciousness)
+/pUncontrollabilityDanger = pofz(expressions.zUncontrollabilityDanger)
+/pNeedControlThoughts = pofz(expressions.zNeedControlThoughts)
+/pTotal = pofz(expressions.zTotal)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_pb>
+/caption = "1. Worrying helps me to avoid future problems."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_ud>
+/caption = "2. My worrying is dangerous for me."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_cs>
+/caption = "3. I think a lot about my thoughts."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_ud>
+/caption = "4. I could make myself sick with worrying."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*
+<radiobuttons q5_cs>
+/caption = "5. I am aware of the way my mind works when I am thinking through a problem."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_ct>
+/caption = "6. If I did not control a worrying thought and then it happened, it would be my fault."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_pb>
+/caption = "7. I need to worry in order to remain organized."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_cc>
+/caption = "8. I have little confidence in memory for words."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_ud>
+/caption = "9. My worrying thoughts persist, no matter how I try to stop them."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10_pb>
+/caption = "10. Worrying helps me get things sorted out in my mind."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11_ud>
+/caption = "11. I cannot ignore my worrying thoughts."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12_cs>
+/caption = "12. I monitor my thoughts."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13_ct>
+/caption = "13. I should be in control of my thoughts all of the time."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14_cc>
+/caption = "14. My memory can mislead me at times."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15_ud>
+/caption = "15. My worrying could make me go mad."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16_cs>
+/caption = "16. I am constantly aware of my thinking."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17_cc>
+/caption = "17. I have a poor memory."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18_cs>
+/caption = "18. I pay close attention to how my mind works."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19_pb>
+/caption = "19. Worrying helps me cope."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20_ct>
+/caption = "20. Not being able to control my thoughts is a sign of weakness."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21_ud>
+/caption = "21. When I start worrying I cannot stop."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22_ct>
+/caption = "22. I will be punished for not controlling certain thoughts."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23_pb>
+/caption = "23. Worrying helps me to solve problems."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q24_cc>
+/caption = "24. I have little confidence in my memory for places."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q25_ct>
+/caption = "25. It is bad to think certain thoughts."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q26_cc>
+/caption = "26. I do not trust my memory."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q27_ct>
+/caption = "27. If I could not control my thoughts, I would not be able to function."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q28_pb>
+/caption = "28. I need to worry in order to work well."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q29_cc>
+/caption = "29. I have little confidence in memory for actions."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q30_cs>
+/caption = "30. I constantly examine my thoughts."
+/ options = ("Do not agree", "Agree slightly", "Agree moderately   ", "Agree very much")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage MCQ_30_1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1_pb, q2_ud, q3_cs]
+</surveypage>
+
+<surveypage MCQ_30_2>
+/caption ="Please respond to all the items, there are no right or wrong answers.
+"
+/questions = [1 = q4_ud, q5_cs, q6_ct]
+</surveypage>
+
+<surveypage MCQ_30_3>
+/caption ="Please respond to all the items, there are no right or wrong answers.
+"
+/questions = [1 = q7_pb, q8_cc, q9_ud]
+</surveypage>
+
+<surveypage MCQ_30_4>
+/caption ="Please respond to all the items, there are no right or wrong answers.
+"
+/questions = [1 = q10_pb, q11_ud, q12_cs]
+</surveypage>
+
+<surveypage MCQ_30_5>
+/caption ="Please respond to all the items, there are no right or wrong answers.
+"
+/questions = [1 = q13_ct, q14_cc, q15_ud]
+</surveypage>
+
+<surveypage MCQ_30_6>
+/caption ="Please respond to all the items, there are no right or wrong answers.
+"
+/questions = [1 = q16_cs, q17_cc, q18_cs]
+</surveypage>
+
+<surveypage MCQ_30_7>
+/caption ="Please respond to all the items, there are no right or wrong answers.
+"
+/questions = [1 = q19_pb, q20_ct, q21_ud]
+</surveypage>
+
+<surveypage MCQ_30_8>
+/caption ="Please respond to all the items, there are no right or wrong answers.
+"
+/questions = [1 = q22_ct, q23_pb, q24_cc]
+</surveypage>
+
+<surveypage MCQ_30_9>
+/caption ="Please respond to all the items, there are no right or wrong answers.
+"
+/questions = [1 = q25_ct, q26_cc, q27_ct]
+</surveypage>
+
+<surveypage MCQ_30_10>
+/caption ="Please respond to all the items, there are no right or wrong answers.
+"
+/questions = [1 = q28_pb, q29_cc, q30_cs]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey MCQ_30>
+/pages = [
+	1 = MCQ_30_1;
+	2 = MCQ_30_2;
+	3 = MCQ_30_3;
+	4 = MCQ_30_4;
+	5 = MCQ_30_5;
+	6 = MCQ_30_6;
+	7 = MCQ_30_7;
+	8 = MCQ_30_8;
+	9 = MCQ_30_9;
+	10 = MCQ_30_10;	
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

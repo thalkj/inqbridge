@@ -1,0 +1,502 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									  SUPPS-P IMPULSE BEHAVIOR SCALE (short UPPS-P)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-28-2013
+last updated:  10-27-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-27-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the SUPPS-P impulsive behavior scale as discussed in:
+
+Cyders, MA, Littlefield, AK, Coffey, S, Karyadi, KA (2014).
+Examination of a short English version of the UPPS-P Impulsive
+Behavior Scale. Addictive Behaviors 39 (2014) 1372–1376.
+
+The original UPPS/UPPS-P scale was published by:
+
+Whiteside, S. P., & Lynam, D. R. (2001). The Five Factor Model and impulsivity: using a structural 
+model of personality to understand impulsivity. Personality and Individual Differences, 30(4), 669-689
+
+and made availabe at: http://www1.psych.purdue.edu/~dlynam/uppspage.htm
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+20 4-point Likert Questions regarding impulsive behavior
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1.5 minutes to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'supps.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	    with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values; responses DO reflect reversed scoring)
+								Items are scored on a scale from 1 to 4; 
+								higher scores reflect more impulsive behavior
+								(where appropriate, responses are reversed (R) scored)
+								
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'supps_p_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+
+Summarydata for each participant: 
+file saves the scores for the subscales and totalscore (responses are reversed scored if appropriate)
+Min (4) - Max (16) for each Subscale
+Min (20) - Max (80) for totalscore => higher values indicate more impulsive behavior
+
+//TotalScore
+totalscore: sum of all subscale scores
+
+//Subscales:
+NURG: Negative Urgency (NURG): 6(R), 8(R), 13(R), 15(R), 
+"measures an individual’s tendency to act “impulsively” under conditions of negative affect" *
+
+PREM: (lack of) Premeditation (PREM): 2, 5, 12, 19
+"assesses an individual’s tendency to act without consideration of the potential consequences of the behavior" *
+
+PERS: (lack of) Perseverance (PERS): 1, 4, 7, 11
+"assesses an individual’s tendency to give up in the face of boredom, fatigue, or frustration." *
+
+SS: Sensation Seeking (SS): 9(R), 14(R), 16(R), 18(R)
+"refers to an individual’s interest in and tendency to pursue activities that are exciting and novel" *
+
+PURG: Positive Urgency (PURG): 3(R), 10(R), 17(R), 20(R)
+"Positive Urgency, assesses an individual’s tendency to give in to impulses under conditions of high positive affect." 
+
+(R) = reversed scoring
+
++ individual responses
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________
+
+5 facets:
+
+1) Negative Urgency (NURG): 6(R), 8(R), 13(R), 15(R)
+"measures an individual’s tendency to act “impulsively” under conditions of negative affect" *
+
+2) (lack of) Premeditation (PREM): 2, 5, 12, 19
+"assesses an individual’s tendency to act without consideration of the potential consequences of the behavior" *
+
+3) (lack of) Perseverance (PERS): 1, 4, 7, 11
+"assesses an individual’s tendency to give up in the face of boredom, fatigue, or frustration." *
+
+4) Sensation Seeking (SS): 9(R), 14(R), 16(R), 18(R)
+"refers to an individual’s interest in and tendency to pursue activities that are exciting and novel" *
+
+5) Positive Urgency (PURG): 3(R), 10(R), 17(R), 20(R)
+"Positive Urgency, assesses an individual’s tendency to give in to impulses under conditions of high positive affect." *
+
+(R) = reversed scoring
+
+Items are initially scored on a scale from 1 (strongly agree) to 4 (strongly disagree)
+Items are then automatically reversed-scored where appropriate to reflect that higher values 
+indicate more impulsive behavior
+
+
+Note: Cyders et al (2014, table1) report to reverse score items that would actually result in lower 
+scores for more impulsive behavior, despite the fact they also write that "Items with an (R) are reverse coded, 
+so that higher values indicate more impulsive behavior".
+
+Example q1: "I generally like to see things through to the end.* (R)"
+"On a four point scale from 1 (strongly agree) to 4 (strongly disagree)", if one strongly agrees with this statement, 
+the initial score of '1' would end up being coded as '4' as it's a R item; 
+yet we think that agreeing to this statement is the opposite of impulsive behavior and should result in a 
+low score not a high one.
+
+In this script, we have thus coded all items in such a way that high scores on each question reflect a higher
+degree of impulsivity. You can check the coding of each question under section QUESTIONS.
+The final scores for each question can be referred from "/optionvalues"
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+</usermanual>
+
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = black
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.totalscore, 
+expressions.NURG, expressions.PREM, expressions.PERS, expressions.SS, expressions.PURG,
+
+//individual responses
+radiobuttons.q1_PERS.response,
+radiobuttons.q2_PREM.response,
+radiobuttons.q3R_PURG.response,
+radiobuttons.q4_PERS.response,
+radiobuttons.q5_PREM.response,
+radiobuttons.q6R_NURG.response,
+radiobuttons.q7_PERS.response,
+radiobuttons.q8R_NURG.response,
+radiobuttons.q9R_SS.response,
+radiobuttons.q10R_PURG.response,
+radiobuttons.q11_PERS.response,
+radiobuttons.q12_PREM.response,
+radiobuttons.q13R_NURG.response,
+radiobuttons.q14R_SS.response,
+radiobuttons.q15R_NURG.response,
+radiobuttons.q16R_SS.response,
+radiobuttons.q17R_PURG.response,
+radiobuttons.q18R_SS.response,
+radiobuttons.q19_PREM.response,
+radiobuttons.q20R_PURG.response
+)
+</summarydata>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+automatically updated
+********************
+
+
+<values>
+/scale = "1=Strongly Agree, 2=Agree Some, 3=Disagree Some, 4=  Disagree Strongly"
+</values>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+NURG/PREM/PERS/SS/PURG:					SUPPS-P subscale scores
+(reversed scores are already reversed)
+totalscore:								calculates the total score
+
+<expressions>
+
+/NURG = 
+radiobuttons.q6R_NURG.response + radiobuttons.q8R_NURG.response + radiobuttons.q13R_NURG.response + radiobuttons.q15R_NURG.response
+
+/PREM =  radiobuttons.q2_PREM.response + radiobuttons.q5_PREM.response + radiobuttons.q12_PREM.response + radiobuttons.q19_PREM.response
+
+/PERS =  radiobuttons.q1_PERS.response + radiobuttons.q4_PERS.response + radiobuttons.q7_PERS.response + radiobuttons.q11_PERS.response
+
+/SS = radiobuttons.q9R_SS.response + radiobuttons.q14R_SS.response + radiobuttons.q16R_SS.response + radiobuttons.q18R_SS.response
+
+/PURG = radiobuttons.q3R_PURG.response + radiobuttons.q10R_PURG.response + radiobuttons.q17R_PURG.response + radiobuttons.q20R_PURG.response
+
+/totalscore =  expressions.NURG + expressions.PREM + expressions.PERS + expressions.SS + expressions.PURG
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	STIMULI
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<radiobuttons q1_PERS>
+/caption = "1. I generally like to see things through to the end."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("1", "2", "3", "4")
+</radiobuttons>
+
+<radiobuttons q2_PREM>
+/caption = "2. My thinking is usually careful and purposeful."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("1", "2", "3", "4")
+</radiobuttons>
+
+<radiobuttons q3R_PURG>
+/caption = "3. When I am in a great mood, I tend to get into situations that could cause me problems."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q4_PERS>
+/caption = "4. Unfinished tasks really bother me."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("1", "2", "3", "4")
+</radiobuttons>
+
+<radiobuttons q5_PREM>
+/caption = "5. I like to stop and think things over before I do them."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("1", "2", "3", "4")
+</radiobuttons>
+
+<radiobuttons q6R_NURG>
+/caption = "6. When I feel bad, I will often do things I later regret in order to make myself feel better now."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q7_PERS>
+/caption = "7. Once I get going on something I hate to stop."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("1", "2", "3", "4")
+</radiobuttons>
+
+<radiobuttons q8R_NURG>
+/caption = "8. Sometimes when I feel bad, I can’t seem to stop what I am doing even though it is making me feel worse."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q9R_SS>
+/caption = "9. I quite enjoy taking risks."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q10R_PURG>
+/caption = "10. I tend to lose control when I am in a great mood."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q11_PERS>
+/caption = "11. I finish what I start."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("1", "2", "3", "4")
+</radiobuttons>
+
+<radiobuttons q12_PREM>
+/caption = "12. I tend to value and follow a rational, 'sensible' approach to things."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("1", "2", "3", "4")
+</radiobuttons>
+
+<radiobuttons q13R_NURG>
+/caption = "13. When I am upset I often act without thinking."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q14R_SS>
+/caption = "14. I welcome new and exciting experiences and sensations, even if they are a little frightening and unconventional."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q15R_NURG>
+/caption = "15. When I feel rejected, I will often say things that I later regret."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q16R_SS>
+/caption = "16. I would like to learn to fly an airplane."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q17R_PURG>
+/caption = "17. Others are shocked or worried about the things I do when I am feeling very excited."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q18R_SS>
+/caption = "18. I would enjoy the sensation of skiing very fast down a high mountain slope."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("4", "3", "2", "1")
+</radiobuttons>
+
+<radiobuttons q19_PREM>
+/caption = "19. I usually think carefully before doing anything."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("1", "2", "3", "4")
+</radiobuttons>
+
+<radiobuttons q20R_PURG>
+/caption = "20. I tend to act without thinking when I am really excited."
+/ options = ("Strongly Agree", "Agree Some", "Disagree Some", "  Disagree Strongly")
+/orientation = horizontalequal
+/required = true
+/optionvalues = ("4", "3", "2", "1")
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage SUPPS_P1>
+/ caption = "Below are a number of statements that describe ways in which people act and think. For each statement, please indicate how much you agree or disagree with the statement.  
+"
+/ questions = [1 = q1_PERS, q2_PREM, q3R_PURG]
+</surveypage>
+
+<surveypage SUPPS_P2>
+/ caption = "Below are a number of statements that describe ways in which people act and think. For each statement, please indicate how much you agree or disagree with the statement.  
+"
+/ questions = [1 = q4_PERS, q5_PREM, q6R_NURG]
+</surveypage>
+
+<surveypage SUPPS_P3>
+/ caption = "Below are a number of statements that describe ways in which people act and think. For each statement, please indicate how much you agree or disagree with the statement.  
+"
+/ questions = [1 = q7_PERS, q8R_NURG, q9R_SS]
+</surveypage>
+
+<surveypage SUPPS_P4>
+/ caption = "Below are a number of statements that describe ways in which people act and think. For each statement, please indicate how much you agree or disagree with the statement.  
+"
+/ questions = [1 = q10R_PURG, q11_PERS, q12_PREM]
+</surveypage>
+
+<surveypage SUPPS_P5>
+/ caption = "Below are a number of statements that describe ways in which people act and think. For each statement, please indicate how much you agree or disagree with the statement.  
+"
+/ questions = [1 = q13R_NURG, q14R_SS, q15R_NURG]
+</surveypage>
+
+<surveypage SUPPS_P6>
+/ caption = "Below are a number of statements that describe ways in which people act and think. For each statement, please indicate how much you agree or disagree with the statement.  
+"
+/ questions = [1 =q16R_SS, q17R_PURG, q18R_SS]
+</surveypage>
+
+<surveypage SUPPS_P7>
+/ caption = "Below are a number of statements that describe ways in which people act and think. For each statement, please indicate how much you agree or disagree with the statement.  
+"
+/ questions = [1 = q19_PREM, q20R_PURG]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<survey SUPPS_P>
+/ pages = [
+	1 = SUPPS_P1; 
+	2 = SUPPS_P2; 
+	3 = SUPPS_P3; 
+	4 = SUPPS_P4;
+	5 = SUPPS_P5;
+	6 = SUPPS_P6;
+	7 = SUPPS_P7;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

@@ -1,0 +1,463 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+						Levenson's Self-Report Psychopathy Scale (LSRP)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 03-12-2018
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of the Levenson's Self-Report Psychopathy Scale (LSRP) as described in:
+
+Levenson, M. R., Kiehl, K. A., & Fitzpatrick, C. M. (1995). Assessing psychopathic attributes in a noninstitutionalised
+population. Journal of Personality and Social Psychology, 68, 151–158.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+26 4-point Likert questions, self-report
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'lsrp.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (disagree strongly) - 4 (agree strongly)
+								R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+								
+								
+(2) Summary data file: 'lsrp_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+							
+total:							sum of all scores (Range: 26-104), the higher the score the higher the self-resported level of psychopathy 
+
+PP:								Primary Psychopathy (measures callous, selfish and manipulative interpersonal attitudes) (Range: 16-64)
+								sum of (q1, q2, q3, q4, q5, q6, q7, q8, q9, q10R, q11, q12R, q13, q14R, q15R, q16R)
+								
+SP:								Secondary Psychopathy (measures impulsivity and a self-defeating lifestyle) (Range: 10 - 40)
+								sum of (q17, q18, q19R, q20, q21, q22, q23R, q24, q25, q26)
+								R= reversed scored
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+see section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Please indicate how much you agree or disagree with the following statements.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.total, expressions.PP, expressions.SP )
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/PP = radiobuttons.q1_PP.response + radiobuttons.q2_PP.response + radiobuttons.q3_PP.response + radiobuttons.q4_PP.response +
+radiobuttons.q5_PP.response + radiobuttons.q6_PP.response + radiobuttons.q7_PP.response + radiobuttons.q8_PP.response +
+radiobuttons.q9_PP.response + radiobuttons.q10R_PP.response + radiobuttons.q11_PP.response + radiobuttons.q12R_PP.response + 
+radiobuttons.q13_PP.response + radiobuttons.q14R_PP.response + radiobuttons.q15R_PP.response + radiobuttons.q16R_PP.response
+
+/SP = radiobuttons.q17_SP.response + radiobuttons.q18_SP.response + radiobuttons.q19R_SP.response + radiobuttons.q20_SP.response +
+radiobuttons.q21_SP.response + radiobuttons.q22_SP.response + radiobuttons.q23R_SP.response + radiobuttons.q24_SP.response +
+radiobuttons.q25_SP.response + radiobuttons.q26_SP.response
+
+/total = expressions.PP + expressions.SP
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_PP>
+/caption = "1. Success is based on survival of the fittest; I am not concerned about the losers."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_PP>
+/caption = "2. For me, what's right is whatever I can get away with."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_PP>
+/caption = "3. In today's world, I feel justified in doing anything I can get away with to succeed."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_PP>
+/caption = "4. My main purpose in life is getting as many goodies as I can."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5_PP>
+/caption = "5. Making a lot of money is my most important goal."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_PP>
+/caption = "6. I let others worry about higher values; my main concern is with the bottom line."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7_PP>
+/caption = "7. People who are stupid enough to get ripped off usually deserve it."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_PP>
+/caption = "8. Looking out for myself is my top priority."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9_PP>
+/caption = "9. I tell other people what they want to hear so that they will do what I want them to do."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10R_PP>
+/caption = "10. I would be upset if my success came at someone else's expense."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11_PP>
+/caption = "11. I often admire a really clever scam."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12R_PP>
+/caption = "12. I make a point of trying not to hurt others in pursuit of my goals."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13_PP>
+/caption = "13. I enjoy manipulating other people's feelings."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14R_PP>
+/caption = "14. I feel bad if my words or actions cause someone else to feel emotional pain."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15R_PP>
+/caption = "15. Even if I were trying very hard to sell something, I wouldn't lie about it."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16R_PP>
+/caption = "16. Cheating is not justified because it is unfair to others."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q17_SP>
+/caption = "17. I find myself in the same kinds of trouble, time after time."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18_SP>
+/caption = "18. I am often bored."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19R_SP>
+/caption = "19. I find that I am able to pursue one goal for a long time."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20_SP>
+/caption = "20. I don't plan anything very far in advance."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21_SP>
+/caption = "21. I quickly lose interest in tasks I start."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22_SP>
+/caption = "22. Most of my problems are due to the fact that other people just don't understand me."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23R_SP>
+/caption = "23. Before I do anything, I carefully consider the possible consequences."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+ 
+<radiobuttons q24_SP>
+/caption = "24. I have been in a lot of shouting matches with other people."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q25_SP>
+/caption = "25. When I get frustrated, I often 'let off steam' by blowing my top."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+ 
+<radiobuttons q26_SP>
+/caption = "26. Love is overrated."
+/ options = ("Disagree strongly", "Disagree somewhat", "Agree somewhat", "Agree strongly")
+/ optionvalues = ("1", "2", "3", "4")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage LSRP1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1_PP, q2_PP, q3_PP]
+</surveypage>
+
+<surveypage LSRP2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4_PP, q5_PP, q6_PP]
+</surveypage>
+
+<surveypage LSRP3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7_PP, q8_PP, q9_PP]
+</surveypage>
+
+<surveypage LSRP4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10R_PP, q11_PP, q12R_PP]
+</surveypage>
+
+<surveypage LSRP5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13_PP, q14R_PP, q15R_PP]
+</surveypage>
+
+<surveypage LSRP6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q16R_PP, q17_SP, q18_SP]
+</surveypage>
+
+<surveypage LSRP7>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q19R_SP, q20_SP, q21_SP]
+</surveypage>
+
+<surveypage LSRP8>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q22_SP, q23R_SP, q24_SP]
+</surveypage>
+
+<surveypage LSRP9>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q25_SP, q26_SP]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey LSRP>
+/pages = [
+	1 = LSRP1;
+	2 = LSRP2;
+	3 = LSRP3;
+	4 = LSRP4;
+	5 = LSRP5;
+	6 = LSRP6;
+	7 = LSRP7;
+	8 = LSRP8;
+	9 = LSRP9;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

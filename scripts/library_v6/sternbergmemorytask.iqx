@@ -1,0 +1,703 @@
+<usermanual>															
+___________________________________________________________________________________________________________________	
+
+									*STERNBERG MEMORY TASK*
+___________________________________________________________________________________________________________________	
+
+last updated:  10-16-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 10-16-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the classic Sternberg Memory Task paradigm to test working memory with strings of digits.
+
+Reference:
+Sternberg, S. (1966). High speed scanning in human memory. Science, 153, 652-654.
+
+Note: script tests set sizes of 2-7 (see list.setsize)
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+
+Participants are given a series of digits (2-7 digits long) before being prompted with a digit
+that was either part of the series (IN) or not (OUT). Participants have to decide
+whether the probe was IN or OUT by pressing 2 different keys on the keyboard.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'sternbergmemorytask_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.
+
+response:						the participant's response (scancode of response button)
+								33 = f
+								36 = j
+										
+responseCategory:				the interpreted key response: "in" vs. "out"
+										
+correct:						the correctness of the response (1 = correct; 0 = incorrect)
+latency: 						the response latency (in ms); measured from onset of target digit
+
+setsize:						the currently tested set size
+
+first-
+seventh:						contain digit1 to digit7 (depends on current set size)
+
+target:							stores the currently presented target
+
+stimulusitem:					the currently presented trial stimulus
+
+individual counts per set sizes:
+count2/countcorrect2,
+count3/countcorrect3,
+count4/countcorrect4,
+count5/countcorrect5,
+count6/countcorrect6,
+count7/countcorrect7
+
+(2) Summary data file: 'sternbergmemorytask_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+									
+propcorrect2-
+propcorrect7:					proportion correct responses by setsize
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+1 Testblock with 18 trials: 3 repetitions of setsizes 2, 3, 4, 5, 6, 7
+* set sizes randomly selected
+* 9 trials are randomly selected to be in-trials (the probe digit was part of the list) and 
+9 trials are selected to be out trials (the probe digit was not part of the list)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+see section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+learninginterval:			interstimulusinterval (in ms), how fast a new letter is presented					
+probepause:					pause (in ms) before probe is presented
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ learninginterval = 1500
+/ probepause = 1000
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item digits>
+/ 1 = "1"
+/ 2 = "2"
+/ 3 = "3"
+/ 4 = "4"
+/ 5 = "5"
+/ 6 = "6"
+/ 7 = "7"
+/ 8 = "8"
+/ 9 = "9"
+/ 10 = "0"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<text instructions>
+/ items = ("<h1>Sternberg Memory Task</h1><hr><br>
+<br>On the following trials, you will see a sequence of digits presented one at a time printed in white. 
+Immediately following each sequence, you will see a final digit printed in <span style='color:yellow'>yellow</span>. 
+Your task is to decide whether or not the <span style='color:yellow'>yellow</span> digit appeared in the preceding sequence.<br><br>
+If the <span style='color:yellow'>yellow digit</span> appeared in the sequence, press the left [F] <%expressions.buttoninstruct1%>.<br>
+If the <span style='color:yellow'>yellow digit</span> was <u>NOT</u> in the sequence, press the right [J] <%expressions.buttoninstruct1%>.<br><br>
+If you are correct, a green <span style='color:green'>O</span> will appear. 
+If you are incorrect, a red <span style='color:red'>X</span> will appear.<br>
+<br><br>Press the space bar to begin.<br>")
+/ hjustify = left
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/ buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {return "response button";} else {return "key";}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: list randomly samples for 18 trials with noreplacement from the given list of setsizes
+<list setsize>
+/ items = (2, 3, 4, 5, 6, 7, 2, 3, 4, 5, 6, 7, 2, 3, 4, 5, 6, 7)
+/ replace = false
+</list>
+
+Note: contains the itemnumbers of the to be sampled digits
+<list digits>
+/ items = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+/ replace = false 
+</list>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ minimumversion = "6.5.2.0"
+/ canvasaspectratio = (4,3)
+/ screencolor = black
+/ txcolor = white
+/ txbgcolor = black
+/ fontstyle = ("Arial", 3%)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session,
+blockcode, blocknum, trialcode, trialnum,   
+response values.responseCategory, correct, latency,
+values.setsize values.first values.second values.third values.fourth values.fifth values.sixth values.seventh 
+values.target, stimulusitem,
+
+values.count2, values.countcorrect2,
+values.count3, values.countcorrect3,
+values.count4, values.countcorrect4,
+values.count5, values.countcorrect5,
+values.count6, values.countcorrect6,
+values.count7, values.countcorrect7)
+
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.propcorrect2, expressions.propcorrect3, expressions.propcorrect4, 
+expressions.propcorrect5, expressions.propcorrect6, expressions.propcorrect7)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+/ setsize:					the currently tested set size
+/ first-
+/ seventh:					contain digit1 to digit7
+/ target:					stores the target
+/ trialduration:			the current trialduration
+
+
+<values>
+/ setsize = ""
+/ first = ""
+/ second = ""
+/ third = ""
+/ fourth = ""
+/ fifth = ""
+/ sixth = ""
+/ seventh = ""
+/ target = ""
+/ trialduration = 0
+/ responseCategory = ""
+</values>
+
+**************************************************************************************************************
+	SUMMARY STATISTICS
+**************************************************************************************************************
+/count2-
+/count7:					counts how many trials of setsize 2-7 were run
+/countcorrect2-
+/countcorrect7:				counts how many correct responses were given for setsizes 2-7
+
+<values>
+/ count2 = 0
+/ count3 = 0
+/ count4 = 0
+/ count5 = 0
+/ count6 = 0
+/ count7 = 0
+/ countcorrect2 = 0
+/ countcorrect3 = 0
+/ countcorrect4 = 0
+/ countcorrect5 = 0
+/ countcorrect6 = 0
+/ countcorrect7 = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+NOTE: default number of trials per setsize = 3
+
+/propcorrect2-
+/propcorrect7:			proportion correct responses by setsize
+
+<expressions>
+/ propcorrect2 = return (values.countcorrect2/values.count2)
+/ propcorrect3 = return (values.countcorrect3/values.count3)
+/ propcorrect4 = return (values.countcorrect4/values.count4)
+/ propcorrect5 = return (values.countcorrect5/values.count5)
+/ propcorrect6 = return (values.countcorrect6/values.count6)
+/ propcorrect7 = return (values.countcorrect7/values.count7)
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+<trial instruction>
+/ stimulusframes = [1=instructions]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<block instruction>
+/ trials = [1 =instruction]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: 
+this item list is dynamtically created for each digit sequence and resets for each new sequence
+<item in>
+</item>
+
+<list in>
+</list>
+
+<text digit1>
+/ items = digits
+/ txcolor = white
+/ fontstyle = ("Arial", 10%)
+/ select = digits
+/ selectionrate = always
+</text>
+
+<text digit2>
+/ items = digits
+/ txcolor = white
+/ fontstyle = ("Arial", 10%)
+/ select = digits
+/ selectionrate = always
+</text>
+
+<text digit3>
+/ items = digits
+/ txcolor = white
+/ fontstyle = ("Arial", 10%)
+/ select = digits
+/ selectionrate = always
+</text>
+
+<text digit4>
+/ items = digits
+/ txcolor = white
+/ fontstyle = ("Arial", 10%)
+/ select = digits
+/ selectionrate = always
+</text>
+
+<text digit5>
+/ items = digits
+/ txcolor = white
+/ fontstyle = ("Arial", 10%)
+/ select = digits
+/ selectionrate = always
+</text>
+
+<text digit6>
+/ items = digits
+/ txcolor = white
+/ fontstyle = ("Arial", 10%)
+/ select = digits
+/ selectionrate = always
+</text>
+
+<text digit7>
+/ items = digits
+/ txcolor = white
+/ fontstyle = ("Arial", 10%)
+/ select = digits
+/ selectionrate = always
+</text>
+
+<text blank>
+/ items = ("00")
+/ txcolor = black
+/ txbgcolor = black
+/ fontstyle = ("Arial", 10%)
+</text>
+
+<text in>
+/ items = in
+/ txcolor = yellow
+/ fontstyle = ("Arial", 10%)
+/ erase = false
+/ select = noreplace
+</text>
+
+<text out>
+/ items = digits
+/ txcolor = yellow
+/ fontstyle = ("Arial", 10%)
+/ erase = false
+/ select = list.digits.nextValue
+</text>
+
+<text errorsignal>
+/ items = ("X")
+/ fontstyle = ("Arial", 10%)
+/ txcolor = red
+/ position = (50%, 80%)
+</text>
+
+<text correctsignal>
+/ items = ("O")
+/ fontstyle = ("Arial", 10%)
+/ txcolor = green
+/ position = (50%, 80%)
+</text>
+
+<text inreminder>
+/ items = ("F = yes")
+/ fontstyle = ("Arial", 5%)
+/ txcolor = white
+/ position = (10%, 10%)
+</text>
+
+<text outreminder>
+/ items = ("J = no")
+/ fontstyle = ("Arial", 5%)
+/ txcolor = white
+/ position = (90%, 10%)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*****************************************************************
+Trial.digit is the main trial of the experiment. It determines the current setsize and displays the set number of digits for 
+a predetermined time. Because the setsize is variable, digits have to be inserted dynamically into /stimulustime
+(for a different set-up see the Sternberg script written for Inquisit 3) and all stimulusframes have to be reset at the end of the trial.
+All digits get stored into their respective values as well as into the dynamically created item list item.in.
+*****************************************************************
+<trial digits>
+/ ontrialbegin = [
+	values.setsize = list.setsize.nextValue;
+	if (values.setsize == 2){
+		values.count2 += 1;
+	} else if (values.setsize == 3){
+		values.count3 += 1;
+	} else if (values.setsize == 4){
+		values.count4 += 1;
+	} else if (values.setsize == 5){
+		values.count5 += 1;
+	} else if (values.setsize == 6){
+		values.count6 += 1;
+	} else if (values.setsize == 7){
+		values.count7 += 1;
+	}
+		
+	values.trialduration = values.setsize*parameters.learninginterval;
+	if (values.setsize >= 2)
+		trial.digits.insertStimulusTime(text.digit2, parameters.learninginterval);
+	if (values.setsize >= 3)
+		trial.digits.insertStimulusTime(text.digit3, 2*parameters.learninginterval);
+	if (values.setsize >= 4)
+		trial.digits.insertStimulusTime(text.digit4, 3*parameters.learninginterval);
+	if (values.setsize >= 5)
+		trial.digits.insertStimulusTime(text.digit5, 4*parameters.learninginterval);
+	if (values.setsize >= 6)
+		trial.digits.insertStimulusTime(text.digit6, 5*parameters.learninginterval);
+	if (values.setsize >= 7)
+		trial.digits.insertStimulusTime(text.digit7, 6*parameters.learninginterval);
+]
+/ stimulustimes = [0=digit1]
+/ trialduration = values.trialduration
+/ beginResponseTime = 0
+/ validresponse = (noresponse)
+/ ontrialend = [
+	item.in.appendItem(text.digit1.currentItem);		
+	values.first = text.digit1.currentItem;
+	if (values.setsize >= 2) {
+		item.in.appendItem(text.digit2.currentItem);
+		values.second = text.digit2.currentItem;
+	}
+	if (values.setsize >= 3) {
+		item.in.appendItem(text.digit3.currentItem);
+		values.third = text.digit3.currentItem;
+	}
+	if (values.setsize >= 4) {
+		item.in.appendItem(text.digit4.currentItem);
+		values.fourth = text.digit4.currentItem;
+	}
+	if (values.setsize >= 5) {
+		item.in.appendItem(text.digit5.currentItem);
+		values.fifth = text.digit5.currentItem;
+	}
+	if (values.setsize >= 6) {
+		item.in.appendItem(text.digit6.currentItem);
+		values.sixth = text.digit6.currentItem;
+	}
+	if (values.setsize >= 7) {
+		item.in.appendItem(text.digit7.currentItem);
+		values.seventh = text.digit7.currentItem;
+	}
+	trial.digits.resetStimulusFrames();
+]
+/ recorddata = false
+</trial>
+
+*****************************************************************
+trial.in and trial.out are the trials that present the (yellow) probe digit and wait for a response.
+trial.in presents a digit that was part of the presented digit sequence, trial.out presents a digit
+that wasn't. Response and latency are recorded.
+*****************************************************************
+<trial in>
+/ pretrialpause = parameters.probepause
+/ stimulusframes = [1=in]
+/ validresponse = ("f", "j")
+/ correctresponse = ("f")
+/ errormessage = (errorsignal, 0)
+/ correctmessage = (correctsignal, 0)
+/ posttrialpause = 500
+/ ontrialend = [
+	values.target = text.in.currentItem;
+	if (values.setsize == 2 && trial.in.correct) {
+		values.countcorrect2 += 1;
+	} else if (values.setsize == 3 && trial.in.correct) {
+		values.countcorrect3 += 1;
+	} else if (values.setsize == 4 && trial.in.correct) {
+		values.countcorrect4 += 1;
+	} else if (values.setsize == 5 && trial.in.correct) {
+		values.countcorrect5 += 1;
+	} else if (values.setsize == 6 && trial.in.correct) {
+		values.countcorrect6 += 1;
+	} else if (values.setsize == 7 && trial.in.correct) {
+		values.countcorrect7 += 1;
+	}
+	if (trial.in.correct){
+		values.responseCategory = "in";
+	} else {
+		values.responseCategory = "out";
+	}
+]	
+/ branch = [return trial.reset;]
+</trial>
+
+<trial out>
+/ pretrialpause = parameters.probepause
+/ stimulusframes = [1=out]
+/ validresponse = ("f", "j")
+/ correctresponse = ("j")
+/ errormessage = (errorsignal, 0)
+/ correctmessage = (correctsignal, 0)
+/ posttrialpause = 500
+/ ontrialend = [
+	values.target = text.out.currentItem;
+	if (values.setsize == 2 && trial.out.correct) {
+		values.countcorrect2 += 1;
+	} else if (values.setsize == 3 && trial.out.correct) {
+		values.countcorrect3 += 1;
+	} else if (values.setsize == 4 && trial.out.correct) {
+		values.countcorrect4 += 1;
+	} else if (values.setsize == 5 && trial.out.correct) {
+		values.countcorrect5 += 1;
+	} else if (values.setsize == 6 && trial.out.correct) {
+		values.countcorrect6 += 1;
+	} else if (values.setsize == 7 && trial.out.correct) {
+		values.countcorrect7 += 1;
+	}
+	
+	if (trial.out.correct){
+		values.responseCategory = "out";
+	} else {
+		values.responseCategory = "in";
+	}	
+]
+/ branch = [return trial.reset;]
+</trial>
+
+*****************************************************************
+trial.reset clears the dynamically created item list item.in and resets 
+list.digits as well as all digit values for the next sequence. 
+*****************************************************************
+
+<trial reset>
+/ ontrialbegin = [
+	item.in.reset();
+	list.digits.reset();
+]
+/ stimulusframes = [1=blank] 
+/ response = noresponse
+/ recorddata = false
+/ posttrialpause = 500
+/ ontrialend = [
+	values.first = "";
+	values.second = "";
+	values.third = "";
+	values.fourth = "";
+	values.fifth = "";
+	values.sixth = "";
+	values.seventh = "";
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+block.memorytest runs 18 trial (combos): half of which are trial.in and the other half are trial.out
+
+<block memorytest>
+/ bgstim = (inreminder, outreminder)
+/ trials = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35 = digits; 
+			2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36 = noreplace(in, out)]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt sternberg>
+/ blocks = [
+	1=instruction; 
+	2=memorytest;
+	3 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

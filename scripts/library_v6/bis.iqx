@@ -1,0 +1,581 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									 BARRATT IMPULSIVENESS SCALE (BIS-11)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 09-17-2012
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Barratt Impulsiveness Scale (BIS-11) described in:
+
+Patton, J.H., Standford, M.S., & Barratt, E.S. (1995). Factor Structure of the Barratt Impulsiveness Scale.
+Journal of Clinical Psychology, 51, 768-774.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'bis.iqdat' 
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (rarely never) - 4 (almost always)
+								R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'bis_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+								
+//Subscale Scores								
+A_Attention:		Attention-Attention subscale score: questions 5, 9R, 11, 20R, 28, Range: 5-20
+A_CogInstabile:		Attention-Cognitive Instability subscale score: questions 6, 24, 26, Range: 3-12
+
+M_Motor:			Motor-Motor Subscale Score: questions 2, 3, 4, 17, 19, 22, 25, Range: 7-28			
+M_Perserverance:	Motor-Perserverance Subscale Score: questions 16, 21, 23, 30R, Range: 4-16
+
+NP_SelfControl:		Nonplanning-Self Control Subscale Score: questions 1R, 7R, 8R, 12R, 13R, 14, Range: 6-24
+NP_CogComplex:		Nonplanning-Cognitive Complexity Subscale Score: questions 10R, 15R, 18, 27, 29R, Range: 5-20 
+(R = reversed scoring, depends on wording)	
+
+//Total Score:
+totalscore:			the total score (sum of all subscale scores), Range: 30-120
+						
+//Individual Scores on each questions
+radiobuttons.q1_R.response,
+radiobuttons.q2.response,
+radiobuttons.q3.response,
+radiobuttons.q4.response,
+radiobuttons.q5.response,
+radiobuttons.q6.response,
+radiobuttons.q7_R.response,
+radiobuttons.q8_R.response,
+radiobuttons.q9_R.response,
+radiobuttons.q10_R.response,
+radiobuttons.q11.response,
+radiobuttons.q12_R.response,
+radiobuttons.q13_R.response,
+radiobuttons.q14.response,
+radiobuttons.q15_R.response,
+radiobuttons.q16.response,
+radiobuttons.q17.response,
+radiobuttons.q18.response,
+radiobuttons.q19.response,
+radiobuttons.q20_R.response,
+radiobuttons.q21.response,
+radiobuttons.q22.response,
+radiobuttons.q23.response,
+radiobuttons.q24.response,
+radiobuttons.q25.response,
+radiobuttons.q26.response,
+radiobuttons.q27.response,
+radiobuttons.q28.response,
+radiobuttons.q29_R.response,
+radiobuttons.q30_R.response
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________
+The questionnaire contains 30 questions. Each question is presented with 4 answer choices
+(-> "Rarely/Never", "Occasionally", "Often", "Almost Always/Always").
+
+Each of the questions belongs to 6 subscales (derived from 6 first order factors and 3 first order factors)
+
+1. Attention-Attention: 5, 9R, 11, 20R, 28
+2. Attention-Cognitive Instability: 6, 24, 26
+3. Motor-Motor: 2, 3, 4, 17, 19, 22, 25
+4. Motor-Perserverance: 16, 21, 23, 30R
+5. Nonplanning-Self Control: 1R, 7R, 8R, 12R, 13R, 14
+6. Nonplanning-Cognitive Complexity: 10R, 15R, 18, 27, 29R
+(R = reversed scoring, depends on wording)
+
+Scoring: on a 4-point scale
+"1" for least impulsive choice to "4" for most impulsive choice
+=> Minimum Score: 30
+=> Maximum Score: 120
+
+</usermanual>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULT SCREEN SETTING
+**************************************************************************************************************
+**************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/ minimumversion = "6.5.2.0"
+/ canvasaspectratio = (4,3)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+********************
+raw data
+********************
+
+The raw questionnaire data are saved under "BIS.IQDAT"
+
+********************
+summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.elapsedTime, script.completed,  
+expressions.A_Attention, expressions.A_CogInstabile, expressions.M_Motor, expressions.M_Perserverance, expressions.NP_SelfControl, 
+expressions.NP_CogComplex, expressions.totalscore,
+
+radiobuttons.q1_R.response,
+radiobuttons.q2.response,
+radiobuttons.q3.response,
+radiobuttons.q4.response,
+radiobuttons.q5.response,
+radiobuttons.q6.response,
+radiobuttons.q7_R.response,
+radiobuttons.q8_R.response,
+radiobuttons.q9_R.response,
+radiobuttons.q10_R.response,
+radiobuttons.q11.response,
+radiobuttons.q12_R.response,
+radiobuttons.q13_R.response,
+radiobuttons.q14.response,
+radiobuttons.q15_R.response,
+radiobuttons.q16.response,
+radiobuttons.q17.response,
+radiobuttons.q18.response,
+radiobuttons.q19.response,
+radiobuttons.q20_R.response,
+radiobuttons.q21.response,
+radiobuttons.q22.response,
+radiobuttons.q23.response,
+radiobuttons.q24.response,
+radiobuttons.q25.response,
+radiobuttons.q26.response,
+radiobuttons.q27.response,
+radiobuttons.q28.response,
+radiobuttons.q29_R.response,
+radiobuttons.q30_R.response
+
+
+)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+totalscore:								holds the total of all scores 
+A_Attention-NP_CogComplex:				adds up all the scores for each individual subscale
+
+<expressions>
+
+/A_Attention = radiobuttons.q5.response + radiobuttons.q9_R.response + radiobuttons.q11.response + 
+radiobuttons.q20_R.response + radiobuttons.q28.response
+
+/A_CogInstabile = radiobuttons.q6.response + radiobuttons.q24.response + radiobuttons.q26.response
+
+/M_Motor = radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response +
+radiobuttons.q17.response + radiobuttons.q19.response + radiobuttons.q22.response + radiobuttons.q25.response
+
+/M_Perserverance = radiobuttons.q16.response + radiobuttons.q21.response + radiobuttons.q23.response + radiobuttons.q30_R.response
+
+/NP_SelfControl = radiobuttons.q1_R.response + radiobuttons.q7_R.response + radiobuttons.q8_R.response +
+radiobuttons.q12_R.response + radiobuttons.q13_R.response + radiobuttons.q14.response
+
+/NP_CogComplex = radiobuttons.q10_R.response + radiobuttons.q15_R.response + radiobuttons.q18.response +
+radiobuttons.q27.response + radiobuttons.q29_R.response
+
+/totalscore = expressions.A_Attention + expressions.A_CogInstabile+expressions.M_Motor+
+expressions.M_Perserverance+expressions.NP_SelfControl+expressions.NP_CogComplex
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	QUESTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+NOTE: 
+*by default each question is required, to change: set
+/required = false for each of the 30 questions
+
+*the R indicates reversed scoring
+
+<radiobuttons q1_R>
+/caption = "1. I plan tasks carefully"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/orientation = horizontalequal
+/ optionvalues = ("4", "3", "2", "1")
+/required = true
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. I do things without thinking"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. I make-up my mind quickly"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. I am happy-go-lucky"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. I don't 'pay attention'"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. I have 'racing thoughts'"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q7_R>
+/caption = "7. I plan trips well ahead of time"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("4", "3", "2", "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q8_R>
+/caption = "8. I am self-controlled"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("4", "3", "2", "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q9_R>
+/caption = "9. I concentrate easily"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("4", "3", "2", "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q10_R>
+/caption = "10. I save regularly"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("4", "3", "2", "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. I 'squirm' at plays and lectures"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q12_R>
+/caption = "12. I am a careful thinker"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("4", "3", "2", "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q13_R>
+/caption = "13. I plan for job security"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("4", "3", "2", "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "14. I say things without thinking"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q15_R>
+/caption = "15. I like to think about complex problems"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("4", "3", "2", "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "16. I change jobs"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. I act 'on impulse'"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "18. I get easily bored when solving thought problems"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. I act on the spur of the moment"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q20_R>
+/caption = "20. I am a steady thinker"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("4", "3", "2", "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q21>
+/caption = "21. I change residences"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "22. I buy things on impulse"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q23>
+/caption = "23. I can only think about one thing at a time"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q24>
+/caption = "24. I change hobbies"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q25>
+/caption = "25. I spend or charge more than I earn"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q26>
+/caption = "26. I often have extraneous thoughts when thinking"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q27>
+/caption = "27. I am more interested in the present than the future"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q28>
+/caption = "28. I am restless at the theater or lectures"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("1", "2", "3", "4")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q29_R>
+/caption = "29. I like puzzles"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("4", "3", "2", "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+<radiobuttons q30_R>
+/caption = "30. I am future oriented"
+/ options = ("Rarely/Never", "Occasionally", "Often", "Almost Always/Always")
+/ optionvalues = ("4", "3", "2", "1")
+/orientation = horizontalequal
+/required = true
+</radiobuttons>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	SURVEYPAGES
+**************************************************************************************************************
+**************************************************************************************************************
+<surveypage IMP1>
+/caption = "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and click the appropriate response button. Do not spend too much time on any statement. Answer quickly and honestly.
+"
+/ questions = [1 = q1_R, q2, q3]
+</surveypage>
+
+<surveypage IMP2>
+/caption = "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and click the appropriate response button. Do not spend too much time on any statement. Answer quickly and honestly.
+"
+/ questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage IMP3>
+/caption = "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and click the appropriate response button. Do not spend too much time on any statement. Answer quickly and honestly.
+"
+/ questions = [1 = q7_R, q8_R, q9_R]
+</surveypage>]
+
+<surveypage IMP4>
+/caption = "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and click the appropriate response button. Do not spend too much time on any statement. Answer quickly and honestly.
+"
+/ questions = [1 = q10_R, q11, q12_R]
+</surveypage>
+
+<surveypage IMP5>
+/caption = "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and click the appropriate response button. Do not spend too much time on any statement. Answer quickly and honestly.
+"
+/ questions = [1 =q13_R, q14, q15_R]
+</surveypage>
+
+<surveypage IMP6>
+/caption = "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and click the appropriate response button. Do not spend too much time on any statement. Answer quickly and honestly.
+"
+/ questions = [1 =q16, q17, q18]
+</surveypage>
+
+<surveypage IMP7>
+/caption = "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and click the appropriate response button. Do not spend too much time on any statement. Answer quickly and honestly.
+"
+/ questions = [1 = q19, q20_R, q21]
+</surveypage>
+
+<surveypage IMP8>
+/caption = "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and click the appropriate response button. Do not spend too much time on any statement. Answer quickly and honestly.
+"
+/ questions = [1 = q22, q23, q24]
+</surveypage>
+
+<surveypage IMP9>
+/caption = "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and click the appropriate response button. Do not spend too much time on any statement. Answer quickly and honestly.
+"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ questions = [1 = q25, q26, q27]
+</surveypage>
+
+<surveypage IMP10>
+/caption = "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and click the appropriate response button. Do not spend too much time on any statement. Answer quickly and honestly.
+"
+/ questions = [1 = q28, q29_R, q30_R]
+</surveypage>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	SURVEY
+**************************************************************************************************************
+**************************************************************************************************************
+
+<survey BIS>
+/ pages = [
+	1 = IMP1; 
+	2 = IMP2; 
+	3 = IMP3;
+	4 = IMP4; 
+	5 = IMP5; 
+	6 = IMP6;
+	7 = IMP7;
+	8 = IMP8;
+	9 = IMP9;
+	10 = IMP10;
+]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/ showquestionnumbers = false
+/ showpagenumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+**************************************************************************************************************
+                                             END OF FILE
+**************************************************************************************************************

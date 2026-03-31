@@ -1,0 +1,544 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+						Multidimensional Assessment of Interoceptive Awareness (MAIA)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-22-2018
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized version of the Multidimensional Assessment of Interoceptive Awareness (MAIA)
+as described in:
+
+Mehling WE, Price C, Daubenmier JJ, Acree M, Bartmess E, Stewart A. (2012) The Multidimensional Assessment of 
+Interoceptive Awareness (MAIA). PLoS ONE 7(11): e48230. doi:10.1371/journal.pone.0048230
+
+more info, as well as paper and pencil survey at:
+http://www.osher.ucsf.edu/maia/
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+32 6-point Likert scale, self-report
+											  
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	 
+The default data stored in the data files are:
+
+(1) Raw data file: 'maia.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 0(never)-5(always)
+									R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'maia_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+Subscale scores: the higher the scores the more positive the body awareness (Range: 0-5)
+
+Noticing:						mean of (q1,q2,q3,q4)
+NotDistracting:					mean of (q5R,q6R,q7R) R=reversed scored
+NotWorrying:					mean of (q8R,q9R,q10) R=reversed scored
+AttentionRegulation:			mean of (q11,q12,q13,q14,q15,q16,q17)
+EmotionalAwareness:				mean of (q18,q19,q20,q21,q22)
+SelfRegulation:					mean of (q23,q24,q25,q26)
+BodyListening:					mean of (q27,q28,q29)
+Trusting:						mean of (q30,q31,q32)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see published paper and pencil survey at: http://www.osher.ucsf.edu/maia/
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Below you will find a list of statements. Please indicate how often each statement applies to you generally in daily life.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+
+<page end>
+Thank you!
+</page>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.Noticing,expressions.NotDistracting,expressions.NotWorrying,
+expressions.AttentionRegulation,expressions.EmotionalAwareness, expressions.SelfRegulation,
+expressions.BodyListening, expressions.Trusting)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<expressions>
+/Noticing = (radiobuttons.q1_Noticing.response + radiobuttons.q2_Noticing.response + radiobuttons.q3_Noticing.response + radiobuttons.q4_Noticing.response)/4
+/NotDistracting = (radiobuttons.q5R_NotDistracting.response + radiobuttons.q6R_NotDistracting.response + radiobuttons.q7R_NotDistracting.response)/3
+/NotWorrying = (radiobuttons.q8R_NotWorrying.response + radiobuttons.q9R_NotWorrying.response + radiobuttons.q10_NotWorrying.response)/3
+/AttentionRegulation = (radiobuttons.q11_AttentionRegulation.response + radiobuttons.q12_AttentionRegulation.response + 
+radiobuttons.q13_AttentionRegulation.response + radiobuttons.q14_AttentionRegulation.response + radiobuttons.q15_AttentionRegulation.response +
+radiobuttons.q16_AttentionRegulation.response + radiobuttons.q17_AttentionRegulation.response)/7
+/EmotionalAwareness = (radiobuttons.q18_EmotionalAwareness.response + radiobuttons.q19_EmotionalAwareness.response + radiobuttons.q20_EmotionalAwareness.response +
+radiobuttons.q21_EmotionalAwareness.response + radiobuttons.q22_EmotionalAwareness.response)/5
+/SelfRegulation = (radiobuttons.q23_SelfRegulation.response + radiobuttons.q24_SelfRegulation.response + radiobuttons.q25_SelfRegulation.response +
+radiobuttons.q26_SelfRegulation.response)/4
+/BodyListening = (radiobuttons.q27_BodyListening.response + radiobuttons.q28_BodyListening.response + radiobuttons.q29_BodyListening.response)/3
+/Trusting = (radiobuttons.q30_Trusting.response + radiobuttons.q31_Trusting.response + radiobuttons.q32_Trusting.response)/3
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1_Noticing>
+/caption = "1. When I am tense I notice where the tension is located in my body."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_Noticing>
+/caption = "2. I notice when I am uncomfortable in my body."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3_Noticing>
+/caption = "3. I notice where in my body I am comfortable."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_Noticing>
+/caption = "4. I notice changes in my breathing, such as whether it slows down or speeds up."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+<radiobuttons q5R_NotDistracting>
+/caption = "5. I do not notice (I ignore) physical tension or discomfort until they become more severe."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6R_NotDistracting>
+/caption = "6. I distract myself from sensations of discomfort."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7R_NotDistracting>
+/caption = "7. When I feel pain or discomfort, I try to power through it."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8R_NotWorrying>
+/caption = "8. When I feel physical pain, I become upset."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9R_NotWorrying>
+/caption = "9. I start to worry that something is wrong if I feel any discomfort."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("5", "4", "3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10_NotWorrying>
+/caption = "10. I can notice an unpleasant body sensation without worrying about it."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11_AttentionRegulation>
+/caption = "11. I can pay attention to my breath without being distracted by things happening around me."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12_AttentionRegulation>
+/caption = "12. I can maintain awareness of my inner bodily sensations even when there is a lot going on around me."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13_AttentionRegulation>
+/caption = "13. When I am in conversation with someone, I can pay attention to my posture."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14_AttentionRegulation>
+/caption = "14. I can return awareness to my body if I am distracted."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15_AttentionRegulation>
+/caption = "15. I can refocus my attention from thinking to sensing my body."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16_AttentionRegulation>
+/caption = "16. I can maintain awareness of my whole body even when a part of me is in pain or discomfort."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17_AttentionRegulation>
+/caption = "17. I am able to consciously focus on my body as a whole."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18_EmotionalAwareness>
+/caption = "18. I notice how my body changes when I am angry."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19_EmotionalAwareness>
+/caption = "19. When something is wrong in my life I can feel it in my body."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20_EmotionalAwareness>
+/caption = "20. I notice that my body feels different after a peaceful experience."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21_EmotionalAwareness>
+/caption = "21. I notice that my breathing becomes free and easy when I feel comfortable."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22_EmotionalAwareness>
+/caption = "22. I notice how my body changes when I feel happy / joyful."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23_SelfRegulation>
+/caption = "23. When I feel overwhelmed I can find a calm place inside."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q24_SelfRegulation>
+/caption = "24. When I bring awareness to my body I feel a sense of calm."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q25_SelfRegulation>
+/caption = "25. I can use my breath to reduce tension."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q26_SelfRegulation>
+/caption = "26. When I am caught up in thoughts, I can calm my mind by focusing on my body/breathing."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q27_BodyListening>
+/caption = "27. I listen for information from my body about my emotional state."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q28_BodyListening>
+/caption = "28. When I am upset, I take time to explore how my body feels."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q29_BodyListening>
+/caption = "29. I listen to my body to inform me about what to do."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q30_Trusting>
+/caption = "30. I am at home in my body."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q31_Trusting>
+/caption = "31. I feel my body is a safe place."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q32_Trusting>
+/caption = "32. I trust my body sensations."
+/ options = ("0~nNever", "1", "2", "3", "4", "5~nAlways")
+/ optionvalues = ("0", "1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage MAIA1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1_Noticing, q2_Noticing, q3_Noticing]
+</surveypage>
+
+<surveypage MAIA2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4_Noticing, q5R_NotDistracting, q6R_NotDistracting]
+</surveypage>
+
+<surveypage MAIA3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7R_NotDistracting, q8R_NotWorrying, q9R_NotWorrying]
+</surveypage>
+
+<surveypage MAIA4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10_NotWorrying, q11_AttentionRegulation, q12_AttentionRegulation]
+</surveypage>
+
+<surveypage MAIA5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13_AttentionRegulation, q14_AttentionRegulation, q15_AttentionRegulation]
+</surveypage>
+
+<surveypage MAIA6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q16_AttentionRegulation, q17_AttentionRegulation, q18_EmotionalAwareness]
+</surveypage>
+
+<surveypage MAIA7>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q19_EmotionalAwareness, q20_EmotionalAwareness, q21_EmotionalAwareness]
+</surveypage>
+
+<surveypage MAIA8>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q22_EmotionalAwareness, q23_SelfRegulation, q24_SelfRegulation]
+</surveypage>
+
+<surveypage MAIA9>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q25_SelfRegulation, q26_SelfRegulation, q27_BodyListening]
+</surveypage>
+
+<surveypage MAIA10>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q28_BodyListening, q29_BodyListening, q30_Trusting]
+</surveypage>
+
+<surveypage MAIA11>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q31_Trusting, q32_Trusting]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey MAIA>
+/pages = [
+	1 = MAIA1;
+	2 = MAIA2;
+	3 = MAIA3;
+	4 = MAIA4;
+	5 = MAIA5;
+	6 = MAIA6;
+	7 = MAIA7;
+	8 = MAIA8;
+	9 = MAIA9;
+	10 = MAIA10;
+	11 = MAIA11;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

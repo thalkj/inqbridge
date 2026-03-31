@@ -1,0 +1,767 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+													*Anagram Task*
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 10-01-2020
+last updated:  02-16-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-16-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements a simple Anagram Test procedure
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+
+Participants are asked to solve 5 easy and 5 difficult anagrams (order of easy and difficult anagrams is 
+fixed). They have 2 minutes per anagram and can enter as many solutions as they want during that time frame.
+A correct solution will terminate the current anagram and automatically present the next one.
+If participants run out of time, the next anagram is presented automatically.
+Participants can skip any anagram at any point, by entering 'SKIP' into the textbox.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes approx. 7 minutes.
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________		
+The default data stored in the data files are:
+
+(1) Raw data file: 'anagramtask_raw*.iqdat'*
+
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file. 
+										
+***built-in Inquisit variables: 
+Note that in this script, only the trial.easyAnagramData/trial.difficultAnagramData store
+data to the data files. These trials do not collect responses.
+All other trials are set to /recorddata = false.
+
+response:					the participant's response (scancode of response buttons)
+correct:					accuracy of response: 1 = correct response; 0 = otherwise
+latency: 					the response latency (in ms); measured from: 
+
+***custom variables
+anagramCondition:			'easy' vs. 'difficult 
+anagramIndex:				the itemnumber of the current anagram 
+anagram:					the presented anagram  
+suggestedSolutions:			collects all suggested solutions for an anagram 
+
+lastSuggestedSolution:		the last suggested solution 
+							Note: if a participant enteres 'SKIP', the last suggested solution will be empty by default
+							(however suggestedSolutions will contain all suggested solutions collected up to this point)
+
+correctSolution:			the correct solution for each anagram
+anagramACC:					1 = final suggested solution is correct; 2 = final suggested solution is incorrect 
+anagramRT:					the cumulative time (in ms) that participants spent on solving each anagram  
+
+skip:						1 = participant entered 'SKIP' into the textbox; 0 = participant did not enter 'SKIP' 
+									
+countAttempts:				the number of suggested solutions per anagram
+
+
+(2) Summary data file: 'anagramtask_summary*.iqdat'*
+
+inquisit.version:		Inquisit version run
+computer.platform:		the platform the script was run on (win/mac/ios/android)
+startDate:				date script was run
+startTime:				time script was started
+subjectid:				assigned subject id number
+groupid:				assigned group id number
+sessionid:				assigned session id number
+elapsedTime:			time it took to run script (in ms); measured from onset to offset of script
+completed:				0 = script was not completed (prematurely aborted); 
+						1 = script was completed (all conditions run)
+									
+									
+countSkips_easy:		counts the number of times participant entered 'SKIP' for an easy anagram
+meanAttempts_easy:		mean number of solutions provided for easy anagrams (includes anagrams that were 'skipped' at some point)
+propCorrect_easy:		proportion correctly solved easy anagrams 
+meanRT_easy:			mean time (ms) participant spent on easy anagrams
+meanCorrRT_easy:		mean time (ms) participant spent on easy anagrams that were solved correctly
+(same for difficult anagrams)							
+							
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+Anagram 1, 2, 5, 8, 10 randomly sample without replacement from the 5 easy anagrams.
+Anagram 3, 4, 6, 7, 9 randomly sample without replacement from the 5 difficult anagrams.
+
+Eachh anagram has 2 minutes.
+=> if participant enters an incorrect solution: feedback is given, the last suggested solution is cleared out
+and participant can make another attempt
+=> if participant enters the correct solution: feedback is given and the next anagram is presented automatically
+=> if participant runs out of time: the next anagram is automatically provided with the note 'ok - let's try this one instead'
+=> if participant enters 'skip' at any point: no feedback is provided and the next anagram is presented immediately
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+provided by Millisecond Software - can be edited under section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by Millisecond Software - can be edited under section Editable Instructions
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+</usermanual>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/anagramTimeout = 120000			//the max. duration (in ms) a participant has to solve a given anagram (default: 120000ms = 2min)
+/feedbackDuration = 1000			//the duration (in ms) that the feedback items stay on screen
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<item easyAnagrams>
+/1 = "AHDN"
+/2 = "BLAL"
+/3 = "NORB"
+/4 = "BLUC"
+/5 = "NAIR"
+</item>
+
+<list easyAnagramsItemnumbers>
+/ items = (1, 2, 3, 4, 5)
+/ replace = false
+</list>
+
+<item easyAnagramsSolutions>
+/1 = "HAND"
+/2 = "BALL"
+/3 = "BORN"
+/4 = "CLUB"
+/5 = "RAIN"
+</item>
+
+<item difficultAnagrams>
+/1 = "DIYAMG"
+/2 = "WOPNEG"
+/3 = "HAMYAP"
+/4 = "CYTEPL"
+/5 = "KAMASD"
+</item>
+
+<list difficultAnagramsItemnumbers>
+/ items = (1, 2, 3, 4, 5)
+/ replace = false
+</list>
+
+<item difficultAnagramsSolutions>
+/1 = "DIGAMY"
+/2 = "GOWPEN"
+/3 = "MAYHAP"
+/4 = "YCLEPT"
+/5 = "DAMASK"
+</item>
+
+<item feedback>
+/1 = "Correct"
+/2 = "Incorrect"
+/3 = "Ok, let's try this one instead"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+</instruct>
+
+<page intro1>
+<h1>Anagram Task</h1><hr><br>
+In this task you will be asked to solve <u>anagrams</u>.<br><br>
+An anagram presents an arrangement of letters such as 'semou' that can be rearranged into an English word
+such as 'mouse'.<br><br>
+Your task will be to unscramble the anagram and find the hidden word.<br><br><br>
+Continue on to learn more about the task.
+</page>
+
+<page intro2>
+<h1>Anagram Task</h1><hr><br>
+You will be asked to solve 10 anagrams and you will have have <%parameters.anagramTimeout/1000/60%> minutes
+to solve each one. Each anagram has only one solution.<br><br>
+You can submit as many solutions as you want during the <%parameters.anagramTimeout/1000/60%> minutes.<br><br>
+If your solution is <b>incorrect</b>, you can try again.<br>
+If your solution is <b>correct</b>, you will automatically move on to the next anagram.<br>
+If you <b>run out of time</b>, you will automatically move on the next anagram.<br><br>
+You can also skip any anagram by entering 'SKIP' into the textbox. The program will immediately present you with
+the next anagram from the queue.<br><br><br>
+Start with your first anagram when you are ready.
+</page>
+
+
+<text instruct>
+/ items = ("Enter the solution and click 'Next' to continue.
+You can enter the word 'SKIP' at any time and the next anagram will start automatically")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 10%)
+/ size = (90%, 20%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+/ erase = false
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 10%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<button exitbutton>
+/ caption = "EXIT"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 80%)
+/ size = (30%, 8%)
+/ valign = center
+/ halign = center
+</button>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum, 
+stimulusitem, response, correct, latency,
+
+values.anagramCondition, values.anagramIndex, values.anagram,  
+values.suggestedSolutions, values.lastSuggestedSolution, values.correctSolution,
+values.anagramACC, values.anagramRT, 
+values.skip, values.countAttempts)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+values.countSkips_easy, expressions.meanAttempts_easy, expressions.propCorrect_easy, expressions.meanRT_easy, expressions.meanCorrRT_easy,
+values.countSkips_difficult, expressions.meanAttempts_difficult, expressions.propCorrect_difficult, expressions.meanRT_difficult, expressions.meanCorrRT_difficult)
+
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+
+<values>
+/anagramCondition = ""
+/anagramOffsettime = ""
+/countAttempts = 0
+/timeout = 0
+/correctSolution = ""
+/lastSuggestedSolution = ""
+/suggestedSolutions = ""
+/anagram = ""
+/anagramRT = ""
+/anagramACC = ""
+/anagramIndex = ""
+/skip = 0
+/selectFeedback = ""
+/defaultResponse = ""
+/nextAnagram = ""
+/countSkips_easy = 0
+/countSkips_difficult = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/meanAttempts_easy = list.attempts_easy.mean
+/propCorrect_easy = list.ACC_easyAnagrams.mean
+/meanRT_easy = list.RT_easyAnagrams.mean
+/meanCorrRT_easy = list.corrRT_easyAnagrams.mean
+
+/meanAttempts_difficult = list.attemtps_difficult.mean
+/propCorrect_difficult = list.ACC_difficultAnagrams.mean
+/meanRT_difficult = list.RT_difficultAnagrams.mean
+/meanCorrRT_difficult = list.corrRT_difficultAnagrams.mean
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+finish trial
+**************************************************************************************************************
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text easyAnagram>
+/ items = easyAnagrams
+/ select = values.anagramIndex
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (50%, 35%)
+/ size = (80%, 10%)
+/ vjustify = center
+</text>
+
+<text difficultAnagram>
+/ items = difficultAnagrams
+/ select = values.anagramIndex
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ position = (50%, 35%)
+/ size = (80%, 10%)
+/ vjustify = center
+</text>
+
+<text feedback>
+/ onprepare = [
+	if (values.selectFeedback == 1){
+		text.feedback.textColor = green;
+	} else if (values.selectFeedback == 2){
+		text.feedback.textColor = red;
+	} else {
+		text.feedback.textColor = black;		
+	}
+]
+/ items = feedback
+/ select = values.selectFeedback
+/ fontstyle = ("Arial", 7%, true, false, false, false, 5, 1)
+/ position = (50%, 70%)
+/ size = (80%, 8%)
+/ vjustify = center
+</text>
+
+<text feedbackEraser>
+/ items = ("")
+/ fontstyle = ("Arial", 7%, false, false, false, false, 5, 1)
+/ position = (50%, 70%)
+/ txcolor = red
+/ size = (80%, 8%)
+/ vjustify = center
+/ txbgcolor = white
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_easyAnagrams>
+</list>
+
+Note: list stores the response latencies for each relevant trial
+<list RT_easyAnagrams>
+</list>
+
+Note: list stores the correct response latencies for each relevant trial
+<list corrRT_easyAnagrams>
+</list>
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_difficultAnagrams>
+</list>
+
+Note: list stores the response latencies for each relevant trial
+<list RT_difficultAnagrams>
+</list>
+
+Note: list stores the correct response latencies for each relevant trial
+<list corrRT_difficultAnagrams>
+</list>
+
+<list attempts_easy>
+</list>
+
+<list attemtps_difficult>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+*******************************
+easy Anagrams
+*******************************
+
+<trial easyAnagramStart>
+/ ontrialend = [
+	values.anagramCondition = "easy";
+	values.anagramIndex = list.easyAnagramsItemnumbers.nextValue;
+	values.correctSolution = item.easyAnagramsSolutions.item(values.anagramIndex);
+	values.anagram = item.easyAnagrams.item(values.anagramIndex);
+	values.anagramACC = 0;
+	values.anagramRT = "";
+	values.skip = 0;
+	values.defaultResponse = "";
+	values.nextAnagram = 0;
+	values.countAttempts = 0;	
+	values.suggestedSolutions = "";
+	values.lastSuggestedSolution = "";
+	
+]
+/ trialduration = 0
+/ branch = [
+	values.anagramOffsettime = script.elapsedTime + parameters.anagramTimeout;//set the timeout for the current anagram
+	return openended.easyAnagram;
+]
+/ recorddata = false
+</trial>
+
+
+<openended easyAnagram>
+/ ontrialbegin = [
+	values.timeout = values.anagramOffsettime - script.elapsedTime;
+	
+	//determine whether a feedback stim should be presented
+	if (values.selectFeedback != 0){
+		openended.easyAnagram.insertStimulusTime(text.feedback, 0);	
+		openended.easyAnagram.insertStimulusTime(text.feedbackEraser, parameters.feedbackDuration);
+	}
+]
+/ stimulustimes = [0 = easyAnagram, instruct]
+/ monkeyresponse = ("HAND", "BALL", "BORN", "CLUB", "RAIN", "DIGAMY", "GOWPEN", "MAYHAP", "YCLEPT", "DAMASK", "SKIP")
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ required = true
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ buttonlabel = "Next"
+/ iscorrectresponse = [
+	toupper(openended.easyAnagram.response) == values.correctSolution;
+]
+/ ontrialend = [
+	openended.easyAnagram.resetStimulusFrames();
+	
+	//update variables as long as participants are still trying to solve the current anagram
+	if (values.nextAnagram == 0){
+	
+		values.anagramRT += openended.easyAnagram.latency;
+			
+		if (contains(toupper(openended.easyAnagram.response), "SKIP")){
+			values.skip = 1;
+			values.countSkips_easy += 1;
+			values.nextAnagram = 1;
+			list.ACC_easyAnagrams.appendItem(0);
+			list.RT_easyAnagrams.appendItem(values.anagramRT);
+			values.selectFeedback = 0;
+			values.lastSuggestedSolution = "";
+		} else if (openended.easyAnagram.correct){
+			values.anagramACC = 1;
+			values.selectFeedback = 1;
+			list.ACC_easyAnagrams.appendItem(1);
+			list.corrRT_easyAnagrams.appendItem(values.anagramRT);
+			list.RT_easyAnagrams.appendItem(values.anagramRT);
+			values.lastSuggestedSolution = openended.easyAnagram.response;
+			values.suggestedSolutions = concat(values.suggestedSolutions, openended.easyAnagram.response);
+			values.suggestedSolutions = concat(values.suggestedSolutions, ",");
+			values.countAttempts += 1;		
+		} else if (openended.easyAnagram.response != ""){
+			values.anagramACC = 0;
+			values.selectFeedback = 2;
+			values.suggestedSolutions = concat(values.suggestedSolutions, openended.easyAnagram.response);
+			values.suggestedSolutions = concat(values.suggestedSolutions, ",");	
+			values.countAttempts += 1;
+		} else {//in case of a no response => ran out of time
+			values.selectFeedback = 3;
+			values.nextAnagram = 1;
+			list.ACC_easyAnagrams.appendItem(0);
+			list.RT_easyAnagrams.appendItem(values.anagramRT);			
+		}				
+	}	
+]
+/ defaultresponse = values.defaultResponse
+/ timeout = values.timeout
+/ branch = [
+	if (values.nextAnagram == 1){//participant is done with the current anagram and should move on to the next
+		if (values.selectFeedback != 3){
+			values.selectFeedback = 0
+		}
+		return trial.easyAnagramData;
+	} else if (values.selectFeedback == 1){
+		values.nextAnagram = 1;//the openended trial should only be presented once more for the Correct Feedback stim
+		values.defaultResponse = openended.easyAnagram.response;
+		values.anagramOffsettime = script.elapsedTime + parameters.feedbackDuration;//the next openended trial only runs for the duration of the feedback trial
+		return openended.easyAnagram;
+	} else {
+		return openended.easyAnagram;
+	}
+]
+/ recorddata = false
+</openended>
+
+//Note: this trial saves the relevant anagram data to the data file
+<trial easyAnagramData>
+/ ontrialbegin = [
+	list.attempts_easy.appendItem(values.countAttempts);
+]
+/ stimulusframes = [1 = clearScreen]
+/ trialduration = 0
+/ recorddata = true
+</trial>
+
+*******************************
+difficult Anagrams
+*******************************
+
+<trial difficultAnagramStart>
+/ ontrialend = [
+	values.anagramCondition = "difficult";
+	values.anagramIndex = list.difficultAnagramsItemnumbers.nextValue;
+	values.correctSolution = item.difficultAnagramsSolutions.item(values.anagramIndex);
+	values.anagram = item.difficultAnagrams.item(values.anagramIndex);
+	values.anagramACC = 0;
+	values.anagramRT = "";
+	values.skip = 0;
+	values.defaultResponse = "";
+	values.nextAnagram = 0;
+	values.countAttempts = 0;	
+	values.suggestedSolutions = "";
+	values.lastSuggestedSolution = "";
+	
+]
+/ trialduration = 0
+/ branch = [
+	values.anagramOffsettime = script.elapsedTime + parameters.anagramTimeout;//set the timeout for the current anagram
+	return openended.difficultAnagram;
+]
+/ recorddata = false
+</trial>
+
+<openended difficultAnagram>
+/ ontrialbegin = [
+	values.timeout = values.anagramOffsettime - script.elapsedTime;
+	
+	//determine whether a feedback stim should be presented
+	if (values.selectFeedback != 0){
+		openended.difficultAnagram.insertStimulusTime(text.feedback, 0);	
+		openended.difficultAnagram.insertStimulusTime(text.feedbackEraser, parameters.feedbackDuration);
+	}
+]
+/ monkeyresponse = ("HAND", "BALL", "BORN", "CLUB", "RAIN", "DIGAMY", "GOWPEN", "MAYHAP", "YCLEPT", "DAMASK", "SKIP")
+/ stimulustimes = [0 = difficultAnagram, instruct]
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ beginresponsetime = 0
+/ required = true
+/ responseinterrupt = immediate
+/ buttonlabel = "Next"
+/ iscorrectresponse = [
+	toupper(openended.difficultAnagram.response) == values.correctSolution;
+]
+/ ontrialend = [
+	openended.difficultAnagram.resetStimulusFrames();
+	
+	//update variables as long as participants are still trying to solve the current anagram
+	if (values.nextAnagram == 0){
+	
+		values.anagramRT += openended.difficultAnagram.latency;
+			
+		if (contains(toupper(openended.difficultAnagram.response), "SKIP")){
+			values.skip = 1;
+			values.countSkips_difficult += 1;
+			values.nextAnagram = 1;
+			list.ACC_difficultAnagrams.appendItem(0);
+			list.RT_difficultAnagrams.appendItem(values.anagramRT);
+			values.selectFeedback = 0;
+			values.lastSuggestedSolution = "";
+		} else if (openended.difficultAnagram.correct){
+			values.anagramACC = 1;
+			values.selectFeedback = 1;
+			list.ACC_difficultAnagrams.appendItem(1);
+			list.corrRT_difficultAnagrams.appendItem(values.anagramRT);
+			list.RT_difficultAnagrams.appendItem(values.anagramRT);
+			values.lastSuggestedSolution = openended.difficultAnagram.response;
+			values.suggestedSolutions = concat(values.suggestedSolutions, openended.difficultAnagram.response);
+			values.suggestedSolutions = concat(values.suggestedSolutions, ",");
+			values.countAttempts += 1;		
+		} else if (openended.difficultAnagram.response != ""){
+			values.anagramACC = 0;
+			values.selectFeedback = 2;
+			values.suggestedSolutions = concat(values.suggestedSolutions, openended.difficultAnagram.response);
+			values.suggestedSolutions = concat(values.suggestedSolutions, ",");	
+			values.countAttempts += 1;
+		} else {//in case of a no response => ran out of time
+			values.selectFeedback = 3;
+			values.nextAnagram = 1;
+			list.ACC_difficultAnagrams.appendItem(0);
+			list.RT_difficultAnagrams.appendItem(values.anagramRT);			
+		}				
+	}	
+]
+/ defaultresponse = values.defaultResponse
+/ timeout = values.timeout
+/ branch = [
+	if (values.nextAnagram == 1){//participant is done with the current anagram and should move on to the next
+		if (values.selectFeedback != 3){
+			values.selectFeedback = 0
+		}
+		return trial.difficultAnagramData;
+	} else if (values.selectFeedback == 1){
+		values.nextAnagram = 1;//the openended trial should only be presented once more for the Correct Feedback stim
+		values.defaultResponse = openended.difficultAnagram.response;
+		values.anagramOffsettime = script.elapsedTime + parameters.feedbackDuration;//the next openended trial only runs for the duration of the feedback trial
+		return openended.difficultAnagram;
+	} else {
+		return openended.difficultAnagram;
+	}
+]
+/ recorddata = false
+</openended>
+
+//Note: this trial saves the relevant anagram data to the data file
+<trial difficultAnagramData>
+/ ontrialbegin = [
+	list.attemtps_difficult.appendItem(values.countAttempts);
+]
+/ stimulusframes = [1 = clearScreen]
+/ trialduration = 0
+/ recorddata = true
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+<block test>
+/ preinstructions = (intro1, intro2)
+/ onblockbegin = [
+	values.selectFeedback = 0;
+]
+/ trials = [
+	1,2,5,8,10 = easyAnagramStart;
+	3,4,6,7,9 = difficultAnagramStart;
+]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt a>
+/ blocks = [
+	1 = test;
+	2 = finish;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

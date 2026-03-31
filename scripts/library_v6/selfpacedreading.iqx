@@ -1,0 +1,674 @@
+﻿<usermanual>												  
+___________________________________________________________________________________________________________________	
+
+								*Self-Paced Reading (Moving Window Paradigm)*
+___________________________________________________________________________________________________________________	
+
+Script Author: David Nitz (dave@millisecond.com) for Millisecond Software, LLC
+last updated:  02-28-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-28-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the  Self-Paced Reading procedure described in:
+
+	Just, M. A., Carpenter, P. A., & Woolley, J. D. (1982). Paradigms and processes in reading 
+	comprehension. Journal of Experimental Psychology: General, 111(2), 228-238.
+
+	Related resources:
+
+	Just, M. A., & Carpenter, P. A. (1980). A theory of reading: From eye fixations to 
+	comprehension. Psychological Review, 87(4), 329-354.
+
+	Thibadeau, R., Just, M. A., & Carpenter, P. A. (1982). A model of the time course and
+	content of reading. Cognitive Science, 6, 157-203.
+
+	Mitchell, D. C. (2004). On-line methods in language processing: Introduction and historical 
+	review. In M. Carreiras & C.E. Clifton, Eds., The on-line study of sentence comprehension: 
+	Eyetracking, ERP and beyond (pp. 15-32). New York, NY: Psychology Press.
+	
+Note: Currently this program only supports left-to-right (LTR) languages.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION
+___________________________________________________________________________________________________________________
+Masked text examples are presented and revealed word by word by Spacebar press.
+2 conditions: 
+
+cumulative => words already revealed stay revealed
+non-cumulative => words that have previously been revealed are masked again when the next word is revealed										  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'selfpacedreading_raw*.iqdat'
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block. 
+																		
+response:							the participant's response
+correct:							the correctness of the response (1 = correct; 0 = incorrect)
+latency: 							the response latency (in ms)
+
+list.mwstims.nextValue:				current "page" number 
+wincount:							Ordinal number of the currently displayed (target) text segment (window).
+windowstring:						The current window (always unmasked)
+
+text.mywindow.stimulusonset:		returns the stimulus onset time in ms. The onset time is the point at which the stimulus 
+									is presented relative to the start of the trial.			
+
+inputend							Returns the total number of characters of the current input string
+									(paragraph or sentence to be displayed in window segments). Used
+									to determine the end of the paragraph and initiate the selection of 
+									the next stimulus (sentence or paragraph).
+									
+winstart							Start position of current text segment (window).
+winend								End position of current text segment (window)
+
+
+ 
+(parameter) cumulative				Determines the moving window mode to use. If set to 'true', any 
+									previously displayed window segments will remain visible on the 
+									screen. If set to 'false' any previously displayed window segments will
+									be remasked (noncumulative mode). Default is 'false'.
+									
+(parameter) highlight				Determines whether the current window should be displayed in a 
+									different color than the remaining (masked or unmasked) text in 
+									order to make it more salient. The highlighting color can be adjusted 
+									via the '/ txcolor' attribute of 'text.mywindowhl'. Default is 'true'.
+									
+
+(2) Summary data file: 'selfpacedreading_summary*.iqdat'
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+runs 2 conditions:
+Cumulative (revealed words stay revealed) and Non-cumulative (once revealed words get mask again)
+	
+___________________________________________________________________________________________________________________	
+STIMULI
+___________________________________________________________________________________________________________________	
+see section Editable Stimuli
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+see section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+	windicator					A single character that indicates each display segment (window). 
+								Must be set to a character which doesn't occur "naturally" in throughout
+								the stimulus material (e.g. '|' or '#'). Each stimulus must start and end 
+								with this character. Default is "I".
+								
+	cumulative					Determines the moving window mode to use. If set to 'true', any 
+								previously displayed window segments will remain visible on the 
+								screen. If set to 'false' any previously displayed window segments will
+								be remasked (noncumulative mode). Default is 'false'.
+								
+	highlight					Determines whether the current window should be displayed in a 
+								different color than the remaining (masked or unmasked) text in 
+								order to make it more salient. The highlighting color can be adjusted 
+								via the '/ txcolor' attribute of 'text.mywindowhl'. Default is 'true'.
+								
+	ucmaskchar					Character used to mask uppercase letters and numbers (as defined in 
+								'list.uppercase'). Suitable characters include (but are not limited to)
+								"-", "—", "_" or "…". The masking character may not be identical to
+								the character defined as window indicator (-> 'parameters.windicator')!
+								Default is "-".
+								
+	lcmaskchar					Character used to mask lowercase letters and interpunctuation 
+								characters (as defined in 'list.lowercase'). Suitable characters 
+								include (but are not limited to) "-", "—", "_" or "…". The masking 
+								character may not be identical to the character defined as window 
+								indicator (-> 'parameters.windicator')! Default is "-".
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ cumulative = false
+/ highlight = true
+/ windicator = "|"
+/ ucmaskchar = "-"
+/ lcmaskchar = "-"
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+	Text stimuli containing the window indicator (as defined in 'parameters.windicator') must be 
+	entered here.
+<item mwstims>
+/ 1 ="|FLYWHEELS
+
+|Flywheels |are |one |of |the |oldest |mechanical |devices |known |to |man. 
+|Every |internal-combustion |engine |contains |a |small |flywheel |that 
+|converts |the |jerky |motion |of |the |pistons |into |the |smooth |flow |of 
+|energy |that |powers |the |drive |shaft.
+
+|The |greater |the |mass |of |a |flywheel |and |the |faster |it |spins, |the 
+|more |energy |can |be |stored |in |it. |But |its |maximum |spinning |speed 
+|is |limited |by |the |strength |of |the |material |it |is |made |from. 
+|If |it |spins |too |fast |for |its |mass, |any |flywheel |will |fly |apart.|"
+
+/ 2 = "|One |type |of |flywheel |consists |of |round |sandwiches |of |fiberglass 
+|and |rubber |providing |the |maximum |possible |storage |of |energy |when 
+|the |wheel |is |confined |in |a |small |space |as |in |an |automobile.
+
+|Another |type, |the |'superflywheel', |consists |of |a |series |of |rimless 
+|spokes. |This |flywheel |stores |the |maximum |energy |when |space |is 
+|unlimited.|"
+</item>
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</instruct>
+
+<page intro>
+<center><hr><div style='background-color: white'><h2>Welcome to the Self-Paced Reading Task!</h2></div><hr></center><br>
+
+This script implements the "moving window" paradigm introduced by<br>
+<pre> 
+ Just, M. A., Carpenter, P. A., & Wooley, J. D. (1982).<br> 
+ Paradigms and processes in reading comprehension.<br> 
+ Journal of Experimental Psychology: General, 111(2),<br> 
+ 228-238.</pre><br>
+The script supports both "cumulative" and "noncumulative" moving window 
+procedures and has fully customizable masking and segmenting options.<br><br>
+You can even highlight the current window in a different color.<br><br>
+The script can be easily adapted to suit your own needs or integrated with 
+other tasks, such as plausibility or grammaticality judgments.
+</page>
+
+<page end>
+<br><br><br><br><br>
+<center>You have reached the end of the task.<br>
+<h1>Thank you!</h1></center>
+</page>
+
+<page cumulative>
+<br><br><br><br><br>
+This block of trials demonstrates the <i>"cumulative"</i> moving window mode.<br><br>
+Press the spacebar to advance through the text.
+</page>
+
+<page noncumulative>
+<br><br><br><br><br>
+This block of trials demonstrates the <i>"noncumulative"</i> moving window mode.<br><br>
+Press the spacebar to advance through the text.
+</page>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	'list.uppercase' contains all characters to be masked by the character defined in 
+	'parameters.ucmaskchar'. Add or remove characters as needed.
+**************************************************************************************************************
+<list uppercase>
+/ items = (
+	"A","B","C","D","E","F","G","H","I","J","K","L","M",
+	"N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
+	"0","1","2","3","4","5","6","7","8","9")
+/ selectionmode = sequence
+/ selectionrate = always
+</list>
+
+**************************************************************************************************************
+	'list.lowercase' contains all characters to be masked by the character defined in 
+	'parameters.lcmaskchar'. Add or remove characters as needed.
+**************************************************************************************************************
+<list lowercase>
+/ items = (
+	"a","b","c","d","e","f","g","h","i","j","k","l","m",
+	"n","o","p","q","r","s","t","u","v","w","x","y","z",
+	"-","—","_",".",":",",",";","?","!","'","(",")","/","\")
+/ selectionmode = sequence
+/ selectionrate = always
+</list>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvassize = (100%,100%)
+/ canvasaspectratio = (4,3)
+/ fontstyle = ("Verdana", 2.50%, false, false, false)
+/ minimumversion = "6.5.2.0"
+/ inputdevice = keyboard
+/ screencolor = silver
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+<data>									
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum,
+response,correct,latency,
+list.mwstims.nextValue,values.wincount,values.windowstring,text.mywindow.stimulusonset,
+expressions.inputend,values.winstart,values.winend,parameters.cumulative,
+parameters.highlight)
+</data>
+
+********************
+summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+	inputstring					Unmasked version of the current text containing the window indicators
+								('parameters.windicator').
+	maskstring					Masked version of the current text containing the window indicators
+								('parameters.windicator').
+	wincount					Ordinal number of the currently displayed text segment (window).
+	winstart					Start position of current text segment (window).
+	winend						End position of current text segment (window) 
+	prewindowstring				Text preceding the current window. Masked or unmasked according to
+								'parameters.cumulative'.
+	windowstring				The current window (always unmasked)
+	postwindowstring			Text succeeding the current window (always masked).
+	outputstring				Concetanation of prewindow, window and postwindow strings.
+	prewindowstringhl			Used to implement the window highlighting (-> 'parameters.highlight').
+	windowstringhl				Color-highlighted version of the current window.
+	postwindowstringhl			Used to implement the window highlighting (-> 'parameters.highlight').
+	outputstringhl				Used to implement the window highlighting (-> 'parameters.highlight').
+	stopblock					Switch used to automatically stop the currently running block as soon as
+								all items have been displayed.
+
+<values taskparams>
+/ inputstring = ""
+/ maskstring = ""
+/ prewindowstring = ""
+/ windowstring = ""
+/ postwindowstring = ""
+/ outputstring = ""
+/ maskstringhl = ""
+/ prewindowstringhl = ""
+/ windowstringhl = ""
+/ postwindowstringhl = ""
+/ outputstringhl = ""
+/ wincount = 0
+/ winstart = 0
+/ winend = 0
+/ stopblock = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+	These expressions parse the input string for any occurence of the window indicator as 
+	defined in 'parameters.windicator'. The input is segmented accordingly into a prewindow string
+	(either masked or unmasked according to the 'parameters.cumulative' setting), the current window 
+	string (unmasked) and a postwindow string (masked).
+
+	
+	inputend				Returns the total number of characters of the current input string
+							(paragraph or sentence to be displayed in window segments). Used
+							to determine the end of the paragraph and initiate the selection of 
+							the next stimulus (sentence or paragraph).
+	maskuppercase			Replaces all uppercase characters (as defined in 'list.uppercase')
+							with the masking character defined in 'parameters.ucmaskchar'.
+	masklowercase			Replaces all lowercase characters (as defined in 'list.lowercase')
+							with the masking character defined in 'parameters.lcmaskchar'.
+	maskuppercasehl			Used to implement the window highlighting (-> 'parameters.highlight').
+	masklowercasehl			Used to implement the window highlighting (-> 'parameters.highlight').
+	getwinstart				Retrieves the start position of the current text segment (window) to
+							display and stores it to 'values.winstart'.
+	getwinend				Retrieves the end position of the current text segment (window) to
+							display and stores it to 'values.winend.
+	getwincount				Computes the ordinal number of the currently text segment (window)
+							and stores it to 'values.wincount'.
+	getprewindow			Extracts the masked or unmasked text preceding the current window
+							and stores it to 'values.prewindowstring'.
+	getwindow				Extracts the unmasked text for the current window and stores it to 
+							'values.windowstring'.
+	getpostwindow			Extracts the masked text succeeding the current window
+							and stores it to 'values.postwindowstring'.
+	getprewindowhl			Used to implement the window highlighting (-> 'parameters.highlight').
+	getwindowhl				Used to implement the window highlighting (-> 'parameters.highlight').
+	getpostwindowhl			Used to implement the window highlighting (-> 'parameters.highlight').
+	stripwindicator			Removes the window indicator character ('parameters.windicator') from
+							prewindow, window and postwindow strings.
+	getoutputstring			Assembles the complete output by joining prewindow, window and 
+							postwindow strings and stores the result to 'values.outputstring'.
+	getoutputstringhl		Assembles the output containining the color-highlighted window and
+							stores the result to 'values.outputstringhl'.
+	movingwindow			Bundles the expressions 'getwinstart' to 'getoutputstring' and executes 
+							them when referenced by a trial element.
+
+*Please, do not change*
+<expressions>
+/ inputend = length(values.inputstring)
+
+/ maskuppercase = if(list.uppercase.unselectedCount > 0){
+	values.maskstring=replaceAll(values.maskstring,list.uppercase.nextValue, parameters.ucmaskchar);
+	expressions.maskuppercase;
+	}	
+/ masklowercase = if(list.lowercase.unselectedCount>0){
+	values.maskstring = replaceAll(values.maskstring, 
+	list.lowercase.nextValue, parameters.lcmaskchar);
+	expressions.masklowercase;
+	}
+/ masklowercasehl = values.maskstringhl = replaceAll(values.maskstringhl, 
+	parameters.lcmaskchar, " ")
+/ maskuppercasehl = values.maskstringhl = replaceAll(values.maskstringhl, 
+	parameters.ucmaskchar, " ")
+/ getwinstart = values.winstart = values.winend
+/ getwinend = values.winend = search(subString(values.inputstring, 
+	values.winstart, length(values.inputstring)-values.winstart), parameters.windicator) 
+	+ length(parameters.windicator) + values.winstart
+/ getprewindow = if(parameters.cumulative==true)
+	values.prewindowstring=subString(values.inputstring, 0, values.winstart) else
+	values.prewindowstring=subString(values.maskstring, 0, values.winstart)
+/ getwindow = values.windowstring = subString(values.inputstring, 
+	values.winstart, abs(values.winstart-values.winend))
+/ getpostwindow = values.postwindowstring = subString(values.maskstring, 
+	values.winend, abs(length(values.inputstring)-values.winend))
+/ getprewindowhl = values.prewindowstringhl = subString(values.maskstringhl, 
+	0, values.winstart)
+/ getwindowhl = values.windowstringhl = subString(values.inputstring, 
+	values.winstart, abs(values.winstart-values.winend))
+/ getpostwindowhl = values.postwindowstringhl = subString(values.maskstringhl, 
+	values.winend, abs(length(values.inputstring)-values.winend))
+/ stripwindicator = if(parameters.windicator!=" "){
+	values.prewindowstring = replaceAll(values.prewindowstring, parameters.windicator, "");
+	values.windowstring = replaceAll(values.windowstring, parameters.windicator, "");
+	values.postwindowstring = replaceAll(values.postwindowstring, parameters.windicator, "");
+	values.prewindowstringhl = replaceAll(values.prewindowstringhl, parameters.windicator, "");
+	values.windowstringhl = replaceAll(values.windowstringhl, parameters.windicator, "");
+	values.postwindowstringhl = replaceAll(values.postwindowstringhl, parameters.windicator, "");
+	}
+/ getwincount = if(values.windowstring!="")values.wincount+=1
+/ getoutputstring = values.outputstring = concat(concat(values.prewindowstring, 
+	values.windowstring),values.postwindowstring)
+/ getoutputstringhl = if(parameters.highlight==true)
+	values.outputstringhl = concat(concat(values.prewindowstringhl, 
+	values.windowstringhl),values.postwindowstringhl) else
+	values.outputstringhl=""
+/ movingwindow = {
+	expressions.getwinstart; expressions.getwinend; 
+	expressions.getprewindow; expressions.getwindow; expressions.getpostwindow; 
+	expressions.getprewindowhl; expressions.getwindowhl; expressions.getpostwindowhl; 
+	expressions.stripwindicator; expressions.getwincount;
+	expressions.getoutputstring; expressions.getoutputstringhl;
+	}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Standard Window Text
+**************************************************************************************************************
+	Fontstyle must be set to a monospaced font such as "Courier", "Courier New", "Courier New" or 
+	"Lucida Console". "Courier New" should be available on any version of the Windows operating
+	system.
+
+<text mywindow>
+/ items = ("<%values.outputstring%>")
+/ fontstyle = ("Courier New", 3.00%, true, false, false)
+/ vjustify = center
+/ hjustify = left
+/ txcolor = black
+/ txbgcolor = transparent
+/ erase = false
+/ size = (100%, 100%)
+</text>
+
+**************************************************************************************************************
+	Highlighted Window Text
+**************************************************************************************************************
+	Settings should be identical to those of 'text.mywindow' save for the '/ txcolor' attribute.
+
+<text mywindowhl>
+/ items = ("<%values.outputstringhl%>")
+/ fontstyle = ("Courier New", 3.00%, true, false, false)
+/ vjustify = center
+/ hjustify = left
+/ txcolor = blue
+/ txbgcolor = transparent
+/ erase = false
+/ size = (100%, 100%)
+</text>
+
+**************************************************************************************************************
+	Text Elements for Moving Window Stimuli
+**************************************************************************************************************
+
+<text mwstims>
+/ items = mwstims
+</text>
+
+**************************************************************************************************************
+	Layout Elements
+**************************************************************************************************************
+
+<shape background>
+/ shape = rectangle
+/ color = white
+/ erase = false
+/ size = (100%, 100%)
+</shape>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	List Elements (Item Selection)
+	Adapt as needed by modifying the settings in the '/ select' attribute.
+**************************************************************************************************************
+<list mwstims>
+/ items = (1, 2)
+/ selectionmode = sequence
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Get Complete Stimulus & Set Up The Mask & Erase Screen
+**************************************************************************************************************
+
+<trial getstim>
+/ ontrialbegin = [
+if(list.mwstims.unselectedCount==0){
+	values.stopblock=1;
+}
+	
+values.inputstring=text.mwstims.item(list.mwstims.nextValue);
+values.maskstring=values.inputstring;
+
+list.uppercase.reset(); 
+list.lowercase.reset();
+expressions.maskuppercase; 
+expressions.masklowercase;
+values.maskstringhl=values.maskstring;
+expressions.maskuppercasehl; 
+expressions.masklowercasehl;
+
+values.wincount=0; 
+values.winstart=0; 
+values.winend=0;
+]
+/ validresponse = (noresponse)
+/ trialduration = 0
+/ branch = [
+	return trial.MWtrial;
+]
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+	Display Moving Window Stimulus
+**************************************************************************************************************
+
+<trial MWtrial>
+/ ontrialbegin = [expressions.movingwindow]
+/ stimulusframes = [1=background, mywindow, mywindowhl]
+/ validresponse = (" ")
+/ branch = [
+	if(values.winend==expressions.inputend){
+		return trial.getstim;
+	} else {
+		return trial.MWtrial;
+	}
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+**************************************************************************************************************
+	Cumulative Moving Window Condition
+**************************************************************************************************************
+
+<block cumulative>
+/ preinstructions = (cumulative)
+/ onblockbegin = [
+	parameters.cumulative=true;
+	list.mwstims.reset();
+]
+/ stop = [values.stopblock==1]
+/ trials = [1=getstim]
+/ onblockend = [
+	values.stopblock=0;
+]
+</block>
+
+**************************************************************************************************************
+	Noncumulative Moving Window Condition
+**************************************************************************************************************
+
+<block noncumulative>
+/ preinstructions = (noncumulative)
+/ onblockbegin = [
+	parameters.cumulative=false;
+	list.mwstims.reset();
+]
+/ stop = [values.stopblock==1]
+/ trials = [1=getstim]
+/ onblockend = [
+	values.stopblock=0;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt MovingWindow>
+/ preinstructions = (intro)
+
+/ blocks = [
+	1=cumulative; 
+	2=noncumulative;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

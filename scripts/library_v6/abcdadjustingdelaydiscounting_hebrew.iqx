@@ -1,0 +1,1030 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+							ABCD Adjusting Amount Discounting Procedure (Hebrew version)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 04-28-2017
+last updated:  05-30-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 05-30-2023 Millisecond Software
+This script has been made available to the Millisecond Software Library by the ABCD Research Consortium.
+The script was designed to be run on ipads.
+
+Millisecond Software thanks Dor Werbner Kalron for sharing the Hebrew translations!
+
+Note:
+This script was adapted to be used in Hebrew.  Some of the instructions are hidden in the script due to problems with 
+display of Hebrew fonts. If you want to edit the text, copy and paste the element into any simple text editor, 
+make the changes and then paste back into Inquisit.
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements an Adjusting Amount Discounting Procedure 
+to assess the hypothetical reward amounts at which people start to discount higher monetary rewards
+in favor of shorter wait periods. 
+
+This script is based on an Python script written by Dr. Mikhail Koffarnus and
+generously shared by the ABCD Consortium.
+
+Koffarnus, M.N. & and Warren K. Bickel, W.K. (2014). A 5-Trial Adjusting Delay Discounting Task:
+Accurate Discount Rates in Less Than One Minute. 
+Experimental and Clinical Psychopharmacology, 22, No. 3, 222–228
+
+Rule Violations described in:
+Johnson and Bickel (2008, Experimental and Clinical Psychopharmacology, 16, 264-274). 
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+Participants have to make a choice between 2 amounts of moneys with different delays:
+a delayed amount (here: $100) for delay1 (e.g. "in a year") compared to an immediate amount (e.g. $50)
+right now. Seven delays ("6hours", "1 day", "1 week", "1 month", "3 months", "1 year", "5 years")
+are tested in this script to determine 7 indifference points. Each delay is tested with 6 trials. 
+Depending on the participant's choice the immediate amount is adjusted up (when delayed amount is selected) 
+or down (when immediate amount is chosen.)
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'abcdadjustingamountdiscounting_hebrew_raw*.iqdat'*
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial (built-in Inquisit variable)
+										Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+										that do not store data to the data file such as feedback trials. Thus, trialnum 
+										may not reflect the number of main trials run per block. 
+																				
+countDelays:						counts the number of delays tested
+delayIndex:							index of delay (in ascending order)
+delay:								stores the current delay tested: ("6 hours from now", "1 day", "1 week", "1 month", "3 months", "1 year", "5 years")
+Delay_indays:						stores the current delays in unit 'day' (numbers from original Phython program)
+countTrials:						counts the number of adjustment trials run per block
+delayedReward:						the delayed amount in $ (here: 100)
+immediate:							stores the currently tested 'immediate' amount
+
+delayedLocation:					1 = delayed amount is presented on the left; 
+									2 = delayed amount is presented on the right
+								
+stimulusitem:						the presented stimuli in order of trial presentation
+text.delayed.timestamp:				the elapsed script time when 'Delayed' text was presented
+choiceRT: 							the response latency (in ms) of the choice
+response:							the participant's response (for test trials: immediate vs. delayed)
+Adjust Amount:						stores the adjust amount of the next immediate amount
+nextimmediate:						stores the next 'immediate' amount
+lastImmediateChosen:				stores the last immediate amount chosen
+lastImmediateRejected:				stores the last immediate amount rejected
+IndiffPoint:						Indifference point (absolute indifference point as the midpoint of values.last ImmediateChosen and values.lastImmediateRejected)
+percent_IndiffPoint	: 				percentage indifference point (relative to standard amount)
+
+immediateChoiceValidity:			immediate choice validity questions after: 3 months, 1 year, 5 year
+									("get $100 NOW" vs. "get $100 in 5 years")
+									each immediate choice receives 1 point: max points 3
+	
+(2) Summary data file: 'abcdadjustingamountdiscounting_hebrew_summary*.iqdat'*
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+delayedRewardAmount:				the delayed amount in $ (here: 100)
+testedDelays:						a string variable that stores all tested delays in the order tested
+
+immediateChoiceValidity:			immediate choice validity questions after: 3 months, 1 year, 5 year
+									("get $100 NOW" vs. "get $100 in 5 years")
+									each immediate choice receives 1 point: max points 3
+
+
+Indif_Point_6h-
+Indif_Point_5years:					store the absolute Indifference Points (IP) for the 7 specific delays tested in this script
+
+percentage indifference points (relative to standard amount)
+percent_Indif_Point_6h-
+percent_Indif_Point_5years
+
+Johnson & Bickel (2008)-test for rule violations:
+Consistent_per_JBcriterion1: 		no: at least one indifference point is larger than the preceding one by 20% of delayed amount (here: $100)
+									yes: otherwise
+								
+violations_JBcriterion1:			stores the number of rule violations of JB criterion 1 based on the six individual indifference point checks 
+									(Range: 0 - 6)
+									
+Consistent_per_JBcriterion2: 		no: the difference btw. first and last indifference point (set relative to delayed amount) is smaller than 10% of the delayed standard amount
+									yes: otherwise
+								
+meanRT_allChoices:					mean latency (in ms) of all choices
+medianRT_allChoices:				median latency (in ms) of all choices
+meanRT_immedChoices:				mean latency (in ms) of 'immediate' choices			
+medianRT_immedChoices:				median latency (in ms) of 'immediate' choices	
+meanRT_delayedChoices:				mean latency (in ms) of 'delayed' choices	
+medianRT_delayedChoices:			median latency (in ms) of 'delayed' choices	
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________
+* 7 delays ("6hours", "1 day", "1 week", "1 month", "3 months", "1 year", "5 years") are tested within-participants in a blocked design
+Note: the delays can be adjusted under section Editable Lists (names of IP values will then have to be adjusted under section VALUES)
+* the order of the delays is determined randomly
+* 6 trials per delays
+* the delayed amount can be set under Editable parameters. By default, it's $100
+* the starting immediate amount is set as half of the delayed amount
+
+Trials:
+* left or right screen location of the delayed and immediate amount are randomly determined for each trial
+* participants makes a choice via a button press: the left key refers to selecting the choice on the left,
+the right key refers to selecting the choice on the right
+* participants have an unlimited time to make a choice
+* depending on choice
+
+Adjustment Algorithm of the Immediate Amount:
+First Trial: half of the difference of delayed and immediate amount
+Example: delayed amount = 100; immediate amount = 50; adjustment = (100-50)/2 = 25
+
+if participants chooses delayed amount (100) -> the next immediate amount tested is = 50 + 25 = 75
+if participant chooses immediate amount (50) -> the next immediate amount tested is = 50 - 25 = 25
+
+Subsequent Trials: half of the previous used adjustment 
+Example: previous adjustment = 25 => the next adjustment will be 12.5
+
+
+Algorithm to calculate Indifference Points (P):
+at the end of each delay, the computer calculates the indifference point for the tested delays 
+as the midpoint of last 'immediate' amount chosen and last 'immediate' amount rejected.
+Notes: 
+a) if participant always rejects the immediate amount, the IP will be the midpoint between the
+delayed amount and the last immediate amount rejected.
+b) if participant always rejects the delayed amount, the IP will be the midpoint between
+0 and the last immediate amount chosen
+
+Rule Violation Algorithms (Johnson & Bickel, 2008):
+Johnson and Bickel (2008, Experimental and Clinical Psychopharmacology, 16, 264-274). 
+
+JB Rule1: if a later indifference point (absolute) is larger than the preceding one by 20% of the delayed standard amount=> rule violation
+JB Rule2: if the difference btw. first and last indifference point (absolute) is smaller than 10% of the standard amount => rule violation
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+provided by ABCD Research Consortium - can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/delayedRewardAmount:	the delayed amount in $ (here: 100)
+
+/starttrialDuration:	the duration (in ms) of the start trial in each block (the announcement of the particular delay) (default: 2000ms)
+
+/leftx:					the proportional screen position of the left amount (here: 25% of the width of the canvas) note: 0% is the very left of canvas
+/rightx:				the proportional screen position of the right amount (here: 75% of the width of the canvas): 100% is the very right of canvas
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/delayedRewardAmount = 100
+
+/starttrialDuration = 2000
+
+/leftx = 25%
+/rightx = 75%
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+</instruct>
+
+
+<item instructions>
+/1 = "ברוכים הבאים למשחק בחירת כסף
+
+במשחק זה, אתם תבצעו בחירות בין סכומי כסף שונים שאתם רוצים לקבל: סכום כסף מסוים עכשיו, או סכום כסף גדול יותר במועד עתידי
+
+כל בחירה תוצג באחת משתי קוביות, לחצו על הקוביה שמייצג את הבחירה שאתם מעדיפים
+
+בגלל שהבחירות הללו הן על כסף דמיוני אתם לא תקבלו כסף עבור המשחק הזה. אך בבקשה תבחרו בין האופציות כאילו שהכסף הוא אמיתי ותקבלו תגמול בעבור הבחירות
+
+לחצו על הכפתור המשך כדי להתקדם למסך הבא
+"
+
+/2 ="עכשיו יהיו לכם שני ניסיונות כדי לראות כיצד המשחק עובד
+
+
+במרכז המסך נמצא ''הבית'' – נקודה אפורה. לאחר כל בחירה, שימו את הסמן בחזרה על נקודת הבית כדי לראות את הבחירה הבאה
+
+
+
+
+לחצו על הכפתור הכחול למטה כדי להתנסות בשני ניסיונות האימון"
+
+/3 = "כעת אתם מוכנים לשחק את המשחק המלא
+
+זכרו לבחור כאילו מדובר בכסף אמיתי, והניחו את הסמן על ה''בית'' לאחר כל בחירה שאתם עושים"
+
+/4 = "תודה ששיחקתם במשחק"
+</item>
+
+<text homeBaseReminder>
+/items = ("הניחו את הסמן על ה"בית" כדי להתחיל")
+/ position = (50%, 50%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ size = (80%, 10%)
+/ erase = false
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: list stores the 7 delays. Selection is done randomly without replacement until all
+delays are sampled
+<list delays>
+/items = (
+"6 שעות מעכשיו", 
+ "יום 1 ", 
+ "שבוע 1 ", 
+ "חודש 1 ",
+ "3 חודשים ",
+ "שנה 1 ",
+ "5 שנים ")
+/ replace = false
+/ resetinterval = 0
+/ selectionrate = block
+</list>
+
+
+Note: list samples the delays in unit-day. It samples the number that is tied to the currently
+sampled index from list.delays
+(numbers from original Phython program)
+<list delays_indays>
+/items = (0.25,1,7,30.44,91.32,365.25,1826.25)
+/ selectionmode = list.delays.currentIndex
+</list>
+
+************************************
+practice lists
+************************************
+
+<list practice_delays>
+/items = (
+ " חודש 1 ",
+ " שבוע 1")
+/ selectionmode = sequence
+</list>
+
+<list practice_immediate>
+/items = (50, 70)
+/ selectionmode = list.practice_delays.currentIndex
+</list>
+
+<list practice_delayed>
+/items = (80, 80)
+/ selectionmode = list.practice_delays.currentIndex
+</list>
+
+<list practice_delayedLocation>
+/items = (2, 1)
+/ selectionmode = list.practice_delays.currentIndex
+</list>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ bidirectional = true
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/txbgcolor = black
+/ txcolor = white
+/ screencolor = black
+/ inputdevice = mouse
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum, 
+values.countDelays, values.delayIndex, values.delay, values.delay_indays, values.countTrials, values.delayedReward, values.immediate,
+values.delayedLocation, stimulusitem, stimulusitem, text.delayed.timestamp, values.choiceRT, 
+response, values.adjust, values.nextimmediate, values.lastImmediateChosen, values.lastImmediateRejected, expressions.IndiffPoint,
+expressions.percent_IndiffPoint, values.immediateChoiceValidity)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+parameters.delayedRewardAmount, values.testedDelays, values.immediateChoiceValidity,
+values.Indif_Point_6h, values.Indif_Point_1day, values.Indif_Point_1week, values.Indif_Point_1month, values.Indif_Point_3months, values.Indif_Point_1year, values.Indif_Point_5years, 
+values.percent_Indif_Point_6h, values.percent_Indif_Point_1day, values.percent_Indif_Point_1week, 
+values.percent_Indif_Point_1month, values.percent_Indif_Point_3months, values.percent_Indif_Point_1year, values.percent_Indif_Point_5years, 
+values.Consistent_per_JBcriterion1, values.violations_JBcriterion1, values.Consistent_per_JBcriterion2,
+expressions.meanRT_allChoices, expressions.medianRT_allChoices,
+expressions.meanRT_immedChoices, expressions.medianRT_immedChoices,
+expressions.meanRT_delayedChoices, expressions.medianRT_delayedChoices)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+/delay:					stores the current delay tested: ("6 hours from now", "1 day", "1 week", "1 month", "3 months", "1 year", "5 years")
+/delayIndex:			index of delay (ascending)
+/delay_indays:			stores the current delays in unit 'day'
+/testedDelays:			a string variable that stores all tested delays in the order tested
+/immediate:				stores the currently tested 'immediate' amount
+/nextimmediate:			stores the next 'immediate' amount
+/countTrials:			counts the number of adjustment trials run per block
+/adjust:				stores the adjust amount of the next immediate amount
+/delayedLocation:		1 = delayed amount is presented on the left; 2 = delayed amount is presented on the right
+/subjectChoice:			"delayed" vs. "immediate"
+/countDelays:			counts the number of delays tested
+/choiceRT: 				response time in milliseconds
+
+/lastImmediateChosen:	stores the last immediate amount chosen
+/lastImmediateRejected:	stores the last immediate amount rejected
+
+/Indif_Point_6h-
+/Indif_Point_5years:	store the Indifference Points (IP) for the specific amounts tested in this script
+
+Johnson & Bickel (2008)-test for rule violations:
+/JBRule1: if a later indifference point is larger than the preceding one by 20% of delayed amount (here: $100) => rule violation (0)
+/JBRule2: if the last indifference point is less than 10% of the delayed amount (here: $100) smaller than the very first => rule violation (0)
+
+in both cases '1' suggests that the rule was not violated
+
+/ruleViolation:		1 = one or both of the JBRules are violated; 0 = otherwise
+
+<values>
+/delay = ""
+/delayIndex = 0
+/delay_indays = ""
+/testedDelays = ""
+/immediate = 50
+/nextimmediate = 0
+/countTrials = 0
+/adjust = 0
+/delayedLocation = 0
+/subjectChoice = ""
+/countDelays = 0
+
+/lastImmediateChosen = ""
+/lastImmediateRejected = ""
+
+/Indif_Point_1day = ""
+/Indif_Point_1week = ""
+/Indif_Point_1month = ""
+/Indif_Point_3months = ""
+/Indif_Point_1year = ""
+/Indif_Point_5years = ""
+/Indif_Point_6h = ""
+
+/percent_Indif_Point_1day = ""
+/percent_Indif_Point_1week = ""
+/percent_Indif_Point_1month = ""
+/percent_Indif_Point_3months = ""
+/percent_Indif_Point_1year = ""
+/percent_Indif_Point_5years = ""
+/percent_Indif_Point_6h = ""
+
+/Consistent_per_JBcriterion1 = "not evaluated yet"
+/Consistent_per_JBcriterion2 = "not evaluated yet"
+/ruleViolation = "no"
+/violations_JBcriterion1 = 0
+/delayedReward = ""
+
+/choiceRT = 0
+
+/immediateChoiceValidity = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+/IndiffPoint: calculates the current absolute indifference point as the midpoint of values.last ImmediateChosen and values.lastImmediateRejected
+/percent_IndiffPoint: calculates the current indifference point as the midpoint of values.last ImmediateChosen and values.lastImmediateRejected
+in proportion to parameters.delayedRewardAmount; the indifference point is stored as a %
+
+Johnson & Bickel (2008)-test for rule violations:
+JB Rule1: if a later indifference point (absolute) is larger than the preceding one by 20% of the delayed standard amount=> rule violation
+JB Rule2: if the difference btw. first and last indifference point (absolute) is smaller than 10% of the standard amount => rule violation
+
+<expressions>
+/IndiffPoint = (values.lastImmediateChosen + values.lastImmediateRejected)/2
+/percent_IndiffPoint = (0.5*(values.lastImmediateChosen + values.lastImmediateRejected)/parameters.delayedRewardAmount)*100
+
+/JBRule1_test = {
+
+	if (((values.Indif_Point_1day - values.Indif_Point_6h) > (parameters.delayedRewardAmount*0.2)) ||
+	((values.Indif_Point_1week - values.Indif_Point_1day) > (parameters.delayedRewardAmount*0.2)) || 
+	((values.Indif_Point_1month-values.Indif_Point_1week) > (parameters.delayedRewardAmount*0.2)) ||
+	((values.Indif_Point_3months-values.Indif_Point_1month) > (parameters.delayedRewardAmount*0.2)) || 
+	((values.Indif_Point_1year-values.Indif_Point_3months) > (parameters.delayedRewardAmount*0.2)) || 
+	((values.Indif_Point_5years-values.Indif_Point_1year) > (parameters.delayedRewardAmount*0.2))){
+
+			values.Consistent_per_JBcriterion1 = "no";
+	} else {
+			values.Consistent_per_JBcriterion1 = "yes";
+	}
+	
+	values.violations_JBcriterion1 = 0;
+	if ((values.Indif_Point_1day - values.Indif_Point_6h) > (parameters.delayedRewardAmount*0.2)){
+		values.violations_JBcriterion1 += 1;
+	}
+	if ((values.Indif_Point_1week - values.Indif_Point_1day) > (parameters.delayedRewardAmount*0.2)){
+		values.violations_JBcriterion1 += 1;
+	}	
+	if ((values.Indif_Point_1month-values.Indif_Point_1week) > (parameters.delayedRewardAmount*0.2)){
+		values.violations_JBcriterion1 += 1;		
+	}	
+	if ((values.Indif_Point_3months-values.Indif_Point_1month) > (parameters.delayedRewardAmount*0.2)){
+		values.violations_JBcriterion1 += 1;
+	}
+	if ((values.Indif_Point_1year-values.Indif_Point_3months) > (parameters.delayedRewardAmount*0.2)){
+		values.violations_JBcriterion1 += 1;
+	} 	
+	if ((values.Indif_Point_5years-values.Indif_Point_1year) > (parameters.delayedRewardAmount*0.2)){	
+		values.violations_JBcriterion1 += 1;
+	}
+}
+/JBRule2_test = {
+	if (values.Indif_Point_6h-values.Indif_Point_5years < (0.1 *parameters.delayedRewardAmount)){
+		values.Consistent_per_JBcriterion2 = "no";
+	} else {
+		values.Consistent_per_JBcriterion2 = "yes";
+	}	
+}
+</expressions>
+
+
+/meanRT_allChoices:				mean latency (in ms) of all choices
+/medianRT_allChoices:			median latency (in ms) of all choices
+/meanRT_immedChoices:			mean latency (in ms) of	'immediate' choices			
+/medianRT_immedChoices:			median latency (in ms) of 'immediate' choices	
+/meanRT_delayedChoices:			mean latency (in ms) of	'delayed' choices	
+/medianRT_delayedChoices:		median latency (in ms) of 'immediate' choices
+
+<expressions>
+/meanRT_allChoices = list.RT.mean
+/medianRT_allChoices = list.RT.median
+/meanRT_immedChoices = list.RT_immediateChoices.mean
+/medianRT_immedChoices = list.RT_immediateChoices.median
+/meanRT_delayedChoices = list.RT_delayedChoices.mean
+/medianRT_delayedChoices = list.RT_delayedChoices.median
+</expressions>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text intro>
+/ items = instructions
+/ select = 1
+/ position = (50%, 50%)
+/ size = (90%, 80%)
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+
+</text>
+
+<text practiceStart>
+/ items = instructions
+/ select = 2
+/ position = (50%, 50%)
+/ size = (90%, 80%)
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+</text>
+
+<text testStart>
+/ items = instructions
+/ select = 3
+/ position = (50%, 50%)
+/ size = (90%, 80%)
+/ fontstyle = ("Arial", 4%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = left
+/ resetinterval = 0
+</text>
+
+<text end>
+/ items = instructions
+/ select = 4
+/ position = (50%, 50%)
+/ size = (90%, 80%)
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+<text start>
+/ items = ("התחלה")
+/ position = (50%, 90%)
+/ size = (40%, 7%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ txbgcolor = blue
+</text>
+
+<text continue>
+/ items = ("המשך")
+/ position = (50%, 90%)
+/ size = (40%, 7%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ txbgcolor = blue
+</text>
+
+
+<text selectInstructions>
+/ items = ("איזה אופציה תעדיפו")
+/ position = (50%, 20%)
+/ size = (80%, 5%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ vjustify = center
+/ erase = false
+</text>
+
+<shape HomeButton_instructions>
+/ shape = circle
+/ hposition = 50%
+/ vposition = 60%
+/ size = (10%*0.75*0.75, 10%)
+/ color = gray
+/ erase = false
+</shape>
+
+***********************
+Instruction Trials
+***********************
+
+<trial intro>
+/ stimulusframes = [1 = intro, continue]
+/ validresponse = ("continue")
+/ recorddata = false
+</trial>
+
+<trial practiceStart>
+/ stimulusframes = [1 = practiceStart, start, HomeButton_instructions]
+/ validresponse = (start)
+/ recorddata = false
+</trial>
+
+<trial testStart>
+/ inputdevice = mouse
+/ stimulusframes = [1 = testStart, start]
+/ validresponse = (start)
+/ recorddata = false
+</trial>
+
+<text endbutton>
+/ items = ("סיום")
+/ position = (50%, 90%)
+/ txbgcolor = blue
+/ txcolor = white
+/ size = (20%, 8%)
+/ fontstyle = ("Arial", 5%, false, false, false, false, 5, 1)
+/ vjustify = center
+</text>
+
+<trial end>
+/ inputdevice = mouse
+/ stimulusframes = [1 = end, endbutton]
+/ validresponse = (endbutton)
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text delay>
+/ items = ("העיכוב הבא
+<%values.delay%>")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ size = (80%, 20%)
+/ position = (50%, 50%)
+/ vjustify = center
+/ hjustify = center
+</text>
+
+<text delayed>
+/ items = 
+("קבל <%values.delayedReward%>
+  שקלים בעוד <%values.delay%>")
+
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ size = (40%, 30%)
+/ vposition = 50%
+/ txbgcolor = gray
+/ txcolor = white
+/ vjustify = center
+</text>
+
+<text immediate>
+/ items =
+("קבל <%values.immediate%>
+ שקלים עכשיו")
+
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ size = (40%, 30%)
+/ vposition = 50%
+/ txbgcolor = gray
+/ txcolor = white
+/ vjustify = center
+</text>
+
+
+<shape HomeButton>
+/ shape = circle
+/ hposition = 50%
+/ vposition = text.immediate.vposition + 20%
+/ size = (10%*0.75*0.75, 10%)
+/ color = gray
+/ erase = false
+</shape>
+
+
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: list randomly (with replacement) assigns the delayed option the left (1) or right (2) position
+<list delayedLocation>
+/items = (1, 2)
+/ replace = true
+/ maxrunsize = 3
+</list>
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+<list RT>
+</list>
+
+<list RT_immediateChoices>
+</list>
+
+<list RT_delayedChoices>
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial start>
+/ stimulusframes = [1 = clearScreen, delay]
+/ trialduration = parameters.starttrialDuration
+/ recorddata = false
+</trial>
+
+Note:
+* trial randomly selects (with replacement) the screen location of the delayed and the immediate options
+* presents delayed and immediate option
+* waits for and evaluates response
+* calculates adjustment to immediate option based on response
+<trial delaydiscounting>
+/ ontrialbegin = [
+	values.immediate = values.nextimmediate;
+	values.delayedLocation = list.delayedLocation.nextValue;
+	if (values.delayedLocation == 1){
+		text.delayed.hposition = parameters.leftx;
+		text.immediate.hposition = parameters.rightx;
+	} else {
+		text.delayed.hposition = parameters.rightx;
+		text.immediate.hposition = parameters.leftx;		
+	}
+]
+/ stimulusframes = [1 = clearScreen, HomeButton, delayed, immediate, selectInstructions]
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ validresponse = ("delayed", "immediate")
+/ ontrialend = [
+	if (values.countTrials == 1) {
+		values.adjust = (parameters.delayedRewardAmount - values.immediate)/2;
+	} else {
+		values.adjust = 0.5*values.adjust;
+	}
+
+	if (trial.delaydiscounting.response == "immediate"){
+			values.subjectChoice = "immediate";
+			values.lastImmediateChosen = values.immediate;
+			values.nextimmediate -= values.adjust;
+			list.RT_immediateChoices.insertItem(trial.delaydiscounting.latency, 1);
+	} else if (trial.delaydiscounting.response == "delayed"){
+			values.subjectChoice = "delayed";
+			values.lastImmediateRejected = values.immediate;
+			values.nextimmediate += values.adjust;	
+			list.RT_delayedChoices.insertItem(trial.delaydiscounting.latency, 1);
+	}	
+	
+	list.RT.insertItem(trial.delaydiscounting.latency, 1);
+	values.choiceRT = trial.delaydiscounting.latency;
+]
+/ recorddata = true
+</trial>
+
+<trial homeBase>
+/ ontrialbegin = [
+		values.countTrials += 1;
+		if (values.countTrials == 1){
+			trial.homeBase.insertStimulusTime(text.homeBaseReminder, 0);
+		}
+]
+/ stimulusframes = [1 = clearScreen, HomeButton]
+/ validresponse = (noresponse)
+/ timeout = 0
+/ beginresponsetime = -1
+/ branch = [
+	return trial.delaydiscounting;
+]
+/ ontrialend = [
+	trial.homeBase.resetStimulusFrames();
+	values.choiceRT = trial.homeBase.latency;
+]
+/ recorddata = true
+/ posttrialsignal = (mouse, homeButton)
+</trial>
+
+*************************************************************
+Practice Trial
+*************************************************************
+
+<trial start_practice>
+/ ontrialbegin = [
+
+	values.delay = list.practice_delays.nextValue;
+	values.immediate = list.practice_immediate.nextValue;
+	values.delayedReward = list.practice_delayed.nextValue;
+	values.delayedLocation = list.practice_delayedLocation.nextValue;
+	if (values.delayedLocation == 1){
+		text.delayed.hposition = parameters.leftx;
+		text.immediate.hposition = parameters.rightx;
+	} else {
+		text.delayed.hposition = parameters.rightx;
+		text.immediate.hposition = parameters.leftx;		
+	}
+]
+/ stimulusframes = [1 = clearScreen, delay]
+/ trialduration = parameters.starttrialDuration
+/ recorddata = false
+</trial>
+
+
+Note:
+* trial randomly selects (with replacement) the screen location of the delayed and the immediate options
+for practice
+* presents delayed and immediate option
+* waits for and evaluates response
+<trial delaydiscounting_practice>
+/ stimulusframes = [1 = clearScreen, HomeButton, delayed, immediate, selectInstructions]
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ validresponse = ("delayed", "immediate")
+/ ontrialend = [
+	values.choiceRT = trial.delaydiscounting_practice.latency;
+]
+/ recorddata = true
+</trial>
+
+<trial homeBase_practice>
+/ stimulusframes = [1 = HomeButton, homeBaseReminder]
+/ validresponse = (noresponse)
+/ responseinterrupt = immediate
+/ timeout = 0
+/ beginresponsetime = -1
+/ recorddata = false
+/ posttrialsignal = (mouse, HomeButton)
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALIDITY TRIALS 	for delays: "3 months", "1 year", "5 years"
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial homeBase_validity>
+/ skip = [
+	values.delay != list.delays.item(5) && values.delay != list.delays.item(6) && values.delay != list.delays.item(7);
+]
+/ stimulusframes = [1 = clearScreen, HomeButton]
+/ validresponse = (noresponse)
+/ timeout = 0
+/ beginresponsetime = -1
+/ branch = [
+	trial.delaydiscounting_validity;
+]
+/ ontrialend = [
+	trial.homeBase.resetStimulusFrames();
+	values.choiceRT = trial.homeBase.latency;
+]
+/ recorddata = true
+/ posttrialsignal = (mouse, homeButton)
+</trial>
+
+Note:
+* trial randomly selects (with replacement) the screen location of the delayed and the immediate options
+* presents delayed and immediate option
+* waits for and evaluates response
+* calculates adjustment to immediate option based on response
+<trial delaydiscounting_validity>
+/ ontrialbegin = [
+	values.immediate = parameters.delayedRewardAmount;
+	values.delayedLocation = list.delayedLocation.nextValue;
+	if (values.delayedLocation == 1){
+		text.delayed.hposition = parameters.leftx;
+		text.immediate.hposition = parameters.rightx;
+	} else {
+		text.delayed.hposition = parameters.rightx;
+		text.immediate.hposition = parameters.leftx;		
+	}
+]
+/ stimulusframes = [1 = clearScreen, HomeButton, delayed, immediate, selectInstructions]
+/ beginresponsetime = 0
+/ responseinterrupt = immediate
+/ validresponse = ("delayed", "immediate")
+/ ontrialend = [
+	if (trial.delaydiscounting.response == "immediate"){
+			values.subjectChoice = "immediate";
+			values.immediateChoiceValidity += 1;
+
+	} else if (trial.delaydiscounting.response == "delayed"){
+			values.subjectChoice = "delayed";
+	}	
+	
+
+	values.choiceRT = trial.delaydiscounting.latency;
+]
+/ recorddata = true
+</trial>
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block intro>
+/ trials = [1 = intro]
+</block>
+
+<block end>
+/ trials = [1 = end]
+</block>
+
+<block practice>
+/ trials = [1 = practiceStart; 2-3 = sequence(start_practice, homeBase_practice, delaydiscounting_practice); 4 = testStart]
+</block>
+
+
+<block delaydiscounting>
+/ onblockbegin = [
+	values.countDelays += 1;
+	values.nextimmediate = parameters.delayedRewardAmount/2;
+	values.delay = list.delays.nextValue;
+	values.delay_indays = list.delays_indays.nextValue;
+	values.delayIndex = list.delays.currentIndex;
+	values.testedDelays = concat(values.testedDelays, values.delay);
+	values.testedDelays = concat(values.testedDelays, ", ");
+	values.countTrials = 0;
+	values.adjust = 0;
+	values.lastImmediateChosen = parameters.delayedRewardAmount;
+	values.lastImmediateRejected = 0;
+	values.delayedReward = parameters.delayedRewardAmount;
+	list.delayedLocation.reset();]
+/ trials = [1 = start; 2-7 = homeBase; 8 = homeBase_validity]
+/ onblockend = [
+	if (values.delay == list.delays.item(1)){
+		values.Indif_Point_6h = expressions.IndiffPoint;
+		values.percent_Indif_Point_6h = expressions.percent_IndiffPoint;
+	} else if (values.delay == list.delays.item(2)){
+		values.Indif_Point_1day = expressions.IndiffPoint;
+		values.percent_Indif_Point_1day = expressions.percent_IndiffPoint;		
+	} else if (values.delay == list.delays.item(3)){
+		values.Indif_Point_1week = expressions.IndiffPoint;
+		values.percent_Indif_Point_1week = expressions.percent_IndiffPoint;		
+	} else if (values.delay == list.delays.item(4)){
+		values.Indif_Point_1month = expressions.IndiffPoint;
+		values.percent_Indif_Point_1month = expressions.percent_IndiffPoint;		
+	} else if (values.delay == list.delays.item(5)){
+		values.Indif_Point_3months = expressions.IndiffPoint;
+		values.percent_Indif_Point_3months = expressions.percent_IndiffPoint;		
+	} else if (values.delay == list.delays.item(6)){
+		values.Indif_Point_1year = expressions.IndiffPoint;
+		values.percent_Indif_Point_1year = expressions.percent_IndiffPoint;		
+	} else if (values.delay == list.delays.item(7)){
+		values.Indif_Point_5years = expressions.IndiffPoint;
+		values.percent_Indif_Point_5years = expressions.percent_IndiffPoint;		
+	}	
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt a>
+/ blocks = [
+	1 = intro;
+	2 = practice;
+	3-9 = delaydiscounting;
+	10 = end;
+]
+/ onexptend = [
+	expressions.JBRule1_test;
+	expressions.JBRule2_test;
+	if (values.Consistent_per_JBcriterion1 == "no" || values.Consistent_per_JBcriterion2 == "no"){
+		values.ruleViolation = "yes";
+	}
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

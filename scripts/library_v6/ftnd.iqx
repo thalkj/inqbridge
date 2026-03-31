@@ -1,0 +1,251 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							Fagerstrom Test of Nicotine Dependence (FTND)
+___________________________________________________________________________________________________________________	
+
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 02-27-2018
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized version of the Fagerstrom Test of Nicotine Dependence (FTND) as described in:
+
+Heatherton TF, Kozlowski LT Frecker RC (1991). The Fagerström Test for Nicotine Dependence: A revision of the
+Fagerström Tolerance Questionnaire. British Journal of Addiction 86:1119-27.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+6 questions regarding nicotine dependence
+											  
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes less than a minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'ftnd_survey.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: question dependant
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+								
+								
+(2) Summary data file: 'ftnd_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+radiobuttons.cigaretteSmoking.response: 	0 = participant does currently not smoke; 1 = participant currently smokes
+Total:										sum of individual scores (range: 0-10)
+
+individual scores:
+radiobuttons.q1.response (range: 0-3)
+radiobuttons.q2.response (range: 0-1)
+radiobuttons.q3.response (range: 0-1)
+radiobuttons.q4.response (range: 0-3)
+radiobuttons.q5.response (range: 0-1)
+radiobuttons.q6.response (range: 0-1)
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+radiobuttons.cigaretteSmoking.response, expressions.Total,
+radiobuttons.q1.response, radiobuttons.q2.response, radiobuttons.q3.response,
+radiobuttons.q4.response, radiobuttons.q5.response, radiobuttons.q6.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/Total = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response +
+radiobuttons.q4.response + radiobuttons.q5.response + radiobuttons.q6.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons cigaretteSmoking>
+/caption = "Do you currently smoke cigarettes?"
+/ options = ("No", "Yes")
+/ optionvalues = ("0", "1")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q1>
+/caption = "1. How soon after you wake up do you smoke your first cigarette?"
+/ options = ("Within 5 minutes", "6-30 minutes", "31-60 minutes", "After 60 minutes")
+/ optionvalues = ("3", "2", "1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Do you find it difficult to refrain from smoking in places where it is forbidden (e.g., in church, at the library, in cinema)?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Which cigarette would you hate most to give up?"
+/ options = ("The first one in the morning", "Any others")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. How many cigarettes per day do you smoke?"
+/ options = ("10 or less", "11-20", "21-30", "31 or more")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. Do you smoke more frequently during the first hours after waking than during the rest of the day?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Do you smoke if you are so ill that you are in bed most of the day?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage ftnd1>
+/caption ="Please, answer the following question.
+"
+/questions = [1 = cigaretteSmoking]
+</surveypage>
+
+<surveypage ftnd2>
+/ skip = [
+	radiobuttons.cigaretteSmoking.response == 0;
+]
+/caption ="Please, select the answer choice that applies best to you.
+"
+/questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage ftnd3>
+/ skip = [
+	radiobuttons.cigaretteSmoking.response == 0;
+]
+/caption ="Please, select the answer choice that applies best to you.
+"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey ftnd>
+/pages = [
+	1 = ftnd1;
+	2 = ftnd2;
+	3 = ftnd3;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

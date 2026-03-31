@@ -1,0 +1,458 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									EPWORTH SLEEPINESS SCALE (ESS)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 10-09-2013
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Epworth Sleepiness Scale (ESS) as described in:
+Johns, M.W. (1991). A new method for measuring daytime sleepiness: The Epworth sleepiness scale.
+Sleep, 14, 540-545. 
+
+This script uses the 1997 version of the ESS which includes a small revision of the original 1991 instructions.
+The script uses radiobuttons instead of textboxes.
+
+More information on the ESS (as well as instruction revisions done in 1997):
+http://epworthsleepinessscale.com/
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+Script offers an optional surveypage that collects demographics (-> see section Editable Parameters parameters.skipdemographics), 
+followed by a surveypage that presents the 8 ESS questions. By default the 8 ESS questions cannot be skipped.
+At the end, an optional feedback page offers feedback in the form of  the totalscore and a generic interpretation
+of the ESS scores. The feedback is not original to the ESS and can be edited under section Editable Stimuli (item.feedback) 
+or can be skipped altogether, see section Editable Parameters -> parameters.skipfeedback (default setting).
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1 minute to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'ess.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 0 (never) - 3 (high chance)
+								no reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'ess_summary*.iqdat'
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+textbox.name.response:				name response if applicable (by default, demographic questions are skipped)
+textbox.age.response:				age  response if applicable (by default, demographic questions are skipped)
+dropdown.gender.response:			gender  response if applicable (by default, demographic questions are skipped)
+
+totalscore:							the participant's total ESS score
+									Note: 
+									In general, the higher the score, the higher your daytime sleepiness.
+									The general guideline is that a score at or below 10 is within normal range.
+
+									It's important to note that 
+									A) higher scores by themselves are not diagnostic of any sleep disorder.
+									B) a score at or below 10 does not exclude the diagnosis of a sleep disorder.
+														
+
+Note: calculation of totalscore
+Based on info from http://epworthsleepinessscale.com/ rational numbers that are not integers (e.g. 1.5) 
+are sometimes chosen by  participants on the paper test. While not encouraged, choosing rational numbers 
+other than integers doesn't invalidate the answer. 
+The totalscore in this script takes all responses and adds them up and only then rounds it to the nearest integer.
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/skipdemographics:			false = script does collect demographic data 
+							true = script does NOT collect demographic data (default)
+							
+/skipfeedback:				false = script does provide feedback to participants
+							true = script does NOT provide feedback to participants (default)
+							Note: to customize feedback go to EDITABLE CODE -> Editable Stimuli
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+<parameters>
+/skipdemographics = true
+/skipfeedback = true
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI: change editable stimuli here
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: this feedback is NOT original to the ESS. 
+
+<item feedback>
+/1 = "Thank you for your participation!
+
+Your ESS Score is: <%expressions.totalscore%>
+
+In general, the higher the score, the higher your daytime sleepiness.
+The general guideline is that a score at or below 10 is within normal range.
+
+It's important to note that 
+A) higher scores by themselves are not diagnostic of any sleep disorder.
+B) a score at or below 10 does not exclude the diagnosis of a sleep disorder.
+
+If you have questions or concerns regarding your score, please contact your health care providers.
+
+
+
+
+Press <SPACEBAR> to exit."
+</item>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+raw data: ESS.iqdat
+********************
+
+
+********************
+summary data
+********************
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+textbox.name.response,textbox.age.response, dropdown.gender.response, expressions.totalscore)
+</summarydata>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/totalscore:			the participant's total ESS score
+
+<expressions>
+/totalscore = round(radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response + 
+				radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+************************************
+Demographic questions
+************************************
+Note: by default, demographic questions are required.
+To change, set /requires = false
+
+<textbox Name>
+/caption = "Name: "
+/ orientation = horizontal
+/mask = alphabetic
+/ required = true
+/ textboxsize = (30%, 5%)
+</textbox>
+
+<textbox Age>
+/caption = "Your Age (in years): "
+/ orientation = horizontal
+/mask = integer
+/ required = true
+</textbox>
+
+<dropdown Gender>
+/caption = "Your Gender: "
+/options = ("Male", "Female")
+/ required = true
+</dropdown>
+
+************************************
+ESS questions
+************************************
+
+Notes: 
+* by default, the ESS questions are required to answer
+* based on info from http://epworthsleepinessscale.com/ rational numbers (e.g. 1.5) are sometimes chosen by 
+participants on the paper test. While not encouraged, it doesn't invalidate the answer.
+To allow for rational numbers /mask = decimal. To discourage rational numbers set /mask = integer
+The totalscore takes all responses and adds them up and only then rounds it to the nearest integer.
+
+<caption header>
+/caption = "Situation"
+/fontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+</caption>
+
+
+<radiobuttons q1>
+/caption = "1. Sitting and reading"
+/ orientation = horizontalequal
+/ options = ("would NEVER~ndoze",
+"SLIGHT CHANCE~nof dozing",
+"MODERATE CHANCE~nof dozing",
+"HIGH CHANCE~nof dozing")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Watching television"
+/ orientation = horizontalequal
+/ options = ("would NEVER~ndoze",
+"SLIGHT CHANCE~nof dozing",
+"MODERATE CHANCE~nof dozing",
+"HIGH CHANCE~nof dozing")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Sitting inactive in a public place (e.g. a theater or meeting)"
+/ orientation = horizontalequal
+/ options = ("would NEVER~ndoze",
+"SLIGHT CHANCE~nof dozing",
+"MODERATE CHANCE~nof dozing",
+"HIGH CHANCE~nof dozing")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. As a passenger in a car for an hour without a break"
+/ orientation = horizontalequal
+/ options = ("would NEVER~ndoze",
+"SLIGHT CHANCE~nof dozing",
+"MODERATE CHANCE~nof dozing",
+"HIGH CHANCE~nof dozing")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. Lying down to rest in the afternoon when circumstances permit"
+/ orientation = horizontalequal
+/ options = ("would NEVER~ndoze",
+"SLIGHT CHANCE~nof dozing",
+"MODERATE CHANCE~nof dozing",
+"HIGH CHANCE~nof dozing")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Sitting and talking to someone"
+/ orientation = horizontalequal
+/ options = ("would NEVER~ndoze",
+"SLIGHT CHANCE~nof dozing",
+"MODERATE CHANCE~nof dozing",
+"HIGH CHANCE~nof dozing")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. Sitting quietly after a lunch without alcohol"
+/ orientation = horizontalequal
+/ options = ("would NEVER~ndoze",
+"SLIGHT CHANCE~nof dozing",
+"MODERATE CHANCE~nof dozing",
+"HIGH CHANCE~nof dozing")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. In a car, while stopped for a few minutes in the traffic"
+/ orientation = horizontalequal
+/ options = ("would NEVER~ndoze",
+"SLIGHT CHANCE~nof dozing",
+"MODERATE CHANCE~nof dozing",
+"HIGH CHANCE~nof dozing")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+</radiobuttons>
+
+<caption thankyou>
+/caption = "Thank You!"
+/fontstyle = ("Arial", 1.7%, true, false, false, false, 5, 1)
+/ position = (50%, 95%)
+</caption>
+
+
+************************************
+Feedback (optional)
+************************************
+<text feedback>
+/items = feedback
+/select = 1
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txcolor = black
+</text>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	UTILITY TRIALS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+optional feedback trial
+<trial feedback>
+/skip = [parameters.skipfeedback == true]
+/stimulusframes = [1 = feedback]
+/validresponse = (" ")
+/recorddata = false
+</trial>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+Note: this surveypage is optional (-> parameters.skipdemographics); it presents the demographic questions
+<surveypage ESS1>
+/skip = [parameters.skipdemographics == true]
+/caption = "The Epworth Sleepiness Scale (ESS)
+"
+/questions = [1 = name, age, gender]
+</surveypage>
+
+Note: this surveypage presents the ESS questions
+<surveypage ESS2>
+/caption = "The Epworth Sleepiness Scale (ESS)
+"
+/subcaption = "How likely are you to doze off or fall asleep in the following situations, in contrast to feeling just tired? 
+
+This refers to your usual way of life in recent times. Even if you have not done some of these things recently try to work out how they would have affected you. 
+
+IT IS IMPORTANT THAT YOU ANSWER EACH QUESTION AS BEST AS YOU CAN
+"
+</surveypage>
+
+<surveypage ESS3>
+/caption = "The Epworth Sleepiness Scale (ESS)"
+/questions = [1 = header, q1, q2, q3]
+</surveypage>
+
+<surveypage ESS4>
+/caption = "The Epworth Sleepiness Scale (ESS)"
+/questions = [1 = header, q4, q5, q6]
+</surveypage>
+
+<surveypage ESS5>
+/caption = "The Epworth Sleepiness Scale (ESS)"
+/questions = [1 = header, q7, q8, thankyou]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY/BLOCK
+*******************************************************************************************************************
+*******************************************************************************************************************
+<survey ESS>
+/pages = [
+	1 = ESS1; 
+	2 = ESS2; 
+	3 = ESS3;
+	4 = ESS4;
+	5 = ESS5;
+]
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+<block summary>
+/trials = [1 = feedback]
+</block>
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+<expt a>
+/blocks = [
+	1 = ESS; 
+	2 = summary;
+]
+</expt>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

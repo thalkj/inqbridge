@@ -1,0 +1,1146 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+										Coordinate Plane Task
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 07-23-2018
+last updated:  03-28-2024 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 03-28-2024 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a basic coordinate plane task (Geary et al, 2015) -
+a measure of visual-spatial perception in which participants are presented coordinate points 
+and asked to place them in a coordinate plane.
+
+
+David C. Geary, Mary K. Hoard, Lara Nugent, Jeffrey N. Rouder (2015).
+Individual differences in algebraic cognition: Relation to the approximate number and semantic memory systems,
+Journal of Experimental Child Psychology, Volume 140, Pages 211-227,
+https://doi.org/10.1016/j.jecp.2015.07.010.
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Participants are presented coordinate points and are asked to place them in a provided coordinate plane.
+One practice trial is followed by 24 test trials.
+Feedback is optional (by default no feedback is provided).
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 8 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'coordinateplanetask_raw*.iqdat'*
+
+build:								The specific Inquisit version used (the 'build') that was run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+date, time: 						date and time script was run 
+subject, group: 					with the current subject/groupnumber
+session:							with the current session id
+
+blockcode, blocknum:				the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 				the name and number of the currently recorded trial
+										(Note: not all trials that are run might record data; 
+										by default data is collected unless /recorddata = false is set for a particular trial/block) 
+										NOTE: silent trials that do not collect data are nevertheless still represented in the trialnum count;
+										for example: in this script, by default trial.dotplacement does not store any data to the datafile (/recorddata = false);
+										whereas trial.testsummary does. This was done to declutter the raw data file. However,
+										if all dots that have been placed until the continue button is pressed should be stored in the data file,
+										set /recorddata = true for trial.dotplacement. Anytime trialnum > 2 for a given problem, the participant
+										placed more than one dot before submitting the coordinates.
+																	
+order:								"p" for practice trial, 1-24 for test trials
+Stimuli:							stores the current point coordinate, e.g. (25, 35)
+stim_x:								stores the current x-coordinate of the to be placed point
+stim_y:								stores the current y-coordinate of the to be placed point
+stimQuadrant:						the quadrant the to be placed point is in
+										1 = top right quadrant (x > 0, y > 0)
+										2 = top left quadrant (x < 0, y > 0)
+										3 = bottom left quadrant (x < 0, y < 0)
+										4 = bottom right quadrant (x >0, y < 0)
+
+resp_x:								the x-coordinate of the response relative to the coordinate plane (with (0, 0) as the coordinate plane's origin)
+resp_y:								the y-coordinate of the response relative to the coordinate plane (with (0, 0) as the coordinate plane's origin)
+
+responseQuadrant:					the quadrant of the response point
+										1 = top right quadrant (x > 0, y > 0)
+										2 = top left quadrant (x < 0, y > 0)
+										3 = bottom left quadrant (x < 0, y < 0)
+										4 = bottom right quadrant (x > 0, y < 0)
+										x-axis: dot was placed on x-axis
+										y-axis: dot was placed on y-axis
+										origin
+										
+respRT:								stores the time (in ms) spent on placing the current dot (measured from onset of coordinate plane until continue is pressed)
+PAE_X:								Deviation from linearity for placed x coordinate	
+PAE_Y:								Deviation from linearity for placed y coordinate	
+PAE:								mean of PAE_X and PAE_Y for the current trial									
+Quad_Cor:							1 = the response point was put in the correct quadrant; 0= otherwise									
+EUC_Er:								calculates the Euklidian Distance Error of the currently placed dot
+
+
+(2) Summary data file: 'coordinateplanetask_summary*.iqdat'*
+
+inquisit.version: 					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)n)
+
+meanRT:								calculates the mean response time (in ms) to submit a response dot for test trials
+									(measured from onset of problem until continue button is hit)
+										
+meanEUCEr:				mean Euklidian Distance Error 
+PQuadCor:				percent of points placed in correct quadrant
+meanPAE:				mean deviation for linearity of placed dots
+meanPAE_X:				mean deviation for linearity for x-coordinate of placed dots
+meanPAE_Y:				mean deviation for linearity for y-coordinate of placed dots
+meanPAE_X_1:			mean deviation for linearity for x-coordinate for dots placed in correct quadrant
+meanPAE_Y_1:			mean deviation for linearity for y-coordinate for dots placed in correct quadrant
+meanEUCEr_1:			mean Euklidian Distance Error for dots placed in correct quadrant
+meanPAE_X_0:			mean deviation for linearity for x-coordinate for dots placed in incorrect quadrant
+meanPAE_Y_0:			mean deviation for linearity for y-coordinate for dots placed in incorrect quadrant
+meanEUCEr_0:			mean Euklidian Distance Error for dots placed in incorrect quadrant
+
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+1 practice trial: practice coordinates stored under list.targetcoordinates_x_practice/list.targetcoordinates_y_practice
+- currently: participants have to place a dot before the continue button is activated
+- onscreen instructions are optional (by default they are presented)
+
+24 test trials: test coordinates stored under list.targetcoordinates_x/list.targetcoordinates_y
+- the test coordinates are selected in sequence (same order for each participant)
+- participants have to place a point before the continue button is activated
+- intertrial interval (blank screen) of 500ms in between each new trial
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS (optional)
+___________________________________________________________________________________________________________________
+based on Geary et al (2015) and extended by Millisecond Software
+can be edited under section Editable Instructions
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/dotSize:				canvas percentage size of the placed dot (default: 1%)
+/widthOfAxis			canvas percentage size of width of the axes (default: 0.25%)
+/lengthOfAxis:			canvas percentage size of length of the axes (default: 80%)
+/planeCenter_x:			the x coordinate (in canvas percentage) of the origin (default: 40%)
+/iti:					intertrial interval in ms (default: 500ms)
+
+
+/showPracticeFeedback:	true = participants are given visual feedback in regard to their placement during the practice
+						false = no feedback is provided to participants during the practice (default)
+
+/showTestFeedback:		true = participants are given visual feedback in regard to their placement during the he test
+						false = no feedback is provided to participants during the test (default)
+					
+/skipInstructions:		true = Script does not provide onscreen instructions to students
+						false = Script provides instructions (default)
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/dotSize =.75%
+/widthOfAxis = 0.15%
+/lengthOfAxis = 90%
+/planeCenter_x = 38%
+/iti = 500
+
+/showPracticeFeedback = false
+/showTestFeedback = false
+/skipInstructions = false
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+</instruct>
+
+<item instructions>
+/1 = "Over here on the upper right is the pair of points you want to graph. 
+
+So, if it says (25,30), you would find where you think 25 would go on the HORIZONTAL axis (here: the green axis) and then where you think 30 would go on the VERTICAL axis (here: the blue axis) and touch the screen. A red dot appears in the position you have touched. You can change the position of the red dot by touching on different areas of the graph.
+
+If you are ready to record your dot location, press on the 'Continue' button in the lower right corner of the screen.
+
+Press the 'Continue' button now to try it."
+/2 = "Now the actual task begins. 
+
+It is just like practice<%expressions.testInstructionsEdit%>.
+
+Press the 'Continue' button to start."
+</item>
+
+<expressions>
+/testInstructionsEdit = if (parameters.showTestFeedback == false && parameters.showPracticeFeedback == true){
+	" but the computer will not show you anymore the location of the correct dot"
+}
+</expressions>
+
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+</text>
+
+<text exit>
+/ items = ("<press here to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+</text>
+
+<button continueButton>
+/ caption = "Continue"
+/ size = (15%, 5%)
+/ position = (85%, 90%)
+/ erase = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</button>
+
+<text dotPlacementInstructions>
+/ items = ("Place dot at
+(<%values.stim_x%>, <%values.stim_y%>)")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (85%, 25%)
+/ size = (20%, 10%)
+/ vjustify = center
+/ erase = false
+</text>
+
+<text instructionReminder>
+/ items = ("<Press here to review instructions>")
+/ fontstyle = ("Arial", 2%, false, false, true, false, 5, 1)
+/ txcolor = blue
+/ position = (85%, 95%)
+/ size = (30%, 5%)
+/ erase = false
+/ vjustify = center
+</text>
+
+<text correctdotPlacement>
+/ items = ("Correct Position")
+/ txcolor  = green
+/ erase = false
+/ hposition = values.stim_x_actual
+/ vposition = values.stim_y_actual - 3%
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = transparent
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ size = (15%, 3%)
+</text>
+
+<text dotReminder>
+/ items = ("Please place a dot")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = red
+/ position = (85%, 80%)
+/ size = (20%, 5%)
+</text>
+
+<text continueReminder>
+/ items = ("Please press 'Continue'")
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ txcolor = red
+/ position = (40%, 30%)
+/ size = (50%, 5%)
+</text>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list targetCoordinates_x_practice>
+/items = (25)
+/ selectionmode = sequence
+/ resetinterval = 0
+</list>
+
+<list targetCoordinates_y_practice>
+/items = (30)
+/ selectionmode = list.targetCoordinates_x_practice.currentIndex
+/ resetinterval = 0
+</list>
+
+
+<list targetCoordinates_x>
+/items = (-35, 7, -36, 2, 31, 41, -11, -41, -43, 41, -3, -32, 39, 33, -23, 21, -16, 32, -22, -6, 14, -32, 48, 16)
+/ selectionmode = sequence
+/ resetinterval = 0
+</list>
+
+<list targetCoordinates_y>
+/items = (37, -2, -32, 4, 32, -40, 12, -48, 35, -44, -1, -27, 40, -25, 27, -22, 4, 20, -29, -16, -17, 20, 43, 10)
+/ selectionmode = list.targetCoordinates_x.currentIndex
+/ resetinterval = 0
+</list>
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+/ screencolor = white
+/ inputdevice = mouse
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, 
+blockcode, blocknum, trialcode, trialnum,
+values.order, values.Stimuli, 
+values.stim_x, values.stim_y, values.stimQuadrant, values.resp_x, values.resp_y, values.responseQuadrant, 
+values.respRT, latency, values.PAE_X, values.PAE_Y, values.PAE, values.Quad_Cor, expressions.EUC_Er)
+</data>
+
+***********************
+summary data file
+***********************
+<summarydata>
+/columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.meanRT,
+expressions.meanEUCEr, 
+expressions.PQuadCor,
+expressions.meanPAE, 
+expressions.meanPAE_X, 
+expressions.meanPAE_Y, 
+expressions.meanPAE_X_1,
+expressions.meanPAE_Y_1,
+expressions.meanEUCEr_1,
+expressions.meanPAE_X_0,
+expressions.meanPAE_Y_0,
+expressions.meanEUCEr_0)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/completed:				0 = script was not completed; 1 = script was completed (all conditions run)
+/order:					"p" for practice trial, 1-24 for test trials
+/Stimuli:				stores the current point coordinate, e.g. (25, 35)
+/stim_x:				stores the current x-coordinate of the to be placed point
+/stim_y:				stores the current y-coordinate of the to be placed point
+/stim_x2:				helper variable to calculate the actual canvas percentage point of the x-coordinate
+/stim_y2:				helper variable to calculate the actual canvas percentage point of the y-coordinate
+/stim_x_actual:			stores the actual canvas (=active screen) percentage point of the x-coordinate (0 = left border of canvas, 100 = right border of canvas)
+/stim_y_actual:			stores the actual canvas (=active screen) percentage point of the y-coordinate (0 = top border of canvas, 100 = bottom border of canvas)
+/stimQuadrant:			the quadrant the to be placed point is in
+									1 = top right quadrant (x>=0, y >=0)
+									2 = top left quadrant (x < 0, y >=0)
+									3 = bottom left quadrant (x < 0, y < 0)
+									4 = bottom right quadrant (x >=0, y < 0)
+/dot_x:					the current canvas percentage of the mouse x-coordinate (0 = left border of canvas, 100 = right border of canvas)
+/dot_y:					the current canvas percentage of the mouse y-coordinate (0 = top border of canvas, 100 = bottom border of canvas)
+/resp_x_actual:			the actual canvas (=active screen) percentage point of the x-coordinate of the submitted response (0 = left border of canvas, 100 = right border of canvas) 
+/resp_y_actual:			the actual canvas (=active screen) percentage point of the y-coordinate of the submitted response (0 = top border of canvas, 100 = bottom border of canvas) 
+/resp_x:				the x-coordinate of the response relative to the coordinate plane (with (0, 0) as the coordinate plane's origin)
+/resp_y:				the y-coordinate of the response relative to the coordinate plane (with (0, 0) as the coordinate plane's origin)
+
+/responseQuadrant:		the quadrant of the response point
+									1 = top right quadrant (x>=0, y >=0)
+									2 = top left quadrant (x < 0, y >=0)
+									3 = bottom left quadrant (x < 0, y < 0)
+									4 = bottom right quadrant (x >=0, y < 0)
+/Quad_Cor:				1 = the response point was put in the correct quadrant; 0= otherwise
+/PAE_X:					Deviation from linearity for x axes	
+/PAE_Y:					Deviation from linearity for y axes	
+/PAE:					mean of PAE_X and PAE_Y for the current trial
+/respRT:				stores the time (in ms) spent on placing the current dot (measured from onset of coordinate plane until continue is pressed)
+/startPlacement:		helper variable to measure values.respRT
+/endPlacement:			helper variable to measure values.respRT
+
+<values>
+/completed = 0
+/order = ""
+/Stimuli = "c"
+
+/stim_x = -5
+/stim_y = -5
+/stim_x2 = -5
+/stim_y2 = -5
+/stim_x_actual = -5
+/stim_y_actual = -5
+/stimQuadrant = 0
+/dot_x = -5
+/dot_y = -5
+/resp_x_actual = -5
+/resp_y_actual = -5
+/resp_x = -5
+/resp_y = -5
+/responseQuadrant = -5
+/Quad_Cor = 0
+/PAE_X = 0
+/PAE_Y = 0
+/PAE = 0
+/respRT = ""
+/startPlacement = 0
+/endPlacement = 0
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/coordinatePlaneCenter_x:		stores the actual canvas percentage of the x-coordinate of the coordinate plane's origin
+/coordinatePlaneCenter_y:		stores the actual canvas percentage of the y-coordinate of the coordinate plane's origin
+/x_step:						calculates the percentage of the actual canvas used for one step on the coordinate plane on the x-axis
+/y_step:						calculates the percentage of the actual canvas used for one step on the coordinate plane on the y-axis
+
+/targetCoordinates_actual:		calculate the actual canvas percentages of the x and y coordinates of the current points to be placed
+/responseCoordinates:			calculates the x and y coordinates of the response point relative to the coordinate plane with origin at (0, 0)
+
+/canvasratio_corr:				correction for ensuring that width/height of coordinate plane is presented with equal length
+
+/EUC_Er:						Euclidian distance error
+
+<expressions>
+/coordinatePlaneCenter_x = shape.verticalAxis.hposition
+/coordinatePlaneCenter_y = shape.verticalAxis.vposition
+/x_step = shape.horizontalAxis.width/100
+/y_step = shape.verticalAxis.height/100
+
+/targetCoordinates_actual = {
+	if (values.stim_x >= 0){
+		if (values.stim_y >=0){
+			values.stimQuadrant = 1;	
+			values.stim_x2 = values.stim_x;
+			values.stim_y2 = values.stim_y;
+			values.stim_x_actual = expressions.coordinatePlaneCenter_x + values.stim_x2*expressions.x_step;
+			values.stim_y_actual = expressions.coordinatePlaneCenter_y - values.stim_y2*expressions.y_step;	
+			
+			if (values.stim_y == 0){
+				values.stimQuadrant = "x-axis";
+				if (values.stim_x == 0){
+					values.stimQuadrant = "origin";
+				}
+			} else if (values.stim_x == 0){
+				values.stimQuadrant = "y-axis"
+			}
+						
+			
+		} else {
+			values.stimQuadrant = 4;
+			values.stim_x2 = values.stim_x;
+			values.stim_y2 = -1*values.stim_y;	
+			values.stim_x_actual = expressions.coordinatePlaneCenter_x + values.stim_x2*expressions.x_step;
+			values.stim_y_actual = expressions.coordinatePlaneCenter_y + values.stim_y2*expressions.y_step;	
+	
+			if (values.stim_x == 0){
+				values.stimQuadrant = "y-axis";
+			}	
+		}
+	} else {
+		if (values.stim_y >= 0){
+			values.stimQuadrant = 2;
+			values.stim_x2 = -1*values.stim_x;
+			values.stim_y2 = values.stim_y;			
+			values.stim_x_actual = expressions.coordinatePlaneCenter_x - values.stim_x2*expressions.x_step;
+			values.stim_y_actual = expressions.coordinatePlaneCenter_y - values.stim_y2*expressions.y_step;	
+	
+			if (values.stim_y == 0){
+				values.stimQuadrant = "x-axis";
+			}
+	
+		} else {
+			values.stimQuadrant = 3;
+			values.stim_x2 = -1*values.stim_x;
+			values.stim_y2 = -1*values.stim_y;			
+			values.stim_x_actual = expressions.coordinatePlaneCenter_x - values.stim_x2*expressions.x_step;
+			values.stim_y_actual = expressions.coordinatePlaneCenter_y + values.stim_y2*expressions.y_step;				
+		}	
+	}	
+}
+/responseCoordinates = {	
+	if (values.resp_x_actual >= expressions.coordinatePlaneCenter_x){
+		if (values.resp_y_actual >=expressions.coordinatePlaneCenter_y){
+			values.responseQuadrant = 4;
+			values.resp_x = (values.resp_x_actual-expressions.coordinatePlaneCenter_x)/expressions.x_step;		
+			values.resp_y = (values.resp_y_actual-expressions.coordinatePlaneCenter_y)/expressions.y_step;
+			values.resp_y = -1*values.resp_y;	
+			values.resp_x = 1*values.resp_x;
+			
+			if (values.resp_y == 0){
+				values.responseQuadrant = "x-axis";
+				if (values.resp_x == 0){
+					values.responseQuadrant = "origin";
+				}
+			} else if (values.resp_x == 0){
+				values.responseQuadrant = "y-axis"
+			}
+			
+		} else {
+			values.responseQuadrant = 1;
+			values.resp_x = (values.resp_x_actual-expressions.coordinatePlaneCenter_x)/expressions.x_step;		
+			values.resp_y = (expressions.coordinatePlaneCenter_y - values.resp_y_actual)/expressions.y_step;
+			values.resp_x = 1*values.resp_x;	
+			values.resp_y = 1*values.resp_y;	
+	
+			if (values.resp_x == 0){
+				values.responseQuadrant = "y-axis";
+			}
+
+		}
+	} else {
+		if (values.resp_y_actual >= expressions.coordinatePlaneCenter_y){
+			values.responseQuadrant = 3;
+			values.resp_x = (expressions.coordinatePlaneCenter_x - values.resp_x_actual)/expressions.x_step;		
+			values.resp_y = (values.resp_y_actual-expressions.coordinatePlaneCenter_y)/expressions.y_step;
+			values.resp_x = -1*values.resp_x;
+			values.resp_y = -1*values.resp_y;	
+		
+			if (values.resp_y == 0){
+				values.responseQuadrant = "x-axis";
+			}
+		} else {
+			values.responseQuadrant = 2;
+			values.resp_x = (expressions.coordinatePlaneCenter_x - values.resp_x_actual)/expressions.x_step;			
+			values.resp_y = (expressions.coordinatePlaneCenter_y - values.resp_y_actual)/expressions.y_step;
+			values.resp_x = -1*values.resp_x;	
+			values.resp_y = 1*values.resp_y;
+		}	
+	}	
+}
+/canvasratio_corr = display.canvasHeight/display.canvasWidth
+
+/EUC_Er = sqrt(((values.resp_x - values.stim_x)*(values.resp_x - values.stim_x)) + ((values.resp_y - values.stim_y)*(values.resp_y - values.stim_y)))
+
+</expressions>
+
+/meanRT:		calculates the mean response time (in ms) to submit a response dot for test trials
+/meanPAE:		the mean of all values.PAE
+/meanPAE_X:		mean of PAE_X
+/meanPAE_Y: 	mean of PAE_Y
+/meanEUCEr:		mean Euklidian Error
+/PQuadCor:		percent of points placed in correct quadrant
+
+<expressions>
+/meanRT = list.RT.mean
+/meanPAE = list.ACC_PAE.mean
+/meanPAE_X = list.ACC_PAE_X.mean
+/meanPAE_Y = list.ACC_PAE_Y.mean
+/meanEUCEr = list.EUC_Errors.mean
+/PQuadCor = list.ACC_responseQuadrant.mean
+/meanPAE_X_1 = list.ACC_PAE_X_1.mean
+/meanPAE_Y_1 = list.ACC_PAE_Y_1.mean
+/meanEUCEr_1 = list.EUC_Errors_1.mean
+/meanPAE_X_0 = list.ACC_PAE_X_0.mean
+/meanPAE_Y_0 = list.ACC_PAE_Y_0.mean
+/meanEUCEr_0 = list.EUC_Errors_0.mean
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+<text practiceInstructions>
+/ items = instructions
+/ select = 1
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ size = (80%, 25%)
+/ position = (50%, 65%)
+/ vjustify = center
+/ hjustify = left
+</text>
+
+<text testInstructions>
+/ items = instructions
+/ select = 2
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ size = (80%, 20%)
+/ position = (50%, 65%)
+/ vjustify = center
+/ hjustify = left
+</text>
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<shape canvas>
+/ shape = rectangle
+/ size = (100%, 100%)
+/ color = white
+/ position = (50%, 50%)
+/ erase = false
+</shape>
+
+<shape coordinateplane>
+/ shape = rectangle
+/ size = (90%*0.75, 90%)
+/ color = white
+/ position = (parameters.planeCenter_x, 50%)
+/ erase = false
+</shape>
+
+<text horizontalLabel_left>
+/ items = ("-50")
+/ position = (5%, 50%)
+/ hposition = shape.horizontalAxis.hposition - 0.5*shape.horizontalAxis.width - 2.5%
+/ vposition = shape.horizontalAxis.vposition
+/ erase = false
+/ vjustify = center
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ size = (5%, 5%)
+</text>
+
+<text horizontalLabel_right>
+/ items = ("50")
+/ hposition = shape.horizontalAxis.hposition + 0.5*shape.horizontalAxis.width + 2.5%
+/ vposition = shape.horizontalAxis.vposition
+/ size = (5%, 5%)
+/ erase = false
+/ vjustify = center
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</text>
+
+<text verticalLabel_top>
+/ items = ("50")
+/ hposition = shape.verticalAxis.hposition
+/ vposition = shape.verticalAxis.vposition - 0.5*shape.verticalAxis.height - 2.5%
+/ size = (5%, 5%)
+/ erase = false
+/ vjustify = center
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</text>
+
+<text verticalLabel_bottom>
+/ items = ("-50")
+/ hposition = shape.verticalAxis.hposition
+/ vposition = shape.verticalAxis.vposition + 0.5*shape.verticalAxis.height + 2.5%
+/ size = (5%, 5%)
+/ erase = false
+/ vjustify = center
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+</text>
+
+
+<shape verticalAxis>
+/ shape = rectangle
+/ color = black
+/ position = (parameters.planeCenter_x, 50%)
+/ size = (parameters.widthOfAxis*expressions.canvasratio_corr, parameters.lengthOfAxis)
+/ erase = false
+</shape>
+
+<shape horizontalAxis>
+/ shape = rectangle
+/ color = black
+/ position = (parameters.planeCenter_x, 50%)
+/ size = (parameters.lengthOfAxis*expressions.canvasratio_corr, parameters.widthOfAxis)
+/ erase = false
+</shape>
+
+
+<shape dot>
+/ shape = circle
+/ size = (parameters.dotSize*expressions.canvasratio_corr, parameters.dotSize)
+/ color = red
+/ erase = false
+/ hposition = values.dot_x
+/ vposition = values.dot_y
+</shape>
+
+<text correctdot>
+/ items = ("X")
+/ txcolor  = green
+/ erase = false
+/ hposition = values.stim_x_actual
+/ vposition = values.stim_y_actual
+/ hjustify = center
+/ vjustify = center
+/ txbgcolor = transparent
+/ fontstyle = ("Arial", 4%, true, false, false, false, 5, 1)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS	
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+*************************************************
+Data Lists: used for descriptive statistics
+store correct latencies/accuracy data
+fill up during runtime
+*************************************************
+
+Note: list stores 1 = correct response; 0 = incorrect response for each relevant trial
+any response coded as an error is automatically coded as 0
+<list ACC_PAE>
+</list>
+
+<list ACC_PAE_X>
+</list>
+
+<list ACC_PAE_Y>
+</list>
+
+<list EUC_Errors>
+</list>
+
+<list ACC_PAE_X_1>
+</list>
+
+<list ACC_PAE_Y_1>
+</list>
+
+<list EUC_Errors_1>
+</list>
+
+<list ACC_PAE_X_0>
+</list>
+
+<list ACC_PAE_Y_0>
+</list>
+
+<list EUC_Errors_0>
+</list>
+
+
+Note: list stores the latency of correct responses for each relevant trial
+<list RT>
+</list>
+
+
+
+<list ACC_responseQuadrant>
+</list>
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial practiceIntro>
+/ skip = [
+	parameters.skipInstructions == true;
+]
+/ ontrialbegin = [
+	shape.horizontalAxis.color = green;
+	shape.verticalAxis.color = blue;
+]
+/ stimulusframes = [1 = clearScreen, coordinateplane, verticalAxis, horizontalAxis,horizontalLabel_left, 
+horizontalLabel_right, verticalLabel_top, verticalLabel_bottom, dot, 
+dotPlacementInstructions, practiceInstructions, continueButton]
+/ validresponse = (continueButton, coordinateplane)
+/ correctresponse = (continueButton)
+/ response = correct
+/ ontrialend = [
+	shape.horizontalAxis.color = black;
+	shape.verticalAxis.color = black;
+]
+/ recorddata = false
+/ errormessage = true(text.continueReminder, 0)
+</trial>
+
+<trial instructionReminder>
+/ skip = [
+	parameters.skipInstructions == true;
+]
+/ ontrialbegin = [
+	shape.horizontalAxis.color = green;
+	shape.verticalAxis.color = blue;
+]
+/ stimulusframes = [1 = clearScreen, coordinateplane, verticalAxis, horizontalAxis,horizontalLabel_left, 
+horizontalLabel_right, verticalLabel_top, verticalLabel_bottom, dot, 
+dotPlacementInstructions, practiceInstructions, continueButton]
+/ validresponse = (continueButton, coordinateplane)
+/ correctresponse = (continueButton)
+/ response = correct
+/ ontrialend = [
+	shape.horizontalAxis.color = black;
+	shape.verticalAxis.color = black;
+]
+/ recorddata = false
+/ errormessage = true(text.continueReminder, 0)
+/ branch = [
+	return trial.dotplacement_practice;
+]
+</trial>
+
+
+<trial dotplacement_practice>
+/ stimulusframes = [1 = clearScreen, coordinateplane, verticalAxis, horizontalAxis,horizontalLabel_left, 
+horizontalLabel_right, verticalLabel_top, verticalLabel_bottom, continueButton, dot, dotPlacementInstructions, instructionReminder]
+/ validresponse = (coordinateplane, continueButton, instructionReminder)
+/ iscorrectresponse = [
+	return (
+	trial.dotplacement_practice.response == "coordinateplane" || 
+	trial.dotplacement_practice.response == "instructionReminder" ||
+	(trial.dotplacement_practice.response == "continueButton" && values.dot_x != -5));	
+]
+/ response = correct
+/ ontrialend = [
+	values.endPlacement = script.elapsedTime;
+	if (trial.dotplacement_practice.response == "coordinateplane"){
+		values.dot_x = display.getpercentx(mouse.x);
+		values.dot_y = display.getpercenty(mouse.y);		
+	}
+]
+/ branch = [
+	if (trial.dotplacement_practice.response == "coordinateplane"){
+		return trial.dotplacement_practice;
+	} else if (trial.dotplacement_practice.response == "instructionReminder"){
+		return trial.instructionReminder;
+	} else {
+		if (parameters.showPracticeFeedback == false){
+			return trial.practiceEnd;		
+		} else {
+			return trial.practiceFeedback;
+		}
+	}
+]
+
+/ recorddata = false
+/ errormessage = true(text.dotReminder, 0)
+</trial>
+
+Note: presents the correct placement of the practice Dot
+<trial practiceFeedback>
+/ ontrialbegin = [
+	values.resp_x_actual = values.dot_x;
+	values.resp_y_actual = values.dot_y;
+	expressions.responseCoordinates;
+	values.respRT = values.endPlacement - values.startPlacement;
+	values.Quad_Cor = values.stimQuadrant == values.responseQuadrant;	
+	values.PAE_X=abs(values.resp_x - values.stim_x)/100;
+	values.PAE_Y=abs(values.resp_y - values.stim_y)/100;
+	values.PAE = (values.PAE_X + values.PAE_Y)/2;			
+]
+/ stimulusframes = [1 = clearScreen, coordinateplane, verticalAxis, horizontalAxis,horizontalLabel_left, 
+horizontalLabel_right, verticalLabel_top, verticalLabel_bottom, continueButton,  dot, correctdot, correctdotPlacement, dotPlacementInstructions]
+/ validresponse = (continueButton)
+/ recorddata = true
+/ posttrialpause = parameters.iti
+/ responsemessage = ("continueButton", clearScreen, 0)
+</trial>
+
+Note; finishes practice without feedback
+<trial practiceEnd>
+/ ontrialbegin = [
+	values.resp_x_actual = values.dot_x;
+	values.resp_y_actual = values.dot_y;
+	expressions.responseCoordinates;
+	values.respRT = values.endPlacement - values.startPlacement;
+	values.Quad_Cor = values.stimQuadrant == values.responseQuadrant;	
+	values.PAE_X=abs(values.resp_x - values.stim_x)/100;
+	values.PAE_Y=abs(values.resp_y - values.stim_y)/100;
+	values.PAE = (values.PAE_X + values.PAE_Y)/2;			
+]
+/ trialduration = 0
+/ recorddata = true
+/ posttrialpause = parameters.iti
+</trial>
+
+
+Note: presents the test instructions
+<trial testIntro>
+/ stimulusframes = [1 = clearScreen, coordinateplane, verticalAxis, horizontalAxis,horizontalLabel_left, 
+horizontalLabel_right, verticalLabel_top, verticalLabel_bottom, continueButton,  
+testInstructions]
+/ validresponse = (continueButton, coordinateplane)
+/ correctresponse = (continueButton)
+/ response = correct
+/ recorddata = false
+/ errormessage = true(text.continueReminder, 0)
+</trial>
+
+<trial dotplacement>
+/ beginresponsetime = -1
+/ stimulusframes = [1 = clearScreen, coordinateplane, verticalAxis, horizontalAxis,horizontalLabel_left, 
+horizontalLabel_right, verticalLabel_top, verticalLabel_bottom, continueButton, dot, dotPlacementInstructions]
+/ validresponse = (coordinateplane, continueButton)
+/ isvalidresponse = [
+	if (trial.dotplacement.response == "continueButton"){
+		values.endPlacement = script.elapsedTime;
+	}
+	
+	return true;
+]
+/ iscorrectresponse = [
+	return (trial.dotplacement.response == "coordinateplane" || 
+	(trial.dotplacement.response == "continueButton" && values.dot_x != -5));
+	
+]
+/ response = correct
+/ ontrialend = [
+	if (values.startPlacement == -1){
+		values.startPlacement = text.dotPlacementInstructions.timestamp;
+	}
+
+	if (trial.dotplacement.response != "continueButton"){
+		values.dot_x = display.getpercentx(mouse.x);
+		values.dot_y = display.getpercenty(mouse.y);		
+	}
+]
+/ branch = [
+	if (trial.dotplacement.response != "continueButton"){
+		return trial.dotplacement;
+	} else {
+		if (parameters.showTestFeedback == true){
+			return trial.testFeedback;
+		} else {
+			return trial.testsummary;			
+		}
+	}
+]
+/ errormessage = true(text.dotReminder, 0)
+/ recorddata = false
+</trial>
+
+<trial testsummary>
+/ ontrialbegin = [
+	values.resp_x_actual = values.dot_x;
+	values.resp_y_actual = values.dot_y;
+	expressions.responseCoordinates;
+	values.respRT = values.endPlacement - values.startPlacement;
+	values.Quad_Cor = values.stimQuadrant == values.responseQuadrant;	
+	list.ACC_responseQuadrant.appendItem(values.Quad_Cor);
+	values.PAE_X=abs(values.resp_x - values.stim_x)/100;
+	list.ACC_PAE_X.appendItem(values.PAE_X);
+	values.PAE_Y=abs(values.resp_y - values.stim_y)/100;
+	list.ACC_PAE_Y.appendItem(values.PAE_Y);
+	values.PAE = (values.PAE_X + values.PAE_Y)/2;	
+	list.RT.appendItem(values.respRT);
+	list.ACC_PAE.appendItem(values.PAE);
+	list.EUC_Errors.appendItem(expressions.EUC_Er);
+	
+	if (values.Quad_Cor == 1){
+		list.ACC_PAE_X_1.appendItem(values.PAE_X);
+		list.ACC_PAE_Y_1.appendItem(values.PAE_Y);
+		list.EUC_Errors_1.appendItem(expressions.EUC_Er);
+	} else {
+		list.ACC_PAE_X_0.appendItem(values.PAE_X);
+		list.ACC_PAE_Y_0.appendItem(values.PAE_Y);
+		list.EUC_Errors_0.appendItem(expressions.EUC_Er);		
+	}
+]
+/ trialduration = 0
+/ recorddata = true
+/ posttrialpause = parameters.iti
+/ responsemessage = ("continueButton", clearScreen, 0)
+</trial>
+
+<trial testFeedback>
+/ ontrialbegin = [
+	values.resp_x_actual = values.dot_x;
+	values.resp_y_actual = values.dot_y;
+	expressions.responseCoordinates;
+	values.respRT = values.endPlacement - values.startPlacement;
+	values.Quad_Cor = values.stimQuadrant == values.responseQuadrant;	
+	list.ACC_responseQuadrant.appendItem(values.Quad_Cor);
+	values.PAE_X=abs(values.resp_x - values.stim_x)/100;
+	list.ACC_PAE_X.appendItem(values.PAE_X);
+	values.PAE_Y=abs(values.resp_y - values.stim_y)/100;
+	list.ACC_PAE_Y.appendItem(values.PAE_Y);
+	values.PAE = (values.PAE_X + values.PAE_Y)/2;	
+	list.RT.appendItem(values.respRT);
+	list.ACC_PAE.appendItem(values.PAE);
+	list.EUC_Errors.appendItem(expressions.EUC_Er);
+	
+	if (values.Quad_Cor == 1){
+		list.ACC_PAE_X_1.appendItem(values.PAE_X);
+		list.ACC_PAE_Y_1.appendItem(values.PAE_Y);
+		list.EUC_Errors_1.appendItem(expressions.EUC_Er);
+	} else {
+		list.ACC_PAE_X_0.appendItem(values.PAE_X);
+		list.ACC_PAE_Y_0.appendItem(values.PAE_Y);
+		list.EUC_Errors_0.appendItem(expressions.EUC_Er);		
+	}
+]
+/ stimulusframes = [1 = clearScreen, coordinateplane, verticalAxis, horizontalAxis,horizontalLabel_left, 
+horizontalLabel_right, verticalLabel_top, verticalLabel_bottom, continueButton,  dot, correctdot, correctdotPlacement, dotPlacementInstructions]
+/ validresponse = (continueButton)
+/ recorddata = true
+/ posttrialpause = parameters.iti
+/ responsemessage = ("continueButton", clearScreen, 0)
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block practice>
+/ onblockbegin = [
+	values.order = "p";
+	values.dot_x = -5;
+	values.dot_y = -5;
+	values.stim_x = list.targetCoordinates_x_practice.nextValue;
+	values.stim_y = list.targetCoordinates_y_practice.nextValue;
+	values.Stimuli = concat("(", values.stim_x);
+	values.Stimuli = concat(values.Stimuli, ",");
+	values.Stimuli = concat(values.Stimuli, values.stim_y);	
+	values.Stimuli = concat(values.Stimuli, ")");		
+	values.resp_x_actual = "not set yet";
+	values.resp_y_actual = "not set yet";
+	values.resp_x = "not set yet";
+	values.resp_y = "not set yet";
+	values.responseQuadrant = "not set yet";
+	expressions.targetCoordinates_actual;
+	values.Quad_Cor = 0;
+	values.PAE_X = 0;
+	values.PAE_Y = 0;
+	values.respRT = "";	
+	values.endPlacement = "";	
+	values.startPlacement = -1;
+]
+/ trials = [1 = practiceIntro; 2 = dotplacement_practice]
+/ onblockend = [
+	values.order = 0;
+]
+</block>
+
+<block testIntro>
+/ skip = [
+	parameters.skipInstructions == true;
+]
+/ trials = [1 = testIntro]
+</block>
+
+<block test>
+/ onblockbegin = [
+	values.order += 1;
+	values.dot_x = -5;
+	values.dot_y = -5;
+	values.stim_x = list.targetCoordinates_x.nextValue;
+	values.stim_y = list.targetCoordinates_y.nextValue;
+	values.Stimuli = concat("(", values.stim_x);
+	values.Stimuli = concat(values.Stimuli, ",");
+	values.Stimuli = concat(values.Stimuli, values.stim_y);	
+	values.Stimuli = concat(values.Stimuli, ")");		
+	values.resp_x_actual = "not set yet";
+	values.resp_y_actual = "not set yet";
+	values.resp_x = "not set yet";
+	values.resp_y = "not set yet";
+	values.responseQuadrant = "not set yet";
+	expressions.targetCoordinates_actual;
+	values.Quad_Cor = 0;
+	values.PAE_X = 0;
+	values.PAE_Y = 0;
+	values.respRT = "";	
+	values.endPlacement = "";
+	values.startPlacement = -1;
+]
+/ trials = [1 = dotplacement]
+</block>
+
+
+<block finish>
+/ trials = [1 = finish]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt a>
+/ onexptbegin = [
+	if (parameters.skipInstructions == true){
+		text.instructionReminder.skip = true;
+	}
+]
+/ blocks = [
+	1 = practice;
+	2 = testIntro;
+	3-26= test;
+	27 = finish;
+]
+/ onexptend = [
+
+	values.completed = 1;
+]
+</expt>
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

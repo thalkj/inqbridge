@@ -1,0 +1,319 @@
+﻿<usermanual>							
+___________________________________________________________________________________________________________________	
+
+									*Cognitive Flexibility Scale (CFS)*
+___________________________________________________________________________________________________________________	
+
+Script Author: David Nitz (dave@millisecond.com) for Millisecond Software, LLC
+Date: 05-05-2020
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © this implementation 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements a computerized adaptation of the short form of the Cognitive Flexibility Scale (CFS) 
+as described in:
+
+Martin, M. M. & Rubin, R.B. (1995). A new measure of cognitive flexibility. Psychological Reports, 76, 623-626.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+											  
+The CFS is a 12-item scale designed to assess cognitive flexibility.
+
+Participants are asked to answer 12 6-point Likert-type questions with the following anchors:
+"Strongly Agree", "Agree", "Slightly Agree", "Slightly Disagree", "Disagree" and "Strongly Disagree".
+
+Scoring: To score the scale, simply sum up the response values of the 12 items.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'cfs_survey*.iqdat' 
+
+date, time:							date and time script was run with the current group/subjectnumber 
+subject, group, session:	  		 with the current subject/groupnumber/session id
+build:								the Inquisit build 
+
+q*_response:						response given (in assigned values)
+									Scale: strongly agree (6) - strongly disagree (1)
+									R = automatically reversed scored questions
+									
+q*_latency:							how much time (in ms) the participant spent on the surveypage with this particular 
+									question (the last time this particular surveypage was visited)
+									
+									
+(2) Summary data file: 'cfs_summary*.iqdat'
+
+inquisit.version:					Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)	
+									
+cfs_sum								sum of responses to the 12 6-point questions
+
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+can be edited under section Editable Parameters.
+The original instructions are:
+"The following statements deal with your beliefs and feelings about your own behavior. Read each statement 
+and respond by circling  the number that best represents your agreement with each statement."
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<parameters>
+/pageinstructions = "The following statements deal with your beliefs and feelings about your own behavior. Read each statement and respond by selecting the number that best represents your agreement with each statement."
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform,, script.startDate, script.startTime, script.subjectId, script.groupId,script.sessionId, 
+script.elapsedTime, script.completed, expressions.cfs_sum)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+/ cfs_mean = average of responses to the 12 6-point likert questions
+
+<expressions>
+/ cfs_sum = (radiobuttons.q1.response + radiobuttons.q2R.response + radiobuttons.q3R.response + radiobuttons.q4.response + 
+radiobuttons.q5R.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + 
+radiobuttons.q9.response + radiobuttons.q10R.response + radiobuttons.q11.response + radiobuttons.q12.response)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/ caption = "I can communicate an idea in many different ways."
+/ options = ("6~nStrongly~nAgree", "5~nAgree", "4~nSlightly~nAgree", "3~nSlightly~nDisagree", "2~nDisagree", "1~nStrongly~nDisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+// reverse scored
+<radiobuttons q2R>
+/ caption = "I avoid new and unusual situations."
+/ options = ("6~nStrongly~nAgree", "5~nAgree", "4~nSlightly~nAgree", "3~nSlightly~nDisagree", "2~nDisagree", "1~nStrongly~nDisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+// reverse scored
+<radiobuttons q3R>
+/ caption = "I feel like I never get to make decisions."
+/ options = ("6~nStrongly~nAgree", "5~nAgree", "4~nSlightly~nAgree", "3~nSlightly~nDisagree", "2~nDisagree", "1~nStrongly~nDisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q4>
+/ caption = "I can find workable solutions to seemingly unsolvable problems."
+/ options = ("6~nStrongly~nAgree", "5~nAgree", "4~nSlightly~nAgree", "3~nSlightly~nDisagree", "2~nDisagree", "1~nStrongly~nDisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+// reverse scored
+<radiobuttons q5R>
+/ caption = "I seldom have choices when deciding how to behave."
+/ options = ("6~nStrongly~nAgree", "5~nAgree", "4~nSlightly~nAgree", "3~nSlightly~nDisagree", "2~nDisagree", "1~nStrongly~nDisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q6>
+/ caption = "I am willing to work at creative solutions to problems."
+/ options = ("6~nStrongly~nAgree", "5~nAgree", "4~nSlightly~nAgree", "3~nSlightly~nDisagree", "2~nDisagree", "1~nStrongly~nDisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q7>
+/ caption = "In any given situation, I am able to act appropriately."
+/ options = ("6~nStrongly~nAgree", "5~nAgree", "4~nSlightly~nAgree", "3~nSlightly~nDisagree", "2~nDisagree", "1~nStrongly~nDisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q8>
+/ caption = "My behavior is a result of conscious decisions that I make."
+/ options = ("6~nStrongly~nAgree", "5~nAgree", "4~nSlightly~nAgree", "3~nSlightly~nDisagree", "2~nDisagree", "1~nStrongly~nDisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q9>
+/ caption = "I have many possible ways of behaving in any given situation."
+/ options = ("6~nStrongly~nAgree", "5~nAgree", "4~nSlightly~nAgree", "3~nSlightly~nDisagree", "2~nDisagree", "1~nStrongly~nDisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+// reverse scored
+<radiobuttons q10R>
+/ caption = "I have difficulty using my knowledge on a given topic in real life situations."
+/ options = ("6~nStrongly~nAgree", "5~nAgree", "4~nSlightly~nAgree", "3~nSlightly~nDisagree", "2~nDisagree", "1~nStrongly~nDisagree")
+/ optionvalues = ("1", "2", "3", "4", "5", "6")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q11>
+/ caption = "I am willing to listen and consider alternatives for handling a problem."
+/ options = ("6~nStrongly~nAgree", "5~nAgree", "4~nSlightly~nAgree", "3~nSlightly~nDisagree", "2~nDisagree", "1~nStrongly~nDisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+<radiobuttons q12>
+/ caption = "I have the self-confidence necessary to try different ways of behaving."
+/ options = ("6~nStrongly~nAgree", "5~nAgree", "4~nSlightly~nAgree", "3~nSlightly~nDisagree", "2~nDisagree", "1~nStrongly~nDisagree")
+/ optionvalues = ("6", "5", "4", "3", "2", "1")
+/ orientation = horizontalequal 
+/ required = true
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+<surveypage cfs1>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q1; 2=q2R; 3=q3R]
+</surveypage>
+
+<surveypage cfs2>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q4; 2=q5R; 3=q6]
+</surveypage>
+
+<surveypage cfs3>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q7; 2=q8; 3=q9]
+</surveypage>
+
+<surveypage cfs4>
+/ caption = "<%parameters.pageinstructions%>"
+/ subcaption = "  "
+/ questions = [1=q10R; 2=q11; 3=q12]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to retain a digital copy of the filled in questionnaire pages, set /screencapture = true
+(only works for Inquisit Lab)
+<survey cfs>
+/ pages = [
+	1=cfs1; 
+	2=cfs2; 
+	3=cfs3;
+	4=cfs4;
+	]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = true
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ navigationbuttonsize = (20%, 5%)
+/ finishlabel = "Finish - Thank you!"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

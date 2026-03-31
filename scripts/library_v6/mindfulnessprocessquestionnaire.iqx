@@ -1,0 +1,320 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									Mindfulness Process Questionnaire
+___________________________________________________________________________________________________________________	
+
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 12-05-2016
+last updated:  02-25-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-25-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the Mindful Process Questionnaire as described in:
+
+
+Erisman, S.M & Roemer, L. (2012). A Preliminary Investigation of the Process of Mindfulness. 
+Mindfulness, 3:30–43.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+7 5-point Likert Scale (Originally 8 questions but question7 was officially dropped from the MDC 
+by Erisman & Roemer(2012).
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 1.5 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'mindfulnessprocessquestionnaire.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+									Scale: 1 (not characteristic) - 5 (characteristic)
+									R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage wit
+
+
+
+(2) Summary data file: 'mindfulnessprocessquestionnaire_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+							
+MDCscore:						the total score (sum of all scores)
+								Note: question 2 is reversed scored
+								
++ all individual responses      (Note: q7 was officially dropped from the MDC by Erisman & Roemer(2012); the 7. question presented
+								is the 8. question in the published survey)
+								
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see section Editable Parameters.
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "You will find below a series of statements that describe how people may react to the uncertainties of life.
+ 
+For each question, please select the response option that describes to what extent each item is characteristic of you.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.MFQscore,
+radiobuttons.q1.response, radiobuttons.q2R.response, radiobuttons.q3.response, radiobuttons.q4.response, 
+radiobuttons.q5.response, radiobuttons.q6.response, values.q7, radiobuttons.q8.response)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<values>
+/q7 = "dropped from survey"
+</values>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/MFQscore = radiobuttons.q1.response + radiobuttons.q2R.response + radiobuttons.q3.response + radiobuttons.q4.response + 
+radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q8.response 
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. When I feel myself getting caught up in my thoughts or feelings, I am able to bring my mind back to what’s happening right now."
+/ options = ("Not at all~n  characteristic~nof me  "
+, "A little~n  characteristic~nof me  ", 
+"Somewhat~n  characteristic~nof me  ", 
+"Very~n  characteristic~nof me  "
+, "Entirely~n  characteristic~nof me  ")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2R>
+/caption = "2. I don't consciously try to be accepting of whatever thoughts and feelings I have."
+/ options = ("Not at all~n  characteristic~nof me  "
+, "A little~n  characteristic~nof me  ", 
+"Somewhat~n  characteristic~nof me  ", 
+"Very~n  characteristic~nof me  "
+, "Entirely~n  characteristic~nof me  ")
+/ optionvalues = ("5", "4", "3", "2", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. I try to be open to whatever happens, as it's happening, instead of having my mind wander to other things."
+/ options = ("Not at all~n  characteristic~nof me  "
+, "A little~n  characteristic~nof me  ", 
+"Somewhat~n  characteristic~nof me  ", 
+"Very~n  characteristic~nof me  "
+, "Entirely~n  characteristic~nof me  ")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. I intentionally try to be accepting of my thoughts and feelings as they occur."
+/ options = ("Not at all~n  characteristic~nof me  "
+, "A little~n  characteristic~nof me  ", 
+"Somewhat~n  characteristic~nof me  ", 
+"Very~n  characteristic~nof me  "
+, "Entirely~n  characteristic~nof me  ")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. When I notice that I'm not engaged in the present moment I can gently bring myself back."
+/ options = ("Not at all~n  characteristic~nof me  "
+, "A little~n  characteristic~nof me  ", 
+"Somewhat~n  characteristic~nof me  ", 
+"Very~n  characteristic~nof me  "
+, "Entirely~n  characteristic~nof me  ")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. If I notice that I’m being hard on myself for the thoughts and feelings I’m experiencing, I try to be kind to myself instead."
+/ options = ("Not at all~n  characteristic~nof me  "
+, "A little~n  characteristic~nof me  ", 
+"Somewhat~n  characteristic~nof me  ", 
+"Very~n  characteristic~nof me  "
+, "Entirely~n  characteristic~nof me  ")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+Note: the original question 7 was dropped from the questionnaire
+<radiobuttons q8>
+/caption = "7. If I notice that I'm being critical of my thoughts or feelings, I try to be more accepting of them instead."
+/ options = ("Not at all~n  characteristic~nof me  "
+, "A little~n  characteristic~nof me  ", 
+"Somewhat~n  characteristic~nof me  ", 
+"Very~n  characteristic~nof me  "
+, "Entirely~n  characteristic~nof me  ")
+/ optionvalues = ("1", "2", "3", "4", "5")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage mindfulnessprocessquestionnaire1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1, q2R]
+</surveypage>
+
+<surveypage mindfulnessprocessquestionnaire2>
+/questions = [1 = q3, q4, q5]
+</surveypage>
+
+<surveypage mindfulnessprocessquestionnaire3>
+/questions = [1 = q6, q8]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey mindfulnessprocessquestionnaire>
+/pages = [
+	1 = mindfulnessprocessquestionnaire1; 
+	2 = mindfulnessprocessquestionnaire2;
+	3 = mindfulnessprocessquestionnaire3;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

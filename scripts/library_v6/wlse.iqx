@@ -1,0 +1,323 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+								Weight Loss Self-Efficacy Scale (WLSE)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 09-27-2023
+last updated:  09-27-2023 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 09-27-2023 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements Millisecond's computerized version of the Weight Loss Self-Efficacy Scale (WLSE)
+by Wilson et al (2016).
+
+Reference:
+
+Wilson, K. E., Harden, S. M., Almeida, F. A., You, W., Hill, J. L., Goessl, C., & Estabrooks, P. A. (2016). Brief Self-Efficacy Scales for Use in 
+Weight-Loss Trials: Preliminary Evidence of Validity. Psychological Assessment, 28(10), 1255–1264. 
+https://doi.org/10.1037/pas0000249
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+
+self-report measure consisting of 12 11-point Likert Scale questions (confidence scale from 0% to 100% in steps of 10).
+
+The scale provides Self-efficacy scores on three scales:
+Healthful Eating Self-efficacy (HESE) (q1-q4)
+Physical Activity Self-efficacy (PASE) (q5-q8)
+Weight Loss Self-efficacy (WLSE) (q9-q12)
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minute to complete
+
+__________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'wlse.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 0% (not confident at all) - 100% (completely confident)
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'wlse_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+							
+HESE: 						Healthful Eating Self-Efficacy, measured as mean of q1,q2,q3,q4 response
+PASE:  						Physical Activity Self-Efficacy, measured as mean of q5,q6,q7,q8 response
+WLSE: 						Weight Loss Self-Efficacy, measured as average of q9,q10,q11,q12 response	
+
++ individual responses						
+
+</usermanual>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.6.1.0 or higher
+
+<defaults>
+/ canvasaspectratio =   (4,3)
+/ minimumversion =   "6.6.1.0"
+/ fontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor =   white
+/ txcolor =   (0, 0, 0)
+</defaults>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+***********************
+summary data file
+***********************
+<summarydata>
+/ columns =   (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+
+expressions.HESE, expressions.PASE, expressions.WLSE
+
+//raw responses:
+radioButtons.q1.response,
+radioButtons.q2.response,
+radioButtons.q3.response,
+radioButtons.q4.response,
+radioButtons.q5.response,
+radioButtons.q6.response,
+radioButtons.q7.response,
+radioButtons.q8.response,
+radioButtons.q9.response,
+radioButtons.q10.response,
+radioButtons.q11.response,
+radioButtons.q12.response,
+)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expressions>
+/ HESE =   return ((radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response)/4)
+/ PASE =   return ((radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response)/4) 
+/ WLSE =   return ((radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q11.response + radiobuttons.q12.response)/4) 
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/ caption =   "1. ...even if you need a long time to develop the necessary routines."
+/ options =   ("0%<br><b>Not<br>at all<br>Confident</b>", "10%","20%","30%","40%","50%",
+"60%","70%","80%","90%","100%<br><b>Completely<br>Confident</b>")
+/ optionvalues =   ("0","10","20","30","40","50","60","70","80","90","100")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/ caption =   "2. ...even if you have to try several times until it works."
+/ options =   ("0%<br><b>Not<br>at all<br>Confident</b>", "10%","20%","30%","40%","50%",
+"60%","70%","80%","90%","100%<br><b>Completely<br>Confident</b>")
+/ optionvalues =   ("0","10","20","30","40","50","60","70","80","90","100")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/ caption =   "3. ...even if you have to rethink your entire way of nutrition."
+/ options =   ("0%<br><b>Not<br>at all<br>Confident</b>", "10%","20%","30%","40%","50%",
+"60%","70%","80%","90%","100%<br><b>Completely<br>Confident</b>")
+/ optionvalues =   ("0","10","20","30","40","50","60","70","80","90","100")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/ caption =   "4. ...even if you have to make a detailed plan."
+/ options =   ("0%<br><b>Not<br>at all<br>Confident</b>", "10%","20%","30%","40%","50%",
+"60%","70%","80%","90%","100%<br><b>Completely<br>Confident</b>")
+/ optionvalues =   ("0","10","20","30","40","50","60","70","80","90","100")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/ caption =   "5. ...even if you need a long time to develop the necessary routines."
+/ options =   ("0%<br><b>Not<br>at all<br>Confident</b>", "10%","20%","30%","40%","50%",
+"60%","70%","80%","90%","100%<br><b>Completely<br>Confident</b>")
+/ optionvalues =   ("0","10","20","30","40","50","60","70","80","90","100")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/ caption =   "6. ...even if you have to try several times until it works."
+/ options =   ("0%<br><b>Not<br>at all<br>Confident</b>", "10%","20%","30%","40%","50%",
+"60%","70%","80%","90%","100%<br><b>Completely<br>Confident</b>")
+/ optionvalues =   ("0","10","20","30","40","50","60","70","80","90","100")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/ caption =   "7. ...even if you have to rethink your entire way of physical activity."
+/ options =   ("0%<br><b>Not<br>at all<br>Confident</b>", "10%","20%","30%","40%","50%",
+"60%","70%","80%","90%","100%<br><b>Completely<br>Confident</b>")
+/ optionvalues =   ("0","10","20","30","40","50","60","70","80","90","100")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/ caption =   "8. ...even if you have to make a detailed plan."
+/ options =   ("0%<br><b>Not<br>at all<br>Confident</b>", "10%","20%","30%","40%","50%",
+"60%","70%","80%","90%","100%<br><b>Completely<br>Confident</b>")
+/ optionvalues =   ("0","10","20","30","40","50","60","70","80","90","100")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/ caption =   "9. ...even if you need a long time to develop the necessary routines."
+/ options =   ("0%<br><b>Not<br>at all<br>Confident</b>", "10%","20%","30%","40%","50%",
+"60%","70%","80%","90%","100%<br><b>Completely<br>Confident</b>")
+/ optionvalues =   ("0","10","20","30","40","50","60","70","80","90","100")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/ caption =   "10. ...even if you have to try several times until it works."
+/ options =   ("0%<br><b>Not<br>at all<br>Confident</b>", "10%","20%","30%","40%","50%",
+"60%","70%","80%","90%","100%<br><b>Completely<br>Confident</b>")
+/ optionvalues =   ("0","10","20","30","40","50","60","70","80","90","100")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/ caption =   "11. ...even if you have to rethink your entire way of losing weight."
+/ options =   ("0%<br><b>Not<br>at all<br>Confident</b>", "10%","20%","30%","40%","50%",
+"60%","70%","80%","90%","100%<br><b>Completely<br>Confident</b>")
+/ optionvalues =   ("0","10","20","30","40","50","60","70","80","90","100")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/ caption =   "12. ...even if you have to make a detailed plan."
+/ options =   ("0%<br><b>Not<br>at all<br>Confident</b>", "10%","20%","30%","40%","50%",
+"60%","70%","80%","90%","100%<br><b>Completely<br>Confident</b>")
+/ optionvalues =   ("0","10","20","30","40","50","60","70","80","90","100")
+/ required =   true
+/ orientation =   horizontalequal
+</radiobuttons>
+
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage wlse_1>
+/ caption =   "<center>Please answer the following questions.</center>"
+/ subcaption =   "<span style='background-color:#00FEFE'>How confident are you that you can stick with <b>eating healthful foods</b></span>..."
+/ questions =   [1 = q1,q2,q3,q4]
+</surveypage>
+
+<surveypage wlse_2>
+/ subcaption =   "<span style='background-color:magenta'>How confident are you that you can be <b>physically active</b></span>..."
+/ questions =   [1 = q5,q6,q7,q8]
+</surveypage>
+
+<surveypage wlse_3>
+/ caption =   ""
+/ subcaption =   "<span style='background-color:yellow'>How confident are you that you can <b>lose weight</b></span>..."
+/ questions =   [1 = q9,q10,q11,q12]
+</surveypage>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+
+<survey wlse>
+/ pages =   [
+	1 = wlse_1;
+	2 = wlse_2;
+	3 = wlse_3;
+]
+/ screencapture =   false
+/ fontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemfontstyle =   ("Arial", 2.5%, true, false, false, false, 5, 1)
+/ responsefontstyle =   ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ showpagenumbers =   false
+/ showquestionnumbers =   false
+/ navigationbuttonfontstyle =   ("Arial", 3%, false, false, false, false, 5, 1)
+/ itemSpacing =   1%
+/ navigationbuttonsize =   (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition =   (70%, 90%)
+/ finishlabel =   "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

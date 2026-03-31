@@ -1,0 +1,388 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									DEMOGRAPHIC SURVEY TEMPLATE
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 12-09-2014
+last updated:  02-21-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-21-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a template for a Demographic Survey in the US. 
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw datafile: 'demographics.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'demographics_summary*.iqdat'
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP
+___________________________________________________________________________________________________________________	
+
+The template provides questions for:
+- age
+- gender
+- ethnicity
+- raceorigin
+- education
+- employmentstatus
+- marital status
+- household members
+- household income
+- region
+
+All individual questions can be edited under section "QUESTIONS"
+All surveypage elements can be edited under section "SURVEYPAGES"
+The survey can be edited under section "SURVEY"
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+/quitinstructions:			the instructions to quit the questionnaire
+								Note: the quitcommand can be changed under DEFAULTS
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/demographicpageinstructions = "Please select the answers that apply best.
+"
+/quitinstructions = "To quit the questionnaire at any time, press Alt+E
+"
+</parameters>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+
+/ quitcommand = (Alt+18)
+</defaults>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+raw data: Demographics.iqdat
+********************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change, set
+/required = false
+
+<radiobuttons gender>
+/caption = "What is your gender?"
+/ options = ("Female", 
+"Male", 
+"I prefer not to answer this question")
+/other = "Other (please specify):"
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<dropdown age>
+/caption = "What is your age?"
+/options = (
+"Under 12 years old",
+"12-17 years old",
+"18-24 years old",
+"25-34 years old",
+"35-44 years old",
+"45-54 years old",
+"55-64 years old",
+"65-74 years old",
+"75 years or older"
+"I prefer not to answer this question")
+/required = true
+</dropdown>
+
+<radiobuttons ethnicity>
+/caption = "What is your ethnicity?"
+/ options = ("Hispanic or Latino (a person of Cuban, Mexican, Puerto Rican, Cuban, South or Central American, or other Spanish culture or origin, regardless of race", 
+"Not Hispanic or Latino", 
+"I prefer not to answer this question")
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<checkboxes raceorigin>
+/ caption="What is your race? Mark one or more races to indicate what you consider yourself to be."
+/ required = true
+/ options=("<b>American Indian or Alaska Native</b> (a person having origins in any of the original peoples of North and South America (including Central America) who maintains cultural identification through tribal affiliation or community attachment)", 
+"<b>Asian</b> (a person having origins in any of the original peoples of the Far East, Southeast Asia, or the Indian Subcontinent, including, for example, Cambodia, China, India, Japan, Korea, Malaysia, Pakistan, the Philippine Islands, Thailand, and Vietnam)", 
+"<b>Black or African American</b> (a person having origins in any of the black racial groups of Africa)",
+"<b>Native Hawaiian or Other Pacific Islander</b> (a person having origins in any of the original peoples of Hawaii, Guam, Samoa, or other Pacific Islands)",
+"<b>White</b> (a person having origins in any of the original peoples of Europe, the Middle East, or North Africa)",
+"I prefer not to answer this question")
+/orientation = vertical
+/other = "Info you would like to add:"
+/required = true
+</checkboxes>
+
+
+<radiobuttons education>
+/caption = "What is the highest degree or level of schooling you have completed? If currently enrolled, highest degree received so far."
+/ options = (    
+"Doctoral or professional degree",
+"Master's degree",
+"Bachelor's degree",
+"Associate's degree",
+"Postsecondary non-degree award",
+"Some college, no degree",
+"High school diploma or equivalent",
+"Less than high school",
+"I prefer not to answer this question")
+/other = "Other (please specify):"
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<radiobuttons employmentstatus>
+/caption = "Are you currently…?"
+/options = (
+"Employed for wages",
+"Self-employed",
+"Out of work and looking for work",
+"Out of work but not currently looking for work",
+"A homemaker",
+"A student",
+"Military",
+"Retired",
+"Unable to work",
+"I prefer not to answer this question")
+/other = "Other (please specify):"
+/required = true
+</radiobuttons>
+
+<radiobuttons maritalstatus>
+/caption = "What is your marital status?"
+/options = (
+"Single, never married",
+"Married or domestic partnership",
+"Widowed",
+"Divorced",
+"Separated",
+"I prefer not to answer this question")
+/other = "Other (please specify)"
+/required = true
+/orientation = vertical
+</radiobuttons>
+
+<dropdown householdmembers>
+/caption = "How many people live in your household?"
+/options = (
+"One person",
+"Two people",
+"Three people",
+"Four people",
+"Five people",
+"Six or more people",
+"I prefer not to answer this question")
+/required = true
+</dropdown>
+
+
+<dropdown householdincome>
+/caption = "What was your total household income before taxes during the past 12 months?"
+/options = (
+"Less than $25,000",
+"$25,000 to $34,999",
+"$35,000 to $49,999",
+"$50,000 to $74,999",
+"$75,000 to $99,999",
+"$100,000 to $149,999",
+"$150,000 to $199,999",
+"$200,000 or more",
+"I prefer not to answer this question")
+/required = true
+</dropdown>
+
+<radiobuttons region>
+/caption = "Which region of the United States do you currently live in?"
+/options = (
+"Midwest - IA, IL, IN, KS, MI, MN, MO, ND, NE, OH, SD, WI",
+"Northeast - CT, DC, DE, MA, MD, ME, NH, NJ, NY, PA, RI, VT",
+"Southeast - AL, AR, FL, GA, KY, LA, MS, NC, SC, TN, VA, WV",
+"Southwest - AZ, NM, OK, TX",
+"West - AK, CA, CO, HI, ID, MT, NV, OR, UT, WA, WY",
+"I prefer not to answer this question")
+/other = "I live outside the United States (please specify)"
+/required = true
+</radiobuttons>
+
+The nine U.S. Census Divisions are groups of states as defined below:
+
+"New England (Maine, New Hampshire, Vermont, Massachusetts, Rhode Island, Connecticut",
+"Middle Atlantic (New York, New Jersey, Pennsylvania)",
+"East North Central (Ohio, Indiana, Illinois, Michigan, Wisconsin)",
+"West North Central (Minnesota, Iowa, Missouri, North Dakota, South Dakota, Nebraska, Kansas)",
+"South Atlantic (Delaware, Maryland, District of Columbia, Virginia, West Virginia, North Carolina, South Carolina, Georgia, Florida)",
+"East South Central (Kentucky, Tennessee, Alabama, Mississippi)",
+"West South Central (Arkansas, Louisiana, Oklahoma, Texas)",
+"Mountain (Montana, Idaho, Wyoming, Colorado, New Mexico, Arizona, Utah, Nevada)",
+"Pacific (Washington, Oregon, California, Alaska, Hawaii)",
+"I prefer not to answer this question")
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+<surveypage Demographics1>
+/caption ="<%parameters.demographicpageinstructions%>"
+/subcaption = "<%parameters.quitinstructions%>"
+/questions = [1 = gender, age, ethnicity]
+</surveypage>
+
+<surveypage Demographics2>
+/caption ="<%parameters.demographicpageinstructions%>"
+/subcaption = "<%parameters.quitinstructions%>"
+/questions = [1 = raceorigin]
+</surveypage>
+
+<surveypage Demographics3>
+/caption ="<%parameters.demographicpageinstructions%>"
+/subcaption = "<%parameters.quitinstructions%>"
+/questions = [1 = education]
+</surveypage>
+
+<surveypage Demographics4>
+/caption ="<%parameters.demographicpageinstructions%>"
+/subcaption = "<%parameters.quitinstructions%>"
+/questions = [1 = employmentstatus]
+</surveypage>
+
+<surveypage Demographics5>
+/caption ="<%parameters.demographicpageinstructions%>"
+/subcaption = "<%parameters.quitinstructions%>"
+/questions = [1 = maritalstatus, householdmembers]
+</surveypage>
+
+<surveypage Demographics6>
+/caption ="<%parameters.demographicpageinstructions%>"
+/subcaption = "<%parameters.quitinstructions%>"
+/questions = [1 = householdincome]
+</surveypage>
+
+<surveypage Demographics7>
+/caption ="<%parameters.demographicpageinstructions%>"
+/subcaption = "<%parameters.quitinstructions%>"
+/questions = [1 = region]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+
+<survey Demographics>
+/pages = [
+	1 = Demographics1; 
+	2 = Demographics2; 
+	3 = Demographics3; 
+	4 = Demographics4;
+	5 = Demographics5;
+	6 = Demographics6;
+	7 = Demographics7;
+]
+/showpagenumbers = false
+/showquestionnumbers = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

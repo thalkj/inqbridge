@@ -1,0 +1,629 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+							Balanced Inventory of Desirable Responding (BIDR)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-06-2016
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Balanced Inventory of Desirable Responding as described in:
+
+Paulhus, D. L. (1984). Two-component models of socially desirable responding. 
+Journal of Personality and Social Psychology, 46, 598-609.
+
+The BIDR is intended to measure self-deceptive positivity and impression management.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+40 7-point Likert questions
+1-20: assess self-deceptive positivity
+21-40: assess impression management
+											  
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 4 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'bidr.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	 with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					scores given for response selected (in assigned values: 0-1) - reversed items are automatically reversed scored
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'bidr_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+BIDR_total:						total score for the BIDR (0-40)
+								=> the higher the score the more questions were answered with a 
+								socially desired response
+
+SDP:							score for the self-deceptive positivity scale (0-20)
+IM:								score for the impression management scale (0-20)
+
+___________________________________________________________________________________________________________________
+QUESTIONNAIRE SET-UP & SCORING
+___________________________________________________________________________________________________________________
+
+The original responses are scored on a scale of 1-7:
+
+all responses < 6: score as 0
+all responses >= 6: score as 1 
+
+R = reversed scoring applied
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:		the general instructions that appear on the surveypages
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "Please rate how much you agree with the following statements.
+
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed, 
+expressions.BIDR_total, expressions.SDP, expressions.IM)
+</summarydata>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/SDP:		score for the self-deceptive positivity scale
+/IM:		score for the impression management scale
+BIDR_total:	total score for the BIDR
+
+<expressions>
+/SDP = radiobuttons.q1.response + radiobuttons.q2_R.response + radiobuttons.q3.response + radiobuttons.q4_R.response +
+radiobuttons.q5.response + radiobuttons.q6_R.response + radiobuttons.q7.response + radiobuttons.q8_R.response +
+radiobuttons.q9.response + radiobuttons.q10_R.response + radiobuttons.q11.response + radiobuttons.q12_R.response +
+radiobuttons.q13.response + radiobuttons.q14_R.response + radiobuttons.q15.response + radiobuttons.q16_R.response +
+radiobuttons.q17.response + radiobuttons.q18_R.response + radiobuttons.q19.response + radiobuttons.q20_R.response
+/IM = radiobuttons.q21_R.response + radiobuttons.q22.response + radiobuttons.q23_R.response + radiobuttons.q24.response +
+radiobuttons.q25_R.response + radiobuttons.q26.response + radiobuttons.q27_R.response + radiobuttons.q28.response +
+radiobuttons.q29_R.response + radiobuttons.q30.response + radiobuttons.q31_R.response + radiobuttons.q32.response +
+radiobuttons.q33_R.response + radiobuttons.q34.response + radiobuttons.q35_R.response + radiobuttons.q36.response +
+radiobuttons.q37_R.response + radiobuttons.q38.response + radiobuttons.q39_R.response + radiobuttons.q40.response
+/BIDR_total = expressions.SDP + expressions.IM
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. My first impressions of people usually turns out to be right."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2_R>
+/caption = "2. It would be hard for me to break any of my bad habits."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. I don’t care to know what other people really think of me."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4_R>
+/caption = "4. I have not always been honest with myself."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. I always know why I like things."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6_R>
+/caption = "6. When my emotions are aroused, it biases my thinking."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. Once I’ve made up my mind, other people can seldom change my opinion."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8_R>
+/caption = "8. I am not a safe driver when I exceed the speed limit."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. I am fully in control of my own fate. "
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10_R>
+/caption = "10. It’s hard for me to shut off a disturbing thought."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. I never regret my decisions."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12_R>
+/caption = "12. I sometimes lose out on things because I can’t make up my mind soon enough."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. The reason I vote is because my vote can make a difference."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14_R>
+/caption = "14. My parents were not always fair when they punished me."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. I am a completely rational person."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16_R>
+/caption = "16. I rarely appreciate criticism."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. I am very confident of my judgments."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18_R>
+/caption = "18. I have sometimes doubted my ability as a lover."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. It’s all right with me if some people happen to dislike me."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20_R>
+/caption = "20. I don’t always know the reasons why I do the things I do."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21_R>
+/caption = "21. I sometimes tell lies if I have to."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "22. I never cover up my mistakes."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23_R>
+/caption = "23. There have been occasions when I have taken advantage of someone."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q24>
+/caption = "24. I never swear."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q25_R>
+/caption = "25. I sometimes try to get even rather than forgive and forget."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q26>
+/caption = "26. I always obey laws, even if I’m unlikely to get caught."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q27_R>
+/caption = "27. I have said something bad about a friend behind his or her back."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q28>
+/caption = "28. When I hear people talking privately, I avoid listening."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q29_R>
+/caption = "29. I have received too much change from a salesperson without telling him or her."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q30>
+/caption = "30. I always declare everything at customs."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q31_R>
+/caption = "31. When I was young I sometimes stole things."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q32>
+/caption = "32. I have never dropped litter on the street."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q33_R>
+/caption = "33. I sometimes drive faster than the speed limit."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q34>
+/caption = "34. I never read sexy books or magazines."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q35_R>
+/caption = "35. I have done things that I don’t tell other people about."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q36>
+/caption = "36. I never take things that don’t belong to me."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q37_R>
+/caption = "37. I have taken sick leave from work or school even though I wasn’t really sick."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q38>
+/caption = "38. I have never damaged a library book or store merchandise without reporting it."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q39_R>
+/caption = "39. I have some pretty awful habits."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("1","1", "0", "0", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q40>
+/caption = "40. I don’t gossip about other people’s business."
+/ options = ("1~nNot true", "2", "3", "4~nSomewhat~ntrue", "5", "6", "7~nVery true")
+/ optionvalues = ("0","0", "0", "0", "0", "1", "1")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage BIDR1>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q1, q2_R, q3]
+</surveypage>
+
+<surveypage BIDR2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4_R, q5, q6_R]
+</surveypage>
+
+<surveypage BIDR3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7, q8_R, q9]
+</surveypage>
+
+<surveypage BIDR4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 =  q10_R, q11, q12_R]
+</surveypage>
+
+<surveypage BIDR5>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q13, q14_R, q15]
+</surveypage>
+
+<surveypage BIDR6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q16_R, q17, q18_R]
+</surveypage>
+
+<surveypage BIDR7>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q19, q20_R, q21_R]
+</surveypage>
+
+<surveypage BIDR8>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q22, q23_R, q24]
+</surveypage>
+
+<surveypage BIDR9>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q25_R, q26, q27_R]
+</surveypage>
+
+<surveypage BIDR10>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q28, q29_R, q30]
+</surveypage>
+
+<surveypage BIDR11>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q31_R, q32, q33_R]
+</surveypage>
+
+<surveypage BIDR12>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q34, q35_R, q36]
+</surveypage>
+
+<surveypage BIDR13>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q37_R, q38, q39_R]
+</surveypage>
+
+<surveypage BIDR14>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q40]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey bidr>
+/pages = [
+	1 = BIDR1; 
+	2 = BIDR2; 
+	3 = BIDR3; 
+	4 = BIDR4; 
+	5 = BIDR5; 
+	6 = BIDR6; 
+	7 = BIDR7; 
+	8 = BIDR8;
+	9 = BIDR9;
+	10 = BIDR10;
+	11 = BIDR11;
+	12 = BIDR12;
+	13 = BIDR13;
+	14 = BIDR14;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

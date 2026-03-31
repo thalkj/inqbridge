@@ -1,0 +1,489 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+						Center for Epidemiological Studies Depression Scale (CES-D) (screening)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 05-04-2018
+last updated:  02-17-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-17-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements a computerized version of the Center for Epidemiological Studies Depression Scale (CES-D) by:
+
+Hann, D., Winter, K., & Jacobsen, P. (1999) Measurement of depressive symptoms in cancer patients. Evaluation of the
+Center for Epidemiological Studies Depression Scale (CES-D). Journal of Psychosomatic Research, 46, 437-443.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+20 4-point Likert scale, self-report											  
+											  
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'ces_d.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 0 (rarely) - 3 (most of the time)
+								R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'ces_d_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)	
+								
+CES_D_score:					Range: 0-60
+								A score of 16 points or more is considered an indicator of a possible depression
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+see section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<parameters>
+/pageinstructions = "Below is a list of some ways you may have felt or behaved. Please indicate how often you have felt this way during the last week by checking the appropriate response option.
+"
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE INSTRUCTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, 
+script.elapsedTime, script.completed,
+expressions.CES_D_score )
+</summarydata>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/CES_D_score = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4R.response +
+radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8R.response +
+radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q11.response + radiobuttons.q12R.response +
+radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q15.response + radiobuttons.q16R.response +
+radiobuttons.q17.response + radiobuttons.q18.response + radiobuttons.q19.response + radiobuttons.q20.response
+</expressions>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "... I was bothered by things that usually don't bother me."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "... I did not feel like eating; my appetite was poor."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "... I felt that I could not shake off the blues even with help from my family or friends."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4R>
+/caption = "... I felt I was just as good as other people."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "... I had trouble keeping my mind on what I was doing."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "... I felt depressed."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "... I felt that everything I did was an effort."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8R>
+/caption = "... I felt hopeful about the future."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "... I thought my life had been a failure."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "... I felt fearful."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "... My sleep was restless."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12R>
+/caption = "... I was happy."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "... I talked less than usual."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "... I felt lonely."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "... People were unfriendly."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16R>
+/caption = "... I enjoyed life."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("3", "2", "1", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "... I had crying spells."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "... I felt sad."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "... I felt that people disliked me."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20>
+/caption = "... I could not get going."
+/ options = ("Rarely or none~nof the time~n(less than 1 day)", 
+"Some or a little~nof the time~n(1-2 days)", 
+"Occasionally~nor a moderate~namount of time~n(3-4 days)",
+ "Most of the time~n(5-7 days)")
+/ optionvalues = ("0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage CES_D1>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Last week..."
+/ questions = [1 = q1, q2]
+</surveypage>
+
+<surveypage CES_D2>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Last week..."
+/ questions = [1 = q3, q4R]
+</surveypage>
+
+<surveypage CES_D3>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Last week..."
+/ questions = [1 = q5, q6]
+</surveypage>
+
+<surveypage CES_D4>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Last week..."
+/ questions = [1 = q7, q8R]
+</surveypage>
+
+<surveypage CES_D5>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Last week..."
+/ questions = [1 = q9, q10]
+</surveypage>
+
+<surveypage CES_D6>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Last week..."
+/ questions = [1 = q11, q12R]
+</surveypage>
+
+<surveypage CES_D7>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Last week..."
+/ questions = [1 = q13, q14]
+</surveypage>
+
+<surveypage CES_D8>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Last week..."
+/ questions = [1 = q15, q16R]
+</surveypage>
+
+<surveypage CES_D9>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Last week..."
+/ questions = [1 = q17, q18]
+</surveypage>
+
+<surveypage CES_D10>
+/ caption ="<%parameters.pageinstructions%>"
+/ subcaption = "Last week..."
+/ questions = [1 = q19, q20]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey CES_D>
+/pages = [
+	1 = CES_D1;
+	2 = CES_D2;
+	3 = CES_D3;
+	4 = CES_D4;
+	5 = CES_D5;
+	6 = CES_D6;
+	7 = CES_D7;
+	8 = CES_D8;
+	9 = CES_D9;
+	10 = CES_D10;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 3%, true, true, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/ showpagenumbers = false
+/ showquestionnumbers = true
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

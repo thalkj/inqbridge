@@ -1,0 +1,486 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+									DRUG ABUSE SCREENING TEST (DAST)
+___________________________________________________________________________________________________________________	
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+last updated:  02-21-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-21-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the Drug Abuse Screening Test (DAST) published by 
+
+Skinner, H.A. (1982). The drug abuse screening test. Addictive Behaviors, 7, 363–371.
+
+The DAST provides an way to screen for drug abuse using 28 self-report "yes/no" questions.
+
+A paper and pencil version can be downloaded from:
+www.drtepp.com/pdf/substance_abuse.pdf
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+28 yes-no questions
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'dast.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								scale: 0 = no; 1 = yes
+								R = automatically reversed scored questions
+									
+q*_latency:						how much time in ms the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+(2) Summary data file: 'dast_summary*.iqdat'
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+									
+totalscore:							calculates the total score as the sum of all individual answers 
+									(abuse affirmative = 1; other = 0)
+									Range: 0 - 28
+
+
+</usermanual>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = black
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+raw data
+********************
+DAST.iqdat
+
+********************
+summary data
+********************
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+expressions.totalscore)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+totalscore:							calculates the total score
+
+<expressions>
+
+/totalscore = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response +
+radiobuttons.q4R.response + radiobuttons.q5R.response + radiobuttons.q6.response + radiobuttons.q7R.response +
+radiobuttons.q8.response + radiobuttons.q9.response + radiobuttons.q10.response + radiobuttons.q11.response +
+radiobuttons.q12.response + radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q15.response +
+radiobuttons.q16.response + radiobuttons.q17.response + radiobuttons.q18.response + radiobuttons.q19.response +
+radiobuttons.q20.response + radiobuttons.q21.response + radiobuttons.q22.response + radiobuttons.q23.response +
+radiobuttons.q24.response + radiobuttons.q25.response + radiobuttons.q26.response + radiobuttons.q27.response +
+radiobuttons.q28.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+NOTE: as a default all questions require a response to move on, to change this 
+go to QUESTIONS and set all /required = true to /required = false
+
+<caption instructions>
+/ caption = "Carefully read each statement and decide whether your answer is yes or no. Then select the appropriate response." 
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+</caption>
+
+
+<radiobuttons q1>
+/caption = "1. Have you used drugs other than those required for medical reasons?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Have you abused prescription drugs?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Do you abuse more than one drug at a time?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q4R>
+/caption = "4. Can you get through the week without using drugs (other than those required for medical reasons)?"
+/ options = ("Yes", "No")
+/ optionvalues = ("0", "1")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q5R>
+/caption = "5. Are you always able to stop using drugs when you want to?"
+/ options = ("Yes", "No")
+/ optionvalues = ("0", "1")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Do you abuse drugs on a continuous basis?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q7R>
+/caption = "7. Do you try to limit your drug use to certain situations?"
+/ options = ("Yes", "No")
+/ optionvalues = ("0", "1")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. Have you had “blackouts” or “flashbacks” as a result of drug use?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. Do you ever feel bad about your drug abuse?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. Does your spouse (or parents) ever complain about your involvement with drugs?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. Do your friends or relatives know or suspect you abuse drugs?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. Has drug abuse ever created problems between you and your spouse?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. Has any family member ever sought help for problems related to your drug use?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "14. Have you ever lost friends because of your use of drugs?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. Have you ever neglected your family or missed work because of your use of drugs?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "16. Have you ever been in trouble at work because of drug abuse?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. Have you ever lost a job because of drug abuse?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "18. Have you gotten into fights when under the influence of drugs?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. Have you ever been arrested because of unusual behavior while under the influence of drugs?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q20>
+/caption = "20. Have you ever been arrested for driving while under the influence of drugs?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q21>
+/caption = "21. Have you engaged in illegal activities in order to obtain drug?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "22. Have you ever been arrested for possession of illegal drugs?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q23>
+/caption = "23. Have you ever experienced withdrawal symptoms as a result of heavy drug intake?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q24>
+/caption = "24. Have you had medical problems as a result of your drug use (e.g., memory loss, hepatitis, convulsions, bleeding, etc.)?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q25>
+/caption = "25. Have you ever gone to anyone for help for a drug problem?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q26>
+/caption = "26. Have you ever been in a hospital for medical problems related to your drug use?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q27>
+/caption = "27. Have you ever been involved in a treatment program specifically related to drug use?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q28>
+/caption = "28. Have you been treated as an outpatient for problems related to drug abuse?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage DAST1>
+/ caption = "The following questions concern information about your involvement and abuse of drugs.
+"
+/subcaption = "Drug abuse refers to 
+(1) the use of prescribed or “over the counter” drugs in excess of the directions and 
+(2) any non-medical use of drugs. 
+" 
+/ questions = [1 = instructions, q1, q2, q3]
+</surveypage>
+
+
+<surveypage DAST2>
+/ caption = "Carefully read each statement and decide whether your answer is yes or no. Then select the appropriate response.
+" 
+/ questions = [1 = q4R, q5R, q6]
+</surveypage>
+
+<surveypage DAST3>
+/ caption = "Carefully read each statement and decide whether your answer is yes or no. Then select the appropriate response.
+" 
+/ questions = [1 = q7R, q8, q9]
+</surveypage>
+
+<surveypage DAST4>
+/ caption = "Carefully read each statement and decide whether your answer is yes or no. Then select the appropriate response.
+" 
+/ questions = [1 =  q10, q11, q12]
+</surveypage>
+
+<surveypage DAST5>
+/ caption = "Carefully read each statement and decide whether your answer is yes or no. Then select the appropriate response.
+" 
+/ questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage DAST6>
+/ caption = "Carefully read each statement and decide whether your answer is yes or no. Then select the appropriate response.
+" 
+/ questions = [1 = q16, q17, q18]
+</surveypage>
+
+<surveypage DAST7>
+/ caption = "Carefully read each statement and decide whether your answer is yes or no. Then select the appropriate response.
+" 
+/ questions = [1 = q19, q20, q21]
+</surveypage>
+
+<surveypage DAST8>
+/ caption = "Carefully read each statement and decide whether your answer is yes or no. Then select the appropriate response.
+" 
+/ questions = [1 = q22, q23, q24]
+</surveypage>
+
+<surveypage DAST9>
+/ caption = "Carefully read each statement and decide whether your answer is yes or no. Then select the appropriate response.
+" 
+/ questions = [1 = q25, q26, q27]
+</surveypage>
+
+<surveypage DAST10>
+/ caption = "Carefully read each statement and decide whether your answer is yes or no. Then select the appropriate response.
+" 
+/ questions = [1 = q28]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+<survey DAST>
+/ pages = [
+	1 = DAST1; 
+	2 = DAST2; 
+	3 = DAST3; 
+	4 = DAST4; 
+	5 = DAST5; 
+	6 = DAST6;
+	7 = DAST7;
+	8 = DAST8;	
+	9 = DAST9;
+	10 = DAST10;
+]
+/ fontstyle = ("Arial", 3%, false, true, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = false
+
+/ backbuttonposition = (70%, 90%)
+/ nextbuttonposition = (80%, 90%)
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

@@ -1,0 +1,1222 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+										MATH EFFORT TASK (MET)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 03-02-2017
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+Millisecond Software thanks Karolin Gieseler for her help with this script!
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+This script implements the Math Effort Task based on:
+
+Engle-Friedman, M., Riela, S., Golan, R., Ventuneac, A. M., Davis, C. M., Jefferson, A. D. and Major, D. (2003).
+The effect of sleep loss on next day effort. Journal of Sleep Research, 12: 113–124. 
+doi:10.1046/j.1365-2869.2003.00351.x
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________	
+Participants work through 100 addition problems. Each problem consists of 4 numbers 
+(default; possible range: 2-5 digits) that are flashed onto the screen one-by-one and participants 
+are asked to add the numbers in their head.
+Once the last number is erased, a textbox is provided to collect the participants' responses.
+The max duration for this sequence (start of number presentation to clicking the submit button)
+is ~15s by default (for 4 numbers).
+
+The numbers for each problem are selected randomly but differ in their level of difficulty.
+Level 1: numbers are randomly selected from 1-3
+Level 2: numbers are randomly selected from 3–9; 
+Level 3: numbers are randomly selected from 7–15; 
+Level 4: numbers are randomly selected from 7–25; 
+Level 5: numbers are randomly selected from 7–35.
+
+The level of difficulty is under the participant's control. By default, participants select
+a level of difficulty for a batch of 5 problems. Nevertheless, after each problem they get
+the option to change their selection of difficulty. Once changed, the new level again applies to the
+next 5 problems by default.
+
+No feedback is provided during the task but the program keeps track of performance and
+calculates a final performance score that weighs the number of correct solutions by
+the problems' respective levels of difficulty.
+  
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 20 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'mathefforttask_raw*.iqdat'*
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group, 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block.
+										
+										
+nrDigits:						stores the number of digits presented (possible range: 2-5)
+countTotalTrials:				tally of the number of test problems run
+currentLevel:					stores the level of difficulty of the current problem
+countTrialsCurrentLevel:		tally of the number of trials run in the current batch
+number1:						stores the number selected for number1 (random selection)
+number2:						stores the number selected for number2 (random selection)
+
+number3:						stores the number selected for number3 (random selection) 
+									Note: if fewer than 3 digits are presented, number3 = 0
+									
+number4:						stores the number selected for number4 (random selection) 
+									Note: if fewer than 4 digits are presented, number4 = 0
+									
+number5:						stores the number selected for number5 (random selection) 
+									Note: if fewer than 5 digits are presented, number5 = 0
+									
+solution:						stores the correct solution to the current addition problem
+currentResponse:				stores the response to the current addition problem
+ACC:							1: correct response provided; 0 = otherwise
+rt:								stores the latency of responding; measured from onset of textbox until "continue" button is pressed
+changeLevel:					1 = participant opted to make a (potential) level change; 0 = otherwise
+countLevelChange:				tallies the number of level changes
+countLevel1:					tally of level 1 problems attempted
+countcorrectLevel1:				tally of level 1 problems correctly solved
+countLevel2:					tally of level 2 problems attempted
+countcorrectLevel2:				tally of level 2 problems correctly solved
+countLevel3:					tally of level 3 problems attempted
+countcorrectLevel3:				tally of level 3 problems correctly solved
+countLevel4:					tally of level 4 problems attempted
+countcorrectLevel4:				tally of level 4 problems correctly solved
+countLevel5:					tally of level 5 problems attempted
+countcorrectLevel5:				tally of level 5 problems correctly solved
+
+
+(2) Summary data file: 'mathefforttask_summary*.iqdat'*
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+				
+nrDigits:						stores the number of digits presented (possible range: 2-5)
+countTotalTrials:				tally of the number of test problems run
+
+METScore: 						final METScore, calculated by adjusting the number of correctly solved problems on each level by
+								the difficulty factor of that level:
+			
+								difficulty factor for level 5 => 5/5 = 1
+								difficulty factor for level 4 => 4/5 = 0.8
+								difficulty factor for level 3 => 3/5 = 0.6
+								difficulty factor for level 2 => 2/5 = 0.4
+								difficulty factor for level 1 => 1/5 = 0.2	
+
+								MES_score = 
+								(correct solutions to level 5 problems x 1) +
+								(correct solutions to level 4 problems x 0.8) +
+								(correct solutions to level 3 problems x 0.6) +
+								(correct solutions to level 2 problems x 0.4) +
+								(correct solutions to level 1 problems x 0.2)
+
+countLevelChange:				tallies the number of level changes
+countLevel1:					tally of level 1 problems attempted
+countcorrectLevel1:				tally of level 1 problems correctly solved
+countLevel2:					tally of level 2 problems attempted
+countcorrectLevel2:				tally of level 2 problems correctly solved
+countLevel3:					tally of level 3 problems attempted
+countcorrectLevel3:				tally of level 3 problems correctly solved
+countLevel4:					tally of level 4 problems attempted
+countcorrectLevel4:				tally of level 4 problems correctly solved
+countLevel5:					tally of level 5 problems attempted
+countcorrectLevel5:				tally of level 5 problems correctly solved
+
+
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+
+1. Intro Block with a demonstration of a problem taken from each of the five levels of difficulties.
+2. Test Block: 100 trials (default)
+- at the start of the test block, participants select the default level of difficulty that automatically
+applies to the next 5 (default) problems UNLESS participant opts to change level sooner.
+- numbers are selected randomly with replacement from the level-corresponding pools of numbers
+
+Problem Sequence: Max duration: ~15s (default)
+GetReady (ITI: 1000ms) -> 
+Start of Problem: Number1 (800ms)-> 
+ISI (500ms) -> 
+Number2 (800ms)-> 
+ISI (500ms) -> 
+Number3** (800ms)-> 
+ISI (500ms) -> 
+Number4** (800ms)-> 
+textbox* -> 
+
+*During the test, participants also receive a second question that allows them to change the level 
+of difficulty for the next question(s)
+** Experimenter can set how many digits should be presented under section Editable Parameters
+
+Number Selections: 
+Level 1: numbers are randomly selected from 1-3
+Level 2: numbers are randomly selected from 3–9; 
+Level 3: numbers are randomly selected from 7–15; 
+Level 4: numbers are randomly selected from 7–25; 
+Level 5: numbers are randomly selected from 7–35.
+
+Scoring Algorithm (suggested by Millisecond Software):
+The number of correctly solved problems at each of the 5 levels are weighted by their level of difficulty
+and summed up:
+MES_score = 
+(correct solutions to level 5 problems x 1) +
+(correct solutions to level 4 problems x 0.8) +
+(correct solutions to level 3 problems x 0.6) +
+(correct solutions to level 2 problems x 0.4) +
+(correct solutions to level 1 problems x 0.2)
+
+The highest possible score (with 100 test problems): 100
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+Number presented in Arial, black on white, in the middle of the screen.
+Size is proportional to the canvas height (default: 15%, can be set under section Editable Parameters)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+instructions are not original to Engle-Friedman et al (2003). 
+They are provided by Millisecond Software and can be edited under section Editable Instructions.
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/numberSize:			the size of the presented numbers proportional to the canvas height (default: 15%)
+
+/numberDuration:		the time (in ms) that each number is visible (default: 800ms)
+/ISI:					the interstimulus interval (white screen) that is presented after the first three numbers (default: 500ms)
+
+/RW:					the max. Duration (in ms) the textbox is provided to submit the response.
+							Note: the max.trialduration (measured from onset of first number to removal of testbox): 
+							default: 4700ms + 10300ms = 15000ms
+							4700ms => the duration of the number presentation sequence for 4 numbers (4700ms = 4*800 + 3*500)
+							
+/ITI:					the intertrial interval (the duration of the 'get ready') in ms (default: 1000ms)
+
+/maxNrTrials:			the maximum number of test trials (default: 100)
+/numberBatchedProblems:	the number of problems in a default problem batch (default: 5)
+
+/presentFinalScore:		true (1): the final score is presented to the participant at the end of this script (default)
+						false (0): the final score is not presented to the participant at the end of this script
+						
+/numberOfDigits:		the number of digits that should be presented (possible range 2-5)
+						Note: numbers outside the possible range get automatically adjusted to be either 2 or 5
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/ numberSize = 15%
+
+/ numberDuration = 800
+/ ISI = 500
+/ RW = 10300
+/ ITI = 1000
+
+/ maxNrTrials = 100
+/ numberBatchedProblems = 5
+/presentFinalScore = true
+
+/numberOfDigits = 4
+</parameters>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 2.8%, false, false, false, false, 5, 1)
+</instruct>
+
+<page End>
+You have reached the end of the task.
+^^<%expressions.finalMessage%>
+^^^^Thank you!
+</page>
+
+<item instructions>
+/ 1 = "In this task you will be asked to solve <%parameters.maxNrTrials%> addition problems.
+
+For each problem, you will be asked to add <%values.nrDigits%> numbers in your head. The numbers will be flashed onto the monitor one by one for a brief duration."
+/ 2 = "In this task you will be asked to solve <%parameters.maxNrTrials%> addition problems.
+
+For each problem, you will be asked to add <%values.nrDigits%> numbers in your head. The numbers will be flashed onto the monitor one by one for a brief duration just like this."
+/ 3 = "PROBLEM DIFFICULTY:
+
+The problems are selected from 5 levels of difficulty. The levels differ from each other in the range of numbers that can be randomly selected for each problem:
+
+The simplest level, Level 1, randomly selects numbers 1–3; 
+Level 2 randomly selects numbers 3–9; 
+Level 3 randomly selects numbers 7–15; 
+Level 4 randomly selects numbers 7–25; 
+and Level 5 randomly selects numbers 7–35.
+
+You will get <%((values.nrDigits*parameters.numberDuration + (values.nrDigits-1)*parameters.ISI) + parameters.RW)/1000%>s for each problem.
+
+To get an idea of the levels of difficulty, continue on and work through a demonstration of 5 practice problems.  The problems start at level 1 and continue to level 5."
+/ 4 = "SELECTION OF DIFFICULTY LEVEL:
+
+During the task, YOU are in control of which level of difficulty to work on:
+
+Before each new batch of <%parameters.numberBatchedProblems%> problems, you are prompted to select the default difficulty level of the new batch. 
+
+For example, if you select 'level 3', the next five problems will automatically be 'level 3' problems UNLESS you change your mind.
+
+You can always change your mind after each problem and opt to adjust the level of difficulty if needed.
+ 
+You can, for example, decide you would rather work on level 4 problems after solving two of the level 3 problems. Once changed, the newly selected level of difficulty will again automatically apply to the next <%parameters.numberBatchedProblems%> problems (unless you change your mind again)."
+/ 5 = "SCORING: 
+
+During the task there will be NO immediate feedback regarding your performance on each problem. Nevertheless, the computer will track your performance and provide you with a score at the end of this session.
+
+In general, the higher the level of problem difficulty you select, the higher your score will be if you solve the problems correctly.
+ 
+The highest possible score is <%parameters.maxNrTrials%>:  This score is achieved by correctly solving all <%parameters.maxNrTrials%> addition problems at level 5.
+
+In calculating the score, the number of correctly solved problems is adjusted by the corresponding level of difficulty.
+For example, <%parameters.maxNrTrials%> correctly solved level 4 problems receive a maximum score of <%parameters.maxNrTrials * 0.8%>.
+<%parameters.maxNrTrials%> correctly solved level 3 problems receive a maximum score of <%parameters.maxNrTrials * 0.6%> and so on.
+
+Continue on to select the level of difficulty for the first batch of problems. 
+Once selected, the first problem will be presented."
+</item>
+
+<text continue>
+/ items = ("<Press SPACEBAR to continue>")
+/ position = (50%, 90%)
+/ fontstyle = ("Courier New", 2%, true, false, false, false, 5, 1)
+/ erase = false
+/ size = (50%, 5%)
+/ txbgcolor = white
+/ txcolor = blue
+</text>
+
+<text demostart>
+/ items = ("<Press SPACEBAR to start demo>")
+/ position = (70%, 95%)
+/ fontstyle = ("Courier New", 3%, true, false, false, false, 5, 1)
+/ erase = false
+/ size = (50%, 5%)
+/ txbgcolor = white
+/ txcolor = blue
+</text>
+
+<text start>
+/ items = ("<Press SPACEBAR to start>")
+/ position = (70%, 95%)
+/ fontstyle = ("Courier New", 3%, true, false, false, false, 5, 1)
+/ erase = false
+/ size = (50%, 5%)
+/ txbgcolor = white
+/ txcolor = blue
+</text>
+
+<text back>
+/ items = ("<Press 'B' to go back to previous page>")
+/ position = (20%, 95%)
+/ fontstyle = ("Courier New", 2%, false, false, false, false, 5, 1)
+/ erase = false
+/ size = (50%, 5%)
+/ txbgcolor = white
+/ txcolor = blue
+</text>
+
+<textbox response>
+/ caption = "Enter the solution:"
+/ required = false
+/ fontstyle = ("Arial", 5%, true, false, false, false, 5, 1)
+/ position = (18%, 35%)
+/ textboxsize = (50%, 10%)
+/ mask = integer
+</textbox>
+
+<radiobuttons changeLevel>
+/ caption = "Optional: Do you want to change levels?"
+/ options = ("Yes")
+/ required = false
+/ txcolor = blue
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ position = (28%, 55%)
+</radiobuttons>
+
+<surveypage debug>
+/ questions = [1 = response, changeLevel]
+/ nextbuttonposition = (45%, 70%)
+</surveypage>
+
+<radiobuttons chooseLevel>
+/ caption = "Choose the default problem level for the next <%parameters.numberBatchedProblems%> problems:"
+/ options = ("Level1", "Level2", "Level3", "Level4", "Level5")
+/ required = true
+</radiobuttons>
+
+<text getReady>
+/ items = ("Get Ready!")
+/ fontstyle = ("Arial", 5.00%, true, false, false, false, 5, 1)
+/ size = (80%, 40%)
+/ position = (50%, 40%)
+/ vjustify = center
+/ hjustify = center
+/ txcolor = orange
+</text>
+
+<text getReady_practice>
+/ items = ("Level <%values.currentLevel%> Practice:
+
+Get Ready!")
+/ fontstyle = ("Arial", 5.00%, true, false, false, false, 5, 1)
+/ size = (80%, 40%)
+/ position = (50%, 40%)
+/ vjustify = center
+/ hjustify = center
+/ txcolor = orange
+</text>
+
+<item feedback>
+/ 1 = "Correct!"
+/ 2 = "Incorrect"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS: change editable lists here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list level1>
+/ items = (1, 2, 3)
+/ replace = true
+/ selectionrate = always 
+</list>
+
+<list level2>
+/ items = (3, 4, 5, 6, 7, 8, 9)
+/ replace = true
+/ selectionrate = always 
+</list>
+
+<list level3>
+/ items = (7, 8, 9, 10, 11, 12, 13, 14, 15)
+/ replace = true
+/ selectionrate = always 
+</list>
+
+<list level4>
+/ items = (7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25)
+/ replace = true
+/ selectionrate = always 
+</list>
+
+<list level5>
+/ items = (7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35)
+/ replace = true
+/ selectionrate = always 
+</list>
+
+**************************************************************************************************************
+				!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ canvasaspectratio = (4,3)
+/ minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+***********************
+raw data file
+***********************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum, 
+values.nrDigits,
+values.countTotalTrials, values.currentLevel, values.countTrialsCurrentLevel, 
+values.number1, values.number2, values.number3, values.number4, values.number5,
+values.solution, values.currentResponse, values.ACC, values.rt, values.changeLevel, values.countLevelChange,
+values.countLevel1, values.countcorrectLevel1,
+values.countLevel2, values.countcorrectLevel2,
+values.countLevel3, values.countcorrectLevel3,
+values.countLevel4, values.countcorrectLevel4,
+values.countLevel5, values.countcorrectLevel5)
+</data>
+
+***********************
+summary data file
+***********************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+values.nrDigits,
+values.countTotalTrials, expressions.METScore, 
+values.countLevelChange,
+values.countLevel1, values.countcorrectLevel1,
+values.countLevel2, values.countcorrectLevel2,
+values.countLevel3, values.countcorrectLevel3,
+values.countLevel4, values.countcorrectLevel4,
+values.countLevel5, values.countcorrectLevel5)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+/ nrDigits:				stores the number of digits presented (possible range: 2-5)
+/currentLevel:			stores the level of difficulty of the current problem
+/previousLevel:			stores the level of difficulty of the previous problem
+/number1:				stores the number selected for number1
+/number2:				stores the number selected for number2
+/number3:				stores the number selected for number3
+/number4:				stores the number selected for number4
+/number5:				stores the number selected for number5
+/solution:				stores the correct solution to the current addition problem
+/response:				stores the response to the current addition problem
+/correct:				1: correct response provided; 0 = otherwise
+/rt:					stores the latency of responding; measured from onset of textbox until "continue" button is pressed
+/countTrialsCurrentLevel:	tally of the number of trials run in the current batch
+/countTotalTrials:		tally of the number of test problems run
+/changeLevel:			1 = participant opted to make a (potential) level change; 0 = otherwise
+
+/countLevel1:			tally of level 1 problems attempted
+/countLevel2:			tally of level 2 problems attempted
+/countLevel3:			tally of level 3 problems attempted
+/countLevel4:			tally of level 4 problems attempted
+/countLevel5:			tally of level 5 problems attempted
+/countcorrectLevel1:	tally of level 1 problems correctly solved
+/countcorrectLevel2:	tally of level 2 problems correctly solved
+/countcorrectLevel3:	tally of level 3 problems correctly solved
+/countcorrectLevel4:	tally of level 4 problems correctly solved
+/countcorrectLevel5:	tally of level 5 problems correctly solved
+
+/countLevelChange:		tallies the number of level changes
+/selectFeedback:		helper variable to present the correct feedback during the demo
+/selectInstructions:	helper variable to present the correct instructions 
+
+
+
+<values>
+/ nrDigits = 0
+/ currentLevel = 0
+/ previousLevel = 0
+/ number1 = ""
+/ number2 = ""
+/ number3 = ""
+/ number4 = ""
+/ number5 = ""
+/ solution = ""
+/ currentResponse = ""
+/ ACC = 0
+/ rt = ""
+/ countTrialsCurrentLevel = 0
+/ countTotalTrials = 0
+/ changeLevel = 0
+
+/ countLevel1 = 0
+/ countLevel2 = 0
+/ countLevel3 = 0
+/ countLevel4 = 0
+/ countLevel5 = 0
+/ countcorrectLevel1 = 0
+/ countcorrectLevel2 = 0
+/ countcorrectLevel3 = 0
+/ countcorrectLevel4 = 0
+/ countcorrectLevel5 = 0
+
+/ countLevelChange = 0
+/ selectFeedback = 0
+/ selectInstructions = 0
+</values>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************	
+		
+/METScore: calculates the final METScore by adjusting the number of correctly solved problems on each level by
+			the difficulty factor of that level:
+			
+			difficulty factor for level 5 => 5/5 = 1
+			difficulty factor for level 4 => 4/5 = 0.8
+			difficulty factor for level 3 => 3/5 = 0.6
+			difficulty factor for level 2 => 2/5 = 0.4
+			difficulty factor for level 1 => 1/5 = 0.2	
+
+			If a person solves 100 level 5 problems correctly, the METScore = 1 * parameters.maxNrTrials = 100 (the top score), if the number of problems provided is 100
+			If a person solves 100 level 4 problems correctly, the METScore = 0.8 * parameters.maxNrTrials = 80
+			If a person solves 100 level 3 problems correctly, the METScore = 0.6 * parameters.maxNrTrials = 60
+			If a person solves 100 level 2 problems correctly, the METScore = 0.4 * parameters.maxNrTrials = 40
+			If a person solves 100 level 1 problems correctly, the METScore = 0.2 * parameters.maxNrTrials = 20			
+	
+<expressions>
+/ METScore = values.countcorrectLevel5*1 + values.countcorrectLevel4*0.8 +
+ values.countcorrectLevel3*0.6 + values.countcorrectLevel2*0.4 + values.countCorrectLevel1*0.2
+
+/finalMessage = if (parameters.presentFinalScore == true) {
+	"Your final score: <%expressions.METScore%>";
+} else {
+	"";
+}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text instructions>
+/ items = instructions
+/ select = values.selectInstructions
+/ position = (10%, 10%)
+/ valign = top
+/ halign = left
+/ hjustify = left
+/ fontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ erase = false
+/ size = (80%, 80%)
+/ txbgcolor = white
+</text>
+
+<trial intro>
+/ ontrialbegin = [
+	values.selectInstructions += 1;
+]
+/ stimulusframes = [1 = clearScreen, instructions, continue]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+<trial intro2>
+/ ontrialbegin = [
+	values.selectInstructions += 1;
+]
+/ ontrialbegin = [
+	values.number1 = list.level1.nextValue;
+	values.number2 = list.level1.nextValue;
+	values.number3 = list.level1.nextValue;
+	values.number4 = list.level1.nextValue;
+	values.number5 = list.level1.nextValue;
+	
+	trial.intro2.insertStimulusTime(shape.numberErase, (0*parameters.ISI + 1*parameters.numberDuration + 500));
+	trial.intro2.insertStimulusTime(text.number2, (1*parameters.numberDuration + 1*parameters.ISI + 500));
+	if (values.nrDigits > 2){
+		trial.intro2.insertStimulusTime(shape.numberErase, (1*parameters.ISI + 2*parameters.numberDuration + 500));
+		trial.intro2.insertStimulusTime(text.number3, (2*parameters.numberDuration + 2*parameters.ISI + 500));		
+	}
+	if (values.nrDigits > 3){
+		trial.intro2.insertStimulusTime(shape.numberErase, (2*parameters.ISI + 3*parameters.numberDuration + 500));
+		trial.intro2.insertStimulusTime(text.number4, (3*parameters.numberDuration + 3*parameters.ISI + 500));		
+	}
+	if (values.nrDigits > 4){
+		trial.intro2.insertStimulusTime(shape.numberErase, (3*parameters.ISI + 4*parameters.numberDuration + 500));
+		trial.intro2.insertStimulusTime(text.number5, (4*parameters.numberDuration + 4*parameters.ISI + 500));		
+	}	
+]
+/ stimulustimes = [0 = clearScreen, instructions; 
+500 = number1]
+/ timeout =(values.nrDigits*parameters.numberDuration + (values.nrDigits-1)*parameters.ISI + 500)
+/ recorddata = false
+/ ontrialend = [
+	trial.intro2.resetStimulusFrames();
+]
+</trial>
+
+<trial intro3>
+/ ontrialbegin = [
+	values.selectInstructions += 1;
+]
+/ stimulusframes = [1 = clearScreen, instructions, demostart]
+/ validresponse = (" ")
+/ recorddata = false
+</trial>
+
+
+<trial intro4>
+/ ontrialbegin = [
+	values.selectInstructions += 1;
+]
+/ stimulusframes = [1 = clearScreen, instructions, continue]
+/ validresponse = (" ")
+/ branch = [
+	return trial.intro5;
+]
+/ recorddata = false
+</trial>
+
+<trial intro5>
+/ ontrialbegin = [
+	values.selectInstructions += 1;
+]
+/ stimulusframes = [1 = clearScreen, instructions, start, back]
+/ validresponse = ("B", " ")
+/ branch = [
+	if (trial.intro5.responseText == "B") {
+		values.selectInstructions -= 2;
+		return trial.intro4;
+	}
+]
+/ recorddata = false
+</trial>
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text number1>
+/ items = ("<%values.number1%>")
+/ fontstyle = ("Arial", parameters.numberSize, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (20%, parameters.numberSize)
+/ vjustify = center
+</text>
+
+<text number2>
+/ items = ("<%values.number2%>")
+/ fontstyle = ("Arial", parameters.numberSize, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (20%, parameters.numberSize)
+/ vjustify = center
+</text>
+
+<text number3>
+/ items = ("<%values.number3%>")
+/ fontstyle = ("Arial", parameters.numberSize, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (20%, parameters.numberSize)
+/ vjustify = center
+</text>
+
+<text number4>
+/ items = ("<%values.number4%>")
+/ fontstyle = ("Arial", parameters.numberSize, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (20%, parameters.numberSize)
+/ vjustify = center
+</text>
+
+<text number5>
+/ items = ("<%values.number5%>")
+/ fontstyle = ("Arial", parameters.numberSize, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (20%, parameters.numberSize)
+/ vjustify = center
+</text>
+
+<shape numberErase>
+/ shape = rectangle
+/ position = (50%, 50%)
+/ size = (20%, parameters.numberSize)
+/ erase = false
+/ color = white
+</shape>
+
+
+<text feedback>
+/ items = feedback
+/ select = values.selectFeedback
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 20%)
+/ hjustify = center
+/ vjustify = center
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	PRACTICE TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial getReady_practice>
+/ ontrialbegin = [
+	values.changeLevel = 0;
+	values.rt="";
+	values.ACC = "";
+	values.solution = "";
+	values.currentResponse = "";
+]
+/ stimulusframes = [1 = clearScreen, getReady_Practice]
+/ timeout = parameters.ITI
+/ branch = [
+	return trial.numberPresentations_practice;
+]
+/ posttrialpause = parameters.ISI
+/ recorddata = false
+</trial>
+
+
+<trial numberPresentations_practice>
+/ ontrialbegin = [
+	if (values.currentLevel == 1) {
+		values.number1 = list.level1.nextValue;
+		values.number2 = list.level1.nextValue;
+		values.number3 = list.level1.nextValue;
+		values.number4 = list.level1.nextValue;
+		values.number5 = list.level1.nextValue;
+		values.countLevel1 += 1;
+	} else if (values.currentLevel == 2) {
+		values.number1 = list.level2.nextValue;
+		values.number2 = list.level2.nextValue;
+		values.number3 = list.level2.nextValue;
+		values.number4 = list.level2.nextValue;
+		values.number5 = list.level2.nextValue;
+		values.countLevel2 += 1;
+	} else if (values.currentLevel == 3) {
+		values.number1 = list.level3.nextValue;
+		values.number2 = list.level3.nextValue;
+		values.number3 = list.level3.nextValue;
+		values.number4 = list.level3.nextValue;
+		values.number5 = list.level3.nextValue;
+		values.countlevel3 += 1;
+	} else if (values.currentLevel == 4) {
+		values.number1 = list.level4.nextValue;
+		values.number2 = list.level4.nextValue;
+		values.number3 = list.level4.nextValue;
+		values.number4 = list.level4.nextValue;
+		values.number5 = list.level4.nextValue;
+		values.countLevel4 += 1;
+	} else if (values.currentLevel == 5) {
+		values.number1 = list.level5.nextValue;
+		values.number2 = list.level5.nextValue;
+		values.number3 = list.level5.nextValue;
+		values.number4 = list.level5.nextValue;
+		values.number5 = list.level5.nextValue;
+		values.countLevel5 += 1;
+	}
+	if (values.nrDigits < 5){
+		values.number5 = 0;
+	}
+	if (values.nrDigits < 4){
+		values.number4 = 0;
+	}
+	if (values.nrDigits < 3){
+		values.number3 = 0;
+	}
+	
+	trial.numberPresentations_practice.insertStimulusTime(clearScreen, (0*parameters.ISI + 1*parameters.numberDuration));
+	trial.numberPresentations_practice.insertStimulusTime(text.number2, (1*parameters.numberDuration + 1*parameters.ISI));
+	if (values.nrDigits > 2){
+		trial.numberPresentations_practice.insertStimulusTime(clearScreen, (1*parameters.ISI + 2*parameters.numberDuration));
+		trial.numberPresentations_practice.insertStimulusTime(text.number3, (2*parameters.numberDuration + 2*parameters.ISI));		
+	}
+	if (values.nrDigits > 3){
+		trial.numberPresentations_practice.insertStimulusTime(clearScreen, (2*parameters.ISI + 3*parameters.numberDuration));
+		trial.numberPresentations_practice.insertStimulusTime(text.number4, (3*parameters.numberDuration + 3*parameters.ISI));		
+	}
+	if (values.nrDigits > 4){
+		trial.numberPresentations_practice.insertStimulusTime(clearScreen, (3*parameters.ISI + 4*parameters.numberDuration));
+		trial.numberPresentations_practice.insertStimulusTime(text.number5, (4*parameters.numberDuration + 4*parameters.ISI));		
+	}	
+
+]
+/ stimulustimes = [0 = number1]
+/ trialduration = (values.nrDigits*parameters.numberDuration + (values.nrDigits-1)*parameters.ISI)
+/ ontrialend = [
+	trial.numberPresentations_practice.resetStimulusFrames();
+	values.solution = values.number1 + values.number2 + values.number3 + values.number4 + values.number5;
+]
+/ branch = [
+	return surveypage.response_practice;
+]
+/ recorddata = false
+</trial>
+
+<surveypage response_practice>
+/ questions = [1 = response]
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ showbackbutton = false
+/ showmousecursor = true
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ ontrialend = [
+	values.currentResponse = textbox.response.response;
+	
+	if (values.currentResponse == values.solution) {
+		values.ACC = 1;
+	} else {
+		values.ACC = 0;
+	}
+	values.rt = surveypage.response_practice.latency;
+	
+]
+/ nextbuttonposition = (45%, 70%)
+/ finishlabel = "submit"
+/ recorddata = true
+/ branch = [
+	return trial.practiceFeedback;
+]
+/ timeout = parameters.RW
+</surveypage>
+
+<trial practicefeedback>
+/ ontrialbegin = [
+	if (values.ACC == 1) {
+		values.selectFeedback = 1;
+		text.feedback.textColor = green;
+	} else {
+		values.selectFeedback = 2;
+		text.feedback.textColor = red;
+	}
+]
+/ stimulusframes = [1 = clearScreen, feedback]
+/ trialduration = 2000
+/ recorddata = false
+/ ontrialend = [
+	values.currentLevel += 1;
+]
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS 	
+**************************************************************************************************************
+**************************************************************************************************************
+
+<surveypage chooseLevel>
+/ ontrialbegin = [
+	values.countTrialsCurrentLevel = 0;
+]
+/ questions = [1 = chooseLevel]
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ showbackbutton = false
+/ showmousecursor = true
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ ontrialend = [
+	values.previousLevel = values.currentLevel;
+	if (radiobuttons.chooseLevel.response == "level1") {
+		values.currentLevel = 1;
+	} else if (radiobuttons.chooseLevel.response == "level2") {
+		values.currentLevel = 2;
+	} else if (radiobuttons.chooseLevel.response == "level3") {
+		values.currentLevel = 3;
+	} else if (radiobuttons.chooseLevel.response == "level4") {
+		values.currentLevel = 4;
+	} else if (radiobuttons.chooseLevel.response == "level5") {
+		values.currentLevel = 5;
+	}
+	if (values.previousLevel != 0) {
+		if (values.currentlevel != values.previousLevel) {
+			values.countLevelChange += 1;
+		}
+	}
+]
+/ branch = [
+	trial.getReady;
+]
+/ nextbuttonposition = (10%, 40%)
+/ finishlabel = "submit"
+/ recorddata = false
+</surveypage>
+
+
+<trial getReady>
+/ ontrialbegin = [
+	values.changeLevel = 0;
+	values.rt="";
+	values.ACC = "";
+	values.solution = "";
+	values.currentResponse = "";
+]
+/ stimulusframes = [1 = clearScreen, getReady]
+/ timeout = parameters.ITI
+/ branch = [
+	return trial.numberPresentations;
+]
+/ posttrialpause = parameters.ISI
+/ recorddata = false
+</trial>
+
+
+<trial numberPresentations>
+/ ontrialbegin = [
+	values.countTotalTrials += 1;
+	values.countTrialsCurrentLevel += 1;
+	if (values.currentLevel == 1) {
+		values.number1 = list.level1.nextValue;
+		values.number2 = list.level1.nextValue;
+		values.number3 = list.level1.nextValue;
+		values.number4 = list.level1.nextValue;
+		values.number5 = list.level1.nextValue;
+		values.countLevel1 += 1;
+	} else if (values.currentLevel == 2) {
+		values.number1 = list.level2.nextValue;
+		values.number2 = list.level2.nextValue;
+		values.number3 = list.level2.nextValue;
+		values.number4 = list.level2.nextValue;
+		values.number5 = list.level2.nextValue;
+		values.countLevel2 += 1;
+	} else if (values.currentLevel == 3) {
+		values.number1 = list.level3.nextValue;
+		values.number2 = list.level3.nextValue;
+		values.number3 = list.level3.nextValue;
+		values.number4 = list.level3.nextValue;
+		values.number5 = list.level3.nextValue;
+		values.countlevel3 += 1;
+	} else if (values.currentLevel == 4) {
+		values.number1 = list.level4.nextValue;
+		values.number2 = list.level4.nextValue;
+		values.number3 = list.level4.nextValue;
+		values.number4 = list.level4.nextValue;
+		values.number5 = list.level4.nextValue;
+		values.countLevel4 += 1;
+	} else if (values.currentLevel == 5) {
+		values.number1 = list.level5.nextValue;
+		values.number2 = list.level5.nextValue;
+		values.number3 = list.level5.nextValue;
+		values.number4 = list.level5.nextValue;
+		values.number5 = list.level5.nextValue;
+		values.countLevel5 += 1;
+	}
+	if (values.nrDigits < 5){
+		values.number5 = 0;
+	}
+	if (values.nrDigits < 4){
+		values.number4 = 0;
+	}
+	if (values.nrDigits < 3){
+		values.number3 = 0;
+	}
+	
+	trial.numberPresentations.insertStimulusTime(clearScreen, (0*parameters.ISI + 1*parameters.numberDuration));
+	trial.numberPresentations.insertStimulusTime(text.number2, (1*parameters.numberDuration + 1*parameters.ISI));
+	
+	if (values.nrDigits > 2){
+		trial.numberPresentations.insertStimulusTime(clearScreen, (1*parameters.ISI + 2*parameters.numberDuration));
+		trial.numberPresentations.insertStimulusTime(text.number3, (2*parameters.numberDuration + 2*parameters.ISI));		
+	}
+	if (values.nrDigits > 3){
+		trial.numberPresentations.insertStimulusTime(clearScreen, (2*parameters.ISI + 3*parameters.numberDuration));
+		trial.numberPresentations.insertStimulusTime(text.number4, (3*parameters.numberDuration + 3*parameters.ISI));		
+	}
+	if (values.nrDigits > 4){
+		trial.numberPresentations.insertStimulusTime(clearScreen, (3*parameters.ISI + 4*parameters.numberDuration));
+		trial.numberPresentations.insertStimulusTime(text.number5, (4*parameters.numberDuration + 4*parameters.ISI));		
+	}	
+]
+/ stimulustimes = [0 = number1]
+/ trialduration = (values.nrDigits*parameters.numberDuration + (values.nrDigits-1)*parameters.ISI)
+/ ontrialend = [
+	trial.numberPresentations.resetStimulusFrames();
+	values.solution = values.number1 + values.number2 + values.number3 + values.number4 + values.number5;
+]
+/ branch = [
+	return surveypage.response;
+]
+/ recorddata = false
+</trial>
+
+<surveypage response>
+/ questions = [1 = response, changeLevel]
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ timeout = parameters.RW
+/ showbackbutton = false
+/ showmousecursor = true
+/ showpagenumbers = false
+/ showquestionnumbers = false
+/ ontrialend = [
+	if (radiobuttons.changeLevel.response == "Yes") {
+		values.changeLevel = 1;
+	} else {
+		values.changeLevel = 0;
+	}
+	values.currentResponse = textbox.response.response;
+	if (monkey.monkeyMode && replace(0,1) == 1){
+		values.currentResponse = values.solution;
+	}
+	if (values.currentResponse == values.solution) {
+		values.ACC = 1;
+	} else {
+		values.ACC = 0;
+	}
+	if (values.currentLevel == 1) {
+		values.countcorrectLevel1 += values.ACC;
+	} else if (values.currentLevel == 2) {
+		values.countcorrectLevel2 += values.ACC;
+	} else if (values.currentLevel == 3) {
+		values.countcorrectLevel3 += values.ACC;
+	} else if (values.currentLevel == 4) {
+		values.countcorrectLevel4 += values.ACC;
+	} else if (values.currentLevel == 5) {
+		values.countcorrectLevel5 += values.ACC;
+	}
+	values.rt = surveypage.response.latency;
+]
+/ branch = [
+	if (values.changeLevel == 1) {
+		return surveypage.chooseLevel;
+	} else {
+		if (values.countTrialsCurrentLevel == parameters.numberBatchedProblems) {
+			values.countTrialsCurrentLevel = 0;
+			return surveypage.chooseLevel;
+		} else {
+			return trial.getReady;
+		}
+	}
+]
+/ nextbuttonposition = (45%, 70%)
+/ finishlabel = "submit"
+/ recorddata = true
+</surveypage>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block intro>
+/ onblockbegin = [
+	values.currentLevel = 1;
+]
+/ trials = [
+	1= intro; 
+	2 = intro2; 
+	3 = intro3 ; 
+	4-8 = getReady_practice; 
+	9=intro4;
+]
+</block>
+
+<block met>
+/ onblockbegin = [
+	values.countTotalTrials = 0;
+	values.countLevel1 = 0;
+	values.countcorrectLevel1 = 0;
+	values.countLevel2 = 0;
+	values.countcorrectLevel2 = 0;	
+	values.countLevel3 = 0;
+	values.countcorrectLevel3 = 0;
+	values.countLevel4 = 0;
+	values.countcorrectLevel4 = 0;	
+	values.countLevel5 = 0;
+	values.countcorrectLevel5 = 0;	
+]
+/ trials = [1 = chooseLevel]
+/ stop = [
+	values.countTotalTrials > parameters.maxNrTrials;
+]
+/ onblockend = [
+	if (values.countTotalTrials > parameters.maxNrTrials){
+		values.countTotalTrials -= 1;
+		
+		if (values.currentLevel == 1){
+			values.countLevel1 -= 1;
+		} else if (values.currentLevel == 2){
+			values.countLevel2 -= 1;
+		} else if (values.currentLevel == 3){
+			values.countLevel3 -= 1;
+		} else if (values.currentLevel == 4){
+			values.countLevel4 -= 1;
+		} else if (values.currentLevel == 5){
+			values.countLevel5 -= 1;
+		}
+	}
+]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt mathEffort>
+/ onexptbegin = [
+	if (parameters.numberOfDigits < 2){
+		values.nrDigits = 2;
+	} else if (parameters.numberOfDigits > 5){
+		values.nrDigits = 5;
+	} else {
+		values.nrDigits = parameters.numberOfDigits;		
+	}
+]
+/ blocks = [
+	1 = intro; 
+	2 = met;
+]
+
+</expt>
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

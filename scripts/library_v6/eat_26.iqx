@@ -1,0 +1,487 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+											EAT-26 (Eating Attitudes Test)
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 12-08-2016
+last updated:  02-22-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-22-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the EAT- 26 (Eating Attitudes Test) as described in:
+
+Garner, D.M., Olmsted, M.P., Boh, Y. & Garfinkle, P.E. (1982). The Eating Attitudes Test: Psychometric features and 
+clinical correlates. Psychological Medicine, 12, 871-878
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+26 6-point Likert questions											  
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 3 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'eat26.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	    with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Note: Scoring:
+									q1-q25: always (3). usually (2), often (1) - the remaining answer choices (0)
+									q26: reversed coded
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'eat_26_summary.iqdat' (Inquisit Lab: one data file per participant)
+
+inquisit.version: 						Inquisit version run
+computer.platform:					the platform the script was run on (win/mac/ios/android)
+startDate:							date script was run
+startTime:							time script was started
+subjectid:							assigned subject id number
+groupid:							assigned group id number
+sessionid:							assigned session id number
+elapsedTime:						time it took to run script (in ms); measured from onset to offset of script
+completed:							0 = script was not completed (prematurely aborted); 
+									1 = script was completed (all conditions run)
+
+EAT26_total:						the total score
+									Note: Scoring:
+									q1-q25: always (3). usually (2), often (1) - the remaining answer choices (0)
+									q26: reversed coded
+																	
+Note:
+Norms are calculated based on data published by Garner et al. (1982).
+The mean and standard deviation used in this script are derived from a group of female college students (N = 140)
+									
+zscore:		the z-score of the EAT27 Total Score with mean = 9.9 and sd = 9.2
+pvalue:		the percentile of the EAT27 zscore
+
+___________________________________________________________________________________________________________________
+NORMS
+___________________________________________________________________________________________________________________
+Norms are calculated based on data published by Garner et al. (1982).
+The mean and standard deviation used in this script are derived from a group of female college students (N = 140)
+
+Mean = 9.9, SD = 9.2 (see Garner et al., 1982, table 2)
+
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________
+can be edited under section Editable Parameters
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+/pageinstructions-
+/pageinstructions2: 	the presented page instructions
+
+Norming Statistics: The mean and standard deviation used in this script are derived from a group of female college students (N = 140) 
+(see Garner et al., 1982, table 2)
+/mean = 9.9				
+/sd = 9.2
+
+</usermanual>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EDITABLE PARAMETERS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/pageinstructions:			the instructions that appear at the top of each surveypage
+
+<parameters>
+/pageinstructions = "Eating Attitudes Test (EAT-26)
+"
+/pageinstructions2 = "Please answer the following questions to the best of your abilities. There are no right or wrong answers.
+"
+
+/mean = 9.9
+/sd = 9.2
+</parameters>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+							REMAINING CODE: Customize after careful consideration only
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DEFAULTS:
+*******************************************************************************************************************
+*******************************************************************************************************************
+requires Inquisit 6.5.2.0
+
+<defaults>
+/minimumversion = "6.5.2.0"
+/canvasaspectratio = (4,3)
+</defaults>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	DATA: this section contains data file information
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+********************
+Summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, 
+script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+expressions.EAT26_total, expressions.z_score, expressions.pvalue)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expressions>
+/EAT26_total = radiobuttons.q1.response + radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4.response + 
+radiobuttons.q5.response + radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response +
+radiobuttons.q9.response + radiobuttons.q10.response +
+radiobuttons.q11.response + radiobuttons.q12.response + radiobuttons.q13.response + radiobuttons.q14.response + 
+radiobuttons.q15.response + radiobuttons.q16.response + radiobuttons.q17.response + radiobuttons.q18.response +
+radiobuttons.q19.response + radiobuttons.q20.response + radiobuttons.q21.response +
+radiobuttons.q22.response + radiobuttons.q23.response + radiobuttons.q24.response + 
+radiobuttons.q25.response + radiobuttons.q26R.response
+
+/z_score = (expressions.EAT26_total - parameters.mean)/parameters.sd
+/pvalue = pofz(expressions.z_score)
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: by default all questions are required to be answered. To change
+/required = false
+
+<radiobuttons q1>
+/caption = "1. Am terrified about being overweight."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Avoid eating when I am hungry."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Find myself preoccupied with food."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. Have gone on eating binges where I feel that I may not be able to stop."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. Cut my food into small pieces."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Aware of the calorie content of foods that I eat."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. Particularly avoid food with a high carbohydrate content (i.e. bread, rice, potatoes,etc.)."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. Feel that others would prefer if I ate more."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. Vomit after I have eaten."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. Feel extremely guilty after eating."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. Am preoccupied with a desire to be thinner."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. Think about burning up calories when I exercise."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. Other people think that I am too thin."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "14. Am preoccupied with the thought of having fat on my body."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. Take longer than others to eat my meals."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "16. Avoid foods with sugar in them."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. Eat diet foods."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "18. Feel that food controls my life."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. Display self-control around food."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q20>
+/caption = "20. Feel that others pressure me to eat."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q21>
+/caption = "21. Give too much time and thought to food."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "22. Feel uncomfortable after eating sweets."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q23>
+/caption = "23. Engage in dieting behavior."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q24>
+/caption = "24. Like my stomach to be empty."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q25>
+/caption = "25. Have the impulse to vomit after meals."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("3", "2", "1", "0", "0", "0")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+<radiobuttons q26R>
+/caption = "26. Enjoy trying new rich foods."
+/ options = ("Always", "Usually", "Often", "Sometimes", "Rarely", "Never")
+/ optionvalues = ("0", "0", "0", "1", "2", "3")
+/required = true
+/orientation = horizontalequal
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage eat26_1>
+/caption ="<%parameters.pageinstructions%>"
+/ subcaption = "<%parameters.pageinstructions2%>"
+/questions = [1 = q1, q2, q3]
+</surveypage>
+
+<surveypage eat26_2>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q4, q5, q6]
+</surveypage>
+
+<surveypage eat26_3>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage eat26_4>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage eat26_5>
+/caption ="<%parameters.pageinstructions%>"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage eat26_6>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q16, q17, q18]
+</surveypage>
+
+<surveypage eat26_7>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q19, q20, q21]
+</surveypage>
+
+<surveypage eat26_8>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q22, q23, q24]
+</surveypage>
+
+<surveypage eat26_9>
+/caption ="<%parameters.pageinstructions%>"
+/questions = [1 = q25, q26R]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+Notes:
+- presents the surveypages
+- to take pictures of each screen set /screencapture = true
+
+<survey eat26>
+/pages = [
+	1 = eat26_1; 
+	2 = eat26_2; 
+	3 = eat26_3; 
+	4 = eat26_4; 
+	5 = eat26_5; 
+	6 = eat26_6; 
+	7 = eat26_7;
+	8 = eat26_8;
+	9 = eat26_9;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/subcaptionfontstyle = ("Arial", 2.0%, false, false, false, false, 5, 1)
+/itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = black
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

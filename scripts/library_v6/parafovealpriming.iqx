@@ -1,0 +1,895 @@
+<usermanual>
+___________________________________________________________________________________________________________________	
+
+									PARAFOVEAL PRIMING
+___________________________________________________________________________________________________________________
+
+Script Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software LLC
+Date: 04-10-2012
+last updated:  02-25-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-25-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________
+Scripts implements a Parafoveal Priming Procedure.This parafoveal priming task was used by Chartrand & Bargh (1996)
+to subliminally activate participants' impression formation mode.
+
+In general, priming procedures are simple response-timed binary categorization tasks of items from two target
+categories  (e.g. positive vs. negative adjectives). Priming Procedures are based on the assumption that 
+people respond faster if the target category was already 'mentally activated' by briefly presenting items 
+(called 'primes') that are closely connected in one's mind. Thus, a person should be faster to quickly categorize
+the target word 'good' as 'positive' after the brief presentation of the prime word 'ice-cream' than
+after the brief presentation of the prime word 'famine'.
+If the primes are presented with a temporal duration that can be consciously processed, the primes are
+called 'supraliminal'. If the the duration of the primes is so short that they are outside one's conscious 
+awareness the primes are called 'subliminal'.
+
+In this particular task, no actual target categories are used. The primes are presented either on the the left or
+right side of the monitor at subliminal speed and covered by a 'mask' of random characters. The resulting 
+visual 'flash' is to be categorized as being on the 'left' or 'right'. This procedure is used to simply activate
+the priming categories.
+
+
+This script uses the original text stimuli but could easily be adapted to a new purpose.
+Please be aware that this script uses absolute stimulus sizing and thus depends on a minimum size monitor.
+If the current monitor is deemed too small to run the current script, the script prematurely terminates.							
+
+Reference:
+											
+Chartrand, T.L & Bargh, J.L. (1996). Automatic Activation of Impression Formation and Memorization Goals: 
+Nonconscious Goal Priming Reproduces Effects of Explicit Task Instructions. 
+Journal of Personality and Social Psychology, 71, 464-478.
+
+
+___________________________________________________________________________________________________________________
+TASK DESCRIPTION	
+___________________________________________________________________________________________________________________
+Categorize brief "flashes" on the screen as left or right flashes.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 8 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________
+The default data stored in the data files are:
+
+(1) Raw data file: 'parafovealpriming_raw*.iqdat'
+
+build:							The specific Inquisit version used (the 'build') that was run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+date, time: 					date and time script was run 
+subject, group: 				with the current subject/groupnumber
+session:						with the current session id
+
+blockcode, blocknum:			the name and number of the current block (built-in Inquisit variable)
+trialcode, trialnum: 			the name and number of the currently recorded trial (built-in Inquisit variable)
+									Note: trialnum is a built-in Inquisit variable; it counts all trials run; even those
+									that do not store data to the data file such as feedback trials. Thus, trialnum 
+									may not reflect the number of main trials run per block. 
+									
+SOA:							stores the current SOA between onset of primes/noprimes
+
+quadrant:						determines the screen quadrant in which the prime will appear
+								1 = left upper
+								2 = right upper
+								3 = left lower
+								4 = right lower
+											
+stimLocation:					"left" vs. "right"
+
+response:						the participant's response: scancode of response
+								30 = A (left response key)
+								38 = L (right response key)
+										
+responseCategory:				"left" vs. "right"
+correct:						the correctness of the response (1 = correct; 0 = incorrect)
+latency: 						the response latency (in ms); measured from onset of stims
+totalcorrect:					keeps a total of the correct responses
+
+
+(2) Summary data file: 'parafovealpriming_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run
+
+counttrials:					the number of test trials run									
+totalcorrect:					keeps a total of the correct responses
+propCorrect:					the proportion correct responses
+
+___________________________________________________________________________________________________________________	
+EXPERIMENTAL SET-UP 
+___________________________________________________________________________________________________________________	
+(1) 6 Practice Trials (with error feedback)
+(2) 75 trials for condition "priming"/"nopriming": randomized order of the 4 different text stimuli, 
+stimuli are selected at random with replacement
+(3) 6 different Stimuli Onset Asynchronies (2000-7000ms); randomly selected with replacement
+(4) 4 screen quadrants for the primes are selected randomly with replacement
+(5) between participant design: half the participants get the prime words the other half the noprimes (see Chartrand & Bargh, 1996);
+Assignment is done by "group number"
+(6) Participants should have a monitor-eye distance of 99cm (see Chartrand & Bargh, 1996)	
+
+___________________________________________________________________________________________________________________
+STIMULI
+___________________________________________________________________________________________________________________
+(1) Practice Stimuli: in this script, the practice trials use unrelated stimuli
+(2) Priming/noPriming conditions: use the original 4 text stimuli from Chartrand & Bargh (1996).
+(3) Fixation Stimuli: 3 "+++ " in the middle of the screen
+(4) Specifics for Stimuli Location/Size:
+	(a) Most experimental stimuli sizes and screen positions in this script are absolute and NOT percentages of the monitor size
+		and thus depends on a minimum sized monitor.
+		If the current monitor is deemed too small to run the current script, the script prematurely terminates.
+		The appropriate sizes are automatically calculated for the current monitor size.
+	(b) the prime's center is 7.6cm away from the fixation symbols on the 45degree angle (135, 225, 315) (see Chartrand & Bargh, 1996).
+		=> the middle of the prime is at 4degree visual angle (if participants sit 99cm away from screen)
+		=> the boundary conditions for the size of the prime are 2degree-6degree visual angle (see Chartrand & Bargh, 1996)
+	(c) Location of Primes: the location of primes in one of the four screen quadrants is randomly determined (Chartrand & Bargh, 1996,
+		used one predetermined sequence)
+	(d) Timing of Primes: the intervals between stimuli presentation is randomly determined (Chartrand & Bargh, 1996,
+		used one predetermined sequence)
+		Participants can respond to the "flashes" at any time during that interval, but are instructed to respond as fast and accurately as possible.
+		Stimulus Onset Asynchrony (SOAs) are controlled by list.soas/list.soas_practice
+	(e) Fontsize: this script uses Arial as it's a widely available font. The ideal fontsize in mm was determined using the longest stimuli
+		used in this script: personality. If you use different stimuli than the ones provided you need to figure out the appropriate fontsize in cm.
+		Go to FONTSIZE DETERMINATION and run block.fontsizedetermination under the experiment with the longest stimuli (-> text.longestword) in your stimuli set.
+		Note the fontsize printed on the screen and use that size for parameters.fontheight_incm under EDITABLE VALUES.
+	(f) Run block.determinefontsize under FONTSIZE DETERMINATION to make sure that the absolute distances used are correct for your monitor 
+
+	
+___________________________________________________________________________________________________________________	
+INSTRUCTIONS 
+___________________________________________________________________________________________________________________	
+Instructions are not original to the task. They are provided by Millisecond Software
+as htm pages and simple text elements and can be edited by changing
+the provided html files and/or directly under Editable Instructions.
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+The parameters you can change are:
+
+distance_primefromfixation_inmm:		the diagonal distance of the prime from the fixation cross (measured in mm)
+
+fontheight_inmm:						this is the fontheight in cm that makes the longest stimulus word fit
+										fit snuggly into the boundaries from 2-6 degrees visual angle.
+										If different stimuli are used go to FONTSIZE DETERMINATION and follow
+										instructions
+
+</usermanual>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/distance_primefromfixation_inmm = 76
+/fontheight_inmm = 11.2
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE STIMULI:
+**************************************************************************************************************
+**************************************************************************************************************
+
+********************************************************************************
+Note:
+all stimuli in the parafoveal priming experiment are absolute (not relative to screen size)
+
+the cm size of the primes/noprimes was determined by the boundary conditions specified by 
+Chartrand & Bargh (1996): 
+(2degree visual angle ------Midpoint of Prime at 4degree visual angle --------6degree visual angle)
+
+The position of the primes etc are determined on runtime and depend on the currently 
+sampled quadrant
+********************************************************************************
+<item primes>
+/1 = "impression"
+/2 = "judgment"
+/3 = "personality"
+/4 = "evaluate"
+</item>
+
+<item noprimes>
+/1 = "building"
+/2 = "coffee"
+/3 = "chalkboard"
+/4 = "alarmclock"
+</item>
+
+<item practicestims>
+/1 = "january"
+/2 = "february"
+/3 = "september"
+/4 = "august"
+</item>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.5%, true, false, false, false, 5, 1)
+</instruct>
+
+<htmlpage intro1>
+/ file = "parafovealpriming_intro1.htm"
+</htmlpage>
+
+<htmlpage intro2>
+/ file = "parafovealpriming_intro2.htm"
+</htmlpage>
+
+<htmlpage teststart>
+/ file = "parafovealpriming_teststart.htm"
+</htmlpage>
+
+<text practiceFeedback>
+/ items = ("Wrong")
+/ size = (70%, 10%)
+/ vjustify = center
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 75%)
+/ txcolor = red
+</text>
+
+<text practiceNRFeedback>
+/ items = ("Be faster!")
+/ size = (70%, 10%)
+/ vjustify = center
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 85%)
+/ txcolor = orange
+</text>
+
+<text finish>
+/ items = ("Thank you!")
+/ fontstyle = ("Arial", 8%, true, false, false, false, 5, 1)
+/ position = (50%, 50%)
+/ size = (80%, 80%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+<text exit>
+/ items = ("<press spacebar to exit>")
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ position = (50%, 90%)
+/ size = (80%, 5%)
+/ vjustify = center
+/ valign = center
+/ halign = center
+</text>
+
+*******************************
+General Helper Instructions
+******************************
+
+<text getReady>
+/items = ("Get Ready:
+~n<%expressions.buttoninstruct3%>")
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ size = (80%, 40%)
+</text>
+
+****************************************************************************************************
+general instruction expressions: adjust the instruction text depending on device used to run script
+****************************************************************************************************
+<expressions>
+/buttoninstruct1 = if (computer.touch && !computer.hasKeyboard) {"response button";} else {"key on your keyboard";}
+/buttoninstruct2 = if (computer.touch && !computer.hasKeyboard) {"Response buttons will be located at the bottom of your screen.";} else {"";}
+/buttoninstruct3 = if (computer.touch && !computer.hasKeyboard) {"Place your index finger over the left and right response buttons to get ready.";} else {"Put your index fingers on the A and L keys to get ready.";}
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE LISTS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list SOAs_practice>
+/items = (2000, 3000, 4000, 5000, 6000, 7000)
+/replace = true
+/selectionrate = trial
+</list>
+
+<list SOAs>
+/items = (2000, 3000, 4000, 5000, 6000, 7000)
+/replace = true
+/selectionrate = trial
+</list>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+/ txcolor = black
+/ minimumversion = "6.5.2.0"
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+****************
+raw data
+****************
+
+<data>
+/ columns = (build, computer.platform, date, time, subject, group, session, blockcode, blocknum, 
+trialcode, trialnum,
+values.SOA, values.quadrant, values.stimLocation, response, values.responseCategory, correct, latency, values.totalcorrect)
+</data>
+
+****************
+summary data
+****************
+
+<summarydata>
+/ columns = (inquisit.version, computer.platform, script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, 
+values.counttrials, values.totalcorrect, expressions.propCorrect)
+</summarydata>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	VALUES: automatically updated
+**************************************************************************************************************
+**************************************************************************************************************
+                                    
+SOA:								stores the current SOA between onset of primes/noprimes
+quadrant:							determines the screen quadrant in which the prime will appear
+counttrials:						counts the number of test trials run
+adjust_height/adjust_width:			helper variable to determine appropriate screen coordinates for primes (determine the quadrants)
+practice:							0 = experimental; 1 = practice
+instructions:						determines the instructions to be shown for each part
+totalcorrect:						keeps a total of the correct responses
+distance:							the x/y coordinate distance of stimuli (e.g. prime) from the center (in mm)
+
+<values>
+/SOA = 0
+/quadrant = 0
+/counttrials = 0
+/adjust_height = 1
+/adjust_width = 1
+/practice = 0
+/instruction = 1
+/totalcorrect = 0
+/distance = parameters.distance_primefromfixation_inmm / sqrt(2)
+/practiceReminder = 1
+/responseCategory = ""
+/stimLocation = ""
+</values>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+/px_per_mm:					pixel per mm (conversion rate on the current monitor)
+/pixeldistance:				converts the relevant mm distances into pixel distances
+/primefontheight:			calculats the appropriate fontheight for the stimuli in mm
+
+<expressions>
+/ px_per_mm = display.height/display.getmmy(display.height, 1)
+/pixeldistance = values.distance * expressions.px_per_mm
+/primefontheight = 1px* expressions.px_per_mm* parameters.fontheight_inmm
+
+/propCorrect = values.totalcorrect / values.counttrials
+</expressions>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	INSTRUCTIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+<trial finish>
+/ stimulusframes = [1 = clearScreen, finish]
+/ timeout = 500
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	STIMULI: Parafoveal Priming
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text fixation>
+/items = ("+++")
+/position = (1px*0.5*display.width, 1px*0.50*display.height)
+/ fontstyle = ("Arial", expressions.primefontheight, false, false, false, false, 5, 1)
+/ txcolor = black
+/erase = false
+</text>
+
+<text prime>
+/items = primes
+/hposition = text.fixation.hposition + (expressions.pixeldistance * values.adjust_width)
+/vposition = text.fixation.vposition + (expressions.pixeldistance * values.adjust_height)
+/ fontstyle = ("Arial", expressions.primefontheight, false, false, false, false, 5, 1)
+/ txcolor = black
+/select = replace
+</text>
+
+<text noprime>
+/items = noprimes
+/hposition = text.fixation.hposition + (expressions.pixeldistance * values.adjust_width)
+/vposition = text.fixation.vposition + (expressions.pixeldistance * values.adjust_height)
+/ fontstyle = ("Arial", expressions.primefontheight, false, false, false, false, 5, 1)
+/ txcolor = black
+/select = replace
+</text>
+
+<text practicestim>
+/items = practicestims
+/hposition = text.fixation.hposition + (expressions.pixeldistance * values.adjust_width)
+/vposition = text.fixation.vposition + (expressions.pixeldistance * values.adjust_height)
+/ fontstyle = ("Arial", expressions.primefontheight, false, false, false, false, 5, 1)
+/ txcolor = black
+/select = replace
+</text>
+
+<text mask>
+/items = ("XQFBZRMQWGBX")
+/ fontstyle = ("Arial", expressions.primefontheight, false, false, false, false, 5, 1)
+/ txcolor = black
+/hposition = text.fixation.hposition + (expressions.pixeldistance * values.adjust_width)
+/vposition = text.fixation.vposition + (expressions.pixeldistance * values.adjust_height)
+</text>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	Fontsize Determination
+**************************************************************************************************************
+**************************************************************************************************************
+Instructions:
+(1) figure out the longest word in your stimulus set and use that one in text.longestword
+(2) run block.fontsizedetermination
+(3) change the fontsize until the word fits snuggly into the provided green rectangle and note
+the fontsize as given on the screen
+(4) set parameters.fontheight_inmm to the determined value
+
+
+draws a box around the center of the prime and extends to 2degrees and 6 degrees visual angle
+<shape boundaries>
+/shape = rectangle
+/hposition = text.fixation.hposition + (expressions.pixeldistance * values.adjust_width)  
+/vposition = text.fixation.vposition + (expressions.pixeldistance * values.adjust_width)
+/size = (1px*expressions.pixeldistance, 1px*expressions.pixeldistance/2)
+/color = green
+</shape>
+
+<text longestword>
+/items = ("personality")
+/hposition = text.fixation.hposition + (expressions.pixeldistance * values.adjust_width)  
+/vposition = text.fixation.vposition + (expressions.pixeldistance * values.adjust_width)
+/ fontstyle = ("Arial", expressions.primefontheight, false, false, false, false, 5, 1)
+/ txcolor = black
+/ txcolor = black
+</text>
+
+<text fontsize_instruct>
+/items = ("Below you see the longest stimulus used in this script in a green rectangle. The width of the green rectangle should measure <%values.distance%> mm. Its width is calculated to cover the distance between 2degree visual angle to 6degree visual angle (the center of the stimulus should be at 4degree visual angle). The longest stimulus should fit snuggly into this rectangle.
+~nif <%text.longestword.currentItem%> is bigger than the green rectangle, press 'D' to decrease the fontsize
+if <%text.longestword.currentItem%> is smaller than the green rectangle, press 'I' to increase the fontsize
+if <%text.longestword.currentItem%> fits just fine into the green rectangle, press 'G' for 'Good enough'
+~nCurrent fontheight (in mm): <%parameters.fontheight_inmm%>")
+/size = (80%, 30%)
+/position = (50%, 20%)
+/txcolor = black
+</text>
+
+<trial Determine_fontheight>
+/stimulusframes = [1 = fontsize_instruct, fixation, boundaries, longestword]
+/validresponse = ("D", "I", "G")
+/branch = [
+	if (trial.determine_fontheight.responseText == "D") {
+		parameters.fontheight_inmm -= 0.1; 
+		return trial.determine_fontheight;
+	} else if (trial.determine_fontheight.responseText == "I") {
+		parameters.fontheight_inmm += 0.1; 
+		return trial.determine_fontheight;
+	}
+]
+</trial>
+
+<block FontsizeDetermination>
+/trials = [1 = determine_fontheight]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	LISTS: Parafoveal Priming
+**************************************************************************************************************
+**************************************************************************************************************
+
+<list quadrantlist>
+/items = (1, 2, 3, 4)
+/replace = true
+</list>
+
+<list quadrantlist_practice>
+/items = (1, 2, 3, 4)
+/replace = true
+</list>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	TRIALS: Parafoveal Priming
+**************************************************************************************************************
+**************************************************************************************************************
+
+
+*****************************************
+Parafoveal Priming: Main Trial sequence
+*****************************************
+
+Note: trial.fixation
+*shows +++ in the middle of the screen
+* selects first values.SOA
+
+<trial fixation>
+/ontrialbegin = [
+	if (values.practice == 0) {
+		values.SOA = list.SOAs.nextValue;
+	} else if (values.practice == 1) {
+		values.SOA = list.SOAs_practice.nextValue;
+	}
+]
+/stimulustimes = [0 = fixation]
+
+/validresponse = ("A", "L")//for touchscreens: present inactive response buttons
+/ isvalidresponse = [
+	return false;
+]
+
+/trialduration = (values.SOA)
+/recorddata = false
+</trial>
+
+
+Note: trial.prime (trial.noprime)
+*presents the prime for 60ms which is then covered up by a mask for 60ms. After 120 an "eraser" erases prime/mask combo
+*selects values.SOA (duration of current trial until next prime/noprime is presented)
+*selects the monitor quadrant for the current prime/noprime and determines hpositions and vpositions of stimuli
+*latency is measured from onset of prime/noprime
+
+<trial prime>
+/ontrialbegin = [
+	values.counttrials += 1;
+	values.SOA = list.SOAs.nextValue;
+	values.quadrant = list.quadrantlist.nextValue;
+	if (values.quadrant == 1) {
+		values.adjust_width = -1; 
+		values.adjust_height = -1;
+		values.stimLocation = "left";
+	} else if (values.quadrant == 2) {
+		values.adjust_width = 1; 
+		values.adjust_height = -1;
+		values.stimLocation = "right";
+	} else if (values.quadrant == 3) {
+		values.adjust_width = -1; 
+		values.adjust_height = 1;
+		values.stimLocation = "left";
+	} else if (values.quadrant == 4) {
+		values.adjust_width = 1; 
+		values.adjust_height = 1;
+		values.stimLocation = "right";
+	}
+	values.responseCategory = "no response";
+]										
+/stimulustimes = [0 = prime; 60 = mask; 120 = clearScreen, fixation]
+/ beginresponsetime = 0
+/trialduration = values.SOA
+/validresponse = ("A", "L", noresponse)
+/iscorrectresponse = [
+	return(
+		((values.quadrant == 1 || values.quadrant == 3) && trial.prime.responseText == "A") ||
+		((values.quadrant == 2 || values.quadrant == 4) && trial.prime.responseText == "L"));
+]
+/ontrialend = [
+	values.totalcorrect += trial.prime.correct;
+	
+	if (trial.prime.responseText == "A"){
+		values.responseCategory = "left";
+	} else if (trial.prime.responseText == "L"){
+		values.responseCategory = "right";
+	}	
+]
+</trial>
+
+<trial noprime>
+/ontrialbegin = [
+	values.counttrials += 1;
+	values.SOA = list.SOAs.nextValue;
+	values.quadrant = list.quadrantlist.nextValue;
+	if (values.quadrant == 1) {
+		values.adjust_width = -1; 
+		values.adjust_height = -1;
+		values.stimLocation = "left";
+	} else if (values.quadrant == 2) {
+		values.adjust_width = 1; 
+		values.adjust_height = -1;
+		values.stimLocation = "right";
+	} else if (values.quadrant == 3) {
+		values.adjust_width = -1; 
+		values.adjust_height = 1;
+		values.stimLocation = "left";
+	} else if (values.quadrant == 4) {
+		values.adjust_width = 1; 
+		values.adjust_height = 1;
+		values.stimLocation = "right";
+	}
+	values.responseCategory = "no response";
+]
+/stimulustimes = [0 = noprime; 60 = mask; 120 = clearScreen, fixation]
+/beginresponsetime = 0
+/validresponse = ("A", "L")
+/iscorrectresponse = [
+	return (
+		((values.quadrant == 1 || values.quadrant == 3) && trial.noprime.responseText == "A") ||
+		((values.quadrant == 2 || values.quadrant == 4) && trial.noprime.responseText == "L"));
+]
+/ontrialend = [
+	values.totalcorrect += trial.noprime.correct;
+	
+	if (trial.noprime.responseText == "A"){
+		values.responseCategory = "left";
+	} else if (trial.noprime.responseText == "L"){
+		values.responseCategory = "right";
+	}
+]	
+
+/trialduration = values.SOA
+</trial>
+
+Note:
+practicetrial use their own set of stimuli and randomly sample quadrant and SOA
+independent of the randomized experimental sequence
+<trial PPF_practicetrial>
+/ontrialbegin= [
+	values.SOA = list.SOAs_practice.nextValue;
+	values.quadrant = list.quadrantlist_practice.nextValue;
+	if (values.quadrant == 1) {
+		values.adjust_width = -1; 
+		values.adjust_height = -1;
+		values.stimLocation = "left";
+	} else if (values.quadrant == 2) {
+		values.adjust_width = 1; 
+		values.adjust_height = -1;
+		values.stimLocation = "right";
+	} else if (values.quadrant == 3) {
+		values.adjust_width = -1; 
+		values.adjust_height = 1;
+		values.stimLocation = "left";
+	} else if (values.quadrant == 4) {
+		values.adjust_width = 1; 
+		values.adjust_height = 1;
+		values.stimLocation = "right";
+	}
+	
+	values.responseCategory = "no response";
+]
+/stimulustimes = [0 = practicestim; 60 = mask; 120 = clearScreen, fixation]
+/beginresponsetime = 0
+/validresponse = ("A", "L")
+/ responseinterrupt = immediate //to give feedback for wrong responses, practice trials interrupt the trials immediately after a response
+/iscorrectresponse = [
+	return (
+	((values.quadrant == 1 || values.quadrant == 3) && trial.PPF_practicetrial.responseText == "A") ||
+	((values.quadrant == 2 || values.quadrant == 4) && trial.PPF_practicetrial.responseText == "L"));
+]
+/ ontrialend = [
+	if (trial.PPF_practicetrial.responseText == "A"){
+		values.responseCategory = "left";
+	} else if (trial.PPF_practicetrial.responseText == "L"){
+		values.responseCategory = "right";
+	}	
+]
+/trialduration = values.SOA
+/ errormessage = true(text.practiceFeedback, 5000)
+/ responsemessage = (0, text.practiceNRFeedback, 5000)
+/ branch = [
+	//practice trials run another trial.fixation as they are not so concerned with actual SOAs
+	trial.fixation;
+]
+</trial>
+
+
+
+*****************************
+General Helper Trial
+*****************************
+
+<trial getReady>
+/ stimulusframes = [1 = getReady]
+/ trialduration = 5000
+/ validresponse = ("A", "L")
+/ beginresponsetime = 5000
+/ errormessage = false
+/ recorddata = false
+</trial>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	BLOCKS: Parafoveal Priming
+**************************************************************************************************************
+**************************************************************************************************************
+
+<block ParafovealPriming_Practice>
+/ preinstructions = (intro1, intro2)
+/onblockbegin = [
+	values.practice = 1; 
+	values.counttrials = 0;
+]
+/trials = [
+	1 = getReady; 
+	2 = fixation; 
+	3-8 = PPF_practicetrial; 
+]
+/ postinstructions = (teststart)
+</block>
+
+<block ParafovealPriming>
+/onblockbegin = [
+	values.practice = 0; 
+	values.counttrials = 0;
+]
+/trials = [
+	1 = getReady; 
+	2 = fixation; 
+	3-77 = prime;
+]
+</block>
+
+<block ParafovealNoPriming>
+/onblockbegin = [
+	values.practice = 0; 
+	values.counttrials = 0;
+]
+/trials = [
+	1 = getReady; 
+	2= fixation; 
+	3-77= noprime; 
+]
+</block>
+
+<block finish>
+/ trials = [
+	1 = finish;
+]
+</block>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DISPLAY SIZE CHECK 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<text testStim>
+/items = primes
+/hposition = text.fixation.hposition + (expressions.pixeldistance)
+/vposition = text.fixation.vposition + (expressions.pixeldistance)
+/ fontstyle = ("Arial", expressions.primefontheight, false, false, false, false, 5, 1)
+/ txcolor = black
+/select = replace
+</text>
+
+<expressions>
+/widthcheck = if ((text.testStim.hposition + 0.5* text.testStim.width) < display.width){
+	true;
+} else {
+	false;
+}
+/heightcheck =if ((text.testStim.vposition + 0.5* text.testStim.height) < display.height){
+	true;
+} else {
+	false;
+}
+</expressions>
+
+<trial displayCheck>
+/ trialduration = 0
+/ branch = [
+	if (expressions.widthcheck == false || expressions.heightcheck == false){
+		return trial.prematureEnd;
+	}
+]
+/ recorddata = false
+</trial>
+
+<text prematureEnd>
+/items = ("The current screen is too small to run this test.
+
+Press Spacebar to exit.")
+/ fontstyle = ("Arial", 6%, true, false, false, false, 5, 1)
+/ size = (80%, 50%)
+/ vjustify = center
+</text>
+
+<trial prematureEnd>
+/ stimulusframes = [1 = prematureEnd]
+/ validresponse = (" ")
+/ ontrialend = [
+	script.abort();
+]
+</trial>
+
+<block displayCheck>
+/ trials = [1 = displayCheck]
+</block>
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPERIMENT 
+**************************************************************************************************************
+**************************************************************************************************************
+
+<expt a>
+/groups = (1 of 2)
+/blocks = [
+	1 = displayCheck;
+	2 = ParafovealPriming_Practice; 
+	3 = ParafovealPriming;
+	4 = Finish;
+]
+</expt>
+
+<expt b>
+/groups = (2 of 2)
+/blocks = [
+	1 = displayCheck;
+	2 = ParafovealPriming_Practice; 
+	3 = ParafovealNoPriming;
+	4 = Finish;
+]
+</expt>
+
+To check fontsize heights run:
+/blocks = [1 = FontsizeDetermination]
+
+
+**************************************************************************************************************
+												End of File
+**************************************************************************************************************

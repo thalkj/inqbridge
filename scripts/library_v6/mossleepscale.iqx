@@ -1,0 +1,631 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+						MEDICAL OUTCOME STUDY (MOS) SLEEP SCALE 1.0
+___________________________________________________________________________________________________________________
+
+Script Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 10-11-2013
+last updated:  02-25-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-25-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+
+This script implements the MOS sleep scale 1.0 as provided by:
+http://www.rand.org/health/surveys_tools/mos/mos_sleep.html
+
+and discussed in:
+Hays, Ron D., Martin, Susan A., Sesti, Anne M., & Spritzer, Karen L. (2005). Psychometric properties of the 
+Medical Outcomes Study sleep measure. Sleep Medicine, 6(1), 41-44.
+
+Scoring Algorithm can be obtained under:
+http://gim.med.ucla.edu/FacultyPages/Hays/surveys.htm
+
+and is described in:
+Spritzer, K. L. & Hays, R. D. (2003, November). MOS Sleep Scale: A Manual for Use and Scoring, 
+Version 1.0. Los Angeles, CA.
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________	
+The survey presents 12 sleep questions (by default, the questions are coded in such a way that participants 
+do not have to answer them) that make up 7 subscales (+ 2 extra).
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________	
+The default data stored in the data files are:
+
+(1) Raw data file: 'mos_sleepscale.iqdat'
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: all of the time - none of the time; no automatically attached values attached to response anchors
+								=> see summary data for numeric values
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+
+
+(2) Summary data file: 'mos_sleepscale_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+							
+						
+slpd4_sleepdisturbance -
+slp9_sleepproblems:				subscale scores	
+
+SLPQRAW_sleepquantity:			Sleep Quantity Score (q2)
+
+q1 -
+q12_SP:							scoring of the individual questions
+								(according to the scoring manual: "Note that items 4 and 12 are scored differently 
+								depending upon which scale they are used in. When used in the sleep adequacy scale, 
+								a higher score reflects less of a problem. When used in the sleep problems index, a 
+								higher score reflects more of a problem." (Spritzer & Hays, 2003, p.2)
+										
+count_slpd4 -
+count_slp9:						count the number of answered items of a subscale
+
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE:
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code to further customize your experiment.
+
+The parameters you can change are:
+
+/instructions:						Contain the surveypage instructions. The default instructions ("Please answer the following questions")
+								are not original to the survey and were addede by Millisecond Software.
+								
+/skipfeedback:					true = no feedback is given (default)
+								false = feedback is given (-> page.feedback)
+
+</usermanual>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE PARAMETERS: change editable parameters here
+**************************************************************************************************************
+**************************************************************************************************************
+
+<parameters>
+/instructions = "Please answer the following questions
+"
+/skipfeedback = true
+</parameters>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EDITABLE INSTRUCTIONS: change instructions here
+**************************************************************************************************************
+**************************************************************************************************************
+<instruct>
+/ fontstyle = ("Arial", 3.00%, false, false, false, false, 5, 1)
+</instruct>
+
+Optional feedback at the end. Customize.
+
+<page feedback>
+You have reached the end of the task. Thank you for your participation!
+</page>
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/txbgcolor = white
+/ txcolor = (0, 0, 0)
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+->MOS_SleepScale.iqdat
+
+********************
+summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed,
+expressions.slpd4_sleepdisturbance, expressions.slpsnr1_snoring, expressions.slpsob1_shortsleep, expressions.slpa2_sleepadequacy,
+expressions.slps3_sleepsomnolence, expressions.slp6_sleepproblems, expressions.slp9_sleepproblems, expressions.SLPQRAW_sleepquantity, 
+expressions.SLPOP1_optimalsleep, expressions.q1, expressions.q3, expressions.q4_sa, expressions.q4_sp, expressions.q5, expressions.q6,
+expressions.q7, expressions.q8, expressions.q9, expressions.q10, expressions.q11, expressions.q12_sa, expressions.q12_sp,
+values.count_slpd4, values.count_slpsnr1, values.count_slpsob1, values.count_slpa2, values.count_slps3,
+values.count_slp6, values.count_slp9)
+</summarydata>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	VALUES: automatically updated
+*******************************************************************************************************************
+*******************************************************************************************************************
+/count_SLPD4 -
+/count_SLP9:				count the number of answered items of a subscale
+/number_misseditems:		counts number of questions that weren't answered
+/misseditems:				list of all unanswered questions
+
+<values>
+/count_SLPD4 = 0
+/count_SLPSNR1 = 0
+/count_SLPSOB1 = 0
+/count_SLPA2 = 0
+/count_SLPS3 = 0
+/count_SLP6 = 0
+/count_SLP9 = 0
+
+/number_misseditems = 0
+/misseditems = ""
+</values>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPRESSIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+/q1 -
+/q12:								scoring of the individual questions
+
+										(according to the scoring manual: "Note that items 4 and 12 are scored differently depending upon which scale they are
+										used in. When used in the sleep adequacy scale, a higher score reflects less of a
+										problem. When used in the sleep problems index, a higher score reflects more of a
+										problem." (Spritzer & Hays, 2003, p.2)
+
+/SLPD4_sleepdisturbance -
+/SLP9_SLPOP1_sleepquantity:				subscale scoring	
+
+<expressions>
+/q1 = if (radiobuttons.q1.response == "0-15 minutes") 0
+		else if (radiobuttons.q1.response == "16-30 minutes") 25
+		else if (radiobuttons.q1.response == "31-45 minutes") 50
+		else if (radiobuttons.q1.response == "46-60 minutes") 75
+		else if (radiobuttons.q1.response == "more than 60 minutes") 100
+		else "";
+
+/q3 = if (radiobuttons.q3.response == "All of the Time") 100
+		else if (radiobuttons.q3.response == "Most of the Time") 80
+		else if (radiobuttons.q3.response == "A Good Bit of the Time") 60
+		else if (radiobuttons.q3.response == "Some of the Time") 40
+		else if (radiobuttons.q3.response == "A Little of the Time") 20
+		else if (radiobuttons.q3.response == "None of the Time") 0
+		else  "";
+
+/q4_SA = if (radiobuttons.q4.response == "All of the Time" ) 0
+		else if (radiobuttons.q4.response == "Most of the Time" ) 20
+		else if (radiobuttons.q4.response == "A Good Bit of the Time" ) 40
+		else if (radiobuttons.q4.response == "Some of the Time" ) 60
+		else if (radiobuttons.q4.response == "A Little of the Time" ) 80
+		else if (radiobuttons.q4.response == "None of the Time" ) 100
+		else "";
+
+/q4_SP = 	if (radiobuttons.q4.response == "All of the Time") 100
+		else if (radiobuttons.q4.response == "Most of the Time") 80
+		else if (radiobuttons.q4.response == "A Good Bit of the Time") 60
+		else if (radiobuttons.q4.response == "Some of the Time") 40
+		else if (radiobuttons.q4.response == "A Little of the Time") 20
+		else if (radiobuttons.q4.response == "None of the Time") 0
+		else "";
+
+/q5 = if (radiobuttons.q5.response == "All of the Time") 100
+		else if (radiobuttons.q5.response == "Most of the Time") 80
+		else if (radiobuttons.q5.response == "A Good Bit of the Time") 60
+		else if (radiobuttons.q5.response == "Some of the Time") 40
+		else if (radiobuttons.q5.response == "A Little of the Time") 20
+		else if (radiobuttons.q5.response == "None of the Time") 0
+		else  "";
+
+/q6 = if (radiobuttons.q6.response == "All of the Time") 100
+		else if (radiobuttons.q6.response == "Most of the Time") 80
+		else if (radiobuttons.q6.response == "A Good Bit of the Time") 60
+		else if (radiobuttons.q6.response == "Some of the Time") 40
+		else if (radiobuttons.q6.response == "A Little of the Time") 20
+		else if (radiobuttons.q6.response == "None of the Time") 0
+		else "";
+
+/q7 = if (radiobuttons.q7.response == "All of the Time") 100
+		else if (radiobuttons.q7.response == "Most of the Time") 80
+		else if (radiobuttons.q7.response == "A Good Bit of the Time") 60
+		else if (radiobuttons.q7.response == "Some of the Time") 40
+		else if (radiobuttons.q7.response == "A Little of the Time") 20
+		else if (radiobuttons.q7.response == "None of the Time") 0
+		else "";
+
+/q8 = if (radiobuttons.q8.response == "All of the Time") 100
+		else if (radiobuttons.q8.response == "Most of the Time") 80
+		else if (radiobuttons.q8.response == "A Good Bit of the Time") 60
+		else if (radiobuttons.q8.response == "Some of the Time") 40
+		else if (radiobuttons.q8.response == "A Little of the Time") 20
+		else if (radiobuttons.q8.response == "None of the Time") 0
+		else "";
+
+/q9 = if (radiobuttons.q9.response == "All of the Time") 100
+		else if (radiobuttons.q9.response == "Most of the Time") 80
+		else if (radiobuttons.q9.response == "A Good Bit of the Time") 60
+		else if (radiobuttons.q9.response == "Some of the Time") 40
+		else if (radiobuttons.q9.response == "A Little of the Time") 20
+		else if (radiobuttons.q9.response == "None of the Time") 0
+		else "";
+
+/q10 = if (radiobuttons.q10.response == "All of the Time") 100
+		else if (radiobuttons.q10.response == "Most of the Time") 80
+		else if (radiobuttons.q10.response == "A Good Bit of the Time") 60
+		else if (radiobuttons.q10.response == "Some of the Time") 40
+		else if (radiobuttons.q10.response == "A Little of the Time") 20
+		else if (radiobuttons.q10.response == "None of the Time") 0
+		else "";
+
+/q11 = if (radiobuttons.q11.response == "All of the Time") 100
+		else if (radiobuttons.q11.response == "Most of the Time") 80
+		else if (radiobuttons.q11.response == "A Good Bit of the Time") 60
+		else if (radiobuttons.q11.response == "Some of the Time") 40
+		else if (radiobuttons.q11.response == "A Little of the Time") 20
+		else if (radiobuttons.q11.response == "None of the Time") 0
+		else "";
+
+/q12_SA = if (radiobuttons.q12.response == "All of the Time") 0
+		else if (radiobuttons.q12.response == "Most of the Time") 20
+		else if (radiobuttons.q12.response == "A Good Bit of the Time") 40
+		else if (radiobuttons.q12.response == "Some of the Time") 60
+		else if (radiobuttons.q12.response == "A Little of the Time") 80
+		else if (radiobuttons.q12.response == "None of the Time") 100
+		else "";
+
+/q12_SP =	if (radiobuttons.q12.response == "All of the Time") 100
+		else if (radiobuttons.q12.response == "Most of the Time") 80
+		else if (radiobuttons.q12.response == "A Good Bit of the Time") 60
+		else if (radiobuttons.q12.response == "Some of the Time") 40
+		else if (radiobuttons.q12.response == "A Little of the Time") 20
+		else if (radiobuttons.q12.response == "None of the Time") 0
+		else "";
+
+/SLPD4_sleepdisturbance = (expressions.q1 + expressions.q3 + expressions.q7 + expressions.q8)/values.count_slpd4
+/SLPSNR1_snoring = (expressions.q10) / values.count_slpsnr1
+/SLPSOB1_shortsleep = (expressions.q5)/values.count_slpsob1
+/SLPA2_sleepadequacy = (expressions.q4_SA + expressions.q12_SA) / values.count_slpa2
+/SLPS3_sleepsomnolence = (expressions.q6 + expressions.q9 + expressions.q11) / values.count_slps3
+/SLP6_sleepproblems = (expressions.q4_SP + expressions.q5 + expressions.q7 + expressions.q8 + expressions.q9 + expressions.q12_SP) / values.count_slp6
+/SLP9_sleepproblems = (expressions.q1 + expressions.q3 + expressions.q4_SP + expressions.q5 + expressions.q6 + expressions.q7 +
+expressions.q8 + expressions.q9 + expressions.q12_SP) / values.count_slp9
+
+/SLPQRAW_sleepquantity = textbox.q2.response
+/SLPOP1_optimalsleep = 
+if (textbox.q2.response !=""){
+	if (textbox.q2.response < 1 || textbox.q2.response > 23) "out of range";
+	else if (textbox.q2.response < 7 || textbox.q2.response > 8) 0;
+	else if (textbox.q2.response <= 8) 1;
+	else "other";
+} else {
+	"N/R";
+}
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<radiobuttons q1>
+/caption = "1. How long did it usually take for you to FALL ASLEEP during the PAST 4 WEEKS?"
+/options = ("0-15 minutes", "16-30 minutes", "31-45 minutes", "46-60 minutes", "more than 60 minutes")
+/required = false
+</radiobuttons>
+
+<textbox q2>
+/caption = "2. On the average, how many hours did you sleep EACH NIGHT during the PAST 4 WEEKS?"
+/mask = decimal
+/required = false
+</textbox>
+
+<radiobuttons q3>
+/caption = "3. How often during the PAST 4 WEEKS did you feel that your sleep was not quiet (moving restlessly, feeling tense, speaking, etc., while sleeping)?"
+/options = ("All of the Time", "Most of the Time", "A Good Bit of the Time", "Some of the Time", "A Little of the Time", "None of the Time")
+/required = false
+</radiobuttons>
+
+<radiobuttons q4>
+/caption = "4. How often during the PAST 4 WEEKS did you get enough sleep to feel rested upon waking in the morning?"
+/options = ("All of the Time", "Most of the Time", "A Good Bit of the Time", "Some of the Time", "A Little of the Time", "None of the Time")
+/required = false
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. How often during the PAST 4 WEEKS did you awaken short of breath or with a headache?"
+/options = ("All of the Time", "Most of the Time", "A Good Bit of the Time", "Some of the Time", "A Little of the Time", "None of the Time")
+/required = false
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. How often during the PAST 4 WEEKS did you feel drowsy or sleepy during the day?"
+/options = ("All of the Time", "Most of the Time", "A Good Bit of the Time", "Some of the Time", "A Little of the Time", "None of the Time")
+/required = false
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. How often during the PAST 4 WEEKS did you have trouble falling asleep?"
+/options = ("All of the Time", "Most of the Time", "A Good Bit of the Time", "Some of the Time", "A Little of the Time", "None of the Time")
+/required = false
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. How often during the PAST 4 WEEKS did you awaken during your sleep time and have trouble falling asleep again?"
+/options = ("All of the Time", "Most of the Time", "A Good Bit of the Time", "Some of the Time", "A Little of the Time", "None of the Time")
+/required = false
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. How often during the PAST 4 WEEKS did you have trouble staying awake during the day?"
+/options = ("All of the Time", "Most of the Time", "A Good Bit of the Time", "Some of the Time", "A Little of the Time", "None of the Time")
+/required = false
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. How often during the PAST 4 WEEKS did you snore during your sleep?"
+/options = ("All of the Time", "Most of the Time", "A Good Bit of the Time", "Some of the Time", "A Little of the Time", "None of the Time")
+/required = false
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. How often during the PAST 4 WEEKS did you take naps (5 minutes or longer) during the day?"
+/options = ("All of the Time", "Most of the Time", "A Good Bit of the Time", "Some of the Time", "A Little of the Time", "None of the Time")
+/required = false
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. How often during the PAST 4 WEEKS did you get the amount of sleep you needed?"
+/options = ("All of the Time", "Most of the Time", "A Good Bit of the Time", "Some of the Time", "A Little of the Time", "None of the Time")
+/required = false
+</radiobuttons>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<surveypage MOS_SS1>
+/caption = "<%parameters.instructions%>"
+/questions = [1 = q1, q2]
+</surveypage>
+
+<surveypage MOS_SS2>
+/caption = "<%parameters.instructions%>"
+/questions = [1 = q3, q4]
+</surveypage>
+
+<surveypage MOS_SS3>
+/caption = "<%parameters.instructions%>"
+/questions = [1 = q5, q6]
+</surveypage>
+
+<surveypage MOS_SS4>
+/caption = "<%parameters.instructions%>"
+/questions = [1 = q7, q8]
+</surveypage>
+
+<surveypage MOS_SS5>
+/caption = "<%parameters.instructions%>"
+/questions = [1 = q9, q10]
+</surveypage>
+
+<surveypage MOS_SS6>
+/caption = "<%parameters.instructions%>"
+/questions = [1 = q11, q12]
+
+</surveypage>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SUMMARY TRIAL: records summary data 
+*******************************************************************************************************************
+*******************************************************************************************************************
+<trial summary>
+/ontrialbegin = [
+	if (radiobuttons.q1.response != "") {
+		values.count_SLPD4 += 1; 
+		values.count_SLP9 += 1;
+	} else {
+		values.number_misseditems += 1; 
+		values.misseditems = concat(values.misseditems, "1,");
+	}
+	
+	if (textbox.q2.response == "") {
+		values.number_misseditems += 1; 
+		values.misseditems = concat(values.misseditems, "2,");
+	}
+	
+	if (radiobuttons.q3.response != "") {
+		values.count_SLPD4 += 1; 
+		values.count_SLP9 += 1;
+	} else {
+		values.number_misseditems += 1; 
+		values.misseditems = concat(values.misseditems, "3,");
+	}
+	
+	if (radiobuttons.q4.response != "") {
+		values.count_SLPA2 += 1; 
+		values.count_SLP9 += 1; 
+		values.count_SLP6 += 1;
+	} else {
+		values.number_misseditems += 1; 
+		values.misseditems = concat(values.misseditems, "4,");
+	}
+	
+	if (radiobuttons.q5.response != "") {
+		values.count_SLPSOB1 += 1; 
+		values.count_SLP6 += 1; 
+		values.count_SLP9 += 1;
+	} else {
+		values.number_misseditems += 1; 
+		values.misseditems = concat(values.misseditems, "5,");
+	}
+	
+	if (radiobuttons.q6.response != "") {
+		values.count_SLPS3 += 1; 
+		values.count_SLP9 += 1;
+	} else {
+		values.number_misseditems += 1; 
+		values.misseditems = concat(values.misseditems, "6,");
+	}
+	
+	if (radiobuttons.q7.response != "") {
+		values.count_SLPD4 += 1;  
+		values.count_SLP6 += 1; 
+		values.count_SLP9 += 1;
+	} else {
+		values.number_misseditems += 1; 
+		values.misseditems = concat(values.misseditems, "7,");
+	}
+	
+	if (radiobuttons.q8.response != "") {
+		values.count_SLPD4 += 1; 
+		values.count_SLP6 += 1; 
+		values.count_SLP9 += 1;
+	} else {
+		values.number_misseditems += 1; 
+		values.misseditems = concat(values.misseditems, "8,");
+	}
+	
+	if (radiobuttons.q9.response != "") {
+		values.count_SLPS3 += 1; 
+		values.count_SLP6 += 1; 
+		values.count_SLP9 += 1;
+	} else {
+		values.number_misseditems += 1; 
+		values.misseditems = concat(values.misseditems, "9,");
+	}
+	
+	if (radiobuttons.q10.response != "") 
+		values.count_SLPSNR1 += 1 
+	else {
+		values.number_misseditems += 1; 
+		values.misseditems = concat(values.misseditems, "10,");
+	}
+	
+	if (radiobuttons.q11.response != "") 
+		values.count_SLPS3 += 1
+	else {
+		values.number_misseditems += 1; 
+		values.misseditems = concat(values.misseditems, "11,");
+	}
+	
+	if (radiobuttons.q12.response != "") {
+		values.count_SLPA2 += 1; 
+		values.count_slp6 += 1; 
+		values.count_SLP9 += 1;
+	} else {
+		values.number_misseditems += 1; 
+		values.misseditems = concat(values.misseditems, "12,");
+	}
+]
+
+/timeout = 0
+/recorddata = false
+</trial>
+
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY/BLOCKS
+*******************************************************************************************************************
+*******************************************************************************************************************
+Note: - to take pictures of each screen set /screencapture = true
+
+<survey MOS_SleepScale>
+/pages = [
+	1 = MOS_SS1; 
+	2 = MOS_SS2; 
+	3 = MOS_SS3; 
+	4 = MOS_SS4;
+	5 = MOS_SS5;
+	6 = MOS_SS6;
+]
+/screencapture = false
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+<block summary>
+/trials = [1 = summary]
+</block>
+
+optional feedback at the end:
+<block feedback>
+/skip = [parameters.skipfeedback == true]
+/preinstructions = (feedback)
+</block>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	EXPERIMENT
+*******************************************************************************************************************
+*******************************************************************************************************************
+
+<expt mos>
+/blocks = [
+	1 =MOS_SleepScale;
+	2 = summary;
+	3 = feedback;
+]
+</expt>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

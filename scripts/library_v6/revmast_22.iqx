@@ -1,0 +1,441 @@
+﻿<usermanual>
+___________________________________________________________________________________________________________________	
+
+						MICHIGAN ALCOHOL SCREENING TEST (revMAST) - revised
+___________________________________________________________________________________________________________________	
+
+Author: Katja Borchert, Ph.D. (katjab@millisecond.com) for Millisecond Software, LLC
+Date: 01-31-2013
+last updated:  02-24-2022 by K. Borchert (katjab@millisecond.com) for Millisecond Software, LLC
+
+Script Copyright © 02-24-2022 Millisecond Software
+
+___________________________________________________________________________________________________________________
+BACKGROUND INFO 	
+___________________________________________________________________________________________________________________	
+This script implements the revised Michigan Alcohol Screening Test (revMAST) with 22* YES/NO questions for a 
+self-assessment of social and vocational issues related to heavy drinking:
+http://www.ou.edu/cwtraining/assets/pdf/handouts/1009/revMAST.pdf
+
+The original revMAST used 25 questions and a more elaborate scoring system. It was published by:
+Selzer, M.L. (1971). The Michigan Alcoholism Screening Test: The quest for a new diagnostic instrument.
+Am J Psychiatry, 127, 1653-1658.
+
+*Note: by default, this script asks for additional information in regard to question 22 (-> textbox.q23)
+
+___________________________________________________________________________________________________________________
+OVERVIEW
+___________________________________________________________________________________________________________________
+Questionnaire with 22 binary yes-no questions.
+
+___________________________________________________________________________________________________________________	
+DURATION 
+___________________________________________________________________________________________________________________	
+the default set-up of the script takes appr. 2 minutes to complete
+
+___________________________________________________________________________________________________________________	
+DATA FILE INFORMATION 
+___________________________________________________________________________________________________________________ 
+The default data stored in the data files are:
+
+(1) Raw data file: 'revmast22.iqdat'
+
+The raw questionnaire data are saved under "revMAST22.iqdat"
+numeric scores are saved in values.q1-values.q23 in revMAST22_summary.iqdat
+
+date, time:						date and time script was run with the current group/subjectnumber 
+subject, group, session:	  	with the current subject/groupnumber/session id
+build:							the Inquisit build 
+
+q*_response:					response given (in assigned values)
+								Scale: 1 (yes = 'alcoholic response') - 0 (no)
+								R = automatically reversed scored questions
+									
+q*_latency:						how much time (in ms) the participant spent on the surveypage with this particular 
+								question (the last time this particular surveypage was visited)
+								
+								
+(2) Summary data file: 'revmast22_summary*.iqdat'
+
+inquisit.version:				Inquisit version run
+computer.platform:				the platform the script was run on (win/mac/ios/android)
+startDate:						date script was run
+startTime:						time script was started
+subjectid:						assigned subject id number
+groupid:						assigned group id number
+sessionid:						assigned session id number
+elapsedTime:					time it took to run script (in ms); measured from onset to offset of script
+completed:						0 = script was not completed (prematurely aborted); 
+								1 = script was completed (all conditions run)
+
+Summarydata for each participant: file saves the Total Score (range: 0-22) and the response to question 23 (number of arrests)
+
+totalscore:						sum of all responses, 0-22 (The higher, the higher the 'alcoholic' response pattern)
+
+
+___________________________________________________________________________________________________________________
+SCORING
+___________________________________________________________________________________________________________________
+alcoholic response = 1 point
+non-alcoholic response = 0 points
+Range: 0-22
+
+___________________________________________________________________________________________________________________	
+EDITABLE CODE 
+___________________________________________________________________________________________________________________	
+check below for (relatively) easily editable parameters, stimuli, instructions etc. 
+Keep in mind that you can use this script as a template and therefore always "mess" with the entire code 
+to further customize your experiment.
+
+
+</usermanual>
+
+
+**************************************************************************************************************
+								!!!REMAINING CODE: Customize after careful consideration only!!!
+**************************************************************************************************************
+
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DEFAULTS
+**************************************************************************************************************
+**************************************************************************************************************
+script requires Inquisit 6.5.2.0 or higher
+
+<defaults>
+/canvasaspectratio = (4,3)
+/minimumversion = "6.5.2.0"
+/ fontstyle = ("Arial", 2%, false, false, false, false, 5, 1)
+/ txcolor = black
+</defaults>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	DATA
+**************************************************************************************************************
+**************************************************************************************************************
+
+Note: data file explanations under User Manual Information at the top
+
+********************
+raw data
+********************
+
+********************
+summary data
+********************
+
+<summarydata>
+/columns = (inquisit.version, computer.platform,script.startDate, script.startTime, script.subjectId, script.groupId, script.sessionId, script.elapsedTime, 
+script.completed, expressions.totalscore,
+textbox.q23.response)
+</summarydata>
+
+**************************************************************************************************************
+**************************************************************************************************************
+	EXPRESSIONS
+**************************************************************************************************************
+**************************************************************************************************************
+
+totalscore:							calculates the total score
+
+<expressions>
+/totalscore =  radiobuttons.q1R.response + 
+radiobuttons.q2.response + radiobuttons.q3.response + radiobuttons.q4R.response + radiobuttons.q5.response +
+radiobuttons.q6.response + radiobuttons.q7.response + radiobuttons.q8.response + radiobuttons.q9.response + radiobuttons.q10.response +
+radiobuttons.q11.response + radiobuttons.q12.response + radiobuttons.q13.response + radiobuttons.q14.response + radiobuttons.q15.response + 
+radiobuttons.q16.response + radiobuttons.q17.response + radiobuttons.q18.response + radiobuttons.q19.response + radiobuttons.q20.response +  
+radiobuttons.q21.response + radiobuttons.q22.response
+</expressions>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	QUESTIONS
+*******************************************************************************************************************
+*******************************************************************************************************************
+NOTE: as a default all questions require a response to move on, to change this 
+go to QUESTIONS and set all /required = true to /required = false
+
+
+
+<radiobuttons q1R>
+/caption = "1. Do you feel you are a normal drinker? ('normal' - drink as much or less than most other people)"
+/ options = ("Yes", "No")
+/ optionvalues = ("0", "1")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q2>
+/caption = "2. Have you ever awakened the morning after some drinking the night before and found that you could not remember a part of the evening?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q3>
+/caption = "3. Does any near relative or close friend ever worry or complain about your drinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q4R>
+/caption = "4. Can you stop drinking without difficulty after one or two drinks?"
+/ options = ("Yes", "No")
+/ optionvalues = ("0", "1")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q5>
+/caption = "5. Do you ever feel guilty about your drinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q6>
+/caption = "6. Have you ever attended a meeting of Alcoholics Anonymous (AA)?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q7>
+/caption = "7. Have you ever gotten into physical fights when drinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q8>
+/caption = "8. Has drinking ever created problems between you and a near relative or close friend?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q9>
+/caption = "9. Has any family member or close friend gone to anyone for help about your drinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q10>
+/caption = "10. Have you ever lost friends because of your drinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q11>
+/caption = "11. Have you ever gotten into trouble at work because of drinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q12>
+/caption = "12. Have you ever lost a job because of drinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q13>
+/caption = "13. Have you ever neglected your obligations, your family, or your work for two or more days in a row because you were drinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q14>
+/caption = "14. Do you drink before noon fairly often?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q15>
+/caption = "15. Have you ever been told you have liver trouble such as cirrhosis?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q16>
+/caption = "16. After heavy drinking have you ever had delirium tremens (D.T.'s), severe shaking, visual or auditory (hearing) hallucinations?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q17>
+/caption = "17. Have you ever gone to anyone for help about your drinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q18>
+/caption = "18. Have you ever been hospitalized because of drinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q19>
+/caption = "19. Has your drinking ever resulted in your being hospitalized in a psychiatric ward?"
+/ options = ("Yes", "No")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q20>
+/caption = "20. Have you ever gone to any doctor, social worker, clergyman or mental health clinic for help with any emotional problem in which drinking was part of the problem?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q21>
+/caption = "21. Have you been arrested more than once for driving under the influence of alcohol?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+<radiobuttons q22>
+/caption = "22. Have you ever been arrested, even for a few hours because of other behavior while drinking?"
+/ options = ("Yes", "No")
+/ optionvalues = ("1", "0")
+/orientation = vertical
+/required = true
+</radiobuttons>
+
+Additional question that could be added to surveypage.revMAST5
+<textbox q23>
+/caption = "How many times have you ever been arrested, even for a few hours because of other behavior while drinking?"
+/subcaption = "If you answered NO to question 22: fill in 0
+If you have answered YES to question 22: fill in the number"
+/subcaptionfontstyle = ("Arial", 1.8%, false, false, false, false, 5, 1)
+/mask = integer
+/required = true
+</textbox>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEYPAGES
+*******************************************************************************************************************
+*******************************************************************************************************************
+<surveypage revMAST1>
+/ caption = "The revMAST Test is a simple, self scoring test that helps assess if you have a drinking problem. 
+Please select the answers to the following YES or NO questions:
+"
+/ questions = [1= q1R, q2, q3]
+</surveypage>
+
+
+<surveypage revMAST2>
+/ caption = "The revMAST Test is a simple, self scoring test that helps assess if you have a drinking problem. 
+Please select the answers to the following YES or NO questions:
+"
+/ questions = [1= q4R, q5, q6]
+</surveypage>
+
+<surveypage revMAST3>
+/ caption = "The revMAST Test is a simple, self scoring test that helps assess if you have a drinking problem. 
+Please select the answers to the following YES or NO questions:
+"
+/ questions = [1 = q7, q8, q9]
+</surveypage>
+
+<surveypage revMAST4>
+/ caption = "The revMAST Test is a simple, self scoring test that helps assess if you have a drinking problem. 
+Please select the answers to the following YES or NO questions:
+"
+/ questions = [1 = q10, q11, q12]
+</surveypage>
+
+<surveypage revMAST5>
+/ caption = "The revMAST Test is a simple, self scoring test that helps assess if you have a drinking problem. 
+Please select the answers to the following YES or NO questions:
+"
+/ questions = [1 = q13, q14, q15]
+</surveypage>
+
+<surveypage revMAST6>
+/ caption = "The revMAST Test is a simple, self scoring test that helps assess if you have a drinking problem. 
+Please select the answers to the following YES or NO questions:
+"
+/ questions = [1 = q16, q17, q18]
+</surveypage>
+
+<surveypage revMAST7>
+/ caption = "The revMAST Test is a simple, self scoring test that helps assess if you have a drinking problem. 
+Please select the answers to the following YES or NO questions:
+"
+/ questions = [1 = q19, q20, q21]
+</surveypage>
+
+<surveypage revMAST8>
+/ caption = "The revMAST Test is a simple, self scoring test that helps assess if you have a drinking problem. 
+Please select the answers to the following YES or NO questions:
+"
+/ questions = [1 = q22, q23]
+</surveypage>
+
+*******************************************************************************************************************
+*******************************************************************************************************************
+	SURVEY
+*******************************************************************************************************************
+*******************************************************************************************************************
+<survey revMAST22>
+/ pages = [
+	1 = revMAST1; 
+	2 = revMAST2; 
+	3 = revMAST3; 
+	4 = revMAST4; 
+	5 = revMAST5;
+	6 = revMAST6;
+	7 = revMAST7;
+	8 = revMAST8;
+]
+/ fontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ subcaptionfontstyle = ("Arial", 1.5%, false, false, false, false, 5, 1)
+/ itemfontstyle = ("Arial", 3%, true, false, false, false, 5, 1)
+/ responsefontstyle = ("Arial", 2.5%, false, false, false, false, 5, 1)
+/ txcolor = (0, 0, 0)
+/showpagenumbers = false
+/showquestionnumbers = false
+/ navigationbuttonfontstyle = ("Arial", 3%, false, false, false, false, 5, 1)
+/ navigationbuttonsize = (15%, 5%)
+/ backbuttonposition = (20%, 90%)
+/ nextbuttonposition = (70%, 90%)
+/ finishlabel = "Finish"
+</survey>
+
+*******************************************************************************************************************
+												End of File
+*******************************************************************************************************************

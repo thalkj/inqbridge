@@ -82,7 +82,7 @@ claude
 
 **Desktop app / web app / IDE extension:**
 1. Clone or download this repo (you can ask Claude to do this for you: "I want to use this tool: https://github.com/thalkj/inqbridge").
-2. **Start a new Claude Code session in the `inqbridge` folder** — the subfolder that was created by cloning, which contains `CLAUDE.md`. This is important: Claude Code loads its configuration from the working directory root, so the session must be started inside `inqbridge`, not a parent folder.
+2. **Start a new Claude Code session in the `inqbridge` folder** — the subfolder that was created by cloning, which contains `CLAUDE.md`. This is important: Claude Code loads its configuration from the working directory root, so the session must be started inside `inqbridge`, not a parent folder. **The AI may ask you to open a terminal or command line interface, but you can start a new session in the app as normal using the correct `inqbridge` subfolder** 
 3. Describe the experiment you want to build — no slash commands needed.
 
 If you already have Claude Code open and ask it to clone this repo, it will create an `inqbridge` subfolder in your current directory. After cloning completes, **start a new session pointed at that `inqbridge` subfolder** so Claude picks up the project configuration.

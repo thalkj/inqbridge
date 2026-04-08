@@ -218,6 +218,8 @@ Every experiment folder must have an `EXPERIMENT.md` with:
 - **Experiment changes go in experiments/<name>/** — never mix platform and experiment changes in the same commit
 - **Do not delete experiment folders** — mark status as `abandoned` if no longer needed
 - **Stimuli stay inside the experiment folder** — keeps each experiment self-contained
+- **Never include experiments/ in a GitHub PR** — PRs are for platform/tool changes only. When creating a PR, stage only specific platform files (e.g. `git add runner/fast_mode.py`), never `git add -A` or `git add experiments/`
+- **Experiments must be committed to master** — new worktree sessions branch from master, so experiment source files must live on master to be visible in new sessions. After finishing experiment work in a worktree, copy changes back to master and commit them.
 
 ## Safety Guardrails
 - **Never modify a user's original .iqx script.** When asked to work on an existing Inquisit file, copy it (or extract the relevant parts) into a new file and work on the copy. The original stays untouched as a reference. Name the copy clearly (e.g., `original_v2.iqx` or copy into a new experiment folder).

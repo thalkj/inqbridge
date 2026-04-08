@@ -27,6 +27,20 @@ _TIMEOUT_ATTR = re.compile(
     r"/\s*timeout\s*=\s*\d+",
     re.IGNORECASE,
 )
+# response = timeout(N) — distinct from / timeout = N attribute
+_RESPONSE_TIMEOUT = re.compile(
+    r"(response\s*=\s*timeout\s*\()\d+(\))",
+    re.IGNORECASE,
+)
+# correctmessage = true(element, N) and errormessage = true(element, N)
+_CORRECTMESSAGE = re.compile(
+    r"(correctmessage\s*=\s*true\s*\([^,]+,\s*)\d+(\s*\))",
+    re.IGNORECASE,
+)
+_ERRORMESSAGE = re.compile(
+    r"(errormessage\s*=\s*true\s*\([^,]+,\s*)\d+(\s*\))",
+    re.IGNORECASE,
+)
 
 
 def _collapse_stimulustimes(match: re.Match) -> str:
@@ -83,6 +97,13 @@ def make_fast_copy(source: str) -> str:
 
     # Minimize timeout (100ms, not 0)
     result = _TIMEOUT_ATTR.sub("/ timeout = 100", result)
+
+    # Minimize response = timeout(N) to 10ms
+    result = _RESPONSE_TIMEOUT.sub(r"\g<1>10\2", result)
+
+    # Minimize correctmessage/errormessage durations to 10ms
+    result = _CORRECTMESSAGE.sub(r"\g<1>10\2", result)
+    result = _ERRORMESSAGE.sub(r"\g<1>10\2", result)
 
     return result
 

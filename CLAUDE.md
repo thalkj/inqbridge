@@ -2,6 +2,8 @@
 
 ## Setup (MUST CHECK FIRST)
 
+If `LOCAL_WORKSPACE_STATE.md` exists, read it before making git or branch decisions. It is a local-only note for machine-specific state that should not be committed.
+
 **Before doing any experiment work**, verify the environment is ready. Check these in order and handle each step yourself via the active shell — never tell the user to "run setup.bat" or go to a terminal.
 
 1. **Virtual environment**: Check whether `.venv/Scripts/python.exe` exists in the project root.

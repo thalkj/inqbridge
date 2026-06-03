@@ -2,6 +2,8 @@
 
 Use the `inqbridge` skill for any Inquisit `.iqx`, experiment-folder, Monkey-mode, screenCapture, data-artifact, or InqBridge runner task.
 
+If `LOCAL_WORKSPACE_STATE.md` exists, read it before making git or branch decisions. It is a local-only note for machine-specific state that should not be committed.
+
 If the skill is not listed in the session, read `.claude/skills/inqbridge/SKILL.md` manually before changing experiment files. That file is the long-form workflow source inherited from the original Claude project.
 
 Keep the workflow entrypoints aligned when editing instructions:

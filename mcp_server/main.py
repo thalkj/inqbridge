@@ -37,7 +37,7 @@ async def list_tools() -> list[Tool]:
     return [
         Tool(
             name="run_script",
-            description="Run an Inquisit script in human or monkey mode. Creates a full audited run with manifest, source snapshot, and artifact collection. WORKFLOW: always run preflight_check first. Use fast_mode=true for quick compile/data checks (overrides timings to near-zero). Use auto_capture=true to inject screenCapture into all trials automatically. Use auto_fix=true to attempt automatic recovery from compile errors.",
+            description="Run an Inquisit script in human or monkey mode. Creates a full audited run with manifest, source snapshot, and artifact collection. WORKFLOW: always run preflight_check first. Use fast_mode=true for quick compile/data checks (overrides timings to near-zero). Use fast_mode=true with auto_capture=true for fast layout smoke captures. Use auto_fix=true to attempt automatic recovery from compile errors.",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -48,7 +48,7 @@ async def list_tools() -> list[Tool]:
                     "capture_policy": {"type": "string", "enum": ["targeted", "all", "none"], "default": "targeted"},
                     "timeout_seconds": {"type": "integer", "default": 600},
                     "fast_mode": {"type": "boolean", "default": False, "description": "Override all timings to near-zero for quick compile/data checks."},
-                    "auto_capture": {"type": "boolean", "default": False, "description": "Inject screenCapture=true into all trials automatically."},
+                    "auto_capture": {"type": "boolean", "default": False, "description": "Inject screenCapture=true into trial-like elements automatically."},
                     "auto_fix": {"type": "boolean", "default": False, "description": "On compile error, auto-fix safe issues and retry once."},
                 },
                 "required": ["script_path"],
@@ -56,15 +56,16 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="run_monkey",
-            description="Convenience wrapper: run a script in Monkey mode for smoke testing. WORKFLOW: always run preflight_check first. Defaults to auto_capture=true (screenCapture injected into all trials) and auto_fix=true (auto-fix compile errors). Use fast_mode=true for quick compile/data checks without waiting for animation timings.",
+            description="Convenience wrapper: run a script in Monkey mode for smoke testing. WORKFLOW: always run preflight_check first. Use fast_mode=true for quick compile/data checks without waiting for animation timings. auto_capture defaults to false; enable it only for layout QA, preferably together with fast_mode=true.",
             inputSchema={
                 "type": "object",
                 "properties": {
                     "script_path": {"type": "string"},
                     "subject_id": {"type": "string", "default": "1"},
                     "group_id": {"type": "string", "default": "1"},
+                    "timeout_seconds": {"type": "integer", "default": 600},
                     "fast_mode": {"type": "boolean", "default": False, "description": "Override all timings to near-zero for quick checks."},
-                    "auto_capture": {"type": "boolean", "default": True, "description": "Inject screenCapture=true into all trials (default: true)."},
+                    "auto_capture": {"type": "boolean", "default": False, "description": "Inject screenCapture=true into trial-like elements for layout QA (default: false)."},
                     "auto_fix": {"type": "boolean", "default": True, "description": "Auto-fix compile errors and retry (default: true)."},
                 },
                 "required": ["script_path"],
@@ -313,8 +314,9 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                 mode="monkey",
                 subject_id=arguments.get("subject_id", "1"),
                 group_id=arguments.get("group_id", "1"),
+                timeout_seconds=arguments.get("timeout_seconds", 600),
                 fast_mode=arguments.get("fast_mode", False),
-                auto_capture=arguments.get("auto_capture", True),
+                auto_capture=arguments.get("auto_capture", False),
                 auto_fix=arguments.get("auto_fix", True),
             )
             return [TextContent(type="text", text=json.dumps(result, indent=2))]

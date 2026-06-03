@@ -20,6 +20,16 @@ def test_inject_adds_to_trial():
     assert "/ screenCapture = true" in result
 
 
+def test_inject_adds_to_openended():
+    """screenCapture=true is injected into text-entry trial-like elements."""
+    source = """<openended recall>
+/ stimulusframes = [1=prompt]
+/ mask = alphabetic
+</openended>"""
+    result = inject_screencapture(source)
+    assert "/ screenCapture = true" in result
+
+
 def test_inject_skips_existing():
     """Trials that already have screenCapture are not modified."""
     source = """<trial test_trial>

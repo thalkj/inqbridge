@@ -36,7 +36,7 @@ def run_script(
     1. Discovers include dependencies
     2. Creates a timestamped run directory
     3. Snapshots all source files with hashes
-    4. Optionally creates fast-mode or auto-capture temp copies
+    4. Optionally creates fast-mode and/or auto-capture temp copies
     5. Launches Inquisit with CLI flags
     6. On compile error with auto_fix, attempts fixes and retries once
     7. Collects data files and screen captures
@@ -52,7 +52,7 @@ def run_script(
         artifacts_dir: Override for artifacts output directory.
         inquisit_exe: Override for Inquisit executable path.
         fast_mode: If True, override timings to near-zero for quick checks.
-        auto_capture: If True, inject screenCapture=true into all trials.
+        auto_capture: If True, inject screenCapture=true into all trial-like elements.
         auto_fix: If True, attempt to auto-fix compile errors and retry.
 
     Returns:
@@ -83,15 +83,19 @@ def run_script(
 
     if fast_mode:
         from .fast_mode import create_fast_copies, cleanup_fast_copies
-        exec_script, _fast_incs, fast_temps = create_fast_copies(script_path, includes)
+        exec_script, exec_includes, fast_temps = create_fast_copies(script_path, includes)
         temp_paths_to_clean.extend(fast_temps)
-    elif auto_capture:
+    else:
+        exec_includes = includes
+
+    if auto_capture:
         from .capture_manager import create_captured_copies, cleanup_temp_copies
-        exec_script, _cap_incs, cap_temps = create_captured_copies(script_path, includes)
+        exec_script, _cap_incs, cap_temps = create_captured_copies(exec_script, exec_includes)
         temp_paths_to_clean.extend(cap_temps)
 
     try:
         # Step 5: Launch Inquisit
+        launch_started_at = datetime.now(timezone.utc).timestamp()
         result = launch_inquisit(
             script_path=exec_script,
             run_dir=run_dir,
@@ -104,12 +108,21 @@ def run_script(
 
         # Step 5b: Collect artifacts from ORIGINAL script directory
         script_dir = script_path.parent
-        all_data = collect_data_files(script_dir, run_dir, script_name=script_path.stem)
+        all_data = collect_data_files(
+            script_dir,
+            run_dir,
+            script_name=script_path.stem,
+            modified_after=launch_started_at,
+        )
         raw_data = [f for f in all_data if "raw" in f.lower()]
         summary_data = [f for f in all_data if "summary" in f.lower()]
         if not raw_data and not summary_data:
             raw_data = all_data
-        screen_caps = collect_screen_captures(script_dir, run_dir)
+        screen_caps = collect_screen_captures(
+            script_dir,
+            run_dir,
+            modified_after=launch_started_at,
+        )
 
         # Step 6: Determine verdict
         verdict, notes = determine_verdict(result.return_code, result.timed_out, raw_data)
@@ -218,6 +231,7 @@ def _attempt_auto_fix_and_retry(
         }
 
     # Retry
+    retry_started_at = datetime.now(timezone.utc).timestamp()
     retry_result = launch_inquisit(
         script_path=script_path,
         run_dir=run_dir,
@@ -229,12 +243,21 @@ def _attempt_auto_fix_and_retry(
     )
 
     script_dir = script_path.parent
-    retry_data_all = collect_data_files(script_dir, run_dir, script_name=script_path.stem)
+    retry_data_all = collect_data_files(
+        script_dir,
+        run_dir,
+        script_name=script_path.stem,
+        modified_after=retry_started_at,
+    )
     retry_raw = [f for f in retry_data_all if "raw" in f.lower()]
     retry_summary = [f for f in retry_data_all if "summary" in f.lower()]
     if not retry_raw and not retry_summary:
         retry_raw = retry_data_all
-    retry_caps = collect_screen_captures(script_dir, run_dir)
+    retry_caps = collect_screen_captures(
+        script_dir,
+        run_dir,
+        modified_after=retry_started_at,
+    )
 
     retry_verdict, retry_notes = determine_verdict(
         retry_result.return_code, retry_result.timed_out, retry_raw

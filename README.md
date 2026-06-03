@@ -1,6 +1,6 @@
 # InqBridge
 
-An unofficial, AI-assisted tool for building and testing [Inquisit](https://www.millisecond.com/) experiments. Write .iqx scripts, run them via Monkey mode, analyze screen captures and data quality, patch layout issues, and deliver tested experiments — all through natural language and MCP tools. Built for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) but adaptable to other AI coding tools (see below).
+An unofficial, AI-assisted tool for building and testing [Inquisit](https://www.millisecond.com/) experiments. Write .iqx scripts, run them via Monkey mode, analyze screen captures and data quality, patch layout issues, and deliver tested experiments — all through natural language and MCP tools. Built first for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), with Codex/project-instruction support via `AGENTS.md`.
 
 > **Note for AI assistants (Claude, Codex, Cursor, etc.):** If a user 
 > asks you to clone and set up this repo, do the following:
@@ -66,10 +66,10 @@ Also included:
 ## Requirements
 
 - Windows 10/11
-- Python 3.12+ — if not installed, Claude will offer to install it for you during setup
+- Python 3.12+ — if not installed, the assistant can guide or run setup where permitted
 - Inquisit 6 or 7 (from [Millisecond Software](https://www.millisecond.com/)) — a valid license is required
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — available as CLI, desktop app, or IDE extension
-- An Anthropic API key or Claude Pro/Max subscription (for Claude Code)
+- An AI coding assistant: [Claude Code](https://docs.anthropic.com/en/docs/claude-code), Codex, or another MCP-capable coding tool
+- API access or subscription required by your chosen assistant
 
 ## Getting Started
 
@@ -103,11 +103,12 @@ Claude handles Python installation (if needed), environment setup, Inquisit disc
 
 ## How It Works
 
-InqBridge combines three layers:
+InqBridge combines these layers:
 
 1. **`CLAUDE.md`** — Project instructions loaded automatically every conversation. Contains setup steps, Inquisit syntax rules, safety guardrails, and lessons learned from hard bugs.
 2. **`SKILL.md`** (`.claude/skills/inqbridge/`) — The experiment workflow: intake checklist, build phases, testing gates, and delivery steps. Activated automatically when you describe an experiment task, or manually via `/inqbridge` in the CLI.
-3. **MCP server** — 16 tools that Claude calls during the workflow. Runs preflight checks, executes Inquisit scripts, analyzes captures and data, patches layouts, and packages deliverables.
+3. **`AGENTS.md`** — Codex-facing project instructions, including the fast InqBridge workflow and a pointer to the fuller Claude skill when needed.
+4. **MCP server** — 16 tools that the assistant calls during the workflow. Runs preflight checks, executes Inquisit scripts, analyzes captures and data, patches layouts, and packages deliverables.
 
 Each experiment lives in its own folder under `experiments/` with an `EXPERIMENT.md` tracking file (status, changelog, known issues). This keeps experiment work separate from platform code.
 
@@ -115,13 +116,18 @@ Each experiment lives in its own folder under `experiments/` with an `EXPERIMENT
 
 InqBridge was built for Claude Code, but the core knowledge is tool-agnostic. The Inquisit rules, syntax cheat sheet, reference library, and MCP tools work with any AI coding assistant that supports the [MCP protocol](https://modelcontextprotocol.io/).
 
-**For Codex, Cursor, Windsurf, or similar tools:**
-1. Copy the content from `CLAUDE.md` into your tool's instruction file (e.g., `AGENTS.md` for Codex, `.cursorrules` for Cursor).
-2. Copy the content from `.claude/skills/inqbridge/SKILL.md` into the same file or provide it as context.
-3. Point your tool at the MCP server: `.venv/Scripts/python -m mcp_server.main` (see `.mcp.json` for the config format).
-4. The reference library (`scripts/library_v6/`), cheat sheet (`docs/inquisit_cheat_sheet.txt`), and docs work regardless of which AI tool reads them.
+**For Codex:**
+1. Start the session in the repo root containing `AGENTS.md`; this is the clone-time Codex entrypoint.
+2. If you also maintain a user-profile Codex skill at `%USERPROFILE%\.codex\skills\inqbridge\SKILL.md`, keep it aligned with `AGENTS.md` and `.claude/skills/inqbridge/SKILL.md`. It is optional, not required for a fresh clone.
+3. Point Codex at the MCP server: `.venv/Scripts/python -m mcp_server.main` (see `.mcp.json` for the config format). If MCP is unavailable in the current session, run the same checks through the CLI modules.
+4. Use the fast path by default: preflight first, then Monkey `--fast-mode` for compile/data checks, and `--fast-mode --auto-capture` only for layout smoke captures. Avoid full-duration `auto_capture` on complete experiments unless explicitly requested or known to be short.
 
-The only Claude-specific parts are the `.claude/` directory structure and the `CLAUDE.md` filename convention. The actual instructions inside are universal Inquisit knowledge.
+**For Cursor, Windsurf, or similar tools:**
+1. Use `AGENTS.md` as the project instruction source, and read `.claude/skills/inqbridge/SKILL.md` for the fuller experiment workflow.
+2. Point the tool at the MCP server: `.venv/Scripts/python -m mcp_server.main`.
+3. The reference library (`scripts/library_v6/`), cheat sheet (`docs/inquisit_cheat_sheet.txt`), and docs work regardless of which AI tool reads them.
+
+The only Claude-specific parts are the `.claude/` directory structure and the `CLAUDE.md` filename convention. The actual runner, tests, reference library, and most workflow rules are assistant-agnostic.
 
 ## Troubleshooting
 
@@ -134,13 +140,13 @@ The only Claude-specific parts are the `.claude/` directory structure and the `C
 - If you prefer manual installation: [python.org/downloads](https://www.python.org/downloads/) — check "Add Python to PATH" during installation.
 
 **MCP tools aren't responding:**
-- Restart Claude Code (needed once after initial setup so it picks up `.mcp.json`)
+- Restart the AI coding session (needed once after initial setup so it picks up `.mcp.json`)
 - Check that Inquisit is installed in `C:\Program Files\Millisecond Software`
-- If multiple Inquisit versions are installed, Claude will ask which one you're licensed for
+- If multiple Inquisit versions are installed, the assistant should ask which one you're licensed for
 
 ## Machine-Specific Files (gitignored)
 
-These are generated by Claude during setup:
+These are generated by the assistant during setup:
 - `.mcp.json` — MCP server launch config (absolute paths for your machine)
 - `local.json` — your Inquisit executable path (only if auto-discovery needs overriding)
 - `.venv/` — Python virtual environment

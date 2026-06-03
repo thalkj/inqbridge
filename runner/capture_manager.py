@@ -9,9 +9,9 @@ import re
 from pathlib import Path
 
 
-# Pattern: <trial name> ... </trial>
+# Pattern: trial-like elements that can produce data rows/screens.
 _TRIAL_BLOCK = re.compile(
-    r"(<trial\s+\w+\s*>)(.*?)(</trial>)",
+    r"(<(trial|openended|likert|slidertrial)\s+\w+\s*>)(.*?)(</\2>)",
     re.IGNORECASE | re.DOTALL,
 )
 
@@ -23,7 +23,7 @@ _SCREENCAPTURE_LINE = re.compile(
 
 
 def inject_screencapture(source: str) -> str:
-    """Add `/ screenCapture = true` to every trial that doesn't already have it.
+    """Add `/ screenCapture = true` to every trial-like element missing it.
 
     Args:
         source: Script text.
@@ -33,8 +33,8 @@ def inject_screencapture(source: str) -> str:
     """
     def _inject_in_trial(match: re.Match) -> str:
         open_tag = match.group(1)
-        body = match.group(2)
-        close_tag = match.group(3)
+        body = match.group(3)
+        close_tag = match.group(4)
 
         # Skip if already has screenCapture
         if _SCREENCAPTURE_LINE.search(body):

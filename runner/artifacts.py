@@ -7,6 +7,7 @@ def collect_data_files(
     script_dir: Path,
     run_dir: Path,
     script_name: str | None = None,
+    modified_after: float | None = None,
 ) -> list[str]:
     """Copy data files from script's data/ folder into run_dir/data/.
 
@@ -19,6 +20,9 @@ def collect_data_files(
         script_name: If provided, only collect files whose names contain this
             stem (case-insensitive). Prevents collecting stale data from
             previous runs of different scripts in the same directory.
+        modified_after: If provided, only collect files with modification times
+            at or after this POSIX timestamp. Prevents stale same-script files
+            from previous runs from being copied into the current manifest.
 
     Returns:
         List of relative paths (from run_dir) of collected files.
@@ -37,6 +41,8 @@ def collect_data_files(
     for f in data_src.iterdir():
         if not f.is_file():
             continue
+        if modified_after is not None and f.stat().st_mtime < modified_after:
+            continue
         # Filter out stale data from other scripts
         if stem_lower:
             fname_lower = f.name.lower().replace(" ", "").replace("-", "").replace("_", "")
@@ -48,11 +54,21 @@ def collect_data_files(
     return collected
 
 
-def collect_screen_captures(script_dir: Path, run_dir: Path) -> list[str]:
+def collect_screen_captures(
+    script_dir: Path,
+    run_dir: Path,
+    modified_after: float | None = None,
+) -> list[str]:
     """Copy screen captures from script's screencaptures/ or data/screencaptures/ folder.
 
     Inquisit 6 writes .png files when screenCapture=true on elements.
     The captures may be in screencaptures/ or data/screencaptures/ relative to the script.
+
+    Args:
+        script_dir: Directory containing the executed script.
+        run_dir: Target directory for collected artifacts.
+        modified_after: If provided, only collect files with modification times
+            at or after this POSIX timestamp.
 
     Returns:
         List of relative paths (from run_dir) of collected captures.
@@ -71,6 +87,8 @@ def collect_screen_captures(script_dir: Path, run_dir: Path) -> list[str]:
     collected = []
     for f in cap_src.iterdir():
         if f.is_file() and f.suffix.lower() in (".bmp", ".png", ".jpg"):
+            if modified_after is not None and f.stat().st_mtime < modified_after:
+                continue
             dst = cap_dst / f.name
             shutil.copy2(f, dst)
             collected.append(f"screencaptures/{f.name}")

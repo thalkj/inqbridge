@@ -2,12 +2,12 @@
 
 ## Setup (MUST CHECK FIRST)
 
-**Before doing any experiment work**, verify the environment is ready. Check these in order and handle each step yourself via Bash — never tell the user to "run setup.bat" or go to a terminal.
+**Before doing any experiment work**, verify the environment is ready. Check these in order and handle each step yourself via the active shell — never tell the user to "run setup.bat" or go to a terminal.
 
 1. **Virtual environment**: Check whether `.venv/Scripts/python.exe` exists in the project root.
    - If missing, tell the user: "I need to create a Python virtual environment and install dependencies (~1 minute). OK to proceed?"
-   - On approval, run via Bash: `python -m venv .venv && .venv/Scripts/pip install -q -e ".[dev]"`
-   - After creating the venv, the MCP server will load on the next Claude Code restart. In the current session, invoke runner modules directly via Bash (e.g., `.venv/Scripts/python -m runner.preflight ...`).
+   - On approval, run via shell: `python -m venv .venv && .venv/Scripts/pip install -q -e ".[dev]"`
+   - After creating the venv, the MCP server will load on the next Claude Code restart. In the current session, invoke runner modules directly via shell (e.g., `.venv/Scripts/python -m runner.preflight ...`).
 
 2. **MCP config**: Check whether `.mcp.json` exists in the project root.
    - If missing, create it via Write tool with this content (use the actual absolute project root path):
@@ -26,7 +26,7 @@
 
 3. **Inquisit discovery** (`local.json`): This file is **optional** if only one Inquisit version is installed. `runner/config.py` auto-discovers Inquisit from `C:\Program Files\Millisecond Software`. However, if multiple versions are installed, **ask the user which version they are licensed for** — a newer version on disk does not mean the user has a license. Create `local.json` with their chosen path.
 
-4. **MCP server not responding**: If MCP tool calls fail with connection errors after setup, tell the user to restart Claude Code so the MCP server process loads. This is the one step that cannot be automated. In the meantime, use Bash to invoke runner modules directly.
+4. **MCP server not responding**: If MCP tool calls fail with connection errors after setup, tell the user to restart Claude Code so the MCP server process loads. This is the one step that cannot be automated. In the meantime, use the shell to invoke runner modules directly.
 
 ## Permission Warming (do after setup)
 
@@ -70,9 +70,10 @@ If the user has already granted broad permissions, skip this step.
 - **Non-obvious Inquisit idioms**: When using uncommon patterns (e.g., `branch`, conditional `skip`, `list.nextvalue`), explain why.
 
 ## Screen Capture Strategy During Development
-- **`/ screenCapture` only works on `<trial>` elements** in Inquisit 6. It does NOT work on `<openended>`, `<likert>`, `<slidertrial>`, or `<surveypage>`. For experiments that primarily use these elements (surveys, text-entry tasks), layout must be verified via a human run instead.
+- **Capture trial-like elements with runner temp copies**: `auto_capture=True` injects `/ screenCapture = true` into temp copies of `<trial>`, `<openended>`, `<likert>`, and `<slidertrial>` elements. It does not modify the real script. `<surveypage>` still needs separate visual verification.
 - **Do NOT capture during iterative debugging**: When fixing compile errors or data issues, use `fast_mode=True` without `auto_capture`. Captures are useless if the script doesn't compile, and layout doesn't change between data-logic fixes.
-- **Capture once before human run**: When the script compiles cleanly, data looks correct, and you're ready to suggest a human run — do one final `run_monkey` with `auto_capture=True`. Then run `score_layout` + `score_layout_deep` and **read the captures yourself** to visually inspect for overlapping text, clipping, elements too close together, or anything visually awkward.
+- **Use fast capture before human run**: When the script compiles cleanly, data looks correct, and you're ready to suggest a human run, do one final `run_monkey` with `fast_mode=True`, `auto_capture=True`, and an explicit timeout. Then run `score_layout` + `score_layout_deep` and **read the captures yourself** to visually inspect for overlapping text, clipping, elements too close together, or anything visually awkward.
+- **Use full-duration capture sparingly**: Only run full-duration `auto_capture` when the user explicitly asks, the script is short, or a small targeted tester cannot represent the screen.
 - **Segment trials for visual checks**: When building a complex trial with multiple `stimulustimes` entries, first test the stimuli as separate short trials and capture those individually.
 - **Compare before/after**: Use `compare_runs` after any layout change to verify improvements and catch regressions.
 - **Deduplication is automatic**: `score_layout` and `score_layout_deep` call `deduplicate_captures()` internally (SHA-256 + perceptual hash). Identical/near-identical frames are marked, not scored twice.
@@ -176,7 +177,7 @@ Pre-built include fragments in `includes/library/`: demographics, consent, debri
 - **Run preflight checks before every Inquisit execution.**
 - Use Monkey mode before asking for a human run.
 - Use `fast_mode=True` on `run_monkey` for quick compile/data checks — it collapses all stimulustimes to t=0 and zeros pauses.
-- `auto_capture` is on by default for `run_monkey` — it injects `/ screenCapture = true` into temp copies without modifying the real script. **Caution**: For experiments with many trials (>30), auto_capture produces hundreds of screenshots. For layout checks on large experiments, manually read 5-6 representative captures instead of running `score_layout` on the full set. Consider using `auto_capture=false` and manually adding `/ screenCapture = true` to just 1-2 representative trials per screen type.
+- `auto_capture` defaults off for `run_monkey`; enable it only for layout QA, preferably together with `fast_mode=True` and an explicit timeout. It injects `/ screenCapture = true` into temp copies of trial-like elements without modifying the real script.
 - `auto_fix` is on by default — on compile error, it runs preflight, auto-fixes missing files and phantom references, and retries once.
 - Use score_layout only after screen captures exist.
 - Use patch_layout only after score_layout returns concrete issues.
@@ -296,8 +297,8 @@ Also available:
 - `scripts/library_index.md` — Full index with grep examples.
 
 ### Screen Capture Policy
-Screen capture is controlled by `/ screenCapture = true` on individual trials in the .iqx script. To get captures:
-1. Add `/ screenCapture = true` to trials you want to inspect
-2. Run with `run_monkey` or `run_script`
-3. Captures appear in the run's `screencaptures/` folder
-4. Remove `/ screenCapture = true` before final delivery
+Screen capture is controlled by `/ screenCapture = true` in Inquisit, but the runner should usually inject it into temporary copies via `auto_capture=True`. To get captures:
+1. Run with `run_monkey(fast_mode=True, auto_capture=True, timeout_seconds=...)` or the equivalent CLI flags.
+2. Captures appear in the run's `screencaptures/` folder.
+3. Read representative captures yourself; layout scoring is a heuristic.
+4. Remove any manually added `/ screenCapture = true` before final delivery.

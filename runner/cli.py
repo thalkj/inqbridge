@@ -19,6 +19,12 @@ def main():
                         help="Timeout in seconds (default: 600)")
     parser.add_argument("--artifacts-dir", help="Override artifacts output directory")
     parser.add_argument("--inquisit-exe", help="Override Inquisit executable path")
+    parser.add_argument("--fast-mode", action="store_true",
+                        help="Collapse timings for quick compile/data/layout checks")
+    parser.add_argument("--auto-capture", action="store_true",
+                        help="Inject screenCapture=true into temp trial-like copies")
+    parser.add_argument("--auto-fix", action="store_true",
+                        help="Attempt one auto-fix retry on compile errors")
 
     args = parser.parse_args()
 
@@ -31,6 +37,9 @@ def main():
             timeout_seconds=args.timeout,
             artifacts_dir=args.artifacts_dir,
             inquisit_exe=args.inquisit_exe,
+            fast_mode=args.fast_mode,
+            auto_capture=args.auto_capture,
+            auto_fix=args.auto_fix,
         )
         print(json.dumps(result, indent=2))
     except (FileNotFoundError, ValueError) as e:

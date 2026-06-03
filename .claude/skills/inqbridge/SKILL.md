@@ -5,20 +5,28 @@ description: Build Inquisit experiments from scratch or iterate on existing ones
 
 ## Setup Check (do this FIRST)
 
-Before using any MCP tools, verify the environment is ready. Handle all steps yourself via Bash — never tell the user to "run setup.bat" or go to a terminal.
+Before using any MCP tools, verify the environment is ready. Handle all steps yourself via the active shell — never tell the user to "run setup.bat" or go to a terminal.
 
 1. Check that `.venv/Scripts/python.exe` exists in the project root. If missing:
    - Tell the user what you need to do: create a Python venv and install dependencies (~1 minute).
    - On approval, run via Bash: `python -m venv .venv && .venv/Scripts/pip install -q -e ".[dev]"`
 2. Check that `.mcp.json` exists. If missing, create it with the MCP server config pointing to `.venv/Scripts/python.exe -m mcp_server.main` with the project root as cwd.
 3. `local.json` is **optional** — Inquisit is auto-discovered from `C:\Program Files\Millisecond Software` by `runner/config.py`. Only needed for a non-standard install path.
-4. If MCP tool calls fail with connection errors after setup, the user must restart Claude Code so the MCP server process loads. This is the one step Claude cannot do itself. In the current session, invoke runner modules directly via Bash (e.g., `.venv/Scripts/python -m runner.preflight ...`).
+4. If MCP tool calls fail with connection errors after setup, the user must restart the AI coding session so the MCP server process loads. This is the one step the assistant cannot do itself. In the current session, invoke runner modules directly via shell (e.g., `.venv/Scripts/python -m runner.preflight ...`).
 
-Do NOT tell the user to "run setup.bat". Handle all setup via Bash, asking approval before running commands.
+Do NOT tell the user to "run setup.bat". Handle all setup via shell, asking approval before running commands when the active assistant requires it.
 
 ### Permission Warming
 
 After setup, if the user is not in "allow all" mode, run a quick warmup that exercises each tool type once (Bash, Write, MCP preflight, MCP run_monkey, Read). This gets Accept prompts out of the way before the real workflow begins. Tell the user: *"I'll run a quick warmup — you'll see a few Accept prompts. After that the session flows without interruptions."* See CLAUDE.md "Permission Warming" section for the full sequence.
+
+### Codex Compatibility
+
+Codex does not automatically discover `.claude/skills`. For Codex sessions, use the root `AGENTS.md` as the clone-time fast entrypoint. If a user-profile Codex skill exists at `%USERPROFILE%\.codex\skills\inqbridge\SKILL.md`, keep it aligned too; it is optional, not required for a fresh clone.
+
+When calling Python APIs directly from any assistant, pass `Path(...)` objects rather than raw strings, for example `preflight_check(Path("experiments/name/main.iqx"))`.
+
+When changing InqBridge workflow rules, keep the shipped entrypoints aligned: this Claude skill and root `AGENTS.md`. If you also maintain a user-profile Codex skill, update that as well. Claude's skill can remain the long-form reference, but the Codex-facing files must carry the same execution defaults, safety gates, and known pitfalls.
 
 ---
 
@@ -131,11 +139,12 @@ Each module is a standalone .iqx that can be tested independently.
 4. Fix issues, repeat
 
 **Layout gate (once per module, after data is correct):**
-1. `run_monkey` with `auto_capture=True` (normal speed so captures are representative)
-2. `score_layout` + `score_layout_deep` on captures
-3. Read the screen captures to visually inspect layout
-4. Fix layout issues if any, re-capture and compare
-5. **Update EXPERIMENT.md**: set status to `building`, add changelog entry for what was built/fixed.
+1. `run_monkey` with `fast_mode=True` and `auto_capture=True` for a quick layout smoke capture.
+2. `score_layout` + `score_layout_deep` on captures.
+3. Read the screen captures to visually inspect layout.
+4. If realistic timing is needed, capture the smallest targeted tester at normal speed. Avoid full-duration captures on complete experiments unless explicitly requested or known to be short.
+5. Fix layout issues if any, re-capture and compare.
+6. **Update EXPERIMENT.md**: set status to `building`, add changelog entry for what was built/fixed.
 
 ### Phase 3 — Integrate
 
@@ -149,12 +158,13 @@ Each module is a standalone .iqx that can be tested independently.
 
 ### Phase 3b — Layout Gate (before suggesting human run)
 
-1. `run_monkey` with `auto_capture=True` on the full experiment.
+1. Run a fast captured smoke test: `run_monkey` with `fast_mode=True`, `auto_capture=True`, and an explicit timeout.
 2. `score_layout` + `score_layout_deep` — check for clipping, overlap, font size issues.
 3. Read captures to visually verify the participant experience.
-4. Fix any layout issues, re-capture, compare.
-5. Only after layout is clean, suggest a human run to the user.
-6. **Update EXPERIMENT.md**: set status to `monkey-tested`, add changelog entry.
+4. Use full-duration `auto_capture` only when the user explicitly asks, the script is short, or a targeted tester cannot represent the screen. Set a generous timeout before doing so.
+5. Fix any layout issues, re-capture, compare.
+6. Only after layout is clean, suggest a human run to the user.
+7. **Update EXPERIMENT.md**: set status to `monkey-tested`, add changelog entry.
 
 ### Phase 4 — Polish & Deliver
 
@@ -205,7 +215,7 @@ All fragments use namespace prefixes (`demo_`, `consent_`, `debrief_`, `compcode
 ### Execution
 | Tool | When to use |
 |------|-------------|
-| **run_monkey** | Smoke testing. Supports `fast_mode` (collapsed timings), `auto_capture` (inject screenCapture), `auto_fix` (retry on compile error). |
+| **run_monkey** | Smoke testing. Use `fast_mode` for compile/data checks. `auto_capture` defaults off; enable it with `fast_mode` for layout smoke captures. |
 | **run_script** | Full run (human or monkey mode). Same `fast_mode`/`auto_capture`/`auto_fix` parameters. Human mode only when user requests it. |
 
 ### Post-execution Analysis
@@ -231,8 +241,8 @@ All fragments use namespace prefixes (`demo_`, `consent_`, `debrief_`, `compcode
 
 ### Run Parameters
 
-- **`fast_mode`**: Creates temp copies with all stimulustimes collapsed to t=0, pauses zeroed, timeouts minimized. Use for quick compile/data checks. Original script untouched.
-- **`auto_capture`**: Injects `/ screenCapture = true` into temp copies of all trials. Default on for `run_monkey`. Captures appear without modifying the real script.
+- **`fast_mode`**: Creates temp copies with all stimulustimes collapsed to t=0, pauses zeroed, timeouts minimized. Use for quick compile/data checks and for first-pass layout captures. Original script untouched.
+- **`auto_capture`**: Injects `/ screenCapture = true` into temp copies of trial-like elements (`trial`, `openended`, `likert`, `slidertrial`). Default off for `run_monkey`. Captures appear without modifying the real script. Prefer `fast_mode=True` with `auto_capture=True` before considering any full-duration capture.
 - **`auto_fix`**: On compile error, runs preflight, auto-fixes missing file references and phantom references, retries once. Bracket bugs are flagged but not auto-fixed.
 
 ---
